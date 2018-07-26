@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<beans
+	default-destroy-method="destroy"
+	default-init-method="afterPropertiesSet"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+	<bean class="com.ted.lms.service.impl.CourseLocalServiceImpl" id="com.ted.lms.service.CourseLocalService" />
+	<bean class="com.ted.lms.service.impl.CourseServiceImpl" id="com.ted.lms.service.CourseService" />
+	<bean class="com.ted.lms.service.persistence.impl.CoursePersistenceImpl" id="com.ted.lms.service.persistence.CoursePersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.CourseResultLocalServiceImpl" id="com.ted.lms.service.CourseResultLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.CourseResultPersistenceImpl" id="com.ted.lms.service.persistence.CourseResultPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.LearningActivityLocalServiceImpl" id="com.ted.lms.service.LearningActivityLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.LearningActivityPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.LearningActivityResultLocalServiceImpl" id="com.ted.lms.service.LearningActivityResultLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.LearningActivityResultPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityResultPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.LearningActivityTryLocalServiceImpl" id="com.ted.lms.service.LearningActivityTryLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.LearningActivityTryPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityTryPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.ModuleLocalServiceImpl" id="com.ted.lms.service.ModuleLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.ModulePersistenceImpl" id="com.ted.lms.service.persistence.ModulePersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.ModuleResultLocalServiceImpl" id="com.ted.lms.service.ModuleResultLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.ModuleResultPersistenceImpl" id="com.ted.lms.service.persistence.ModuleResultPersistence" parent="basePersistence" />
+</beans>

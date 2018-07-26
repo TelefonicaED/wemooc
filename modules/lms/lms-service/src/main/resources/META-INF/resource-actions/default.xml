@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE resource-action-mapping PUBLIC "-//Liferay//DTD Resource Action Mapping 7.1.0//EN" "http://www.liferay.com/dtd/liferay-resource-action-mapping_7_1_0.dtd">
+
+<resource-action-mapping>
+	<model-resource>
+		<model-name>com.ted.lms.model.Course</model-name>
+		<portlet-ref>
+			<portlet-name>com_ted_lms_web_portlet_CourseAdminPortlet</portlet-name>
+			<portlet-name>com_ted_lms_web_portlet_ModuleAdminPortlet</portlet-name>
+			<portlet-name>com_ted_lms_web_portlet_ActivityAdminPortlet</portlet-name>
+		</portlet-ref>
+		<root>true</root>
+		<weight>1</weight>
+		<permissions>
+			<supports>
+				<action-key>ADD_COURSE</action-key>
+				<action-key>DELETE</action-key>
+				<action-key>PERMISSIONS</action-key>
+				<action-key>UPDATE</action-key>
+				<action-key>VIEW</action-key>
+				<action-key>PUBLISH</action-key>
+				<action-key>REGISTER</action-key>
+				<action-key>ASSIGN_MEMBERS</action-key>
+				<action-key>ACCESS</action-key>
+				<action-key>ADD_MODULE</action-key>
+				<action-key>ACCESSLOCK</action-key>
+				<action-key>VIEW_RESULTS</action-key>
+			</supports>
+			<site-member-defaults>
+				<action-key>VIEW</action-key>
+				<action-key>REGISTER</action-key>
+				<action-key>ACCESS</action-key>
+			</site-member-defaults>
+			<guest-defaults>
+				<action-key>VIEW</action-key>
+				<action-key>ACCESS</action-key>
+			</guest-defaults>
+			<guest-unsupported>
+				<action-key>DELETE</action-key>
+				<action-key>PERMISSIONS</action-key>
+				<action-key>UPDATE</action-key>
+				<action-key>REGISTER</action-key>
+				<action-key>ASSIGN_MEMBERS</action-key>
+				<action-key>ADD_MODULE</action-key>
+				<action-key>ADD_COURSE</action-key>
+			</guest-unsupported>
+		</permissions>
+	</model-resource>
+	
+</resource-action-mapping>

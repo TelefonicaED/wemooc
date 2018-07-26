@@ -1,0 +1,425 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+
+<service-builder package-path="com.ted.lms">
+	<namespace>LMS</namespace>
+	<entity local-service="true" name="Course" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="courseId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="parentCourseId" type="long" />
+		<column name="groupCreatedId" type="long" />
+		<column name="title" type="String" localized="true"/>
+		<column name="description" type="String" localized="true" />
+		<column name="friendlyURL" type="String" />
+		<column name="icon" type="long" />
+		<column name="registrationStartDate" type="Date" />
+		<column name="registrationEndDate" type="Date" />
+		<column name="executionStartDate" type="Date" />
+		<column name="executionEndDate" type="Date" />
+		<column name="closed" type="boolean" />
+		<column name="maxUsers" type="int" />
+		<column name="inscriptionType" type="long" />
+		<column name="courseEvalId" type="long" />
+		<column name="calificationType" type="long" />
+		<column name="welcome" type="boolean" />
+		<column name="welcomeSubject" type="String" />
+		<column name="welcomeMsg" type="String" />
+		<column name="goodbye" type="boolean" />
+		<column name="goodbyeSubject" type="String" />
+		<column name="goodbyeMsg" type="String" />
+		<column name="courseExtraData" type="String" />
+		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="courseId" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="CompanyId" return-type="Collection">
+			<finder-column name="companyId" />
+		</finder>
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
+		<finder name="GroupCreatedId" return-type="Course" unique="true">
+			<finder-column name="groupCreatedId" />
+		</finder>
+		<finder name="parentCourseId" return-type="Collection">
+			<finder-column name="parentCourseId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="Image" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+		<reference entity="AssetCategory" package-path="com.liferay.portlet.asset" />
+		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />
+		<reference entity="AssetTag" package-path="com.liferay.portlet.asset" />
+		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
+		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
+		<reference entity="ExpandoRow" package-path="com.liferay.portlet.expando" />
+		<reference entity="RatingsStats" package-path="com.liferay.portlet.ratings" />
+		<reference entity="WorkflowDefinitionLink" package-path="com.liferay.portal" />
+		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
+		<reference entity="ExpandoValue" package-path="com.liferay.portlet.expando" />
+		<reference entity="Resource" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="CourseResult" remote-service="false">
+
+		<!-- PK fields -->
+
+		<column name="crId" primary="true" type="long" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userModifiedId" type="long" />
+		<column name="userModifiedName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="courseId" type="long" />
+		<column name="userId" type="long" />
+		<column name="result" type="double"/>
+		<column name="comments" type="String"/>
+		<column name="passed" type="boolean" />
+		
+		<column name="registrationDate" type="Date" />
+		<column name="startDate" type="Date" />
+		<column name="passedDate" type="Date" />
+		<column name="allowStartDate" type="Date" />
+		<column name="allowEndDate" type="Date" />
+		
+		<column name="extraData" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="CourseId" return-type="Collection">
+			<finder-column name="courseId" />
+		</finder>
+		<finder name="CourseIdUserId" return-type="CourseResult" unique="true">
+			<finder-column name="courseId" />
+			<finder-column name="userId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="Module" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="moduleId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="title" type="String" localized="true"/>
+		<column name="description" type="String" localized="true" />
+		<column name="icon" type="long" />
+		<column name="order" type="long" />
+		<column name="startDate" type="Date" />
+		<column name="endDate" type="Date" />
+		<column name="allowedTime" type="long" />
+		<column name="moduleExtraData" type="String" />
+		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="order" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="CompanyId" return-type="Collection">
+			<finder-column name="companyId" />
+		</finder>
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="Image" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+		<reference entity="ExpandoRow" package-path="com.liferay.portlet.expando" />
+		<reference entity="WorkflowDefinitionLink" package-path="com.liferay.portal" />
+		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
+		<reference entity="ExpandoValue" package-path="com.liferay.portlet.expando" />
+		<reference entity="Resource" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="ModuleResult" remote-service="false">
+
+		<!-- PK fields -->
+
+		<column name="mrId" primary="true" type="long" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userModifiedId" type="long" />
+		<column name="userModifiedName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="moduleId" type="long" />
+		<column name="userId" type="long" />
+		<column name="result" type="double"/>
+		<column name="comments" type="String"/>
+		<column name="passed" type="boolean" />
+		
+		<column name="startDate" type="Date" />
+		<column name="passedDate" type="Date" />
+		
+		<column name="extraData" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="ModuleId" return-type="Collection">
+			<finder-column name="moduleId" />
+		</finder>
+		<finder name="ModuleIdUserId" return-type="ModuleResult" unique="true">
+			<finder-column name="moduleId" />
+			<finder-column name="userId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="LearningActivity" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="actId" primary="true" type="long" />
+
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="moduleId" type="long" />
+		<column name="title" type="String" localized="true"/>
+		<column name="description" type="String" localized="true" />
+		<column name="typeId" type="int" />
+		<column name="startDate" type="Date" />
+		<column name="endDate" type="Date" />
+		<column name="tries" type="int" />
+		<column name="passPuntuation" type="int" />
+		<column name="priority" type="long" />
+		<column name="extraContent" type="String" />
+		<column name="feedbackCorrect" type="String" />
+		<column name="feedbackNoCorrect" type="String" />
+		<column name="required" type="boolean" />
+		<column name="commentsActivated" type="boolean" />
+		<column name="status" type="int" />
+		<column name="statusByUserId" type="long" />
+		<column name="statusByUserName" type="String" />
+		<column name="statusDate" type="Date" />
+
+		<!-- Order -->
+
+		<order by="asc">
+			<order-column name="moduleId" />
+			<order-column name="priority" />
+		</order>
+
+		<!-- Finder methods -->
+
+		<finder name="CompanyId" return-type="Collection">
+			<finder-column name="companyId" />
+		</finder>
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
+		<finder name="ModuleId" return-type="Collection">
+			<finder-column name="moduleId" />
+		</finder>
+		<finder name="ModuleIdRequired" return-type="Collection">
+			<finder-column name="moduleId" />
+			<finder-column name="required" />
+		</finder>
+		<finder name="GroupIdRequired" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="required" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+		<reference entity="AssetCategory" package-path="com.liferay.portlet.asset" />
+		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />
+		<reference entity="AssetTag" package-path="com.liferay.portlet.asset" />
+		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
+		<reference entity="ExpandoRow" package-path="com.liferay.portlet.expando" />
+		<reference entity="RatingsStats" package-path="com.liferay.portlet.ratings" />
+		<reference entity="WorkflowDefinitionLink" package-path="com.liferay.portal" />
+		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
+		<reference entity="ExpandoValue" package-path="com.liferay.portlet.expando" />
+		<reference entity="Resource" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="LearningActivityResult" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="larId" primary="true" type="long" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userModifiedId" type="long" />
+		<column name="userModifiedName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="actId" type="long" />
+		<column name="userId" type="long" />
+		<column name="result" type="double"/>
+		<column name="comments" type="String"/>
+		<column name="passed" type="boolean" />
+		
+		<column name="startDate" type="Date" />
+		<column name="endDate" type="Date" />
+		
+		<column name="extraData" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="ActId" return-type="Collection">
+			<finder-column name="actId" />
+		</finder>
+		<finder name="ActIdUserId" return-type="LearningActivityResult" unique="true">
+			<finder-column name="actId" />
+			<finder-column name="userId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+	<entity local-service="true" name="LearningActivityTry" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="latId" primary="true" type="long" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userModifiedId" type="long" />
+		<column name="userModifiedName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="actId" type="long" />
+		<column name="userId" type="long" />
+		<column name="result" type="double"/>
+		<column name="comments" type="String"/>
+		
+		<column name="startDate" type="Date" />
+		<column name="endDate" type="Date" />
+		<column name="endUserDate" type="Date" />
+		
+		<column name="tryResultData" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="ActId" return-type="Collection">
+			<finder-column name="actId" />
+		</finder>
+		<finder name="ActIdUserId" return-type="Collection">
+			<finder-column name="actId" />
+			<finder-column name="userId" />
+		</finder>
+
+		<!-- References -->
+
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+</service-builder>
