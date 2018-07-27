@@ -12,11 +12,13 @@
 		<permissions>
 			<supports>
 				<action-key>ADD_COURSE</action-key>
+				<action-key>PERMISSIONS</action-key>
 			</supports>
 			<site-member-defaults/>
 			<guest-defaults />
 			<guest-unsupported>
 				<action-key>ADD_COURSE</action-key>
+				<action-key>PERMISSIONS</action-key>
 			</guest-unsupported>
 		</permissions>
 	</model-resource>
