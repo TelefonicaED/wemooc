@@ -1,5 +1,7 @@
-package com.ted.lms.web.internal.securitiy.permission.resource;
+package com.ted.lms.web.internal.security.permission.resource;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.ted.lms.constants.LMSConstants;
@@ -7,13 +9,20 @@ import com.ted.lms.constants.LMSConstants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Permission helper sobre com.ted.lms
+ * @author JE10436
+ *
+ */
 @Component(immediate = true)
 public class LMSPermission {
+	
+	private static final Log log = LogFactoryUtil.getLog(LMSPermission.class);
 
 	public static boolean contains(
         PermissionChecker permissionChecker, long groupId, String actionId) {
 
-        return portletResourcePermission.contains(
+        return _portletResourcePermission.contains(
             permissionChecker, groupId, actionId);
     }
 
@@ -23,10 +32,10 @@ public class LMSPermission {
     )
     protected void setPortletResourcePermission(
         PortletResourcePermission portletResourcePermission) {
-
-        this.portletResourcePermission = portletResourcePermission;
+    	log.debug("LMSPermission::setPortletResourcePermission::"+portletResourcePermission);
+        _portletResourcePermission = portletResourcePermission;
     }
 
-    private static PortletResourcePermission portletResourcePermission;
+    private static PortletResourcePermission _portletResourcePermission;
 
 }

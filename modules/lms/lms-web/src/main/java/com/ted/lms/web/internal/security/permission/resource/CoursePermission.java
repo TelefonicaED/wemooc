@@ -1,4 +1,4 @@
-package com.ted.lms.web.internal.securitiy.permission.resource;
+package com.ted.lms.web.internal.security.permission.resource;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -21,11 +21,11 @@ public class CoursePermission {
     }
 
     public static boolean contains(
-            PermissionChecker permissionChecker, long entryId, String actionId)
+            PermissionChecker permissionChecker, long courseId, String actionId)
         throws PortalException {
 
         return courseModelResourcePermission.contains(
-            permissionChecker, entryId, actionId);
+            permissionChecker, courseId, actionId);
     }
 
     @Reference(

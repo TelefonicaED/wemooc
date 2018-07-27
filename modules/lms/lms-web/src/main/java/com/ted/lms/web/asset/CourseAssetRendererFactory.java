@@ -10,14 +10,14 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.ted.lms.constants.LMSConstants;
+import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.web.internal.security.permission.resource.CoursePermission;
+import com.ted.lms.web.internal.security.permission.resource.LMSPermission;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -99,8 +99,7 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 	    throws Exception {
 		log.debug("CourseAssetRendererFactory::hasAddPermission::"+groupId+"::"+classTypeId);
 
-	    return true; //portletResourcePermission.contains(
-	       // permissionChecker, groupId, LMSActionKeys.ADD_COURSE);
+	    return LMSPermission.contains(permissionChecker, groupId, LMSActionKeys.ADD_COURSE);
 	}
 
 	@Override
@@ -108,7 +107,7 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 	        PermissionChecker permissionChecker, long classPK, String actionId)
 	    throws Exception {
 		log.debug("CourseAssetRendererFactory::hasPermission::"+classPK+"::"+actionId);
-	    return true; // courseModelResourcePermission.contains(permissionChecker, classPK, actionId);
+	    return CoursePermission.contains(permissionChecker, classPK, actionId);
 	}
 	
 	@Reference(unbind = "-")
@@ -152,10 +151,4 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 	
 	@Reference
 	private Portal _portal;
-	
-	@Reference(target = "(resource.name=" + LMSConstants.RESOURCE_NAME + ")")
-	private PortletResourcePermission portletResourcePermission;
-	
-	@Reference(target = "(model.class.name=" + LMSConstants.COURSE_MODEL_CLASS_NAME + ")")
-	private ModelResourcePermission<Course> courseModelResourcePermission;
 }

@@ -23,7 +23,7 @@ import com.ted.lms.constants.LMSKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.util.LMSPropsKeys;
-import com.ted.lms.web.internal.securitiy.permission.resource.CoursePermission;
+import com.ted.lms.web.internal.security.permission.resource.CoursePermission;
 import com.ted.lms.web.internal.util.CourseUtil;
 
 import java.util.Locale;
@@ -42,7 +42,7 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 	private final ResourceBundleLoader resourceBundleLoader;
 	
 	public CourseAssetRenderer(Course course, ResourceBundleLoader resourceBundleLoader) {
-		this.course = course;
+		this.course = course; 
 		this.resourceBundleLoader = resourceBundleLoader;
 	}
 

@@ -14,6 +14,9 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.ted.lms.model.Course;
 import com.ted.lms.service.base.CourseLocalServiceBaseImpl;
 
 /**
@@ -36,4 +39,34 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseLocalServiceUtil} to access the course local service.
 	 */
+	
+	//Debemos rellenar con lo que sea
+	public Course addCourse() {
+		Course course = null;
+		try {
+			course = coursePersistence.create(counterLocalService.increment(Course.class.getName()));
+			coursePersistence.update(course);
+			resourceLocalService.addResources(course.getCompanyId(), course.getGroupId(), course.getUserId(),  Course.class.getName(), course.getCourseId(), false, true, false);
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return course;
+	}
+	
+	public Course deleteCourse(Course course) {
+		
+		try {
+			resourceLocalService.deleteResource(course.getCompanyId(), Course.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL, course.getCourseId());
+			
+			coursePersistence.remove(course);
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			course = null;
+		}
+		
+		return course;
+	}
 }
