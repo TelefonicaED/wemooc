@@ -23,9 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class is used by SOAP remote services.
+ * This class is used by SOAP remote services, specifically {@link com.ted.lms.service.http.LearningActivityServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @see com.ted.lms.service.http.LearningActivityServiceSoap
  * @generated
  */
 @ProviderType

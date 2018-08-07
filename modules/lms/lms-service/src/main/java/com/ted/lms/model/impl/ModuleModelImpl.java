@@ -42,13 +42,16 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.ted.lms.model.Module;
 import com.ted.lms.model.ModuleModel;
+import com.ted.lms.model.ModuleSoap;
 
 import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +70,7 @@ import java.util.TreeSet;
  * @see ModuleModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class ModuleModelImpl extends BaseModelImpl<Module>
 	implements ModuleModel {
@@ -87,7 +91,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "title", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "icon", Types.BIGINT },
+			{ "smallImageId", Types.BIGINT },
 			{ "order_", Types.BIGINT },
 			{ "startDate", Types.TIMESTAMP },
 			{ "endDate", Types.TIMESTAMP },
@@ -111,7 +115,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("icon", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("smallImageId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("order_", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("startDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endDate", Types.TIMESTAMP);
@@ -123,7 +127,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_Module (uuid_ VARCHAR(75) null,moduleId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title STRING null,description STRING null,icon LONG,order_ LONG,startDate DATE null,endDate DATE null,allowedTime LONG,moduleExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_Module (uuid_ VARCHAR(75) null,moduleId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title STRING null,description STRING null,smallImageId LONG,order_ LONG,startDate DATE null,endDate DATE null,allowedTime LONG,moduleExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_Module";
 	public static final String ORDER_BY_JPQL = " ORDER BY module.order ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_Module.order_ ASC";
@@ -143,6 +147,64 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 	public static final long UUID_COLUMN_BITMASK = 4L;
 	public static final long ORDER_COLUMN_BITMASK = 8L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static Module toModel(ModuleSoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		Module model = new ModuleImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setModuleId(soapModel.getModuleId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setUserId(soapModel.getUserId());
+		model.setUserName(soapModel.getUserName());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setTitle(soapModel.getTitle());
+		model.setDescription(soapModel.getDescription());
+		model.setSmallImageId(soapModel.getSmallImageId());
+		model.setOrder(soapModel.getOrder());
+		model.setStartDate(soapModel.getStartDate());
+		model.setEndDate(soapModel.getEndDate());
+		model.setAllowedTime(soapModel.getAllowedTime());
+		model.setModuleExtraData(soapModel.getModuleExtraData());
+		model.setStatus(soapModel.getStatus());
+		model.setStatusByUserId(soapModel.getStatusByUserId());
+		model.setStatusByUserName(soapModel.getStatusByUserName());
+		model.setStatusDate(soapModel.getStatusDate());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<Module> toModels(ModuleSoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<Module> models = new ArrayList<Module>(soapModels.length);
+
+		for (ModuleSoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ted.lms.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ted.lms.model.Module"));
 
@@ -193,7 +255,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
-		attributes.put("icon", getIcon());
+		attributes.put("smallImageId", getSmallImageId());
 		attributes.put("order", getOrder());
 		attributes.put("startDate", getStartDate());
 		attributes.put("endDate", getEndDate());
@@ -272,10 +334,10 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 			setDescription(description);
 		}
 
-		Long icon = (Long)attributes.get("icon");
+		Long smallImageId = (Long)attributes.get("smallImageId");
 
-		if (icon != null) {
-			setIcon(icon);
+		if (smallImageId != null) {
+			setSmallImageId(smallImageId);
 		}
 
 		Long order = (Long)attributes.get("order");
@@ -333,6 +395,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -356,6 +419,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getModuleId() {
 		return _moduleId;
@@ -366,6 +430,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_moduleId = moduleId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -388,6 +453,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -410,6 +476,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public long getUserId() {
 		return _userId;
@@ -436,6 +503,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	public void setUserUuid(String userUuid) {
 	}
 
+	@JSON
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
@@ -451,6 +519,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_userName = userName;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -461,6 +530,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -477,6 +547,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public String getTitle() {
 		if (_title == null) {
@@ -575,6 +646,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 				"Title", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
+	@JSON
 	@Override
 	public String getDescription() {
 		if (_description == null) {
@@ -677,16 +749,18 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
+	@JSON
 	@Override
-	public long getIcon() {
-		return _icon;
+	public long getSmallImageId() {
+		return _smallImageId;
 	}
 
 	@Override
-	public void setIcon(long icon) {
-		_icon = icon;
+	public void setSmallImageId(long smallImageId) {
+		_smallImageId = smallImageId;
 	}
 
+	@JSON
 	@Override
 	public long getOrder() {
 		return _order;
@@ -699,6 +773,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_order = order;
 	}
 
+	@JSON
 	@Override
 	public Date getStartDate() {
 		return _startDate;
@@ -709,6 +784,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_startDate = startDate;
 	}
 
+	@JSON
 	@Override
 	public Date getEndDate() {
 		return _endDate;
@@ -719,6 +795,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_endDate = endDate;
 	}
 
+	@JSON
 	@Override
 	public long getAllowedTime() {
 		return _allowedTime;
@@ -729,6 +806,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_allowedTime = allowedTime;
 	}
 
+	@JSON
 	@Override
 	public String getModuleExtraData() {
 		if (_moduleExtraData == null) {
@@ -744,6 +822,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_moduleExtraData = moduleExtraData;
 	}
 
+	@JSON
 	@Override
 	public int getStatus() {
 		return _status;
@@ -754,6 +833,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_status = status;
 	}
 
+	@JSON
 	@Override
 	public long getStatusByUserId() {
 		return _statusByUserId;
@@ -780,6 +860,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	public void setStatusByUserUuid(String statusByUserUuid) {
 	}
 
+	@JSON
 	@Override
 	public String getStatusByUserName() {
 		if (_statusByUserName == null) {
@@ -795,6 +876,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		_statusByUserName = statusByUserName;
 	}
 
+	@JSON
 	@Override
 	public Date getStatusDate() {
 		return _statusDate;
@@ -1014,7 +1096,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		moduleImpl.setModifiedDate(getModifiedDate());
 		moduleImpl.setTitle(getTitle());
 		moduleImpl.setDescription(getDescription());
-		moduleImpl.setIcon(getIcon());
+		moduleImpl.setSmallImageId(getSmallImageId());
 		moduleImpl.setOrder(getOrder());
 		moduleImpl.setStartDate(getStartDate());
 		moduleImpl.setEndDate(getEndDate());
@@ -1169,7 +1251,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 			moduleCacheModel.description = null;
 		}
 
-		moduleCacheModel.icon = getIcon();
+		moduleCacheModel.smallImageId = getSmallImageId();
 
 		moduleCacheModel.order = getOrder();
 
@@ -1249,8 +1331,8 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		sb.append(getTitle());
 		sb.append(", description=");
 		sb.append(getDescription());
-		sb.append(", icon=");
-		sb.append(getIcon());
+		sb.append(", smallImageId=");
+		sb.append(getSmallImageId());
 		sb.append(", order=");
 		sb.append(getOrder());
 		sb.append(", startDate=");
@@ -1323,8 +1405,8 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		sb.append(getDescription());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>icon</column-name><column-value><![CDATA[");
-		sb.append(getIcon());
+			"<column><column-name>smallImageId</column-name><column-value><![CDATA[");
+		sb.append(getSmallImageId());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>order</column-name><column-value><![CDATA[");
@@ -1390,7 +1472,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	private String _titleCurrentLanguageId;
 	private String _description;
 	private String _descriptionCurrentLanguageId;
-	private long _icon;
+	private long _smallImageId;
 	private long _order;
 	private Date _startDate;
 	private Date _endDate;

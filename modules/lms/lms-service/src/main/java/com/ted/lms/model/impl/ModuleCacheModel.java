@@ -86,8 +86,8 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		sb.append(title);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", icon=");
-		sb.append(icon);
+		sb.append(", smallImageId=");
+		sb.append(smallImageId);
 		sb.append(", order=");
 		sb.append(order);
 		sb.append(", startDate=");
@@ -162,7 +162,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 			moduleImpl.setDescription(description);
 		}
 
-		moduleImpl.setIcon(icon);
+		moduleImpl.setSmallImageId(smallImageId);
 		moduleImpl.setOrder(order);
 
 		if (startDate == Long.MIN_VALUE) {
@@ -227,7 +227,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		title = objectInput.readUTF();
 		description = objectInput.readUTF();
 
-		icon = objectInput.readLong();
+		smallImageId = objectInput.readLong();
 
 		order = objectInput.readLong();
 		startDate = objectInput.readLong();
@@ -285,7 +285,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 			objectOutput.writeUTF(description);
 		}
 
-		objectOutput.writeLong(icon);
+		objectOutput.writeLong(smallImageId);
 
 		objectOutput.writeLong(order);
 		objectOutput.writeLong(startDate);
@@ -324,7 +324,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 	public long modifiedDate;
 	public String title;
 	public String description;
-	public long icon;
+	public long smallImageId;
 	public long order;
 	public long startDate;
 	public long endDate;

@@ -14,13 +14,22 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.base.CourseServiceBaseImpl;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The implementation of the course remote service.
@@ -53,4 +62,39 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	        PortletResourcePermissionFactory.getInstance(
 	            CourseServiceImpl.class, "portletResourcePermission",
 	            LMSConstants.RESOURCE_NAME);
+	
+	public Course addCourse(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, String summary, String friendlyURL, Locale locale, long parentCourseId, 
+			long smallImageId, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, long layoutSetPrototypeId,int typeSite, 
+			long inscriptionType, long courseEvalId, long calificationType, int maxUsers, boolean welcome, String welcomeSubject, String welcomeMsg, 
+			boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status, ServiceContext serviceContext) throws PortalException {
+		
+		portletResourcePermission.check(
+				getPermissionChecker(), serviceContext.getScopeGroupId(),
+				LMSActionKeys.ADD_COURSE);
+		
+		return courseLocalService.addCourse(titleMap, descriptionMap, summary, friendlyURL, locale, parentCourseId, smallImageId, registrationStartDate, 
+				registrationEndDate, executionStartDate, executionEndDate, layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId, calificationType, 
+				maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
+		
+	}
+	
+	public Course addCourse(String title, String description, String summary, String friendlyURL, long parentCourseId, 
+			Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, long layoutSetPrototypeId,int typeSite, 
+			long inscriptionType, long courseEvalId, long calificationType, int maxUsers, boolean welcome, String welcomeSubject, String welcomeMsg, 
+			boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status, ServiceContext serviceContext) throws PortalException {
+		
+		portletResourcePermission.check(
+				getPermissionChecker(), serviceContext.getScopeGroupId(),
+				LMSActionKeys.ADD_COURSE);
+		Map<Locale, String> titleMap = new HashMap<Locale,String>();
+		titleMap.put(LocaleUtil.getDefault(), title);
+		
+		Map<Locale, String> descriptionMap = new HashMap<Locale,String>();
+		descriptionMap.put(LocaleUtil.getDefault(), description);
+		
+		return courseLocalService.addCourse(titleMap, descriptionMap, summary, friendlyURL, LocaleUtil.getDefault(), parentCourseId, 0, registrationStartDate, 
+				registrationEndDate, executionStartDate, executionEndDate, layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId, calificationType, 
+				maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
+		
+	}
 }

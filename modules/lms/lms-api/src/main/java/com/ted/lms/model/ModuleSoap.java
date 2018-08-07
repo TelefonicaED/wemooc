@@ -23,9 +23,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class is used by SOAP remote services.
+ * This class is used by SOAP remote services, specifically {@link com.ted.lms.service.http.ModuleServiceSoap}.
  *
  * @author Brian Wing Shun Chan
+ * @see com.ted.lms.service.http.ModuleServiceSoap
  * @generated
  */
 @ProviderType
@@ -43,7 +44,7 @@ public class ModuleSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setIcon(model.getIcon());
+		soapModel.setSmallImageId(model.getSmallImageId());
 		soapModel.setOrder(model.getOrder());
 		soapModel.setStartDate(model.getStartDate());
 		soapModel.setEndDate(model.getEndDate());
@@ -185,12 +186,12 @@ public class ModuleSoap implements Serializable {
 		_description = description;
 	}
 
-	public long getIcon() {
-		return _icon;
+	public long getSmallImageId() {
+		return _smallImageId;
 	}
 
-	public void setIcon(long icon) {
-		_icon = icon;
+	public void setSmallImageId(long smallImageId) {
+		_smallImageId = smallImageId;
 	}
 
 	public long getOrder() {
@@ -275,7 +276,7 @@ public class ModuleSoap implements Serializable {
 	private Date _modifiedDate;
 	private String _title;
 	private String _description;
-	private long _icon;
+	private long _smallImageId;
 	private long _order;
 	private Date _startDate;
 	private Date _endDate;

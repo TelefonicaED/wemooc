@@ -21,9 +21,16 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Transactional;
+
+import com.ted.lms.model.Course;
+
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the remote service interface for Course. Methods of this
@@ -49,6 +56,26 @@ public interface CourseService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link CourseServiceUtil} to access the course remote service. Add custom service methods to {@link com.ted.lms.service.impl.CourseServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public Course addCourse(Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, String summary, String friendlyURL,
+		Locale locale, long parentCourseId, long smallImageId,
+		Date registrationStartDate, Date registrationEndDate,
+		Date executionStartDate, Date executionEndDate,
+		long layoutSetPrototypeId, int typeSite, long inscriptionType,
+		long courseEvalId, long calificationType, int maxUsers,
+		boolean welcome, String welcomeSubject, String welcomeMsg,
+		boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status,
+		ServiceContext serviceContext) throws PortalException;
+
+	public Course addCourse(String title, String description, String summary,
+		String friendlyURL, long parentCourseId, Date registrationStartDate,
+		Date registrationEndDate, Date executionStartDate,
+		Date executionEndDate, long layoutSetPrototypeId, int typeSite,
+		long inscriptionType, long courseEvalId, long calificationType,
+		int maxUsers, boolean welcome, String welcomeSubject,
+		String welcomeMsg, boolean goodbye, String goodbyeSubject,
+		String goodbyeMsg, int status, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.

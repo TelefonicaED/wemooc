@@ -16,9 +16,21 @@ package com.ted.lms.service.http;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
+
+import com.ted.lms.service.CourseServiceUtil;
+
+import java.rmi.RemoteException;
+
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Provides the SOAP utility for the
- * {@link com.ted.lms.service.CourseServiceUtil} service utility. The
+ * {@link CourseServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -53,9 +65,76 @@ import aQute.bnd.annotation.ProviderType;
  * @author Brian Wing Shun Chan
  * @see CourseServiceHttp
  * @see com.ted.lms.model.CourseSoap
- * @see com.ted.lms.service.CourseServiceUtil
+ * @see CourseServiceUtil
  * @generated
  */
 @ProviderType
 public class CourseServiceSoap {
+	public static com.ted.lms.model.CourseSoap addCourse(
+		String[] titleMapLanguageIds, String[] titleMapValues,
+		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
+		String summary, String friendlyURL, String locale, long parentCourseId,
+		long smallImageId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, long layoutSetPrototypeId,
+		int typeSite, long inscriptionType, long courseEvalId,
+		long calificationType, int maxUsers, boolean welcome,
+		String welcomeSubject, String welcomeMsg, boolean goodbye,
+		String goodbyeSubject, String goodbyeMsg, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
+					descriptionMapValues);
+
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(titleMap,
+					descriptionMap, summary, friendlyURL,
+					LocaleUtil.fromLanguageId(locale), parentCourseId,
+					smallImageId, registrationStartDate, registrationEndDate,
+					executionStartDate, executionEndDate, layoutSetPrototypeId,
+					typeSite, inscriptionType, courseEvalId, calificationType,
+					maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye,
+					goodbyeSubject, goodbyeMsg, status, serviceContext);
+
+			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.CourseSoap addCourse(String title,
+		String description, String summary, String friendlyURL,
+		long parentCourseId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, long layoutSetPrototypeId,
+		int typeSite, long inscriptionType, long courseEvalId,
+		long calificationType, int maxUsers, boolean welcome,
+		String welcomeSubject, String welcomeMsg, boolean goodbye,
+		String goodbyeSubject, String goodbyeMsg, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(title,
+					description, summary, friendlyURL, parentCourseId,
+					registrationStartDate, registrationEndDate,
+					executionStartDate, executionEndDate, layoutSetPrototypeId,
+					typeSite, inscriptionType, courseEvalId, calificationType,
+					maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye,
+					goodbyeSubject, goodbyeMsg, status, serviceContext);
+
+			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(CourseServiceSoap.class);
 }

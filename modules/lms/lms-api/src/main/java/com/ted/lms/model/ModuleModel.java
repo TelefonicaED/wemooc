@@ -416,18 +416,18 @@ public interface ModuleModel extends BaseModel<Module>, GroupedModel,
 		Locale defaultLocale);
 
 	/**
-	 * Returns the icon of this module.
+	 * Returns the small image ID of this module.
 	 *
-	 * @return the icon of this module
+	 * @return the small image ID of this module
 	 */
-	public long getIcon();
+	public long getSmallImageId();
 
 	/**
-	 * Sets the icon of this module.
+	 * Sets the small image ID of this module.
 	 *
-	 * @param icon the icon of this module
+	 * @param smallImageId the small image ID of this module
 	 */
-	public void setIcon(long icon);
+	public void setSmallImageId(long smallImageId);
 
 	/**
 	 * Returns the order of this module.

@@ -27,13 +27,11 @@
 		<column name="groupCreatedId" type="long" />
 		<column name="title" type="String" localized="true"/>
 		<column name="description" type="String" localized="true" />
-		<column name="friendlyURL" type="String" />
-		<column name="icon" type="long" />
+		<column name="smallImageId" type="long" />
 		<column name="registrationStartDate" type="Date" />
 		<column name="registrationEndDate" type="Date" />
 		<column name="executionStartDate" type="Date" />
 		<column name="executionEndDate" type="Date" />
-		<column name="closed" type="boolean" />
 		<column name="maxUsers" type="int" />
 		<column name="inscriptionType" type="long" />
 		<column name="courseEvalId" type="long" />
@@ -139,7 +137,7 @@
 		<reference entity="Group" package-path="com.liferay.portal" />
 		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
-	<entity local-service="true" name="Module" remote-service="false" uuid="true">
+	<entity local-service="true" name="Module" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -161,7 +159,7 @@
 
 		<column name="title" type="String" localized="true"/>
 		<column name="description" type="String" localized="true" />
-		<column name="icon" type="long" />
+		<column name="smallImageId" type="long" />
 		<column name="order" type="long" />
 		<column name="startDate" type="Date" />
 		<column name="endDate" type="Date" />
@@ -246,7 +244,7 @@
 		<reference entity="Group" package-path="com.liferay.portal" />
 		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
-	<entity local-service="true" name="LearningActivity" remote-service="false" uuid="true">
+	<entity local-service="true" name="LearningActivity" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 

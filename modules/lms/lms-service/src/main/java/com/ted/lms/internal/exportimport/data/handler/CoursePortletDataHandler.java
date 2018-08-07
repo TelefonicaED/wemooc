@@ -7,15 +7,15 @@ import com.ted.lms.constants.LMSPortletKeys;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * Proporciona la funcionalidad de exportar e importar un curso desde el portlet de administración de cursos, 
- * que consiste en importar o exportar todos los módulos y actividades asociadas a ese curso. 
- * Tras la importación, nuevos módulos y actividades se crearán de acuerdo con la estrategia DATA_MIRROW
- * El autor de los objetos recién creados está determinado por la clase
+ * Proporciona la funcionalidad de exportar e importar un curso desde el portlet de administraciï¿½n de cursos, 
+ * que consiste en importar o exportar todos los mï¿½dulos y actividades asociadas a ese curso. 
+ * Tras la importaciï¿½n, nuevos mï¿½dulos y actividades se crearï¿½n de acuerdo con la estrategia DATA_MIRROW
+ * El autor de los objetos reciï¿½n creados estï¿½ determinado por la clase
  * CourseCreationStrategy definida en el <i>portal.properties</i>. 
- * Esta estrategia también permite que los módulos y actividades se revisen y modifiquen antes
- * de la importación.
+ * Esta estrategia tambiï¿½n permite que los mï¿½dulos y actividades se revisen y modifiquen antes
+ * de la importaciï¿½n.
  *
- * @author Virginia Martín Agudo
+ * @author Virginia MartÃ­n Agudo
  * @see    com.ted.lms.internal.exportimport.creation.strategy.CourseCreationStrategy
  * @see    PortletDataHandler
  */

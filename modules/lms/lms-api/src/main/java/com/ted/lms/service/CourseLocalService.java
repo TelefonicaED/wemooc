@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -39,7 +40,10 @@ import com.ted.lms.model.Course;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the local service interface for Course. Methods of this
@@ -72,6 +76,18 @@ public interface CourseLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Course addCourse(Course course);
+
+	@Indexable(type = IndexableType.REINDEX)
+	public Course addCourse(Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, String summary, String friendlyURL,
+		Locale locale, long parentCourseId, long smallImageId,
+		Date registrationStartDate, Date registrationEndDate,
+		Date executionStartDate, Date executionEndDate,
+		long layoutSetPrototypeId, int typeSite, long inscriptionType,
+		long courseEvalId, long calificationType, int maxUsers,
+		boolean welcome, String welcomeSubject, String welcomeMsg,
+		boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status,
+		ServiceContext serviceContext);
 
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
@@ -269,6 +285,11 @@ public interface CourseLocalService extends BaseLocalService,
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
+		throws PortalException;
+
+	public void updateAsset(long userId, Course course,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds, Double priority, String summary)
 		throws PortalException;
 
 	/**

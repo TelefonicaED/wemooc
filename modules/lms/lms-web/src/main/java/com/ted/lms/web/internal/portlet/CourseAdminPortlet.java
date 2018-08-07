@@ -9,7 +9,7 @@ import javax.portlet.Portlet;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * @author JE10436
+ * @author Virginia Martín Agudo
  */
 @Component(
 	immediate = true,

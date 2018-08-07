@@ -15,14 +15,14 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSKeys;
 import com.ted.lms.constants.LMSPortletKeys;
+import com.ted.lms.constants.LMSPropsKeys;
 import com.ted.lms.model.Course;
-import com.ted.lms.util.LMSPropsKeys;
 import com.ted.lms.web.internal.security.permission.resource.CoursePermission;
 import com.ted.lms.web.internal.util.CourseUtil;
 
@@ -83,7 +83,6 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 
 	@Override
 	public String getSummary(PortletRequest portletRequest, PortletResponse portletResponse) {
-		//TODO mostrar la descripci�n pero sin c�digo html
 		
 		int abstractLength = AssetHelper.ASSET_ENTRY_ABSTRACT_LENGTH;
 
@@ -120,7 +119,7 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 	 */
 	@Override
 	public String getDiscussionPath() {
-	    if (GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.COURSE_ENTRY_COMMENTS_ENABLED))) {
+	    if (PrefsPropsUtil.getBoolean(LMSPropsKeys.COURSE_ENTRY_COMMENTS_ENABLED, false)) {
 	        return "edit_entry_discussion";
 	    }
 	    else {

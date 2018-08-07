@@ -66,7 +66,7 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 	@Override
 	public String getIconCssClass() {
 		log.debug("CourseAssetRendererFactory::getIconCssClass");
-	    return "community";
+	    return "course";
 	}
 	
 	@Override

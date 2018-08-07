@@ -64,7 +64,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(69);
+		StringBundler sb = new StringBundler(65);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -90,10 +90,8 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		sb.append(title);
 		sb.append(", description=");
 		sb.append(description);
-		sb.append(", friendlyURL=");
-		sb.append(friendlyURL);
-		sb.append(", icon=");
-		sb.append(icon);
+		sb.append(", smallImageId=");
+		sb.append(smallImageId);
 		sb.append(", registrationStartDate=");
 		sb.append(registrationStartDate);
 		sb.append(", registrationEndDate=");
@@ -102,8 +100,6 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		sb.append(executionStartDate);
 		sb.append(", executionEndDate=");
 		sb.append(executionEndDate);
-		sb.append(", closed=");
-		sb.append(closed);
 		sb.append(", maxUsers=");
 		sb.append(maxUsers);
 		sb.append(", inscriptionType=");
@@ -193,14 +189,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 			courseImpl.setDescription(description);
 		}
 
-		if (friendlyURL == null) {
-			courseImpl.setFriendlyURL("");
-		}
-		else {
-			courseImpl.setFriendlyURL(friendlyURL);
-		}
-
-		courseImpl.setIcon(icon);
+		courseImpl.setSmallImageId(smallImageId);
 
 		if (registrationStartDate == Long.MIN_VALUE) {
 			courseImpl.setRegistrationStartDate(null);
@@ -230,7 +219,6 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 			courseImpl.setExecutionEndDate(new Date(executionEndDate));
 		}
 
-		courseImpl.setClosed(closed);
 		courseImpl.setMaxUsers(maxUsers);
 		courseImpl.setInscriptionType(inscriptionType);
 		courseImpl.setCourseEvalId(courseEvalId);
@@ -316,15 +304,12 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		groupCreatedId = objectInput.readLong();
 		title = objectInput.readUTF();
 		description = objectInput.readUTF();
-		friendlyURL = objectInput.readUTF();
 
-		icon = objectInput.readLong();
+		smallImageId = objectInput.readLong();
 		registrationStartDate = objectInput.readLong();
 		registrationEndDate = objectInput.readLong();
 		executionStartDate = objectInput.readLong();
 		executionEndDate = objectInput.readLong();
-
-		closed = objectInput.readBoolean();
 
 		maxUsers = objectInput.readInt();
 
@@ -396,20 +381,11 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 			objectOutput.writeUTF(description);
 		}
 
-		if (friendlyURL == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(friendlyURL);
-		}
-
-		objectOutput.writeLong(icon);
+		objectOutput.writeLong(smallImageId);
 		objectOutput.writeLong(registrationStartDate);
 		objectOutput.writeLong(registrationEndDate);
 		objectOutput.writeLong(executionStartDate);
 		objectOutput.writeLong(executionEndDate);
-
-		objectOutput.writeBoolean(closed);
 
 		objectOutput.writeInt(maxUsers);
 
@@ -484,13 +460,11 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 	public long groupCreatedId;
 	public String title;
 	public String description;
-	public String friendlyURL;
-	public long icon;
+	public long smallImageId;
 	public long registrationStartDate;
 	public long registrationEndDate;
 	public long executionStartDate;
 	public long executionEndDate;
-	public boolean closed;
 	public int maxUsers;
 	public long inscriptionType;
 	public long courseEvalId;

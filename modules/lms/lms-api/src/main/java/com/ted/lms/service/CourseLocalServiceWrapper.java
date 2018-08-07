@@ -43,6 +43,28 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		return _courseLocalService.addCourse(course);
 	}
 
+	@Override
+	public com.ted.lms.model.Course addCourse(
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap, String summary,
+		String friendlyURL, java.util.Locale locale, long parentCourseId,
+		long smallImageId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, long layoutSetPrototypeId,
+		int typeSite, long inscriptionType, long courseEvalId,
+		long calificationType, int maxUsers, boolean welcome,
+		String welcomeSubject, String welcomeMsg, boolean goodbye,
+		String goodbyeSubject, String goodbyeMsg, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _courseLocalService.addCourse(titleMap, descriptionMap, summary,
+			friendlyURL, locale, parentCourseId, smallImageId,
+			registrationStartDate, registrationEndDate, executionStartDate,
+			executionEndDate, layoutSetPrototypeId, typeSite, inscriptionType,
+			courseEvalId, calificationType, maxUsers, welcome, welcomeSubject,
+			welcomeMsg, goodbye, goodbyeSubject, goodbyeMsg, status,
+			serviceContext);
+	}
+
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
 	*
@@ -308,6 +330,15 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public void updateAsset(long userId, com.ted.lms.model.Course course,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds, Double priority, String summary)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_courseLocalService.updateAsset(userId, course, assetCategoryIds,
+			assetTagNames, assetLinkEntryIds, priority, summary);
 	}
 
 	/**

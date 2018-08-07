@@ -444,33 +444,18 @@ public interface CourseModel extends BaseModel<Course>, GroupedModel,
 		Locale defaultLocale);
 
 	/**
-	 * Returns the friendly url of this course.
+	 * Returns the small image ID of this course.
 	 *
-	 * @return the friendly url of this course
+	 * @return the small image ID of this course
 	 */
-	@AutoEscape
-	public String getFriendlyURL();
+	public long getSmallImageId();
 
 	/**
-	 * Sets the friendly url of this course.
+	 * Sets the small image ID of this course.
 	 *
-	 * @param friendlyURL the friendly url of this course
+	 * @param smallImageId the small image ID of this course
 	 */
-	public void setFriendlyURL(String friendlyURL);
-
-	/**
-	 * Returns the icon of this course.
-	 *
-	 * @return the icon of this course
-	 */
-	public long getIcon();
-
-	/**
-	 * Sets the icon of this course.
-	 *
-	 * @param icon the icon of this course
-	 */
-	public void setIcon(long icon);
+	public void setSmallImageId(long smallImageId);
 
 	/**
 	 * Returns the registration start date of this course.
@@ -527,27 +512,6 @@ public interface CourseModel extends BaseModel<Course>, GroupedModel,
 	 * @param executionEndDate the execution end date of this course
 	 */
 	public void setExecutionEndDate(Date executionEndDate);
-
-	/**
-	 * Returns the closed of this course.
-	 *
-	 * @return the closed of this course
-	 */
-	public boolean getClosed();
-
-	/**
-	 * Returns <code>true</code> if this course is closed.
-	 *
-	 * @return <code>true</code> if this course is closed; <code>false</code> otherwise
-	 */
-	public boolean isClosed();
-
-	/**
-	 * Sets whether this course is closed.
-	 *
-	 * @param closed the closed of this course
-	 */
-	public void setClosed(boolean closed);
 
 	/**
 	 * Returns the max users of this course.

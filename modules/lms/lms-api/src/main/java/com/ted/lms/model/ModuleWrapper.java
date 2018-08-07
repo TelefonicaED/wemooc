@@ -69,7 +69,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
-		attributes.put("icon", getIcon());
+		attributes.put("smallImageId", getSmallImageId());
 		attributes.put("order", getOrder());
 		attributes.put("startDate", getStartDate());
 		attributes.put("endDate", getEndDate());
@@ -145,10 +145,10 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 			setDescription(description);
 		}
 
-		Long icon = (Long)attributes.get("icon");
+		Long smallImageId = (Long)attributes.get("smallImageId");
 
-		if (icon != null) {
-			setIcon(icon);
+		if (smallImageId != null) {
+			setSmallImageId(smallImageId);
 		}
 
 		Long order = (Long)attributes.get("order");
@@ -358,16 +358,6 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	/**
-	* Returns the icon of this module.
-	*
-	* @return the icon of this module
-	*/
-	@Override
-	public long getIcon() {
-		return _module.getIcon();
-	}
-
-	/**
 	* Returns the modified date of this module.
 	*
 	* @return the modified date of this module
@@ -420,6 +410,16 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public Serializable getPrimaryKeyObj() {
 		return _module.getPrimaryKeyObj();
+	}
+
+	/**
+	* Returns the small image ID of this module.
+	*
+	* @return the small image ID of this module
+	*/
+	@Override
+	public long getSmallImageId() {
+		return _module.getSmallImageId();
 	}
 
 	/**
@@ -850,16 +850,6 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	/**
-	* Sets the icon of this module.
-	*
-	* @param icon the icon of this module
-	*/
-	@Override
-	public void setIcon(long icon) {
-		_module.setIcon(icon);
-	}
-
-	/**
 	* Sets the modified date of this module.
 	*
 	* @param modifiedDate the modified date of this module
@@ -917,6 +907,16 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
 		_module.setPrimaryKeyObj(primaryKeyObj);
+	}
+
+	/**
+	* Sets the small image ID of this module.
+	*
+	* @param smallImageId the small image ID of this module
+	*/
+	@Override
+	public void setSmallImageId(long smallImageId) {
+		_module.setSmallImageId(smallImageId);
 	}
 
 	/**

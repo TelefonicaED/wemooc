@@ -46,13 +46,11 @@ public class CourseSoap implements Serializable {
 		soapModel.setGroupCreatedId(model.getGroupCreatedId());
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
-		soapModel.setFriendlyURL(model.getFriendlyURL());
-		soapModel.setIcon(model.getIcon());
+		soapModel.setSmallImageId(model.getSmallImageId());
 		soapModel.setRegistrationStartDate(model.getRegistrationStartDate());
 		soapModel.setRegistrationEndDate(model.getRegistrationEndDate());
 		soapModel.setExecutionStartDate(model.getExecutionStartDate());
 		soapModel.setExecutionEndDate(model.getExecutionEndDate());
-		soapModel.setClosed(model.isClosed());
 		soapModel.setMaxUsers(model.getMaxUsers());
 		soapModel.setInscriptionType(model.getInscriptionType());
 		soapModel.setCourseEvalId(model.getCourseEvalId());
@@ -216,20 +214,12 @@ public class CourseSoap implements Serializable {
 		_description = description;
 	}
 
-	public String getFriendlyURL() {
-		return _friendlyURL;
+	public long getSmallImageId() {
+		return _smallImageId;
 	}
 
-	public void setFriendlyURL(String friendlyURL) {
-		_friendlyURL = friendlyURL;
-	}
-
-	public long getIcon() {
-		return _icon;
-	}
-
-	public void setIcon(long icon) {
-		_icon = icon;
+	public void setSmallImageId(long smallImageId) {
+		_smallImageId = smallImageId;
 	}
 
 	public Date getRegistrationStartDate() {
@@ -262,18 +252,6 @@ public class CourseSoap implements Serializable {
 
 	public void setExecutionEndDate(Date executionEndDate) {
 		_executionEndDate = executionEndDate;
-	}
-
-	public boolean getClosed() {
-		return _closed;
-	}
-
-	public boolean isClosed() {
-		return _closed;
-	}
-
-	public void setClosed(boolean closed) {
-		_closed = closed;
 	}
 
 	public int getMaxUsers() {
@@ -416,13 +394,11 @@ public class CourseSoap implements Serializable {
 	private long _groupCreatedId;
 	private String _title;
 	private String _description;
-	private String _friendlyURL;
-	private long _icon;
+	private long _smallImageId;
 	private Date _registrationStartDate;
 	private Date _registrationEndDate;
 	private Date _executionStartDate;
 	private Date _executionEndDate;
-	private boolean _closed;
 	private int _maxUsers;
 	private long _inscriptionType;
 	private long _courseEvalId;

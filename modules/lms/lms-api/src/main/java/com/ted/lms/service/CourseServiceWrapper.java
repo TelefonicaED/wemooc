@@ -32,6 +32,49 @@ public class CourseServiceWrapper implements CourseService,
 		_courseService = courseService;
 	}
 
+	@Override
+	public com.ted.lms.model.Course addCourse(
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap, String summary,
+		String friendlyURL, java.util.Locale locale, long parentCourseId,
+		long smallImageId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, long layoutSetPrototypeId,
+		int typeSite, long inscriptionType, long courseEvalId,
+		long calificationType, int maxUsers, boolean welcome,
+		String welcomeSubject, String welcomeMsg, boolean goodbye,
+		String goodbyeSubject, String goodbyeMsg, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseService.addCourse(titleMap, descriptionMap, summary,
+			friendlyURL, locale, parentCourseId, smallImageId,
+			registrationStartDate, registrationEndDate, executionStartDate,
+			executionEndDate, layoutSetPrototypeId, typeSite, inscriptionType,
+			courseEvalId, calificationType, maxUsers, welcome, welcomeSubject,
+			welcomeMsg, goodbye, goodbyeSubject, goodbyeMsg, status,
+			serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.Course addCourse(String title, String description,
+		String summary, String friendlyURL, long parentCourseId,
+		java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, long layoutSetPrototypeId,
+		int typeSite, long inscriptionType, long courseEvalId,
+		long calificationType, int maxUsers, boolean welcome,
+		String welcomeSubject, String welcomeMsg, boolean goodbye,
+		String goodbyeSubject, String goodbyeMsg, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseService.addCourse(title, description, summary,
+			friendlyURL, parentCourseId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId,
+			calificationType, maxUsers, welcome, welcomeSubject, welcomeMsg,
+			goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

@@ -187,6 +187,25 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the learning activity remote service.
+	 *
+	 * @return the learning activity remote service
+	 */
+	public com.ted.lms.service.LearningActivityService getLearningActivityService() {
+		return learningActivityService;
+	}
+
+	/**
+	 * Sets the learning activity remote service.
+	 *
+	 * @param learningActivityService the learning activity remote service
+	 */
+	public void setLearningActivityService(
+		com.ted.lms.service.LearningActivityService learningActivityService) {
+		this.learningActivityService = learningActivityService;
+	}
+
+	/**
 	 * Returns the learning activity persistence.
 	 *
 	 * @return the learning activity persistence
@@ -298,6 +317,25 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	public void setModuleLocalService(
 		com.ted.lms.service.ModuleLocalService moduleLocalService) {
 		this.moduleLocalService = moduleLocalService;
+	}
+
+	/**
+	 * Returns the module remote service.
+	 *
+	 * @return the module remote service
+	 */
+	public com.ted.lms.service.ModuleService getModuleService() {
+		return moduleService;
+	}
+
+	/**
+	 * Sets the module remote service.
+	 *
+	 * @param moduleService the module remote service
+	 */
+	public void setModuleService(
+		com.ted.lms.service.ModuleService moduleService) {
+		this.moduleService = moduleService;
 	}
 
 	/**
@@ -1190,6 +1228,8 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	protected CourseResultPersistence courseResultPersistence;
 	@BeanReference(type = com.ted.lms.service.LearningActivityLocalService.class)
 	protected com.ted.lms.service.LearningActivityLocalService learningActivityLocalService;
+	@BeanReference(type = com.ted.lms.service.LearningActivityService.class)
+	protected com.ted.lms.service.LearningActivityService learningActivityService;
 	@BeanReference(type = LearningActivityPersistence.class)
 	protected LearningActivityPersistence learningActivityPersistence;
 	@BeanReference(type = com.ted.lms.service.LearningActivityResultLocalService.class)
@@ -1202,6 +1242,8 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	protected LearningActivityTryPersistence learningActivityTryPersistence;
 	@BeanReference(type = com.ted.lms.service.ModuleLocalService.class)
 	protected com.ted.lms.service.ModuleLocalService moduleLocalService;
+	@BeanReference(type = com.ted.lms.service.ModuleService.class)
+	protected com.ted.lms.service.ModuleService moduleService;
 	@BeanReference(type = ModulePersistence.class)
 	protected ModulePersistence modulePersistence;
 	@BeanReference(type = com.ted.lms.service.ModuleResultLocalService.class)

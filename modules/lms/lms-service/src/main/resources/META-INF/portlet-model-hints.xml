@@ -14,15 +14,11 @@
 		<field name="groupCreatedId" type="long" />
 		<field localized="true" name="title" type="String" />
 		<field localized="true" name="description" type="String" />
-		<field name="friendlyURL" type="String">
-			<hint name="max-length">100</hint>
-		</field>
-		<field name="icon" type="long" />
+		<field name="smallImageId" type="long" />
 		<field name="registrationStartDate" type="Date" />
 		<field name="registrationEndDate" type="Date" />
 		<field name="executionStartDate" type="Date" />
 		<field name="executionEndDate" type="Date" />
-		<field name="closed" type="boolean" />
 		<field name="maxUsers" type="int" />
 		<field name="inscriptionType" type="long" />
 		<field name="courseEvalId" type="long" />
@@ -154,7 +150,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field localized="true" name="title" type="String" />
 		<field localized="true" name="description" type="String" />
-		<field name="icon" type="long" />
+		<field name="smallImageId" type="long" />
 		<field name="order" type="long" />
 		<field name="startDate" type="Date" />
 		<field name="endDate" type="Date" />

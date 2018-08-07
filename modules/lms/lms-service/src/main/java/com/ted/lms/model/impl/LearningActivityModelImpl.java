@@ -42,13 +42,16 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityModel;
+import com.ted.lms.model.LearningActivitySoap;
 
 import java.io.Serializable;
 
 import java.sql.Types;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +70,7 @@ import java.util.TreeSet;
  * @see LearningActivityModel
  * @generated
  */
+@JSON(strict = true)
 @ProviderType
 public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	implements LearningActivityModel {
@@ -157,6 +161,71 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public static final long REQUIRED_COLUMN_BITMASK = 8L;
 	public static final long UUID_COLUMN_BITMASK = 16L;
 	public static final long PRIORITY_COLUMN_BITMASK = 32L;
+
+	/**
+	 * Converts the soap model instance into a normal model instance.
+	 *
+	 * @param soapModel the soap model instance to convert
+	 * @return the normal model instance
+	 */
+	public static LearningActivity toModel(LearningActivitySoap soapModel) {
+		if (soapModel == null) {
+			return null;
+		}
+
+		LearningActivity model = new LearningActivityImpl();
+
+		model.setUuid(soapModel.getUuid());
+		model.setActId(soapModel.getActId());
+		model.setGroupId(soapModel.getGroupId());
+		model.setCompanyId(soapModel.getCompanyId());
+		model.setUserId(soapModel.getUserId());
+		model.setUserName(soapModel.getUserName());
+		model.setCreateDate(soapModel.getCreateDate());
+		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setModuleId(soapModel.getModuleId());
+		model.setTitle(soapModel.getTitle());
+		model.setDescription(soapModel.getDescription());
+		model.setTypeId(soapModel.getTypeId());
+		model.setStartDate(soapModel.getStartDate());
+		model.setEndDate(soapModel.getEndDate());
+		model.setTries(soapModel.getTries());
+		model.setPassPuntuation(soapModel.getPassPuntuation());
+		model.setPriority(soapModel.getPriority());
+		model.setExtraContent(soapModel.getExtraContent());
+		model.setFeedbackCorrect(soapModel.getFeedbackCorrect());
+		model.setFeedbackNoCorrect(soapModel.getFeedbackNoCorrect());
+		model.setRequired(soapModel.isRequired());
+		model.setCommentsActivated(soapModel.isCommentsActivated());
+		model.setStatus(soapModel.getStatus());
+		model.setStatusByUserId(soapModel.getStatusByUserId());
+		model.setStatusByUserName(soapModel.getStatusByUserName());
+		model.setStatusDate(soapModel.getStatusDate());
+
+		return model;
+	}
+
+	/**
+	 * Converts the soap model instances into normal model instances.
+	 *
+	 * @param soapModels the soap model instances to convert
+	 * @return the normal model instances
+	 */
+	public static List<LearningActivity> toModels(
+		LearningActivitySoap[] soapModels) {
+		if (soapModels == null) {
+			return null;
+		}
+
+		List<LearningActivity> models = new ArrayList<LearningActivity>(soapModels.length);
+
+		for (LearningActivitySoap soapModel : soapModels) {
+			models.add(toModel(soapModel));
+		}
+
+		return models;
+	}
+
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ted.lms.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ted.lms.model.LearningActivity"));
 
@@ -389,6 +458,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		}
 	}
 
+	@JSON
 	@Override
 	public String getUuid() {
 		if (_uuid == null) {
@@ -412,6 +482,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		return GetterUtil.getString(_originalUuid);
 	}
 
+	@JSON
 	@Override
 	public long getActId() {
 		return _actId;
@@ -422,6 +493,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_actId = actId;
 	}
 
+	@JSON
 	@Override
 	public long getGroupId() {
 		return _groupId;
@@ -444,6 +516,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		return _originalGroupId;
 	}
 
+	@JSON
 	@Override
 	public long getCompanyId() {
 		return _companyId;
@@ -466,6 +539,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		return _originalCompanyId;
 	}
 
+	@JSON
 	@Override
 	public long getUserId() {
 		return _userId;
@@ -492,6 +566,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public void setUserUuid(String userUuid) {
 	}
 
+	@JSON
 	@Override
 	public String getUserName() {
 		if (_userName == null) {
@@ -507,6 +582,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_userName = userName;
 	}
 
+	@JSON
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -517,6 +593,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_createDate = createDate;
 	}
 
+	@JSON
 	@Override
 	public Date getModifiedDate() {
 		return _modifiedDate;
@@ -533,6 +610,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_modifiedDate = modifiedDate;
 	}
 
+	@JSON
 	@Override
 	public long getModuleId() {
 		return _moduleId;
@@ -555,6 +633,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		return _originalModuleId;
 	}
 
+	@JSON
 	@Override
 	public String getTitle() {
 		if (_title == null) {
@@ -653,6 +732,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 				"Title", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
+	@JSON
 	@Override
 	public String getDescription() {
 		if (_description == null) {
@@ -755,6 +835,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
+	@JSON
 	@Override
 	public int getTypeId() {
 		return _typeId;
@@ -765,6 +846,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_typeId = typeId;
 	}
 
+	@JSON
 	@Override
 	public Date getStartDate() {
 		return _startDate;
@@ -775,6 +857,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_startDate = startDate;
 	}
 
+	@JSON
 	@Override
 	public Date getEndDate() {
 		return _endDate;
@@ -785,6 +868,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_endDate = endDate;
 	}
 
+	@JSON
 	@Override
 	public int getTries() {
 		return _tries;
@@ -795,6 +879,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_tries = tries;
 	}
 
+	@JSON
 	@Override
 	public int getPassPuntuation() {
 		return _passPuntuation;
@@ -805,6 +890,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_passPuntuation = passPuntuation;
 	}
 
+	@JSON
 	@Override
 	public long getPriority() {
 		return _priority;
@@ -817,6 +903,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_priority = priority;
 	}
 
+	@JSON
 	@Override
 	public String getExtraContent() {
 		if (_extraContent == null) {
@@ -832,6 +919,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_extraContent = extraContent;
 	}
 
+	@JSON
 	@Override
 	public String getFeedbackCorrect() {
 		if (_feedbackCorrect == null) {
@@ -847,6 +935,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_feedbackCorrect = feedbackCorrect;
 	}
 
+	@JSON
 	@Override
 	public String getFeedbackNoCorrect() {
 		if (_feedbackNoCorrect == null) {
@@ -862,11 +951,13 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_feedbackNoCorrect = feedbackNoCorrect;
 	}
 
+	@JSON
 	@Override
 	public boolean getRequired() {
 		return _required;
 	}
 
+	@JSON
 	@Override
 	public boolean isRequired() {
 		return _required;
@@ -889,11 +980,13 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		return _originalRequired;
 	}
 
+	@JSON
 	@Override
 	public boolean getCommentsActivated() {
 		return _commentsActivated;
 	}
 
+	@JSON
 	@Override
 	public boolean isCommentsActivated() {
 		return _commentsActivated;
@@ -904,6 +997,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_commentsActivated = commentsActivated;
 	}
 
+	@JSON
 	@Override
 	public int getStatus() {
 		return _status;
@@ -914,6 +1008,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_status = status;
 	}
 
+	@JSON
 	@Override
 	public long getStatusByUserId() {
 		return _statusByUserId;
@@ -940,6 +1035,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public void setStatusByUserUuid(String statusByUserUuid) {
 	}
 
+	@JSON
 	@Override
 	public String getStatusByUserName() {
 		if (_statusByUserName == null) {
@@ -955,6 +1051,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_statusByUserName = statusByUserName;
 	}
 
+	@JSON
 	@Override
 	public Date getStatusDate() {
 		return _statusDate;

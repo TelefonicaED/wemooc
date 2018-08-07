@@ -45,7 +45,7 @@ public class CourseModelResourcePermissionRegistrar {
                     consumer.accept(	
                         new WorkflowedModelPermissionLogic<>(
                             workflowPermission, modelResourcePermission,
-                            _groupLocalService, Course::getCourseId));
+                            groupLocalService, Course::getCourseId));
                 }),
             properties);
     }
@@ -68,5 +68,5 @@ public class CourseModelResourcePermissionRegistrar {
     private WorkflowPermission workflowPermission;
     
     @Reference
-	private GroupLocalService _groupLocalService;
+	private GroupLocalService groupLocalService;
 }

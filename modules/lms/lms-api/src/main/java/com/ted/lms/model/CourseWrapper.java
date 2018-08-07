@@ -71,13 +71,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		attributes.put("groupCreatedId", getGroupCreatedId());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
-		attributes.put("friendlyURL", getFriendlyURL());
-		attributes.put("icon", getIcon());
+		attributes.put("smallImageId", getSmallImageId());
 		attributes.put("registrationStartDate", getRegistrationStartDate());
 		attributes.put("registrationEndDate", getRegistrationEndDate());
 		attributes.put("executionStartDate", getExecutionStartDate());
 		attributes.put("executionEndDate", getExecutionEndDate());
-		attributes.put("closed", isClosed());
 		attributes.put("maxUsers", getMaxUsers());
 		attributes.put("inscriptionType", getInscriptionType());
 		attributes.put("courseEvalId", getCourseEvalId());
@@ -171,16 +169,10 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 			setDescription(description);
 		}
 
-		String friendlyURL = (String)attributes.get("friendlyURL");
+		Long smallImageId = (Long)attributes.get("smallImageId");
 
-		if (friendlyURL != null) {
-			setFriendlyURL(friendlyURL);
-		}
-
-		Long icon = (Long)attributes.get("icon");
-
-		if (icon != null) {
-			setIcon(icon);
+		if (smallImageId != null) {
+			setSmallImageId(smallImageId);
 		}
 
 		Date registrationStartDate = (Date)attributes.get(
@@ -206,12 +198,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 
 		if (executionEndDate != null) {
 			setExecutionEndDate(executionEndDate);
-		}
-
-		Boolean closed = (Boolean)attributes.get("closed");
-
-		if (closed != null) {
-			setClosed(closed);
 		}
 
 		Integer maxUsers = (Integer)attributes.get("maxUsers");
@@ -328,16 +314,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public long getCalificationType() {
 		return _course.getCalificationType();
-	}
-
-	/**
-	* Returns the closed of this course.
-	*
-	* @return the closed of this course
-	*/
-	@Override
-	public boolean getClosed() {
-		return _course.getClosed();
 	}
 
 	/**
@@ -497,16 +473,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
-	* Returns the friendly url of this course.
-	*
-	* @return the friendly url of this course
-	*/
-	@Override
-	public String getFriendlyURL() {
-		return _course.getFriendlyURL();
-	}
-
-	/**
 	* Returns the goodbye of this course.
 	*
 	* @return the goodbye of this course
@@ -554,16 +520,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public long getGroupId() {
 		return _course.getGroupId();
-	}
-
-	/**
-	* Returns the icon of this course.
-	*
-	* @return the icon of this course
-	*/
-	@Override
-	public long getIcon() {
-		return _course.getIcon();
 	}
 
 	/**
@@ -639,6 +595,16 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public Date getRegistrationStartDate() {
 		return _course.getRegistrationStartDate();
+	}
+
+	/**
+	* Returns the small image ID of this course.
+	*
+	* @return the small image ID of this course
+	*/
+	@Override
+	public long getSmallImageId() {
+		return _course.getSmallImageId();
 	}
 
 	/**
@@ -858,16 +824,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
-	* Returns <code>true</code> if this course is closed.
-	*
-	* @return <code>true</code> if this course is closed; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isClosed() {
-		return _course.isClosed();
-	}
-
-	/**
 	* Returns <code>true</code> if this course is denied.
 	*
 	* @return <code>true</code> if this course is denied; <code>false</code> otherwise
@@ -998,16 +954,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setCalificationType(long calificationType) {
 		_course.setCalificationType(calificationType);
-	}
-
-	/**
-	* Sets whether this course is closed.
-	*
-	* @param closed the closed of this course
-	*/
-	@Override
-	public void setClosed(boolean closed) {
-		_course.setClosed(closed);
 	}
 
 	/**
@@ -1159,16 +1105,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
-	* Sets the friendly url of this course.
-	*
-	* @param friendlyURL the friendly url of this course
-	*/
-	@Override
-	public void setFriendlyURL(String friendlyURL) {
-		_course.setFriendlyURL(friendlyURL);
-	}
-
-	/**
 	* Sets whether this course is goodbye.
 	*
 	* @param goodbye the goodbye of this course
@@ -1216,16 +1152,6 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setGroupId(long groupId) {
 		_course.setGroupId(groupId);
-	}
-
-	/**
-	* Sets the icon of this course.
-	*
-	* @param icon the icon of this course
-	*/
-	@Override
-	public void setIcon(long icon) {
-		_course.setIcon(icon);
 	}
 
 	/**
@@ -1306,6 +1232,16 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setRegistrationStartDate(Date registrationStartDate) {
 		_course.setRegistrationStartDate(registrationStartDate);
+	}
+
+	/**
+	* Sets the small image ID of this course.
+	*
+	* @param smallImageId the small image ID of this course
+	*/
+	@Override
+	public void setSmallImageId(long smallImageId) {
+		_course.setSmallImageId(smallImageId);
 	}
 
 	/**

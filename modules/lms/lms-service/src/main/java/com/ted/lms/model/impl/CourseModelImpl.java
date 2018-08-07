@@ -93,13 +93,11 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			{ "groupCreatedId", Types.BIGINT },
 			{ "title", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "friendlyURL", Types.VARCHAR },
-			{ "icon", Types.BIGINT },
+			{ "smallImageId", Types.BIGINT },
 			{ "registrationStartDate", Types.TIMESTAMP },
 			{ "registrationEndDate", Types.TIMESTAMP },
 			{ "executionStartDate", Types.TIMESTAMP },
 			{ "executionEndDate", Types.TIMESTAMP },
-			{ "closed", Types.BOOLEAN },
 			{ "maxUsers", Types.INTEGER },
 			{ "inscriptionType", Types.BIGINT },
 			{ "courseEvalId", Types.BIGINT },
@@ -131,13 +129,11 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		TABLE_COLUMNS_MAP.put("groupCreatedId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("friendlyURL", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("icon", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("smallImageId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("registrationStartDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("registrationEndDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("executionStartDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("executionEndDate", Types.TIMESTAMP);
-		TABLE_COLUMNS_MAP.put("closed", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("maxUsers", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("inscriptionType", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("courseEvalId", Types.BIGINT);
@@ -155,7 +151,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentCourseId LONG,groupCreatedId LONG,title STRING null,description STRING null,friendlyURL VARCHAR(100) null,icon LONG,registrationStartDate DATE null,registrationEndDate DATE null,executionStartDate DATE null,executionEndDate DATE null,closed BOOLEAN,maxUsers INTEGER,inscriptionType LONG,courseEvalId LONG,calificationType LONG,welcome BOOLEAN,welcomeSubject VARCHAR(75) null,welcomeMsg TEXT null,goodbye BOOLEAN,goodbyeSubject VARCHAR(75) null,goodbyeMsg TEXT null,courseExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentCourseId LONG,groupCreatedId LONG,title STRING null,description STRING null,smallImageId LONG,registrationStartDate DATE null,registrationEndDate DATE null,executionStartDate DATE null,executionEndDate DATE null,maxUsers INTEGER,inscriptionType LONG,courseEvalId LONG,calificationType LONG,welcome BOOLEAN,welcomeSubject VARCHAR(75) null,welcomeMsg TEXT null,goodbye BOOLEAN,goodbyeSubject VARCHAR(75) null,goodbyeMsg TEXT null,courseExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_Course";
 	public static final String ORDER_BY_JPQL = " ORDER BY course.courseId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_Course.courseId ASC";
@@ -203,13 +199,11 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		model.setGroupCreatedId(soapModel.getGroupCreatedId());
 		model.setTitle(soapModel.getTitle());
 		model.setDescription(soapModel.getDescription());
-		model.setFriendlyURL(soapModel.getFriendlyURL());
-		model.setIcon(soapModel.getIcon());
+		model.setSmallImageId(soapModel.getSmallImageId());
 		model.setRegistrationStartDate(soapModel.getRegistrationStartDate());
 		model.setRegistrationEndDate(soapModel.getRegistrationEndDate());
 		model.setExecutionStartDate(soapModel.getExecutionStartDate());
 		model.setExecutionEndDate(soapModel.getExecutionEndDate());
-		model.setClosed(soapModel.isClosed());
 		model.setMaxUsers(soapModel.getMaxUsers());
 		model.setInscriptionType(soapModel.getInscriptionType());
 		model.setCourseEvalId(soapModel.getCourseEvalId());
@@ -301,13 +295,11 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		attributes.put("groupCreatedId", getGroupCreatedId());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
-		attributes.put("friendlyURL", getFriendlyURL());
-		attributes.put("icon", getIcon());
+		attributes.put("smallImageId", getSmallImageId());
 		attributes.put("registrationStartDate", getRegistrationStartDate());
 		attributes.put("registrationEndDate", getRegistrationEndDate());
 		attributes.put("executionStartDate", getExecutionStartDate());
 		attributes.put("executionEndDate", getExecutionEndDate());
-		attributes.put("closed", isClosed());
 		attributes.put("maxUsers", getMaxUsers());
 		attributes.put("inscriptionType", getInscriptionType());
 		attributes.put("courseEvalId", getCourseEvalId());
@@ -404,16 +396,10 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			setDescription(description);
 		}
 
-		String friendlyURL = (String)attributes.get("friendlyURL");
+		Long smallImageId = (Long)attributes.get("smallImageId");
 
-		if (friendlyURL != null) {
-			setFriendlyURL(friendlyURL);
-		}
-
-		Long icon = (Long)attributes.get("icon");
-
-		if (icon != null) {
-			setIcon(icon);
+		if (smallImageId != null) {
+			setSmallImageId(smallImageId);
 		}
 
 		Date registrationStartDate = (Date)attributes.get(
@@ -439,12 +425,6 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 		if (executionEndDate != null) {
 			setExecutionEndDate(executionEndDate);
-		}
-
-		Boolean closed = (Boolean)attributes.get("closed");
-
-		if (closed != null) {
-			setClosed(closed);
 		}
 
 		Integer maxUsers = (Integer)attributes.get("maxUsers");
@@ -942,29 +922,13 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@JSON
 	@Override
-	public String getFriendlyURL() {
-		if (_friendlyURL == null) {
-			return "";
-		}
-		else {
-			return _friendlyURL;
-		}
+	public long getSmallImageId() {
+		return _smallImageId;
 	}
 
 	@Override
-	public void setFriendlyURL(String friendlyURL) {
-		_friendlyURL = friendlyURL;
-	}
-
-	@JSON
-	@Override
-	public long getIcon() {
-		return _icon;
-	}
-
-	@Override
-	public void setIcon(long icon) {
-		_icon = icon;
+	public void setSmallImageId(long smallImageId) {
+		_smallImageId = smallImageId;
 	}
 
 	@JSON
@@ -1009,23 +973,6 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	@Override
 	public void setExecutionEndDate(Date executionEndDate) {
 		_executionEndDate = executionEndDate;
-	}
-
-	@JSON
-	@Override
-	public boolean getClosed() {
-		return _closed;
-	}
-
-	@JSON
-	@Override
-	public boolean isClosed() {
-		return _closed;
-	}
-
-	@Override
-	public void setClosed(boolean closed) {
-		_closed = closed;
 	}
 
 	@JSON
@@ -1462,13 +1409,11 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		courseImpl.setGroupCreatedId(getGroupCreatedId());
 		courseImpl.setTitle(getTitle());
 		courseImpl.setDescription(getDescription());
-		courseImpl.setFriendlyURL(getFriendlyURL());
-		courseImpl.setIcon(getIcon());
+		courseImpl.setSmallImageId(getSmallImageId());
 		courseImpl.setRegistrationStartDate(getRegistrationStartDate());
 		courseImpl.setRegistrationEndDate(getRegistrationEndDate());
 		courseImpl.setExecutionStartDate(getExecutionStartDate());
 		courseImpl.setExecutionEndDate(getExecutionEndDate());
-		courseImpl.setClosed(isClosed());
 		courseImpl.setMaxUsers(getMaxUsers());
 		courseImpl.setInscriptionType(getInscriptionType());
 		courseImpl.setCourseEvalId(getCourseEvalId());
@@ -1641,15 +1586,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			courseCacheModel.description = null;
 		}
 
-		courseCacheModel.friendlyURL = getFriendlyURL();
-
-		String friendlyURL = courseCacheModel.friendlyURL;
-
-		if ((friendlyURL != null) && (friendlyURL.length() == 0)) {
-			courseCacheModel.friendlyURL = null;
-		}
-
-		courseCacheModel.icon = getIcon();
+		courseCacheModel.smallImageId = getSmallImageId();
 
 		Date registrationStartDate = getRegistrationStartDate();
 
@@ -1686,8 +1623,6 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		else {
 			courseCacheModel.executionEndDate = Long.MIN_VALUE;
 		}
-
-		courseCacheModel.closed = isClosed();
 
 		courseCacheModel.maxUsers = getMaxUsers();
 
@@ -1767,7 +1702,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(69);
+		StringBundler sb = new StringBundler(65);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1793,10 +1728,8 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getTitle());
 		sb.append(", description=");
 		sb.append(getDescription());
-		sb.append(", friendlyURL=");
-		sb.append(getFriendlyURL());
-		sb.append(", icon=");
-		sb.append(getIcon());
+		sb.append(", smallImageId=");
+		sb.append(getSmallImageId());
 		sb.append(", registrationStartDate=");
 		sb.append(getRegistrationStartDate());
 		sb.append(", registrationEndDate=");
@@ -1805,8 +1738,6 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getExecutionStartDate());
 		sb.append(", executionEndDate=");
 		sb.append(getExecutionEndDate());
-		sb.append(", closed=");
-		sb.append(isClosed());
 		sb.append(", maxUsers=");
 		sb.append(getMaxUsers());
 		sb.append(", inscriptionType=");
@@ -1844,7 +1775,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(106);
+		StringBundler sb = new StringBundler(100);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.model.Course");
@@ -1899,12 +1830,8 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getDescription());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>friendlyURL</column-name><column-value><![CDATA[");
-		sb.append(getFriendlyURL());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>icon</column-name><column-value><![CDATA[");
-		sb.append(getIcon());
+			"<column><column-name>smallImageId</column-name><column-value><![CDATA[");
+		sb.append(getSmallImageId());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>registrationStartDate</column-name><column-value><![CDATA[");
@@ -1921,10 +1848,6 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(
 			"<column><column-name>executionEndDate</column-name><column-value><![CDATA[");
 		sb.append(getExecutionEndDate());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>closed</column-name><column-value><![CDATA[");
-		sb.append(isClosed());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>maxUsers</column-name><column-value><![CDATA[");
@@ -2020,13 +1943,11 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	private String _titleCurrentLanguageId;
 	private String _description;
 	private String _descriptionCurrentLanguageId;
-	private String _friendlyURL;
-	private long _icon;
+	private long _smallImageId;
 	private Date _registrationStartDate;
 	private Date _registrationEndDate;
 	private Date _executionStartDate;
 	private Date _executionEndDate;
-	private boolean _closed;
 	private int _maxUsers;
 	private long _inscriptionType;
 	private long _courseEvalId;
