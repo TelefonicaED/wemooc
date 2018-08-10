@@ -5,5 +5,7 @@ Export-Package:\
 	com.ted.lms.exception,\
 	com.ted.lms.model,\
 	com.ted.lms.service,\
-	com.ted.lms.service.persistence
+	com.ted.lms.service.persistence,\
+	com.ted.lms.constants,\
+	com.ted.lms.settings
 -includeresource: META-INF/service.xml=../lms-service/service.xml

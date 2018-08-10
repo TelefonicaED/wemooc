@@ -1,5 +1,10 @@
 package com.ted.lms.constants;
 
+/**
+ * Esta clase define las propiedades que tendrá el LMS configuradas en el prefsprops
+ * @author Virginia Martín Agudo
+ *
+ */
 public class LMSPropsKeys {
 	public static final String COURSE_ENTRY_COMMENTS_ENABLED = "course.comments.enabled";
 	public static final String COURSE_ADD_TEACHER_ROLE_TO_CREATOR = "course.add.teacher-role";

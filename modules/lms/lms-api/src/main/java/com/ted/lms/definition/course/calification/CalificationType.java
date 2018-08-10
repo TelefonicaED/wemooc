@@ -6,7 +6,12 @@ import com.ted.lms.model.Course;
 import java.util.Locale;
 
 import javax.portlet.PortletResponse;
-
+ 
+/**
+  * Interfaz para el tipo de calificación de curso
+  * @author Virginia Martín Agudo
+  *
+  */
 public interface CalificationType {
 	
 	public long getTypeId();

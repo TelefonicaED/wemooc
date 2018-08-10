@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -77,10 +78,38 @@ public interface CourseLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Course addCourse(Course course);
 
+	/**
+	* Crea un nuevo curso
+	*
+	* @param titleMap título del curso con las traducciones
+	* @param descriptionMap descripción del curso con las traducciones
+	* @param summary resumen del curso
+	* @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
+	* @param smallImageImageSelector imagen seleccionada para el curso
+	* @param registrationStartDate fecha de inicio de inscripción
+	* @param registrationEndDate fecha de fin de inscripción
+	* @param executionStartDate fecha de inicio de ejecución
+	* @param executionEndDate fecha de fin de ejecución
+	* @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
+	* @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
+	* @param inscriptionType tipo de inscripción al curso
+	* @param courseEvalId tipo de evaluación del curso
+	* @param calificationType tipo de calificación del curso
+	* @param maxUsers máximo de usuarios que se pueden inscribir al curso
+	* @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
+	* @param welcomeSubject asunto del mensaje de bienvenida
+	* @param welcomeMsg cuerpo del mensaje de bienvenida
+	* @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
+	* @param goodbyeSubject asunto del mensaje de despedida
+	* @param goodbyeMsg cuerpo del mensaje de despedida
+	* @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	* @param serviceContext contexto de la creación del curso
+	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Course addCourse(Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, String summary, String friendlyURL,
-		Locale locale, long parentCourseId, long smallImageId,
+		long parentCourseId, ImageSelector smallImageImageSelector,
 		Date registrationStartDate, Date registrationEndDate,
 		Date executionStartDate, Date executionEndDate,
 		long layoutSetPrototypeId, int typeSite, long inscriptionType,
@@ -104,7 +133,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @param course the course
 	* @return the course that was removed
 	*/
-	@Indexable(type = IndexableType.DELETE)
+	@Indexable(type = IndexableType.REINDEX)
 	public Course deleteCourse(Course course);
 
 	/**
@@ -287,6 +316,17 @@ public interface CourseLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	/**
+	* Actualiza el estado del asset correspondiente al curso
+	*
+	* @param userId identificador del usuario que modifica
+	* @param course curso que se modifica
+	* @param assetCategoryIds identificadores de categorías que añadiremos al asset del curso
+	* @param assetTagNames etiquetas que añadiremos al asset del curso
+	* @param assetLinkEntryIds contenidos relacionados que añadiremos al asset del curso
+	* @param priority prioridad del curso en las búsquedas
+	* @param summary resumen del curso
+	*/
 	public void updateAsset(long userId, Course course,
 		long[] assetCategoryIds, String[] assetTagNames,
 		long[] assetLinkEntryIds, Double priority, String summary)
@@ -300,4 +340,18 @@ public interface CourseLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(Course course);
+
+	/**
+	* Modifica la url de un curso
+	*
+	* @param groupCreatedId identificador del sitio web del curso
+	* @param friendlyURL nueva url
+	* @throws PortalException
+	*/
+	public void updateFriendlyURL(long groupCreatedId, String friendlyURL)
+		throws PortalException;
+
+	public void updateSmallImage(long courseId,
+		ImageSelector smallImageSelector, ServiceContext serviceContext)
+		throws PortalException;
 }

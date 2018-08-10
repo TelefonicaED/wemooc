@@ -1,12 +1,10 @@
-package com.ted.lms.definition.learning.activity;
+package com.ted.lms.model;
 
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.xml.Element;
-import com.ted.lms.model.LearningActivity;
-import com.ted.lms.model.LearningActivityTry;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -15,7 +13,15 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletResponse;
 
-public interface LearningActivityType {
+import aQute.bnd.annotation.ProviderType;
+
+/**
+ * Interfaz para las actividades del LMS
+ * @author Virginia Martín Agudo
+ *
+ */
+@ProviderType
+public interface LearningActivityType<T> {
 
 	public int getTypeId();
 	public boolean isScoreConfigurable();
@@ -48,4 +54,9 @@ public interface LearningActivityType {
 	public String getSpecificResultsPage();
 	public long calculateResult(LearningActivity learningActivity, LearningActivityTry learningActivityTry);
 	public boolean isPassed(LearningActivity learningActivity, LearningActivityTry learningActivityTry);
+	
+	public LearningActivityTypeFactory<T> getLearningActivityTypeFactory();
+	public String getClassName();
+
+	public long getClassPK();
 }
