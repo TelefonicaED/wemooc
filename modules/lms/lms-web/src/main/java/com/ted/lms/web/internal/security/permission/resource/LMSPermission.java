@@ -10,8 +10,8 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * Permission helper sobre com.ted.lms
- * @author JE10436
+ * Helper para permisos sobre com.ted.lms
+ * @author Virginia Martín
  *
  */
 @Component(immediate = true)

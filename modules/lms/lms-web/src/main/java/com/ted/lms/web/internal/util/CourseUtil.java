@@ -6,6 +6,11 @@ import com.ted.lms.model.Course;
 
 import java.util.ResourceBundle;
 
+/**
+ * Esta clase contiene métodos útiles para trabajar con los cursos
+ * @author Virginia Martín Agudo
+ *
+ */
 public class CourseUtil {
 	public static String getDisplayTitle(ResourceBundle resourceBundle, Course course) {
 

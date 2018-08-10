@@ -36,6 +36,11 @@ import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Esta clase declara la entidad curso como asset
+ * @author Virginia Martín Agudo
+ *
+ */
 public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 	
 	private final Course course;

@@ -9,6 +9,11 @@ import com.ted.lms.model.Course;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Helper para permisos sobre cursos
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(immediate = true)
 public class CoursePermission {
 	public static boolean contains(

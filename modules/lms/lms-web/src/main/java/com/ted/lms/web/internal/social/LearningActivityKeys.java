@@ -1,5 +1,10 @@
 package com.ted.lms.web.internal.social;
 
+/**
+ * Declara las constantes para los tipos de actividad social de las actividades
+ * @author Virginia Martín Agudo
+ *
+ */
 public class LearningActivityKeys {
 	public static final int ADD_ENTRY = 10101;
 	public static final int UPDATE_ENTRY = 10102;

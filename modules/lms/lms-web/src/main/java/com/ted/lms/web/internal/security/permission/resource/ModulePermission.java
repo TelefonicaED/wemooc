@@ -9,6 +9,11 @@ import com.ted.lms.model.Module;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Helper para permisos sobre los módulos
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(immediate = true)
 public class ModulePermission {
 	public static boolean contains(

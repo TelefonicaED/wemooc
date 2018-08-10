@@ -9,6 +9,11 @@ import com.ted.lms.model.LearningActivity;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Helper para permisos sobre actividades
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(immediate = true)
 public class LearningActivityPermission {
 	public static boolean contains(

@@ -15,6 +15,11 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
+/**
+ * Declara las actividades para que se usen como actividad social
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(
 		property = "javax.portlet.name=" + LMSPortletKeys.LEARNING_ACTIVITY,
 		service = SocialActivityInterpreter.class

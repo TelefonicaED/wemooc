@@ -28,6 +28,11 @@ import javax.servlet.ServletContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Esta clase registra la entidad curso para que pueda ser usado como un asset
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(
     immediate = true,
     property = {"javax.portlet.name=" + LMSPortletKeys.COURSE},
