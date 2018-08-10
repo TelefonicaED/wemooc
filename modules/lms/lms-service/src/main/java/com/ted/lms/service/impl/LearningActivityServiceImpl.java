@@ -43,6 +43,6 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 	private static volatile ModelResourcePermission<LearningActivity>
 		learningActivityModelResourcePermission =
 	    ModelResourcePermissionFactory.getInstance(
-	        ModuleServiceImpl.class,
+	        LearningActivityServiceImpl.class,
 	        "learningActivityModelResourcePermission", LearningActivity.class);
 }

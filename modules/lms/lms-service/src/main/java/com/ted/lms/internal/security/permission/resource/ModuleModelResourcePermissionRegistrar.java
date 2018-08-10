@@ -19,6 +19,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Esta clase registra los permisos sobre la entidad de módulo
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(immediate = true)
 public class ModuleModelResourcePermissionRegistrar { 
 	

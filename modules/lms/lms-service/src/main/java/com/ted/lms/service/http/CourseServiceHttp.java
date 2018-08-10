@@ -59,8 +59,9 @@ public class CourseServiceHttp {
 		HttpPrincipal httpPrincipal,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, String summary,
-		String friendlyURL, java.util.Locale locale, long parentCourseId,
-		long smallImageId, java.util.Date registrationStartDate,
+		String friendlyURL, long parentCourseId,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
+		java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, long layoutSetPrototypeId,
 		int typeSite, long inscriptionType, long courseEvalId,
@@ -74,8 +75,8 @@ public class CourseServiceHttp {
 					"addCourse", _addCourseParameterTypes0);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
-					titleMap, descriptionMap, summary, friendlyURL, locale,
-					parentCourseId, smallImageId, registrationStartDate,
+					titleMap, descriptionMap, summary, friendlyURL,
+					parentCourseId, smallImageSelector, registrationStartDate,
 					registrationEndDate, executionStartDate, executionEndDate,
 					layoutSetPrototypeId, typeSite, inscriptionType,
 					courseEvalId, calificationType, maxUsers, welcome,
@@ -150,14 +151,51 @@ public class CourseServiceHttp {
 		}
 	}
 
+	public static void updateSmallImage(HttpPrincipal httpPrincipal,
+		long courseId, String imageString, String imageTitle,
+		String imageMimeType,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException,
+			com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
+					"updateSmallImage", _updateSmallImageParameterTypes2);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					courseId, imageString, imageTitle, imageMimeType,
+					serviceContext);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.security.auth.PrincipalException) {
+					throw (com.liferay.portal.kernel.security.auth.PrincipalException)e;
+				}
+
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(CourseServiceHttp.class);
 	private static final Class<?>[] _addCourseParameterTypes0 = new Class[] {
 			java.util.Map.class, java.util.Map.class, String.class, String.class,
-			java.util.Locale.class, long.class, long.class, java.util.Date.class,
+			long.class,
+			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector.class,
 			java.util.Date.class, java.util.Date.class, java.util.Date.class,
-			long.class, int.class, long.class, long.class, long.class, int.class,
-			boolean.class, String.class, String.class, boolean.class,
-			String.class, String.class, int.class,
+			java.util.Date.class, long.class, int.class, long.class, long.class,
+			long.class, int.class, boolean.class, String.class, String.class,
+			boolean.class, String.class, String.class, int.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _addCourseParameterTypes1 = new Class[] {
@@ -166,6 +204,10 @@ public class CourseServiceHttp {
 			java.util.Date.class, long.class, int.class, long.class, long.class,
 			long.class, int.class, boolean.class, String.class, String.class,
 			boolean.class, String.class, String.class, int.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _updateSmallImageParameterTypes2 = new Class[] {
+			long.class, String.class, String.class, String.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

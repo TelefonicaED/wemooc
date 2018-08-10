@@ -17,6 +17,11 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Esta clase registra los permisos generales del LMS
+ * @author Virginia Martín Agudo
+ *
+ */
 @Component(immediate = true)
 public class LMSPortletResourcePermissionRegistrar {
 	@Activate

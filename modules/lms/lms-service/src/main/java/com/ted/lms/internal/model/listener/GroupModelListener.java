@@ -10,9 +10,9 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * Proporciona la funcionalidad para que al asociar/desasociar usuarios a sitios web se pueda
- * comprobar si son cursos, en cuyo caso se realizar·n las acciones necesarias 
+ * comprobar si son cursos, en cuyo caso se realizar√°n las acciones necesarias 
  * cuando se asocia/desasocia un usuario a un curso
- * @author Virginia MartÌn Agudo
+ * @author Virginia Mart√≠n Agudo
  */
 @Component(immediate = true, service = ModelListener.class)
 public class GroupModelListener extends BaseModelListener<Group> {

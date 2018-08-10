@@ -18,7 +18,6 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 
 import com.ted.lms.service.CourseServiceUtil;
@@ -70,11 +69,40 @@ import java.util.Map;
  */
 @ProviderType
 public class CourseServiceSoap {
+	/**
+	* Crea un nuevo curso
+	*
+	* @param titleMap título del curso con las traducciones
+	* @param descriptionMap descripción del curso con las traducciones
+	* @param summary resumen del curso
+	* @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
+	* @param smallImageId identificador de la imagen del curso
+	* @param registrationStartDate fecha de inicio de inscripción
+	* @param registrationEndDate fecha de fin de inscripción
+	* @param executionStartDate fecha de inicio de ejecución
+	* @param executionEndDate fecha de fin de ejecución
+	* @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
+	* @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
+	* @param inscriptionType tipo de inscripción al curso
+	* @param courseEvalId tipo de evaluación del curso
+	* @param calificationType tipo de calificación del curso
+	* @param maxUsers máximo de usuarios que se pueden inscribir al curso
+	* @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
+	* @param welcomeSubject asunto del mensaje de bienvenida
+	* @param welcomeMsg cuerpo del mensaje de bienvenida
+	* @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
+	* @param goodbyeSubject asunto del mensaje de despedida
+	* @param goodbyeMsg cuerpo del mensaje de despedida
+	* @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	* @param serviceContext contexto de la creación del curso
+	*/
 	public static com.ted.lms.model.CourseSoap addCourse(
 		String[] titleMapLanguageIds, String[] titleMapValues,
 		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
-		String summary, String friendlyURL, String locale, long parentCourseId,
-		long smallImageId, java.util.Date registrationStartDate,
+		String summary, String friendlyURL, long parentCourseId,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
+		java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, long layoutSetPrototypeId,
 		int typeSite, long inscriptionType, long courseEvalId,
@@ -90,13 +118,13 @@ public class CourseServiceSoap {
 					descriptionMapValues);
 
 			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(titleMap,
-					descriptionMap, summary, friendlyURL,
-					LocaleUtil.fromLanguageId(locale), parentCourseId,
-					smallImageId, registrationStartDate, registrationEndDate,
-					executionStartDate, executionEndDate, layoutSetPrototypeId,
-					typeSite, inscriptionType, courseEvalId, calificationType,
-					maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye,
-					goodbyeSubject, goodbyeMsg, status, serviceContext);
+					descriptionMap, summary, friendlyURL, parentCourseId,
+					smallImageSelector, registrationStartDate,
+					registrationEndDate, executionStartDate, executionEndDate,
+					layoutSetPrototypeId, typeSite, inscriptionType,
+					courseEvalId, calificationType, maxUsers, welcome,
+					welcomeSubject, welcomeMsg, goodbye, goodbyeSubject,
+					goodbyeMsg, status, serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
 		}
@@ -107,6 +135,33 @@ public class CourseServiceSoap {
 		}
 	}
 
+	/**
+	* Crea un nuevo curso
+	*
+	* @param title título del curso
+	* @param description descripción del curso
+	* @param summary resumen del curso
+	* @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
+	* @param registrationStartDate fecha de inicio de inscripción
+	* @param registrationEndDate fecha de fin de inscripción
+	* @param executionStartDate fecha de inicio de ejecución
+	* @param executionEndDate fecha de fin de ejecución
+	* @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
+	* @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
+	* @param inscriptionType tipo de inscripción al curso
+	* @param courseEvalId tipo de evaluación del curso
+	* @param calificationType tipo de calificación del curso
+	* @param maxUsers máximo de usuarios que se pueden inscribir al curso
+	* @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
+	* @param welcomeSubject asunto del mensaje de bienvenida
+	* @param welcomeMsg cuerpo del mensaje de bienvenida
+	* @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
+	* @param goodbyeSubject asunto del mensaje de despedida
+	* @param goodbyeMsg cuerpo del mensaje de despedida
+	* @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	* @param serviceContext contexto de la creación del curso
+	*/
 	public static com.ted.lms.model.CourseSoap addCourse(String title,
 		String description, String summary, String friendlyURL,
 		long parentCourseId, java.util.Date registrationStartDate,
@@ -128,6 +183,21 @@ public class CourseServiceSoap {
 					goodbyeSubject, goodbyeMsg, status, serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void updateSmallImage(long courseId, String imageString,
+		String imageTitle, String imageMimeType,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			CourseServiceUtil.updateSmallImage(courseId, imageString,
+				imageTitle, imageMimeType, serviceContext);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
