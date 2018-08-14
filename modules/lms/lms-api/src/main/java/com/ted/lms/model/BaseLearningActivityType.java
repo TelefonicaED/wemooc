@@ -2,10 +2,13 @@ package com.ted.lms.model;
 
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
-import com.ted.lms.learningactivity.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 
 import java.util.HashMap;
 import javax.portlet.ActionRequest;
@@ -158,4 +161,27 @@ public abstract class BaseLearningActivityType<T> implements LearningActivityTyp
 	
 	private LearningActivityTypeFactory<T> learningActivityTypeFactory;
 
+	@Override
+	public int getStatus() {
+		return WorkflowConstants.STATUS_APPROVED;
+	}
+	
+	@Override
+	public boolean hasEditPermission(PermissionChecker permissionChecker)
+		throws PortalException {
+
+		return false;
+	}
+
+	@Override
+	public boolean hasViewPermission(PermissionChecker permissionChecker)
+		throws PortalException {
+
+		return true;
+	}
+	
+	@Override 
+	public int getTypeId() {
+		return getLearningActivityTypeFactory().getType();
+	}
 }

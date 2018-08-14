@@ -1,31 +1,63 @@
 package com.ted.lms.model;
 
-import com.liferay.asset.kernel.model.AssetRenderer;
-import com.liferay.exportimport.kernel.lar.PortletDataContext;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.upload.UploadRequest;
-import com.liferay.portal.kernel.xml.Element;
-
-import java.util.HashMap;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import java.util.Locale;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
+import javax.portlet.WindowState;
 
 import aQute.bnd.annotation.ProviderType;
 
 /**
- * Interfaz para las actividades del LMS
+ * Interfaz para la factoría de actividades del LMS
  * @author Virginia Martín Agudo
  *
  */
 @ProviderType
 public interface LearningActivityTypeFactory<T> {
 
-	public long getClassNameId();
-	public boolean isActive(long companyId);
-	public boolean isSelectable();
+	public LearningActivity getLearningActivity(long actId) throws PortalException;
+
+	public LearningActivityType<T> getLearningActivityType(long actId) throws PortalException;
+
+	public LearningActivityType<T> getLearningActivityType(LearningActivity activity, int type) throws PortalException;
+
 	public String getClassName();
-	public String getType();
+
+	public long getClassNameId();
+
+	public String getPortletId();
+
+	public int getType();
+
+	public String getName(Locale locale);
+	
+	public String getDescription(Locale locale);
+	
+	public String getIconCssClass();
+
+	public PortletURL getURLView(
+			LiferayPortletResponse liferayPortletResponse,
+			WindowState windowState)
+		throws PortalException;
+
+	public boolean hasAddPermission(
+			PermissionChecker permissionChecker, long groupId, long classTypeId)
+		throws Exception;
+
+	public boolean hasPermission(
+			PermissionChecker permissionChecker, long actId,
+			String actionId)
+		throws Exception;
+
+	public boolean isActive(long companyId);
+	
+	public boolean isActive(long companyId, long groupId);
+
+	public boolean isCategorizable();
+
+	public void setClassName(String className);
+
+	public void setPortletId(String portletId);
 }

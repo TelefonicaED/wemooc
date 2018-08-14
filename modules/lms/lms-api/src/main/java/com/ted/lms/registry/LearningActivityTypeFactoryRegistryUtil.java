@@ -1,4 +1,4 @@
-package com.ted.lms.learningactivity;
+package com.ted.lms.registry;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -32,17 +32,16 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 		return ListUtil.fromMapValues(
 			_filterLearningActivityFactories(
-				companyId, _learningActivityFactoriesMapByClassName, false));
+				companyId, 0, _learningActivityFactoriesMapByClassName));
 	}
-
+	
 	public static List<LearningActivityTypeFactory<?>> getLearningActivityFactories(
-		long companyId, boolean filterSelectable) {
+			long companyId, long groupId) {
 
-		return ListUtil.fromMapValues(
-			_filterLearningActivityFactories(
-				companyId, _learningActivityFactoriesMapByClassName,
-				filterSelectable));
-	}
+			return ListUtil.fromMapValues(
+				_filterLearningActivityFactories(
+					companyId, groupId, _learningActivityFactoriesMapByClassName));
+		}
 
 	public static <T> LearningActivityTypeFactory<T> getLearningActivityTypeFactoryByClass(
 		Class<T> clazz) {
@@ -65,25 +64,20 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	}
 
 	public static LearningActivityTypeFactory<?> getLearningActivityTypeFactoryByType(
-		String type) {
+		int type) {
 
 		return _learningActivityFactoriesMapByClassType.get(type);
 	}
 
-	public static long[] getClassNameIds(long companyId) {
-		return getClassNameIds(companyId, false);
-	}
-
 	public static long[] getClassNameIds(
-		long companyId, boolean filterSelectable) {
+		long companyId) {
 
 		Map<String, LearningActivityTypeFactory<?>> learningActivityFactories =
 			_learningActivityFactoriesMapByClassName;
 
 		if (companyId > 0) {
 			learningActivityFactories = _filterLearningActivityFactories(
-				companyId, _learningActivityFactoriesMapByClassName,
-				filterSelectable);
+				companyId, 0, _learningActivityFactoriesMapByClassName);
 		}
 
 		long[] classNameIds = new long[learningActivityFactories.size()];
@@ -146,9 +140,8 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 	private static Map<String, LearningActivityTypeFactory<?>>
 		_filterLearningActivityFactories(
-			long companyId,
-			Map<String, LearningActivityTypeFactory<?>> learningActivityFactories,
-			boolean filterSelectable) {
+			long companyId, long groupId,
+			Map<String, LearningActivityTypeFactory<?>> learningActivityFactories) {
 
 		Map<String, LearningActivityTypeFactory<?>> filteredLearningActivityFactories =
 			new ConcurrentHashMap<>();
@@ -158,8 +151,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 			LearningActivityTypeFactory<?> learningActivityFactory = entry.getValue();
 
-			if (learningActivityFactory.isActive(companyId) &&
-				(!filterSelectable || learningActivityFactory.isSelectable())) {
+			if (learningActivityFactory.isActive(companyId, groupId)) {
 
 				filteredLearningActivityFactories.put(
 					entry.getKey(), learningActivityFactory);
@@ -168,6 +160,8 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 		return filteredLearningActivityFactories;
 	}
+	
+	
 
 	private LearningActivityTypeFactoryRegistryUtil() {
 	}
@@ -177,7 +171,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 	private static final Map<String, LearningActivityTypeFactory<?>>
 		_learningActivityFactoriesMapByClassName = new ConcurrentHashMap<>();
-	private static final Map<String, LearningActivityTypeFactory<?>>
+	private static final Map<Integer, LearningActivityTypeFactory<?>>
 		_learningActivityFactoriesMapByClassType = new ConcurrentHashMap<>();
 	private static final ServiceRegistrationMap<LearningActivityTypeFactory<?>>
 		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
@@ -215,7 +209,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 						String.valueOf(learningActivityFactory)));
 			}
 
-			String type = learningActivityFactory.getType();
+			int type = learningActivityFactory.getType();
 
 			LearningActivityTypeFactory<?> typeLearningActivityTypeFactory =
 				_learningActivityFactoriesMapByClassType.put(
@@ -225,7 +219,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 				_log.warn(
 					StringBundler.concat(
 						"Replacing ", String.valueOf(typeLearningActivityTypeFactory),
-						" for type ", type, " with ",
+						" for type ", String.valueOf(type), " with ",
 						String.valueOf(learningActivityFactory)));
 			}
 

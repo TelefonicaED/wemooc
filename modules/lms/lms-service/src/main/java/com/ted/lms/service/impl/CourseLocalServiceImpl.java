@@ -368,6 +368,10 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return processedImageFileEntry.getFileEntryId();
 	}
 	
+	public Course getCourseByGroupCreatedId(long groupCreatedId) {
+		return coursePersistence.fetchByGroupCreatedId(groupCreatedId);
+	}
+	
 	private static final String SMALL_IMAGE_FOLDER_NAME = "Small Image";
 
 }

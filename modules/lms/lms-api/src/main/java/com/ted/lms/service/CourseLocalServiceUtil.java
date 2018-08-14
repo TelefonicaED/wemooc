@@ -256,6 +256,11 @@ public class CourseLocalServiceUtil {
 		return getService().getCourse(courseId);
 	}
 
+	public static com.ted.lms.model.Course getCourseByGroupCreatedId(
+		long groupCreatedId) {
+		return getService().getCourseByGroupCreatedId(groupCreatedId);
+	}
+
 	/**
 	* Returns the course matching the UUID and group.
 	*

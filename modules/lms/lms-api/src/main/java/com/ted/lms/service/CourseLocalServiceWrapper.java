@@ -260,6 +260,12 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		return _courseLocalService.getCourse(courseId);
 	}
 
+	@Override
+	public com.ted.lms.model.Course getCourseByGroupCreatedId(
+		long groupCreatedId) {
+		return _courseLocalService.getCourseByGroupCreatedId(groupCreatedId);
+	}
+
 	/**
 	* Returns the course matching the UUID and group.
 	*
