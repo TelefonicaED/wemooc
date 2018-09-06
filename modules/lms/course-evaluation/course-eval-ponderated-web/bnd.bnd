@@ -1,0 +1,4 @@
+Bundle-Name: course-eval-ponderated-web
+Bundle-SymbolicName: com.ted.lms.course.eval.ponderated.web
+Bundle-Version: 1.0.0
+Export-Package: com.ted.lms.course.eval.ponderated.constants
