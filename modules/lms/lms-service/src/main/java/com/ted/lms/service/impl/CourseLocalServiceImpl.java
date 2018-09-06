@@ -207,10 +207,8 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			indexer.reindex(course);
 			
 		} catch (PortalException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

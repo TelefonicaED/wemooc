@@ -12,19 +12,10 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
-import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
-import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.security.permission.resource.LearningActivityPermission;
 import com.ted.lms.service.LearningActivityLocalService;
-import com.ted.lms.web.internal.security.permission.resource.CoursePermission;
-import com.ted.lms.web.internal.security.permission.resource.LMSPermission;
-import com.ted.lms.web.internal.security.permission.resource.LearningActivityPermission;
-
-import java.util.Locale;
-import java.util.Map;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -73,6 +64,33 @@ public class LearningActivityAssetRendererFactory extends BaseAssetRendererFacto
 	    learningActivityAssetRenderer.setServletContext(servletContext);
 
 	    return learningActivityAssetRenderer;
+	}
+	
+	@Override
+	public PortletURL getURLAdd(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse, long classTypeId) {
+		log.debug("LearningActivityAssetRendererFactory::getURLAdd::"+classTypeId);
+	    PortletURL portletURL = _portal.getControlPanelPortletURL(liferayPortletRequest, getGroup(liferayPortletRequest),
+	    															LMSPortletKeys.LEARNING_ACTIVITY, 0, 0, PortletRequest.RENDER_PHASE);
+	    portletURL.setParameter("mvcRenderCommandName", "/lms/new_activity");
+
+	    return portletURL;
+	}
+	
+	@Override
+	public PortletURL getURLView(LiferayPortletResponse liferayPortletResponse,WindowState windowState) {
+		log.debug("LearningActivityAssetRendererFactory::getURLView");
+		
+		
+	    LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.LEARNING_ACTIVITY, PortletRequest.RENDER_PHASE);
+
+	    try {
+	        liferayPortletURL.setWindowState(windowState);
+	    }
+	    catch (WindowStateException wse) {
+	    	wse.printStackTrace();
+	    }
+
+	    return liferayPortletURL;
 	}
 	
 	@Override

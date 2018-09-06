@@ -53,4 +53,12 @@ public interface Course extends CourseModel, PersistedModel {
 				return Course.class;
 			}
 		};
+
+	public String getFriendlyURL();
+
+	public com.liferay.portal.kernel.json.JSONObject getCourseExtraDataJSON();
+
+	public void addCourseExtraDataJSON(String key, Object value);
+
+	public com.liferay.portal.kernel.json.JSONObject getCourseEvalJSON();
 }

@@ -330,6 +330,363 @@ public class CourseResultUtil {
 	}
 
 	/**
+	* Returns all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @return the matching course results
+	*/
+	public static List<CourseResult> findByCourseIdPassed(long courseId,
+		boolean passed) {
+		return getPersistence().findByCourseIdPassed(courseId, passed);
+	}
+
+	/**
+	* Returns a range of all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param start the lower bound of the range of course results
+	* @param end the upper bound of the range of course results (not inclusive)
+	* @return the range of matching course results
+	*/
+	public static List<CourseResult> findByCourseIdPassed(long courseId,
+		boolean passed, int start, int end) {
+		return getPersistence()
+				   .findByCourseIdPassed(courseId, passed, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param start the lower bound of the range of course results
+	* @param end the upper bound of the range of course results (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching course results
+	*/
+	public static List<CourseResult> findByCourseIdPassed(long courseId,
+		boolean passed, int start, int end,
+		OrderByComparator<CourseResult> orderByComparator) {
+		return getPersistence()
+				   .findByCourseIdPassed(courseId, passed, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param start the lower bound of the range of course results
+	* @param end the upper bound of the range of course results (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching course results
+	*/
+	public static List<CourseResult> findByCourseIdPassed(long courseId,
+		boolean passed, int start, int end,
+		OrderByComparator<CourseResult> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByCourseIdPassed(courseId, passed, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching course result
+	* @throws NoSuchCourseResultException if a matching course result could not be found
+	*/
+	public static CourseResult findByCourseIdPassed_First(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getPersistence()
+				   .findByCourseIdPassed_First(courseId, passed,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching course result, or <code>null</code> if a matching course result could not be found
+	*/
+	public static CourseResult fetchByCourseIdPassed_First(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator) {
+		return getPersistence()
+				   .fetchByCourseIdPassed_First(courseId, passed,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching course result
+	* @throws NoSuchCourseResultException if a matching course result could not be found
+	*/
+	public static CourseResult findByCourseIdPassed_Last(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getPersistence()
+				   .findByCourseIdPassed_Last(courseId, passed,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching course result, or <code>null</code> if a matching course result could not be found
+	*/
+	public static CourseResult fetchByCourseIdPassed_Last(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator) {
+		return getPersistence()
+				   .fetchByCourseIdPassed_Last(courseId, passed,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the course results before and after the current course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param crId the primary key of the current course result
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next course result
+	* @throws NoSuchCourseResultException if a course result with the primary key could not be found
+	*/
+	public static CourseResult[] findByCourseIdPassed_PrevAndNext(long crId,
+		long courseId, boolean passed,
+		OrderByComparator<CourseResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getPersistence()
+				   .findByCourseIdPassed_PrevAndNext(crId, courseId, passed,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the course results where courseId = &#63; and passed = &#63; from the database.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	*/
+	public static void removeByCourseIdPassed(long courseId, boolean passed) {
+		getPersistence().removeByCourseIdPassed(courseId, passed);
+	}
+
+	/**
+	* Returns the number of course results where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @return the number of matching course results
+	*/
+	public static int countByCourseIdPassed(long courseId, boolean passed) {
+		return getPersistence().countByCourseIdPassed(courseId, passed);
+	}
+
+	/**
+	* Returns all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @return the matching course results
+	*/
+	public static List<CourseResult> findByFinished(long courseId,
+		boolean passed) {
+		return getPersistence().findByFinished(courseId, passed);
+	}
+
+	/**
+	* Returns a range of all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param start the lower bound of the range of course results
+	* @param end the upper bound of the range of course results (not inclusive)
+	* @return the range of matching course results
+	*/
+	public static List<CourseResult> findByFinished(long courseId,
+		boolean passed, int start, int end) {
+		return getPersistence().findByFinished(courseId, passed, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param start the lower bound of the range of course results
+	* @param end the upper bound of the range of course results (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching course results
+	*/
+	public static List<CourseResult> findByFinished(long courseId,
+		boolean passed, int start, int end,
+		OrderByComparator<CourseResult> orderByComparator) {
+		return getPersistence()
+				   .findByFinished(courseId, passed, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the course results where courseId = &#63; and passed = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param start the lower bound of the range of course results
+	* @param end the upper bound of the range of course results (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching course results
+	*/
+	public static List<CourseResult> findByFinished(long courseId,
+		boolean passed, int start, int end,
+		OrderByComparator<CourseResult> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByFinished(courseId, passed, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching course result
+	* @throws NoSuchCourseResultException if a matching course result could not be found
+	*/
+	public static CourseResult findByFinished_First(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getPersistence()
+				   .findByFinished_First(courseId, passed, orderByComparator);
+	}
+
+	/**
+	* Returns the first course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching course result, or <code>null</code> if a matching course result could not be found
+	*/
+	public static CourseResult fetchByFinished_First(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator) {
+		return getPersistence()
+				   .fetchByFinished_First(courseId, passed, orderByComparator);
+	}
+
+	/**
+	* Returns the last course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching course result
+	* @throws NoSuchCourseResultException if a matching course result could not be found
+	*/
+	public static CourseResult findByFinished_Last(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getPersistence()
+				   .findByFinished_Last(courseId, passed, orderByComparator);
+	}
+
+	/**
+	* Returns the last course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching course result, or <code>null</code> if a matching course result could not be found
+	*/
+	public static CourseResult fetchByFinished_Last(long courseId,
+		boolean passed, OrderByComparator<CourseResult> orderByComparator) {
+		return getPersistence()
+				   .fetchByFinished_Last(courseId, passed, orderByComparator);
+	}
+
+	/**
+	* Returns the course results before and after the current course result in the ordered set where courseId = &#63; and passed = &#63;.
+	*
+	* @param crId the primary key of the current course result
+	* @param courseId the course ID
+	* @param passed the passed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next course result
+	* @throws NoSuchCourseResultException if a course result with the primary key could not be found
+	*/
+	public static CourseResult[] findByFinished_PrevAndNext(long crId,
+		long courseId, boolean passed,
+		OrderByComparator<CourseResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getPersistence()
+				   .findByFinished_PrevAndNext(crId, courseId, passed,
+			orderByComparator);
+	}
+
+	/**
+	* Removes all the course results where courseId = &#63; and passed = &#63; from the database.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	*/
+	public static void removeByFinished(long courseId, boolean passed) {
+		getPersistence().removeByFinished(courseId, passed);
+	}
+
+	/**
+	* Returns the number of course results where courseId = &#63; and passed = &#63;.
+	*
+	* @param courseId the course ID
+	* @param passed the passed
+	* @return the number of matching course results
+	*/
+	public static int countByFinished(long courseId, boolean passed) {
+		return getPersistence().countByFinished(courseId, passed);
+	}
+
+	/**
 	* Caches the course result in the entity cache if it is enabled.
 	*
 	* @param courseResult the course result

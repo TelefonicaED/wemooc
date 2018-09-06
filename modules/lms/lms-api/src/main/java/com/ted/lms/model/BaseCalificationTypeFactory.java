@@ -2,32 +2,23 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.ted.lms.service.CourseLocalServiceUtil;
-
 import java.util.Locale;
-import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
 
-public abstract class BaseCalificationTypeFactory<T> implements CalificationTypeFactory<T> {
+import javax.portlet.PortletResponse;
+
+/**
+ * Base para la factoría de los tipos de calificaciones
+ * @author Virginia Martín Agudo
+ *
+ */
+public abstract class BaseCalificationTypeFactory implements CalificationTypeFactory {
 
 	@Override
-	public CalificationType<T> getCalificationType(Course course) throws PortalException {	
+	public CalificationType getCalificationType(Course course) throws PortalException {	
 		return null;
-	}
-
-	@Override
-	public CalificationType<T> getCalificationType(Module module) throws PortalException {
-		Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(module.getGroupId());
-		return getCalificationType(course);
-	}
-	
-	@Override
-	public CalificationType<T> getCalificationType(LearningActivity learningActivity) throws PortalException {
-		Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(learningActivity.getGroupId());
-		return getCalificationType(course);
 	}
 
 	@Override
@@ -46,6 +37,8 @@ public abstract class BaseCalificationTypeFactory<T> implements CalificationType
 			ResourceActionsUtil.getModelResourceNamePrefix();
 
 		String key = modelResourceNamePrefix.concat(getClassName());
+		
+		System.out.println("key: " + key);
 
 		String value = LanguageUtil.get(locale, key, null);
 
@@ -62,11 +55,17 @@ public abstract class BaseCalificationTypeFactory<T> implements CalificationType
 	}
 
 	@Override
-	public PortletURL getURLSpecificContent(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws PortalException{
+	public String getURLSpecificContent() {
 		return null;
 	}
 	
+	@Override
+	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse) {
+		return true;
+	}
+	
+	@Override
+	public String getPortletId() {
+		return "";
+	}
 }

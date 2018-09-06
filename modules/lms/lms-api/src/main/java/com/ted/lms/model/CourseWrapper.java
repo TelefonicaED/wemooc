@@ -292,6 +292,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	@Override
+	public void addCourseExtraDataJSON(String key, Object value) {
+		_course.addCourseExtraDataJSON(key, value);
+	}
+
+	@Override
 	public Object clone() {
 		return new CourseWrapper((Course)_course.clone());
 	}
@@ -336,6 +341,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getCourseEvalId();
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject getCourseEvalJSON() {
+		return _course.getCourseEvalJSON();
+	}
+
 	/**
 	* Returns the course extra data of this course.
 	*
@@ -344,6 +354,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public String getCourseExtraData() {
 		return _course.getCourseExtraData();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject getCourseExtraDataJSON() {
+		return _course.getCourseExtraDataJSON();
 	}
 
 	/**
@@ -470,6 +485,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _course.getExpandoBridge();
+	}
+
+	@Override
+	public String getFriendlyURL() {
+		return _course.getFriendlyURL();
 	}
 
 	/**

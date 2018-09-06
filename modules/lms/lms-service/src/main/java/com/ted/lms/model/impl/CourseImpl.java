@@ -14,6 +14,14 @@
 
 package com.ted.lms.model.impl;
 
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.model.impl.GroupImpl;
+import com.ted.lms.constants.CourseConstants;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -32,6 +40,68 @@ public class CourseImpl extends CourseBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a course model instance should use the {@link com.ted.lms.model.Course} interface instead.
 	 */
-	public CourseImpl() {
+	private Group _group;
+	private JSONObject extraData = null;
+	
+	public String getFriendlyURL() {
+		if (_group == NULL_GROUP) {
+			return null;
+		}
+
+		if (_group == null) {
+			Group group = GroupLocalServiceUtil.fetchGroup(getGroupCreatedId());
+
+			if (group == null) {
+				_group = NULL_GROUP;
+			}
+			else {
+				_group = group;
+			}
+		}
+
+		return _group.getFriendlyURL();
 	}
+	
+	private static final Group NULL_GROUP = new GroupImpl();
+
+	@Override
+	public JSONObject getCourseExtraDataJSON() {
+		System.out.println("extraData: " + extraData);
+		if(extraData == null) {
+			System.out.println("extraData no cargado todavía");
+			try {
+				System.out.println("cargamos extraDatA: " + getCourseExtraData());
+				extraData = JSONFactoryUtil.createJSONObject(getCourseExtraData());
+			} catch (JSONException e) {
+				e.printStackTrace();
+				extraData = JSONFactoryUtil.createJSONObject();
+			}
+		}
+		System.out.println("devolvemos: " + extraData.toJSONString());
+		return extraData;
+	}
+	
+	@Override
+	public void setCourseExtraData(String courseExtraData) {
+		System.out.println("setextraData: " + courseExtraData);
+		try {
+			extraData = JSONFactoryUtil.createJSONObject(courseExtraData);
+		} catch (JSONException e) {
+			extraData = JSONFactoryUtil.createJSONObject();
+		}
+		
+		super.setCourseExtraData(courseExtraData);
+	}
+	
+	@Override
+	public void addCourseExtraDataJSON(String key, Object value) {
+		JSONObject extraData = getCourseExtraDataJSON();
+		extraData.put(key, value);
+		this.extraData = extraData;
+	}
+	
+	public JSONObject getCourseEvalJSON() {
+		return getCourseExtraDataJSON().getJSONObject(CourseConstants.JSON_COURSE_EVAL);
+	}
+	
 }

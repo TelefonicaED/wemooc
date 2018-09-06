@@ -45,6 +45,11 @@ public class ModuleResultLocalServiceWrapper implements ModuleResultLocalService
 		return _moduleResultLocalService.addModuleResult(moduleResult);
 	}
 
+	@Override
+	public int countModulesUserPassed(long groupId, long userId) {
+		return _moduleResultLocalService.countModulesUserPassed(groupId, userId);
+	}
+
 	/**
 	* Creates a new module result with the primary key. Does not add the module result to the database.
 	*
@@ -219,6 +224,12 @@ public class ModuleResultLocalServiceWrapper implements ModuleResultLocalService
 	public java.util.List<com.ted.lms.model.ModuleResult> getModuleResults(
 		int start, int end) {
 		return _moduleResultLocalService.getModuleResults(start, end);
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.ModuleResult> getModuleResults(
+		long moduleId) {
+		return _moduleResultLocalService.getModuleResults(moduleId);
 	}
 
 	/**

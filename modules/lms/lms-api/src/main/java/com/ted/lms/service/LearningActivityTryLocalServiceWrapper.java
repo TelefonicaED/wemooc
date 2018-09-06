@@ -275,6 +275,12 @@ public class LearningActivityTryLocalServiceWrapper
 		return _learningActivityTryLocalService.getLearningActivityTriesCount();
 	}
 
+	@Override
+	public int getLearningActivityTriesCount(long actId, long userId) {
+		return _learningActivityTryLocalService.getLearningActivityTriesCount(actId,
+			userId);
+	}
+
 	/**
 	* Returns the learning activity try with the primary key.
 	*

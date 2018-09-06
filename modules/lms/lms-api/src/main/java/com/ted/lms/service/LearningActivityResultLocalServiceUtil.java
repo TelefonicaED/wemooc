@@ -218,6 +218,11 @@ public class LearningActivityResultLocalServiceUtil {
 		return getService().getLearningActivityResult(larId);
 	}
 
+	public static com.ted.lms.model.LearningActivityResult getLearningActivityResult(
+		long actId, long userId) {
+		return getService().getLearningActivityResult(actId, userId);
+	}
+
 	/**
 	* Returns the learning activity result matching the UUID and group.
 	*
@@ -302,6 +307,11 @@ public class LearningActivityResultLocalServiceUtil {
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static java.util.List<com.ted.lms.model.LearningActivityResult> getRequiredLearningActivityResults(
+		long groupId, long userId) {
+		return getService().getRequiredLearningActivityResults(groupId, userId);
 	}
 
 	/**

@@ -54,6 +54,12 @@ public class CourseResultLocalServiceUtil {
 		return getService().addCourseResult(courseResult);
 	}
 
+	public static com.ted.lms.model.CourseResult addCourseResult(
+		long courseId, long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().addCourseResult(courseId, userId, serviceContext);
+	}
+
 	/**
 	* Creates a new course result with the primary key. Does not add the course result to the database.
 	*
@@ -174,12 +180,23 @@ public class CourseResultLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static com.ted.lms.model.CourseResult enrollStudent(
+		com.ted.lms.model.Course course, long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().enrollStudent(course, userId, serviceContext);
+	}
+
 	public static com.ted.lms.model.CourseResult fetchCourseResult(long crId) {
 		return getService().fetchCourseResult(crId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return getService().getActionableDynamicQuery();
+	}
+
+	public static com.ted.lms.model.CourseResult getByCourseIdUserId(
+		long courseId, long userId) {
+		return getService().getByCourseIdUserId(courseId, userId);
 	}
 
 	/**
@@ -210,6 +227,16 @@ public class CourseResultLocalServiceUtil {
 		return getService().getCourseResults(start, end);
 	}
 
+	public static java.util.List<com.ted.lms.model.CourseResult> getCourseResults(
+		long courseId) {
+		return getService().getCourseResults(courseId);
+	}
+
+	public static java.util.List<com.ted.lms.model.CourseResult> getCourseResults(
+		long courseId, boolean passed) {
+		return getService().getCourseResults(courseId, passed);
+	}
+
 	/**
 	* Returns the number of course results.
 	*
@@ -217,6 +244,11 @@ public class CourseResultLocalServiceUtil {
 	*/
 	public static int getCourseResultsCount() {
 		return getService().getCourseResultsCount();
+	}
+
+	public static java.util.List<com.ted.lms.model.CourseResult> getFailedCourseResults(
+		long courseId) {
+		return getService().getFailedCourseResults(courseId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
@@ -236,6 +268,11 @@ public class CourseResultLocalServiceUtil {
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static boolean unsubscribeStudent(com.ted.lms.model.Course course,
+		long userId) {
+		return getService().unsubscribeStudent(course, userId);
 	}
 
 	/**

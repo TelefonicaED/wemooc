@@ -1,33 +1,29 @@
 package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.upload.UploadRequest;
 import java.util.Locale;
-import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
+
+import javax.portlet.PortletResponse;
 
 import aQute.bnd.annotation.ProviderType;
 
 /**
- * Interfaz para la factoría de actividades del LMS, tiene los métodos que son genéricos y no dependen del método de calificación de un curso en concreto,
+ * Interfaz para la factoría de los métodos de calificación, tiene los métodos que son genéricos y no dependen del método de calificación de un curso en concreto,
  * como el tipo, el nombre, etc.
  * @author Virginia Martín Agudo
  *
  */
 @ProviderType
-public interface CalificationTypeFactory<T> {
+public interface CalificationTypeFactory {
 
-	public CalificationType<T> getCalificationType(Course course) throws PortalException;
-	
-	public CalificationType<T> getCalificationType(Module module) throws PortalException;
-	
-	public CalificationType<T> getCalificationType(LearningActivity learningActivity) throws PortalException;
+	public CalificationType getCalificationType(Course course) throws PortalException;
 
 	public String getClassName();
 
 	public long getClassNameId();
 
-	public int getType();
+	public long getType();
 
 	public String getTitle(Locale locale);
 	
@@ -35,8 +31,10 @@ public interface CalificationTypeFactory<T> {
 	
 	public String getIconCssClass();
 
-	public PortletURL getURLSpecificContent(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws PortalException;
+	public String getURLSpecificContent();
+	
+	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse);
+	
+	public String getPortletId();
+
 }

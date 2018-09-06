@@ -412,6 +412,11 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		return _module.getPrimaryKeyObj();
 	}
 
+	@Override
+	public java.util.List<LearningActivity> getRequiredLearningActivities() {
+		return _module.getRequiredLearningActivities();
+	}
+
 	/**
 	* Returns the small image ID of this module.
 	*

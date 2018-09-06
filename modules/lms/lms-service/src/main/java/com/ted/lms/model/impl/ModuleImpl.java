@@ -14,6 +14,11 @@
 
 package com.ted.lms.model.impl;
 
+import com.ted.lms.model.LearningActivity;
+import com.ted.lms.service.LearningActivityLocalServiceUtil;
+
+import java.util.List;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -33,5 +38,9 @@ public class ModuleImpl extends ModuleBaseImpl {
 	 * Never reference this class directly. All methods that expect a module model instance should use the {@link com.ted.lms.model.Module} interface instead.
 	 */
 	public ModuleImpl() {
+	}
+	
+	public List<LearningActivity> getRequiredLearningActivities(){
+		return LearningActivityLocalServiceUtil.getRequiredLearningActivitiesOfModule(getModuleId());
 	}
 }

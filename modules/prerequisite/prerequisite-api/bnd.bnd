@@ -1,0 +1,9 @@
+Bundle-Name: prerequisite-api
+Bundle-SymbolicName: prerequisite.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	prerequisite.exception,\
+	prerequisite.model,\
+	prerequisite.service,\
+	prerequisite.service.persistence
+-includeresource: META-INF/service.xml=../prerequisite-service/service.xml

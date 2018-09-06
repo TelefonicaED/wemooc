@@ -1,0 +1,4 @@
+Bundle-Name: inscription-simple
+Bundle-SymbolicName: inscription.simple
+Bundle-Version: 1.0.0
+Export-Package: inscription.simple.constants

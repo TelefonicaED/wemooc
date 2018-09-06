@@ -15,13 +15,13 @@ import aQute.bnd.annotation.ProviderType;
  *
  */
 @ProviderType
-public interface LearningActivityTypeFactory<T> {
+public interface LearningActivityTypeFactory {
 
 	public LearningActivity getLearningActivity(long actId) throws PortalException;
 
-	public LearningActivityType<T> getLearningActivityType(long actId) throws PortalException;
+	public LearningActivityType getLearningActivityType(long actId) throws PortalException;
 
-	public LearningActivityType<T> getLearningActivityType(LearningActivity activity, int type) throws PortalException;
+	public LearningActivityType getLearningActivityType(LearningActivity activity, long type) throws PortalException;
 
 	public String getClassName();
 
@@ -29,7 +29,7 @@ public interface LearningActivityTypeFactory<T> {
 
 	public String getPortletId();
 
-	public int getType();
+	public long getType();
 
 	public String getName(Locale locale);
 	

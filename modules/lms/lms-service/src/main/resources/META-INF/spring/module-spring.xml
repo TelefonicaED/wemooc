@@ -17,6 +17,7 @@
 	<bean class="com.ted.lms.service.persistence.impl.LearningActivityPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityPersistence" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.LearningActivityResultLocalServiceImpl" id="com.ted.lms.service.LearningActivityResultLocalService" />
 	<bean class="com.ted.lms.service.persistence.impl.LearningActivityResultPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityResultPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.persistence.impl.LearningActivityResultFinderImpl" id="com.ted.lms.service.persistence.LearningActivityResultFinder" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.LearningActivityTryLocalServiceImpl" id="com.ted.lms.service.LearningActivityTryLocalService" />
 	<bean class="com.ted.lms.service.persistence.impl.LearningActivityTryPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityTryPersistence" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.ModuleLocalServiceImpl" id="com.ted.lms.service.ModuleLocalService" />
@@ -24,4 +25,5 @@
 	<bean class="com.ted.lms.service.persistence.impl.ModulePersistenceImpl" id="com.ted.lms.service.persistence.ModulePersistence" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.ModuleResultLocalServiceImpl" id="com.ted.lms.service.ModuleResultLocalService" />
 	<bean class="com.ted.lms.service.persistence.impl.ModuleResultPersistenceImpl" id="com.ted.lms.service.persistence.ModuleResultPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.persistence.impl.ModuleResultFinderImpl" id="com.ted.lms.service.persistence.ModuleResultFinder" parent="basePersistence" />
 </beans>

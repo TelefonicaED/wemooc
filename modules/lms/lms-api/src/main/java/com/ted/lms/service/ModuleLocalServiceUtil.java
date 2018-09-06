@@ -190,6 +190,12 @@ public class ModuleLocalServiceUtil {
 		return getService().fetchModuleByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static java.util.List<com.ted.lms.model.Module> findAllInGroup(
+		long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return getService().findAllInGroup(groupId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return getService().getActionableDynamicQuery();
 	}

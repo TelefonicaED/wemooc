@@ -22,12 +22,27 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Registry para los tipos de calificación
  * @author Virginia Martín Agudo
+ *
  */
 @ProviderType
 public class CalificationTypeFactoryRegistryUtil {
+	
+	private static final Log log = LogFactoryUtil.getLog(
+		CalificationTypeFactoryRegistryUtil.class);
 
-	public static List<CalificationTypeFactory<?>> getCalificationFactories(
+	private static final Map<String, CalificationTypeFactory>
+		_calificationFactoriesMapByClassName = new ConcurrentHashMap<>();
+	private static final Map<Long, CalificationTypeFactory>
+		_calificationFactoriesMapByClassType = new ConcurrentHashMap<>();
+	private static final ServiceRegistrationMap<CalificationTypeFactory>
+		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
+	private static final
+		ServiceTracker<CalificationTypeFactory, CalificationTypeFactory>
+			_serviceTracker;
+
+	public static List<CalificationTypeFactory> getCalificationFactories(
 		long companyId) {
 
 		return ListUtil.fromMapValues(
@@ -35,27 +50,20 @@ public class CalificationTypeFactoryRegistryUtil {
 				companyId, _calificationFactoriesMapByClassName));
 	}
 
-	public static <T> CalificationTypeFactory<T> getCalificationTypeFactoryByClass(
-		Class<T> clazz) {
-
-		return (CalificationTypeFactory<T>)_calificationFactoriesMapByClassName.get(
-			clazz.getName());
-	}
-
-	public static CalificationTypeFactory<?> getCalificationTypeFactoryByClassName(
+	public static CalificationTypeFactory getCalificationTypeFactoryByClassName(
 		String className) {
 
 		return _calificationFactoriesMapByClassName.get(className);
 	}
 
-	public static CalificationTypeFactory<?> getCalificationTypeFactoryByClassNameId(
+	public static CalificationTypeFactory getCalificationTypeFactoryByClassNameId(
 		long classNameId) {
 
 		return _calificationFactoriesMapByClassName.get(
 			PortalUtil.getClassName(classNameId));
 	}
 
-	public static CalificationTypeFactory<?> getCalificationTypeFactoryByType(
+	public static CalificationTypeFactory getCalificationTypeFactoryByType(
 		long type) {
 
 		return _calificationFactoriesMapByClassType.get(type);
@@ -63,7 +71,7 @@ public class CalificationTypeFactoryRegistryUtil {
 
 	public static long[] getClassNameIds(long companyId) {
 
-		Map<String, CalificationTypeFactory<?>> calificationFactories =
+		Map<String, CalificationTypeFactory> calificationFactories =
 			_calificationFactoriesMapByClassName;
 
 		if (companyId > 0) {
@@ -75,7 +83,7 @@ public class CalificationTypeFactoryRegistryUtil {
 
 		int i = 0;
 
-		for (CalificationTypeFactory<?> calificationFactory :
+		for (CalificationTypeFactory calificationFactory :
 				calificationFactories.values()) {
 
 			classNameIds[i] = calificationFactory.getClassNameId();
@@ -86,12 +94,12 @@ public class CalificationTypeFactoryRegistryUtil {
 		return classNameIds;
 	}
 
-	public static void register(CalificationTypeFactory<?> calificationFactory) {
+	public static void register(CalificationTypeFactory calificationFactory) {
 		Registry registry = RegistryUtil.getRegistry();
 
-		ServiceRegistration<CalificationTypeFactory<?>> serviceRegistration =
+		ServiceRegistration<CalificationTypeFactory> serviceRegistration =
 			registry.registerService(
-				(Class<CalificationTypeFactory<?>>)(Class<?>)
+				(Class<CalificationTypeFactory>)(Class<?>)
 					CalificationTypeFactory.class,
 				calificationFactory);
 
@@ -99,9 +107,9 @@ public class CalificationTypeFactoryRegistryUtil {
 	}
 
 	public static void register(
-		List<CalificationTypeFactory<?>> calificationFactories) {
+		List<CalificationTypeFactory> calificationFactories) {
 
-		for (CalificationTypeFactory<?> calificationFactory :
+		for (CalificationTypeFactory calificationFactory :
 				calificationFactories) {
 
 			register(calificationFactory);
@@ -109,9 +117,9 @@ public class CalificationTypeFactoryRegistryUtil {
 	}
 
 	public static void unregister(
-		CalificationTypeFactory<?> calificationFactory) {
+		CalificationTypeFactory calificationFactory) {
 
-		ServiceRegistration<CalificationTypeFactory<?>> serviceRegistration =
+		ServiceRegistration<CalificationTypeFactory> serviceRegistration =
 			_serviceRegistrations.remove(calificationFactory);
 
 		if (serviceRegistration != null) {
@@ -120,27 +128,27 @@ public class CalificationTypeFactoryRegistryUtil {
 	}
 
 	public static void unregister(
-		List<CalificationTypeFactory<?>> calificationFactories) {
+		List<CalificationTypeFactory> calificationFactories) {
 
-		for (CalificationTypeFactory<?> calificationFactory :
+		for (CalificationTypeFactory calificationFactory :
 				calificationFactories) {
 
 			unregister(calificationFactory);
 		}
 	}
 
-	private static Map<String, CalificationTypeFactory<?>>
+	private static Map<String, CalificationTypeFactory>
 		_filterCalificationFactories(
 			long companyId,
-			Map<String, CalificationTypeFactory<?>> calificationFactories) {
+			Map<String, CalificationTypeFactory> calificationFactories) {
 
-		Map<String, CalificationTypeFactory<?>> filteredCalificationFactories =
+		Map<String, CalificationTypeFactory> filteredCalificationFactories =
 			new ConcurrentHashMap<>();
 
-		for (Map.Entry<String, CalificationTypeFactory<?>> entry :
+		for (Map.Entry<String, CalificationTypeFactory> entry :
 				calificationFactories.entrySet()) {
 
-			CalificationTypeFactory<?> calificationFactory = entry.getValue();
+			CalificationTypeFactory calificationFactory = entry.getValue();
 
 			filteredCalificationFactories.put(
 				entry.getKey(), calificationFactory);
@@ -152,61 +160,58 @@ public class CalificationTypeFactoryRegistryUtil {
 	private CalificationTypeFactoryRegistryUtil() {
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		CalificationTypeFactoryRegistryUtil.class);
-
-	private static final Map<String, CalificationTypeFactory<?>>
-		_calificationFactoriesMapByClassName = new ConcurrentHashMap<>();
-	private static final Map<Integer, CalificationTypeFactory<?>>
-		_calificationFactoriesMapByClassType = new ConcurrentHashMap<>();
-	private static final ServiceRegistrationMap<CalificationTypeFactory<?>>
-		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
-	private static final
-		ServiceTracker<CalificationTypeFactory<?>, CalificationTypeFactory<?>>
-			_serviceTracker;
 
 	private static class CalificationTypeFactoryServiceTrackerCustomizer
 		implements ServiceTrackerCustomizer
-			<CalificationTypeFactory<?>, CalificationTypeFactory<?>> {
+			<CalificationTypeFactory, CalificationTypeFactory> {
 
 		@Override
-		public CalificationTypeFactory<?> addingService(
-			ServiceReference<CalificationTypeFactory<?>> serviceReference) {
+		public CalificationTypeFactory addingService(
+			ServiceReference<CalificationTypeFactory> serviceReference) {
 
 			Registry registry = RegistryUtil.getRegistry();
+			
+			log.debug("serviceReference: " + serviceReference.toString());
+			
+			CalificationTypeFactory calificationFactory = null;
+			
+			try {
 
-			CalificationTypeFactory<?> calificationFactory = registry.getService(
-				serviceReference);
-
-			String className = calificationFactory.getClassName();
-
-			CalificationTypeFactory<?> classNameCalificationTypeFactory =
-				_calificationFactoriesMapByClassName.put(
-					className, calificationFactory);
-
-			if (_log.isWarnEnabled() &&
-				(classNameCalificationTypeFactory != null)) {
-
-				_log.warn(
-					StringBundler.concat(
-						"Replacing ",
-						String.valueOf(classNameCalificationTypeFactory),
-						" for class name ", className, " with ",
-						String.valueOf(calificationFactory)));
-			}
-
-			int type = calificationFactory.getType();
-
-			CalificationTypeFactory<?> typeCalificationTypeFactory =
-				_calificationFactoriesMapByClassType.put(
-					type, calificationFactory);
-
-			if (_log.isWarnEnabled() && (typeCalificationTypeFactory != null)) {
-				_log.warn(
-					StringBundler.concat(
-						"Replacing ", String.valueOf(typeCalificationTypeFactory),
-						" for type ", String.valueOf(type), " with ",
-						String.valueOf(calificationFactory)));
+				calificationFactory = registry.getService(
+					serviceReference);
+	 
+				String className = calificationFactory.getClassName();
+	
+				CalificationTypeFactory classNameCalificationTypeFactory =
+					_calificationFactoriesMapByClassName.put(
+						className, calificationFactory);
+	
+				if (log.isWarnEnabled() &&
+					(classNameCalificationTypeFactory != null)) {
+	
+					log.warn(
+						StringBundler.concat(
+							"Replacing ",
+							String.valueOf(classNameCalificationTypeFactory),
+							" for class name ", className, " with ",
+							String.valueOf(calificationFactory)));
+				}
+	
+				long type = calificationFactory.getType();
+	
+				CalificationTypeFactory typeCalificationTypeFactory =
+					_calificationFactoriesMapByClassType.put(
+						type, calificationFactory);
+	
+				if (log.isWarnEnabled() && (typeCalificationTypeFactory != null)) {
+					log.warn(
+						StringBundler.concat(
+							"Replacing ", String.valueOf(typeCalificationTypeFactory),
+							" for type ", String.valueOf(type), " with ",
+							String.valueOf(calificationFactory)));
+				}
+			} catch (ClassCastException e) {
+				if(log.isDebugEnabled()) log.debug(e.getMessage());
 			}
 
 			return calificationFactory;
@@ -214,14 +219,14 @@ public class CalificationTypeFactoryRegistryUtil {
 
 		@Override
 		public void modifiedService(
-			ServiceReference<CalificationTypeFactory<?>> serviceReference,
-			CalificationTypeFactory<?> calificationFactory) {
+			ServiceReference<CalificationTypeFactory> serviceReference,
+			CalificationTypeFactory calificationFactory) {
 		}
 
 		@Override
 		public void removedService(
-			ServiceReference<CalificationTypeFactory<?>> serviceReference,
-			CalificationTypeFactory<?> calificationFactory) {
+			ServiceReference<CalificationTypeFactory> serviceReference,
+			CalificationTypeFactory calificationFactory) {
 
 			Registry registry = RegistryUtil.getRegistry();
 
@@ -239,7 +244,7 @@ public class CalificationTypeFactoryRegistryUtil {
 		Registry registry = RegistryUtil.getRegistry();
 
 		_serviceTracker = registry.trackServices(
-			(Class<CalificationTypeFactory<?>>)(Class<?>)
+			(Class<CalificationTypeFactory>)(Class<?>)
 				CalificationTypeFactory.class,
 			new CalificationTypeFactoryServiceTrackerCustomizer());
 

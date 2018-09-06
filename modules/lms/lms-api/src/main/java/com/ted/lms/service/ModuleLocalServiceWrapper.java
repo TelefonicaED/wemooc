@@ -192,6 +192,12 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ted.lms.model.Module> findAllInGroup(long groupId)
+		throws com.liferay.portal.kernel.exception.SystemException {
+		return _moduleLocalService.findAllInGroup(groupId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _moduleLocalService.getActionableDynamicQuery();
 	}

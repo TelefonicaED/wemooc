@@ -14,7 +14,22 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.ted.lms.model.Course;
+import com.ted.lms.model.CourseResult;
+import com.ted.lms.model.Postcondition;
+import com.ted.lms.registry.PostconditionRegistryUtil;
 import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
+import com.ted.prerequisite.model.Prerequisite;
+import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * The implementation of the course result local service.
@@ -37,4 +52,97 @@ public class CourseResultLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseResultLocalServiceUtil} to access the course result local service.
 	 */
+	
+	public List<CourseResult> getCourseResults(long courseId){
+		
+		return courseResultPersistence.findByCourseId(courseId);
+		
+	}
+	
+	public CourseResult getByCourseIdUserId(long courseId, long userId) {
+		return courseResultPersistence.fetchByCourseIdUserId(courseId, userId);
+	}
+	
+	public CourseResult addCourseResult(long courseId, long userId, ServiceContext serviceContext) {
+		CourseResult courseResult = null;
+		
+		try {
+			User userModified = userLocalService.getUser(serviceContext.getUserId());
+			
+			courseResult = courseResultPersistence.create(counterLocalService.increment(CourseResult.class.getName()));
+			courseResult.setCourseId(courseId);
+			courseResult.setUserId(userId);
+			courseResult.setResult(0);
+			courseResult.setRegistrationDate(new Date());
+			courseResult.setPassed(false);
+			courseResult.setGroupId(serviceContext.getScopeGroupId());
+			courseResult.setCompanyId(serviceContext.getCompanyId());
+			courseResult.setUserModifiedId(serviceContext.getUserId());
+			courseResult.setUserModifiedName(userModified.getFullName());
+			courseResult.setCreateDate(new Date());
+			courseResult.setModifiedDate(courseResult.getCreateDate());
+			
+			courseResultPersistence.update(courseResult);
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return courseResult;
+	}
+	
+	public List<CourseResult> getCourseResults(long courseId, boolean passed){
+		return courseResultPersistence.findByCourseIdPassed(courseId, passed);
+	}
+	
+	public List<CourseResult> getFailedCourseResults(long courseId){
+		return courseResultPersistence.findByFinished(courseId, false);
+	}
+	
+	@Override
+	public CourseResult updateCourseResult(CourseResult courseResult) {
+		//Si ha finalizado el curso llamamos a las postcondiciones
+		if(Validator.isNotNull(courseResult.getPassedDate())) {
+			List<Postcondition> listPostcondition = PostconditionRegistryUtil.getPostconditions(courseResult.getCompanyId());
+			for(Postcondition postcondition: listPostcondition) {
+				if(courseResult.isPassed()) {
+					postcondition.passedCourseResult(courseResult);
+				}else {
+					postcondition.failedCourseResult(courseResult);
+				}
+			}
+		}
+		return super.updateCourseResult(courseResult);
+	}
+	
+	public CourseResult enrollStudent(Course course, long userId, ServiceContext serviceContext) {
+		
+		CourseResult courseResult = null;
+		
+		//Comprobamos que no esté ya inscrito
+		if(!GroupLocalServiceUtil.hasUserGroup(userId, course.getGroupCreatedId())) {
+			
+			//Comprobamos que se cumplan todos los prerequisitos
+			List<Prerequisite> listPrerequiste = PrerequisiteRelationLocalServiceUtil.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), course.getCourseId());
+			boolean isPassed = true;
+			int i = 0;
+			while(isPassed && listPrerequiste.size() > i) {
+				isPassed = listPrerequiste.get(i).isPassed(userId);
+			}
+			if(isPassed) {
+				
+			}
+		}else {
+			courseResult = courseResultPersistence.fetchByCourseIdUserId(course.getCourseId(), userId);
+			//Debería tenerlo, pero lo creo si no lo tiene
+			if(courseResult == null) {
+				courseResult = courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
+			}
+		}
+		return courseResult;
+	}
+	
+	public boolean unsubscribeStudent(Course course, long userId) {
+		return true;
+	}
 }

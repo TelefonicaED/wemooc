@@ -17,7 +17,7 @@ import org.osgi.service.component.annotations.Component;
 		"com.liferay.portlet.display-category=wemooc",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.jsp",
+		"javax.portlet.init-param.mvc-command-names-default-views=/courses/view",
 		"javax.portlet.name=" + LMSPortletKeys.COURSE,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=user"

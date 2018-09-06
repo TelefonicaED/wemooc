@@ -23,7 +23,7 @@ import com.ted.lms.constants.LMSKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.constants.LMSPropsKeys;
 import com.ted.lms.model.Course;
-import com.ted.lms.web.internal.security.permission.resource.CoursePermission;
+import com.ted.lms.security.permission.resource.CoursePermission;
 import com.ted.lms.web.internal.util.CourseUtil;
 
 import java.util.Locale;

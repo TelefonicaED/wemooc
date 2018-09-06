@@ -318,6 +318,18 @@ public class LearningActivityLocalServiceWrapper
 		return _learningActivityLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getRequiredLearningActivitiesOfGroup(
+		long groupId) {
+		return _learningActivityLocalService.getRequiredLearningActivitiesOfGroup(groupId);
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getRequiredLearningActivitiesOfModule(
+		long moduleId) {
+		return _learningActivityLocalService.getRequiredLearningActivitiesOfModule(moduleId);
+	}
+
 	/**
 	* Updates the learning activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

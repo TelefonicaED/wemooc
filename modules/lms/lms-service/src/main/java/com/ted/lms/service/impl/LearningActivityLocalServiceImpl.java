@@ -14,7 +14,10 @@
 
 package com.ted.lms.service.impl;
 
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.base.LearningActivityLocalServiceBaseImpl;
+
+import java.util.List;
 
 /**
  * The implementation of the learning activity local service.
@@ -37,4 +40,13 @@ public class LearningActivityLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.LearningActivityLocalServiceUtil} to access the learning activity local service.
 	 */
+	
+	public List<LearningActivity> getRequiredLearningActivitiesOfGroup(long groupId){
+		return learningActivityPersistence.findByGroupIdRequired(groupId, true);
+	}
+	
+	public List<LearningActivity> getRequiredLearningActivitiesOfModule(long moduleId){
+		return learningActivityPersistence.findByModuleIdRequired(moduleId, true);
+	}
+	
 }

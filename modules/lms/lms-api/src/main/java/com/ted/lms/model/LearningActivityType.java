@@ -21,9 +21,9 @@ import aQute.bnd.annotation.ProviderType;
  *
  */
 @ProviderType
-public interface LearningActivityType<T> {
+public interface LearningActivityType {
 
-	public int getTypeId();
+	public long getTypeId();
 	public boolean isScoreConfigurable();
 	public long getDefaultScore();
 	public boolean isTriesConfigurable();
@@ -43,7 +43,7 @@ public interface LearningActivityType<T> {
 	public boolean specificValidations(UploadRequest uploadRequest, PortletResponse portletResponse);
 	public void afterInsertOrUpdate(UploadRequest uploadRequest, PortletResponse portletResponse, LearningActivity learningActivity);
 	public String getPortletId();
-	public void deleteResources(ActionRequest actionRequest,ActionResponse actionResponse, LearningActivity learningActivity);
+	public boolean onDelete(ActionRequest actionRequest,ActionResponse actionResponse, LearningActivity learningActivity);
 	public boolean isAutoCorrect();
 	public String importLearningActivity(LearningActivity learningActivity, Element actElement, Element rootElement, PortletDataContext portletDataContext, ServiceContext serviceContext);
 	public String onAfterImportLearningActivity(LearningActivity learningActivity, HashMap<Long,Long> relationActivities);
@@ -53,8 +53,9 @@ public interface LearningActivityType<T> {
 	public long calculateResult(LearningActivity learningActivity, LearningActivityTry learningActivityTry);
 	public boolean isPassed(LearningActivity learningActivity, LearningActivityTry learningActivityTry);
 	public String getClassName();
+	public boolean deleteLearningActivityTry(LearningActivityTry learningActiityTry);
 	
-	public LearningActivityTypeFactory<T> getLearningActivityTypeFactory();
+	public LearningActivityTypeFactory getLearningActivityTypeFactory();
 
 	public int getStatus();
 	public boolean hasEditPermission(PermissionChecker permissionChecker)

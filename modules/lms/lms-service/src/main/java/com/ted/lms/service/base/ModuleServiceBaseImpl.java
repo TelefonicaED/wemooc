@@ -40,9 +40,11 @@ import com.ted.lms.service.ModuleService;
 import com.ted.lms.service.persistence.CoursePersistence;
 import com.ted.lms.service.persistence.CourseResultPersistence;
 import com.ted.lms.service.persistence.LearningActivityPersistence;
+import com.ted.lms.service.persistence.LearningActivityResultFinder;
 import com.ted.lms.service.persistence.LearningActivityResultPersistence;
 import com.ted.lms.service.persistence.LearningActivityTryPersistence;
 import com.ted.lms.service.persistence.ModulePersistence;
+import com.ted.lms.service.persistence.ModuleResultFinder;
 import com.ted.lms.service.persistence.ModuleResultPersistence;
 
 import javax.sql.DataSource;
@@ -257,6 +259,25 @@ public abstract class ModuleServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the learning activity result finder.
+	 *
+	 * @return the learning activity result finder
+	 */
+	public LearningActivityResultFinder getLearningActivityResultFinder() {
+		return learningActivityResultFinder;
+	}
+
+	/**
+	 * Sets the learning activity result finder.
+	 *
+	 * @param learningActivityResultFinder the learning activity result finder
+	 */
+	public void setLearningActivityResultFinder(
+		LearningActivityResultFinder learningActivityResultFinder) {
+		this.learningActivityResultFinder = learningActivityResultFinder;
+	}
+
+	/**
 	 * Returns the learning activity try local service.
 	 *
 	 * @return the learning activity try local service
@@ -385,6 +406,24 @@ public abstract class ModuleServiceBaseImpl extends BaseServiceImpl
 	public void setModuleResultPersistence(
 		ModuleResultPersistence moduleResultPersistence) {
 		this.moduleResultPersistence = moduleResultPersistence;
+	}
+
+	/**
+	 * Returns the module result finder.
+	 *
+	 * @return the module result finder
+	 */
+	public ModuleResultFinder getModuleResultFinder() {
+		return moduleResultFinder;
+	}
+
+	/**
+	 * Sets the module result finder.
+	 *
+	 * @param moduleResultFinder the module result finder
+	 */
+	public void setModuleResultFinder(ModuleResultFinder moduleResultFinder) {
+		this.moduleResultFinder = moduleResultFinder;
 	}
 
 	/**
@@ -945,6 +984,8 @@ public abstract class ModuleServiceBaseImpl extends BaseServiceImpl
 	protected com.ted.lms.service.LearningActivityResultLocalService learningActivityResultLocalService;
 	@BeanReference(type = LearningActivityResultPersistence.class)
 	protected LearningActivityResultPersistence learningActivityResultPersistence;
+	@BeanReference(type = LearningActivityResultFinder.class)
+	protected LearningActivityResultFinder learningActivityResultFinder;
 	@BeanReference(type = com.ted.lms.service.LearningActivityTryLocalService.class)
 	protected com.ted.lms.service.LearningActivityTryLocalService learningActivityTryLocalService;
 	@BeanReference(type = LearningActivityTryPersistence.class)
@@ -959,6 +1000,8 @@ public abstract class ModuleServiceBaseImpl extends BaseServiceImpl
 	protected com.ted.lms.service.ModuleResultLocalService moduleResultLocalService;
 	@BeanReference(type = ModuleResultPersistence.class)
 	protected ModuleResultPersistence moduleResultPersistence;
+	@BeanReference(type = ModuleResultFinder.class)
+	protected ModuleResultFinder moduleResultFinder;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
 	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)

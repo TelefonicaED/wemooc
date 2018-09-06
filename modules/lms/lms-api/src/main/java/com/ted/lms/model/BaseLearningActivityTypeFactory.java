@@ -20,14 +20,19 @@ import java.util.ResourceBundle;
 import javax.portlet.PortletURL;
 import javax.portlet.WindowState;
 
-public abstract class BaseLearningActivityTypeFactory<T> implements LearningActivityTypeFactory<T> {
+/**
+ * Base para la factoría de los tipos de actividad
+ * @author Virginia Martín Agudo
+ *
+ */
+public abstract class BaseLearningActivityTypeFactory implements LearningActivityTypeFactory {
 	@Override
 	public LearningActivity getLearningActivity(long actId) throws PortalException {
 		return LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	}
 
 	@Override
-	public LearningActivityType<T> getLearningActivityType(long actId)
+	public LearningActivityType getLearningActivityType(long actId)
 		throws PortalException {
 		LearningActivity activity = getLearningActivity(actId);
 		
@@ -35,7 +40,7 @@ public abstract class BaseLearningActivityTypeFactory<T> implements LearningActi
 	}
 
 	@Override
-	public LearningActivityType<T> getLearningActivityType(LearningActivity activity, int type) throws PortalException {
+	public LearningActivityType getLearningActivityType(LearningActivity activity, long type) throws PortalException {
 
 		return null;
 	}

@@ -4,7 +4,6 @@ import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelListener;
-import com.ted.lms.service.CourseLocalServiceUtil;
 
 import org.osgi.service.component.annotations.Component;
 

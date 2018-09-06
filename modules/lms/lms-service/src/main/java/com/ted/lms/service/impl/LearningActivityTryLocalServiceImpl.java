@@ -37,4 +37,8 @@ public class LearningActivityTryLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.LearningActivityTryLocalServiceUtil} to access the learning activity try local service.
 	 */
+	
+	public int getLearningActivityTriesCount(long actId, long userId) {
+		return learningActivityTryPersistence.countByActIdUserId(actId, userId);
+	}
 }

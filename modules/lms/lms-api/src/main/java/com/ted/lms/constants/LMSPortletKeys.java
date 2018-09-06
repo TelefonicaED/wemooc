@@ -12,5 +12,7 @@ public class LMSPortletKeys {
 			"com_ted_lms_web_portlet_ModuleAdminPortlet";
 	public static final String LEARNING_ACTIVITY = 
 			"com_ted_lms_web_portlet_LearningActivityAdminPortlet";
+	public static final String INSCRIPTION = 
+			"com_ted_lms_web_portlet_InscriptionPortlet";
 	
 }

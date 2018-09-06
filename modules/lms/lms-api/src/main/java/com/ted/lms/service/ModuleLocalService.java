@@ -180,6 +180,8 @@ public interface ModuleLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Module fetchModuleByUuidAndGroupId(String uuid, long groupId);
 
+	public List<Module> findAllInGroup(long groupId) throws SystemException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 

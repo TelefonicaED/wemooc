@@ -53,4 +53,6 @@ public interface Module extends ModuleModel, PersistedModel {
 				return Module.class;
 			}
 		};
+
+	public java.util.List<LearningActivity> getRequiredLearningActivities();
 }

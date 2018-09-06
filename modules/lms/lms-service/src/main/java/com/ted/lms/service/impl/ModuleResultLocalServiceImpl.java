@@ -14,7 +14,10 @@
 
 package com.ted.lms.service.impl;
 
+import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl;
+
+import java.util.List;
 
 /**
  * The implementation of the module result local service.
@@ -37,4 +40,12 @@ public class ModuleResultLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.ModuleResultLocalServiceUtil} to access the module result local service.
 	 */
+	
+	public List<ModuleResult> getModuleResults(long moduleId){
+		return moduleResultPersistence.findByModuleId(moduleId);
+	}
+	
+	public int countModulesUserPassed(long groupId, long userId) {
+		return moduleResultFinder.countModulesUserPassed(groupId, userId);
+	}
 }

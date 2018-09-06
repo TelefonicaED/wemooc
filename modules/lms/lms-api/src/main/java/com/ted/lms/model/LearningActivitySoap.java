@@ -202,11 +202,11 @@ public class LearningActivitySoap implements Serializable {
 		_description = description;
 	}
 
-	public int getTypeId() {
+	public long getTypeId() {
 		return _typeId;
 	}
 
-	public void setTypeId(int typeId) {
+	public void setTypeId(long typeId) {
 		_typeId = typeId;
 	}
 
@@ -341,7 +341,7 @@ public class LearningActivitySoap implements Serializable {
 	private long _moduleId;
 	private String _title;
 	private String _description;
-	private int _typeId;
+	private long _typeId;
 	private Date _startDate;
 	private Date _endDate;
 	private int _tries;

@@ -70,6 +70,8 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public ModuleResult addModuleResult(ModuleResult moduleResult);
 
+	public int countModulesUserPassed(long groupId, long userId);
+
 	/**
 	* Creates a new module result with the primary key. Does not add the module result to the database.
 	*
@@ -196,6 +198,9 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<ModuleResult> getModuleResults(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<ModuleResult> getModuleResults(long moduleId);
 
 	/**
 	* Returns the number of module results.

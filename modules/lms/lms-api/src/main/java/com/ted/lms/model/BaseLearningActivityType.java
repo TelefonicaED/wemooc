@@ -15,7 +15,12 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletResponse;
 
-public abstract class BaseLearningActivityType<T> implements LearningActivityType<T> {
+/**
+ * Base para los tipos de actividades
+ * @author Virginia Martín Agudo
+ *
+ */
+public abstract class BaseLearningActivityType implements LearningActivityType {
 
 	@Override
 	public boolean isScoreConfigurable() {
@@ -106,9 +111,9 @@ public abstract class BaseLearningActivityType<T> implements LearningActivityTyp
 	}
 
 	@Override
-	public void deleteResources(ActionRequest actionRequest, ActionResponse actionResponse,
+	public boolean onDelete(ActionRequest actionRequest, ActionResponse actionResponse,
 			LearningActivity learningActivity) {
-		
+		return true;
 	}
 
 	@Override
@@ -144,22 +149,21 @@ public abstract class BaseLearningActivityType<T> implements LearningActivityTyp
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public LearningActivityTypeFactory<T> getLearningActivityTypeFactory() {
+	public LearningActivityTypeFactory getLearningActivityTypeFactory() {
 		if (learningActivityTypeFactory != null) {
 			return learningActivityTypeFactory;
 		}
 
 		learningActivityTypeFactory =
-			(LearningActivityTypeFactory<T>)
+			(LearningActivityTypeFactory)
 			LearningActivityTypeFactoryRegistryUtil.
 					getLearningActivityTypeFactoryByClassName(getClassName());
 
 		return learningActivityTypeFactory;
 	}
 	
-	private LearningActivityTypeFactory<T> learningActivityTypeFactory;
+	private LearningActivityTypeFactory learningActivityTypeFactory;
 
 	@Override
 	public int getStatus() {
@@ -181,7 +185,7 @@ public abstract class BaseLearningActivityType<T> implements LearningActivityTyp
 	}
 	
 	@Override 
-	public int getTypeId() {
+	public long getTypeId() {
 		return getLearningActivityTypeFactory().getType();
 	}
 }

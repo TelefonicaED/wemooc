@@ -242,6 +242,9 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getLearningActivityTriesCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getLearningActivityTriesCount(long actId, long userId);
+
 	/**
 	* Returns the learning activity try with the primary key.
 	*

@@ -261,7 +261,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 		title = objectInput.readUTF();
 		description = objectInput.readUTF();
 
-		typeId = objectInput.readInt();
+		typeId = objectInput.readLong();
 		startDate = objectInput.readLong();
 		endDate = objectInput.readLong();
 
@@ -329,7 +329,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 			objectOutput.writeUTF(description);
 		}
 
-		objectOutput.writeInt(typeId);
+		objectOutput.writeLong(typeId);
 		objectOutput.writeLong(startDate);
 		objectOutput.writeLong(endDate);
 
@@ -389,7 +389,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 	public long moduleId;
 	public String title;
 	public String description;
-	public int typeId;
+	public long typeId;
 	public long startDate;
 	public long endDate;
 	public int tries;

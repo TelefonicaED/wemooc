@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ted.prerequisite.model.PrerequisiteRelation">
+		<field name="uuid" type="String" />
+		<field name="prerequisiteRelationId" type="long" />
+		<field name="classNamePrerequisiteId" type="long" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
+		<field name="extraData" type="String" />
+	</model>
+</model-hints>

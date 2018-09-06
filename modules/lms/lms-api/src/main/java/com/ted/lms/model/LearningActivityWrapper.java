@@ -158,7 +158,7 @@ public class LearningActivityWrapper implements LearningActivity,
 			setDescription(description);
 		}
 
-		Integer typeId = (Integer)attributes.get("typeId");
+		Long typeId = (Long)attributes.get("typeId");
 
 		if (typeId != null) {
 			setTypeId(typeId);
@@ -657,7 +657,7 @@ public class LearningActivityWrapper implements LearningActivity,
 	* @return the type ID of this learning activity
 	*/
 	@Override
-	public int getTypeId() {
+	public long getTypeId() {
 		return _learningActivity.getTypeId();
 	}
 
@@ -1219,7 +1219,7 @@ public class LearningActivityWrapper implements LearningActivity,
 	* @param typeId the type ID of this learning activity
 	*/
 	@Override
-	public void setTypeId(int typeId) {
+	public void setTypeId(long typeId) {
 		_learningActivity.setTypeId(typeId);
 	}
 

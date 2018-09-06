@@ -1,0 +1,4 @@
+Bundle-Name: activity-evaluation
+Bundle-SymbolicName: activity.evaluation
+Bundle-Version: 1.0.0
+Export-Package: activity.evaluation.constants

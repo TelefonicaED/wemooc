@@ -66,7 +66,7 @@ create table LMS_LearningActivity (
 	moduleId LONG,
 	title STRING null,
 	description STRING null,
-	typeId INTEGER,
+	typeId LONG,
 	startDate DATE null,
 	endDate DATE null,
 	tries INTEGER,

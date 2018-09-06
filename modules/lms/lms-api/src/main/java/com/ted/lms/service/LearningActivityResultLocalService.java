@@ -205,6 +205,10 @@ public interface LearningActivityResultLocalService extends BaseLocalService,
 	public LearningActivityResult getLearningActivityResult(long larId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LearningActivityResult getLearningActivityResult(long actId,
+		long userId);
+
 	/**
 	* Returns the learning activity result matching the UUID and group.
 	*
@@ -277,6 +281,10 @@ public interface LearningActivityResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivityResult> getRequiredLearningActivityResults(
+		long groupId, long userId);
 
 	/**
 	* Updates the learning activity result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

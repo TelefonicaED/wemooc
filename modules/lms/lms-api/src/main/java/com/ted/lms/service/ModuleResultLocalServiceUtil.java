@@ -54,6 +54,10 @@ public class ModuleResultLocalServiceUtil {
 		return getService().addModuleResult(moduleResult);
 	}
 
+	public static int countModulesUserPassed(long groupId, long userId) {
+		return getService().countModulesUserPassed(groupId, userId);
+	}
+
 	/**
 	* Creates a new module result with the primary key. Does not add the module result to the database.
 	*
@@ -212,6 +216,11 @@ public class ModuleResultLocalServiceUtil {
 	public static java.util.List<com.ted.lms.model.ModuleResult> getModuleResults(
 		int start, int end) {
 		return getService().getModuleResults(start, end);
+	}
+
+	public static java.util.List<com.ted.lms.model.ModuleResult> getModuleResults(
+		long moduleId) {
+		return getService().getModuleResults(moduleId);
 	}
 
 	/**

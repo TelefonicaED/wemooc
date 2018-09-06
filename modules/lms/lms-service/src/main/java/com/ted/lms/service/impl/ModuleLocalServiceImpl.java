@@ -14,7 +14,11 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.SystemException;
+import com.ted.lms.model.Module;
 import com.ted.lms.service.base.ModuleLocalServiceBaseImpl;
+
+import java.util.List;
 
 /**
  * The implementation of the module local service.
@@ -36,4 +40,8 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.ModuleLocalServiceUtil} to access the module local service.
 	 */
+	
+	public List<Module> findAllInGroup(long groupId) throws SystemException {
+		return modulePersistence.findByGroupId(groupId);
+	}
 }

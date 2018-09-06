@@ -1,7 +1,5 @@
 package com.ted.lms.model;
 
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
 
@@ -9,12 +7,12 @@ import java.util.Locale;
 
 import javax.portlet.PortletResponse;
 
-public abstract class BaseCalificationType<T> implements CalificationType<T> {
-
-	@Override
-	public String getSuffix() {
-		return "";
-	}
+/**
+ * Base para los tipos de calificaciones
+ * @author Virginia Martín Agudo
+ *
+ */
+public abstract class BaseCalificationType implements CalificationType{
 	
 	@Override
 	public String translate(Locale locale, double result) {
@@ -31,35 +29,33 @@ public abstract class BaseCalificationType<T> implements CalificationType<T> {
 	}
 	
 	@Override
+	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
+		return null;
+	}
+	
+	@Override
+	public String getSuffix() {
+		return "";
+	}
+	
+	@Override
 	public double getMinValue() {
 		return 0;
 	}
 	
 	@Override
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public CalificationTypeFactory<T> getCalificationTypeFactory(){
+	public CalificationTypeFactory getCalificationTypeFactory(){
 		if (calificationTypeFactory != null) {
 			return calificationTypeFactory;
 		}
 
 		calificationTypeFactory =
-			(CalificationTypeFactory<T>)
+			(CalificationTypeFactory)
 			CalificationTypeFactoryRegistryUtil.
 					getCalificationTypeFactoryByClassName(getClassName());
 
 		return calificationTypeFactory;
 	}
 	
-	private CalificationTypeFactory<T> calificationTypeFactory;
-
-	@Override
-	public boolean hasViewPermission(PermissionChecker permissionChecker)
-		throws PortalException{
-		return true;
-	}
+	private CalificationTypeFactory calificationTypeFactory;
 }

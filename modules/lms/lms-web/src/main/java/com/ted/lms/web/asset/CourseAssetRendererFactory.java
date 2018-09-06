@@ -15,9 +15,9 @@ import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
+import com.ted.lms.security.permission.resource.CoursePermission;
+import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
-import com.ted.lms.web.internal.security.permission.resource.CoursePermission;
-import com.ted.lms.web.internal.security.permission.resource.LMSPermission;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;

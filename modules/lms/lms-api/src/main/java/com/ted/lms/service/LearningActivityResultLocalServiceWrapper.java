@@ -228,6 +228,13 @@ public class LearningActivityResultLocalServiceWrapper
 		return _learningActivityResultLocalService.getLearningActivityResult(larId);
 	}
 
+	@Override
+	public com.ted.lms.model.LearningActivityResult getLearningActivityResult(
+		long actId, long userId) {
+		return _learningActivityResultLocalService.getLearningActivityResult(actId,
+			userId);
+	}
+
 	/**
 	* Returns the learning activity result matching the UUID and group.
 	*
@@ -319,6 +326,13 @@ public class LearningActivityResultLocalServiceWrapper
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _learningActivityResultLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivityResult> getRequiredLearningActivityResults(
+		long groupId, long userId) {
+		return _learningActivityResultLocalService.getRequiredLearningActivityResults(groupId,
+			userId);
 	}
 
 	/**

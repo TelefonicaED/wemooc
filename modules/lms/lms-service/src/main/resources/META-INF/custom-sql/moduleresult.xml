@@ -1,0 +1,15 @@
+<custom-sql>
+	<sql id="com.ted.lms.service.persistence.ModuleResultFinder.countModulesUserPassed">
+		<![CDATA[   			
+			SELECT 
+				COUNT(1) AS COUNT_VALUE  
+			FROM 
+				lms_moduleresult mr
+			INNER JOIN 
+				lms_module m 
+					ON mr.moduleId = m.moduleId AND m.groupId = ?
+			WHERE 
+				mr.userId = ?
+		]]>
+	</sql>
+</custom-sql>

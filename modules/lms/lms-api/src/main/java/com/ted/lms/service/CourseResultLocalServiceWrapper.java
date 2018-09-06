@@ -45,6 +45,14 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 		return _courseResultLocalService.addCourseResult(courseResult);
 	}
 
+	@Override
+	public com.ted.lms.model.CourseResult addCourseResult(long courseId,
+		long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _courseResultLocalService.addCourseResult(courseId, userId,
+			serviceContext);
+	}
+
 	/**
 	* Creates a new course result with the primary key. Does not add the course result to the database.
 	*
@@ -177,6 +185,14 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 	}
 
 	@Override
+	public com.ted.lms.model.CourseResult enrollStudent(
+		com.ted.lms.model.Course course, long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _courseResultLocalService.enrollStudent(course, userId,
+			serviceContext);
+	}
+
+	@Override
 	public com.ted.lms.model.CourseResult fetchCourseResult(long crId) {
 		return _courseResultLocalService.fetchCourseResult(crId);
 	}
@@ -184,6 +200,12 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _courseResultLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public com.ted.lms.model.CourseResult getByCourseIdUserId(long courseId,
+		long userId) {
+		return _courseResultLocalService.getByCourseIdUserId(courseId, userId);
 	}
 
 	/**
@@ -216,6 +238,18 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 		return _courseResultLocalService.getCourseResults(start, end);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.model.CourseResult> getCourseResults(
+		long courseId) {
+		return _courseResultLocalService.getCourseResults(courseId);
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.CourseResult> getCourseResults(
+		long courseId, boolean passed) {
+		return _courseResultLocalService.getCourseResults(courseId, passed);
+	}
+
 	/**
 	* Returns the number of course results.
 	*
@@ -224,6 +258,12 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 	@Override
 	public int getCourseResultsCount() {
 		return _courseResultLocalService.getCourseResultsCount();
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.CourseResult> getFailedCourseResults(
+		long courseId) {
+		return _courseResultLocalService.getFailedCourseResults(courseId);
 	}
 
 	@Override
@@ -246,6 +286,12 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseResultLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public boolean unsubscribeStudent(com.ted.lms.model.Course course,
+		long userId) {
+		return _courseResultLocalService.unsubscribeStudent(course, userId);
 	}
 
 	/**

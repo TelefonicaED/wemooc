@@ -27,11 +27,13 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 
 import java.io.Serializable;
@@ -69,6 +71,9 @@ public interface CourseResultLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public CourseResult addCourseResult(CourseResult courseResult);
+
+	public CourseResult addCourseResult(long courseId, long userId,
+		ServiceContext serviceContext);
 
 	/**
 	* Creates a new course result with the primary key. Does not add the course result to the database.
@@ -164,11 +169,17 @@ public interface CourseResultLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
+	public CourseResult enrollStudent(Course course, long userId,
+		ServiceContext serviceContext);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public CourseResult fetchCourseResult(long crId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public CourseResult getByCourseIdUserId(long courseId, long userId);
 
 	/**
 	* Returns the course result with the primary key.
@@ -194,6 +205,12 @@ public interface CourseResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<CourseResult> getCourseResults(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CourseResult> getCourseResults(long courseId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CourseResult> getCourseResults(long courseId, boolean passed);
+
 	/**
 	* Returns the number of course results.
 	*
@@ -201,6 +218,9 @@ public interface CourseResultLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getCourseResultsCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CourseResult> getFailedCourseResults(long courseId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
@@ -216,6 +236,8 @@ public interface CourseResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	public boolean unsubscribeStudent(Course course, long userId);
 
 	/**
 	* Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

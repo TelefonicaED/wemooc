@@ -302,6 +302,16 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getRequiredLearningActivitiesOfGroup(
+		long groupId) {
+		return getService().getRequiredLearningActivitiesOfGroup(groupId);
+	}
+
+	public static java.util.List<com.ted.lms.model.LearningActivity> getRequiredLearningActivitiesOfModule(
+		long moduleId) {
+		return getService().getRequiredLearningActivitiesOfModule(moduleId);
+	}
+
 	/**
 	* Updates the learning activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

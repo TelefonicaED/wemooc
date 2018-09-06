@@ -92,7 +92,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			{ "moduleId", Types.BIGINT },
 			{ "title", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "typeId", Types.INTEGER },
+			{ "typeId", Types.BIGINT },
 			{ "startDate", Types.TIMESTAMP },
 			{ "endDate", Types.TIMESTAMP },
 			{ "tries", Types.INTEGER },
@@ -122,7 +122,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		TABLE_COLUMNS_MAP.put("moduleId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("typeId", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("typeId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("startDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("tries", Types.INTEGER);
@@ -139,7 +139,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_LearningActivity (uuid_ VARCHAR(75) null,actId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,moduleId LONG,title STRING null,description STRING null,typeId INTEGER,startDate DATE null,endDate DATE null,tries INTEGER,passPuntuation INTEGER,priority LONG,extraContent TEXT null,feedbackCorrect VARCHAR(75) null,feedbackNoCorrect VARCHAR(75) null,required BOOLEAN,commentsActivated BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_LearningActivity (uuid_ VARCHAR(75) null,actId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,moduleId LONG,title STRING null,description STRING null,typeId LONG,startDate DATE null,endDate DATE null,tries INTEGER,passPuntuation INTEGER,priority LONG,extraContent TEXT null,feedbackCorrect VARCHAR(75) null,feedbackNoCorrect VARCHAR(75) null,required BOOLEAN,commentsActivated BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_LearningActivity";
 	public static final String ORDER_BY_JPQL = " ORDER BY learningActivity.moduleId ASC, learningActivity.priority ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_LearningActivity.moduleId ASC, LMS_LearningActivity.priority ASC";
@@ -367,7 +367,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			setDescription(description);
 		}
 
-		Integer typeId = (Integer)attributes.get("typeId");
+		Long typeId = (Long)attributes.get("typeId");
 
 		if (typeId != null) {
 			setTypeId(typeId);
@@ -837,12 +837,12 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 	@JSON
 	@Override
-	public int getTypeId() {
+	public long getTypeId() {
 		return _typeId;
 	}
 
 	@Override
-	public void setTypeId(int typeId) {
+	public void setTypeId(long typeId) {
 		_typeId = typeId;
 	}
 
@@ -1738,7 +1738,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	private String _titleCurrentLanguageId;
 	private String _description;
 	private String _descriptionCurrentLanguageId;
-	private int _typeId;
+	private long _typeId;
 	private Date _startDate;
 	private Date _endDate;
 	private int _tries;

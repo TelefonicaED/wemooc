@@ -77,7 +77,7 @@
 		<field name="moduleId" type="long" />
 		<field localized="true" name="title" type="String" />
 		<field localized="true" name="description" type="String" />
-		<field name="typeId" type="int" />
+		<field name="typeId" type="long" />
 		<field name="startDate" type="Date" />
 		<field name="endDate" type="Date" />
 		<field name="tries" type="int" />

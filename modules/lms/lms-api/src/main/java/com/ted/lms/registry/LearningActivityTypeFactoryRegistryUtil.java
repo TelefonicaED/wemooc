@@ -22,12 +22,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Registry para los tipos de actividades
  * @author Virginia Martín Agudo
+ *
  */
 @ProviderType
 public class LearningActivityTypeFactoryRegistryUtil {
 
-	public static List<LearningActivityTypeFactory<?>> getLearningActivityFactories(
+	public static List<LearningActivityTypeFactory> getLearningActivityFactories(
 		long companyId) {
 
 		return ListUtil.fromMapValues(
@@ -35,7 +37,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 				companyId, 0, _learningActivityFactoriesMapByClassName));
 	}
 	
-	public static List<LearningActivityTypeFactory<?>> getLearningActivityFactories(
+	public static List<LearningActivityTypeFactory> getLearningActivityFactories(
 			long companyId, long groupId) {
 
 			return ListUtil.fromMapValues(
@@ -43,28 +45,28 @@ public class LearningActivityTypeFactoryRegistryUtil {
 					companyId, groupId, _learningActivityFactoriesMapByClassName));
 		}
 
-	public static <T> LearningActivityTypeFactory<T> getLearningActivityTypeFactoryByClass(
+	public static <T> LearningActivityTypeFactory getLearningActivityTypeFactoryByClass(
 		Class<T> clazz) {
 
-		return (LearningActivityTypeFactory<T>)_learningActivityFactoriesMapByClassName.get(
+		return (LearningActivityTypeFactory)_learningActivityFactoriesMapByClassName.get(
 			clazz.getName());
 	}
 
-	public static LearningActivityTypeFactory<?> getLearningActivityTypeFactoryByClassName(
+	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByClassName(
 		String className) {
 
 		return _learningActivityFactoriesMapByClassName.get(className);
 	}
 
-	public static LearningActivityTypeFactory<?> getLearningActivityTypeFactoryByClassNameId(
+	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByClassNameId(
 		long classNameId) {
 
 		return _learningActivityFactoriesMapByClassName.get(
 			PortalUtil.getClassName(classNameId));
 	}
 
-	public static LearningActivityTypeFactory<?> getLearningActivityTypeFactoryByType(
-		int type) {
+	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByType(
+		long type) {
 
 		return _learningActivityFactoriesMapByClassType.get(type);
 	}
@@ -72,7 +74,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	public static long[] getClassNameIds(
 		long companyId) {
 
-		Map<String, LearningActivityTypeFactory<?>> learningActivityFactories =
+		Map<String, LearningActivityTypeFactory> learningActivityFactories =
 			_learningActivityFactoriesMapByClassName;
 
 		if (companyId > 0) {
@@ -84,7 +86,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 		int i = 0;
 
-		for (LearningActivityTypeFactory<?> learningActivityFactory :
+		for (LearningActivityTypeFactory learningActivityFactory :
 				learningActivityFactories.values()) {
 
 			classNameIds[i] = learningActivityFactory.getClassNameId();
@@ -95,12 +97,12 @@ public class LearningActivityTypeFactoryRegistryUtil {
 		return classNameIds;
 	}
 
-	public static void register(LearningActivityTypeFactory<?> learningActivityFactory) {
+	public static void register(LearningActivityTypeFactory learningActivityFactory) {
 		Registry registry = RegistryUtil.getRegistry();
 
-		ServiceRegistration<LearningActivityTypeFactory<?>> serviceRegistration =
+		ServiceRegistration<LearningActivityTypeFactory> serviceRegistration =
 			registry.registerService(
-				(Class<LearningActivityTypeFactory<?>>)(Class<?>)
+				(Class<LearningActivityTypeFactory>)(Class<?>)
 					LearningActivityTypeFactory.class,
 				learningActivityFactory);
 
@@ -108,9 +110,9 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	}
 
 	public static void register(
-		List<LearningActivityTypeFactory<?>> learningActivityFactories) {
+		List<LearningActivityTypeFactory> learningActivityFactories) {
 
-		for (LearningActivityTypeFactory<?> learningActivityFactory :
+		for (LearningActivityTypeFactory learningActivityFactory :
 				learningActivityFactories) {
 
 			register(learningActivityFactory);
@@ -118,9 +120,9 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	}
 
 	public static void unregister(
-		LearningActivityTypeFactory<?> learningActivityFactory) {
+		LearningActivityTypeFactory learningActivityFactory) {
 
-		ServiceRegistration<LearningActivityTypeFactory<?>> serviceRegistration =
+		ServiceRegistration<LearningActivityTypeFactory> serviceRegistration =
 			_serviceRegistrations.remove(learningActivityFactory);
 
 		if (serviceRegistration != null) {
@@ -129,27 +131,27 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	}
 
 	public static void unregister(
-		List<LearningActivityTypeFactory<?>> learningActivityFactories) {
+		List<LearningActivityTypeFactory> learningActivityFactories) {
 
-		for (LearningActivityTypeFactory<?> learningActivityFactory :
+		for (LearningActivityTypeFactory learningActivityFactory :
 				learningActivityFactories) {
 
 			unregister(learningActivityFactory);
 		}
 	}
 
-	private static Map<String, LearningActivityTypeFactory<?>>
+	private static Map<String, LearningActivityTypeFactory>
 		_filterLearningActivityFactories(
 			long companyId, long groupId,
-			Map<String, LearningActivityTypeFactory<?>> learningActivityFactories) {
+			Map<String, LearningActivityTypeFactory> learningActivityFactories) {
 
-		Map<String, LearningActivityTypeFactory<?>> filteredLearningActivityFactories =
+		Map<String, LearningActivityTypeFactory> filteredLearningActivityFactories =
 			new ConcurrentHashMap<>();
 
-		for (Map.Entry<String, LearningActivityTypeFactory<?>> entry :
+		for (Map.Entry<String, LearningActivityTypeFactory> entry :
 				learningActivityFactories.entrySet()) {
 
-			LearningActivityTypeFactory<?> learningActivityFactory = entry.getValue();
+			LearningActivityTypeFactory learningActivityFactory = entry.getValue();
 
 			if (learningActivityFactory.isActive(companyId, groupId)) {
 
@@ -169,58 +171,66 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LearningActivityTypeFactoryRegistryUtil.class);
 
-	private static final Map<String, LearningActivityTypeFactory<?>>
+	private static final Map<String, LearningActivityTypeFactory>
 		_learningActivityFactoriesMapByClassName = new ConcurrentHashMap<>();
-	private static final Map<Integer, LearningActivityTypeFactory<?>>
+	private static final Map<Long, LearningActivityTypeFactory>
 		_learningActivityFactoriesMapByClassType = new ConcurrentHashMap<>();
-	private static final ServiceRegistrationMap<LearningActivityTypeFactory<?>>
+	private static final ServiceRegistrationMap<LearningActivityTypeFactory>
 		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
 	private static final
-		ServiceTracker<LearningActivityTypeFactory<?>, LearningActivityTypeFactory<?>>
+		ServiceTracker<LearningActivityTypeFactory, LearningActivityTypeFactory>
 			_serviceTracker;
 
 	private static class LearningActivityTypeFactoryServiceTrackerCustomizer
 		implements ServiceTrackerCustomizer
-			<LearningActivityTypeFactory<?>, LearningActivityTypeFactory<?>> {
+			<LearningActivityTypeFactory, LearningActivityTypeFactory> {
 
 		@Override
-		public LearningActivityTypeFactory<?> addingService(
-			ServiceReference<LearningActivityTypeFactory<?>> serviceReference) {
+		public LearningActivityTypeFactory addingService(
+			ServiceReference<LearningActivityTypeFactory> serviceReference) {
 
 			Registry registry = RegistryUtil.getRegistry();
+			
+			LearningActivityTypeFactory learningActivityFactory = null;
+			
+			try {
 
-			LearningActivityTypeFactory<?> learningActivityFactory = registry.getService(
-				serviceReference);
+				learningActivityFactory = registry.getService(
+					serviceReference);
+	
+				String className = learningActivityFactory.getClassName();
 
-			String className = learningActivityFactory.getClassName();
-
-			LearningActivityTypeFactory<?> classNameLearningActivityTypeFactory =
-				_learningActivityFactoriesMapByClassName.put(
-					className, learningActivityFactory);
-
-			if (_log.isWarnEnabled() &&
-				(classNameLearningActivityTypeFactory != null)) {
-
-				_log.warn(
-					StringBundler.concat(
-						"Replacing ",
-						String.valueOf(classNameLearningActivityTypeFactory),
-						" for class name ", className, " with ",
-						String.valueOf(learningActivityFactory)));
-			}
-
-			int type = learningActivityFactory.getType();
-
-			LearningActivityTypeFactory<?> typeLearningActivityTypeFactory =
-				_learningActivityFactoriesMapByClassType.put(
-					type, learningActivityFactory);
-
-			if (_log.isWarnEnabled() && (typeLearningActivityTypeFactory != null)) {
-				_log.warn(
-					StringBundler.concat(
-						"Replacing ", String.valueOf(typeLearningActivityTypeFactory),
-						" for type ", String.valueOf(type), " with ",
-						String.valueOf(learningActivityFactory)));
+				LearningActivityTypeFactory classNameLearningActivityTypeFactory =
+					_learningActivityFactoriesMapByClassName.put(
+						className, learningActivityFactory);
+	
+				if (_log.isWarnEnabled() &&
+					(classNameLearningActivityTypeFactory != null)) {
+	
+					_log.warn(
+						StringBundler.concat(
+							"Replacing ",
+							String.valueOf(classNameLearningActivityTypeFactory),
+							" for class name ", className, " with ",
+							String.valueOf(learningActivityFactory)));
+				}
+	
+				long type = learningActivityFactory.getType();
+	
+				LearningActivityTypeFactory typeLearningActivityTypeFactory =
+					_learningActivityFactoriesMapByClassType.put(
+						type, learningActivityFactory);
+	
+				if (_log.isWarnEnabled() && (typeLearningActivityTypeFactory != null)) {
+					_log.warn(
+						StringBundler.concat(
+							"Replacing ", String.valueOf(typeLearningActivityTypeFactory),
+							" for type ", String.valueOf(type), " with ",
+							String.valueOf(learningActivityFactory)));
+				}
+			
+			} catch (ClassCastException e) {
+				if(_log.isDebugEnabled()) _log.debug(e.getMessage());
 			}
 
 			return learningActivityFactory;
@@ -228,14 +238,14 @@ public class LearningActivityTypeFactoryRegistryUtil {
 
 		@Override
 		public void modifiedService(
-			ServiceReference<LearningActivityTypeFactory<?>> serviceReference,
-			LearningActivityTypeFactory<?> learningActivityFactory) {
+			ServiceReference<LearningActivityTypeFactory> serviceReference,
+			LearningActivityTypeFactory learningActivityFactory) {
 		}
 
 		@Override
 		public void removedService(
-			ServiceReference<LearningActivityTypeFactory<?>> serviceReference,
-			LearningActivityTypeFactory<?> learningActivityFactory) {
+			ServiceReference<LearningActivityTypeFactory> serviceReference,
+			LearningActivityTypeFactory learningActivityFactory) {
 
 			Registry registry = RegistryUtil.getRegistry();
 
@@ -253,7 +263,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 		Registry registry = RegistryUtil.getRegistry();
 
 		_serviceTracker = registry.trackServices(
-			(Class<LearningActivityTypeFactory<?>>)(Class<?>)
+			(Class<LearningActivityTypeFactory>)(Class<?>)
 				LearningActivityTypeFactory.class,
 			new LearningActivityTypeFactoryServiceTrackerCustomizer());
 

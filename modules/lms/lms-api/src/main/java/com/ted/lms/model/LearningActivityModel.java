@@ -435,14 +435,14 @@ public interface LearningActivityModel extends BaseModel<LearningActivity>,
 	 *
 	 * @return the type ID of this learning activity
 	 */
-	public int getTypeId();
+	public long getTypeId();
 
 	/**
 	 * Sets the type ID of this learning activity.
 	 *
 	 * @param typeId the type ID of this learning activity
 	 */
-	public void setTypeId(int typeId);
+	public void setTypeId(long typeId);
 
 	/**
 	 * Returns the start date of this learning activity.

@@ -124,8 +124,9 @@ public class CourseResultModelImpl extends BaseModelImpl<CourseResult>
 				"value.object.column.bitmask.enabled.com.ted.lms.model.CourseResult"),
 			true);
 	public static final long COURSEID_COLUMN_BITMASK = 1L;
-	public static final long USERID_COLUMN_BITMASK = 2L;
-	public static final long CRID_COLUMN_BITMASK = 4L;
+	public static final long PASSED_COLUMN_BITMASK = 2L;
+	public static final long USERID_COLUMN_BITMASK = 4L;
+	public static final long CRID_COLUMN_BITMASK = 8L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ted.lms.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ted.lms.model.CourseResult"));
 
@@ -480,7 +481,19 @@ public class CourseResultModelImpl extends BaseModelImpl<CourseResult>
 
 	@Override
 	public void setPassed(boolean passed) {
+		_columnBitmask |= PASSED_COLUMN_BITMASK;
+
+		if (!_setOriginalPassed) {
+			_setOriginalPassed = true;
+
+			_originalPassed = _passed;
+		}
+
 		_passed = passed;
+	}
+
+	public boolean getOriginalPassed() {
+		return _originalPassed;
 	}
 
 	@Override
@@ -668,6 +681,10 @@ public class CourseResultModelImpl extends BaseModelImpl<CourseResult>
 		courseResultModelImpl._originalUserId = courseResultModelImpl._userId;
 
 		courseResultModelImpl._setOriginalUserId = false;
+
+		courseResultModelImpl._originalPassed = courseResultModelImpl._passed;
+
+		courseResultModelImpl._setOriginalPassed = false;
 
 		courseResultModelImpl._columnBitmask = 0;
 	}
@@ -934,6 +951,8 @@ public class CourseResultModelImpl extends BaseModelImpl<CourseResult>
 	private double _result;
 	private String _comments;
 	private boolean _passed;
+	private boolean _originalPassed;
+	private boolean _setOriginalPassed;
 	private Date _registrationDate;
 	private Date _startDate;
 	private Date _passedDate;

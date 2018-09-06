@@ -262,6 +262,10 @@ public class LearningActivityTryLocalServiceUtil {
 		return getService().getLearningActivityTriesCount();
 	}
 
+	public static int getLearningActivityTriesCount(long actId, long userId) {
+		return getService().getLearningActivityTriesCount(actId, userId);
+	}
+
 	/**
 	* Returns the learning activity try with the primary key.
 	*
