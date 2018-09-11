@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<import class="com.ted.lms.inscription.teams.model.Schedule" />
+	<class name="com.ted.lms.inscription.teams.model.impl.ScheduleImpl" table="iteam_Schedule">
+		<id name="scheduleId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property name="teamId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property name="startDate" type="org.hibernate.type.TimestampType" />
+		<property name="endDate" type="org.hibernate.type.TimestampType" />
+	</class>
+</hibernate-mapping>

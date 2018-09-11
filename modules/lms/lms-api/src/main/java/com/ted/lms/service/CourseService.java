@@ -26,11 +26,15 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.Course;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -135,12 +139,25 @@ public interface CourseService extends BaseService {
 		String goodbyeMsg, int status, ServiceContext serviceContext)
 		throws PortalException;
 
+	public int countCourses(long companyId, String title, String description,
+		String language, int status, long parentCourseId, long groupId,
+		LinkedHashMap<String, Object> params, boolean andOperator);
+
 	/**
 	* Returns the OSGi service identifier.
 	*
 	* @return the OSGi service identifier
 	*/
 	public String getOSGiServiceIdentifier();
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Course> searchCourses(long companyId, String title,
+		String description, String language, int status, long parentCourseId,
+		long groupId, LinkedHashMap<String, Object> params,
+		boolean andOperator, int start, int end, OrderByComparator<Course> obc);
 
 	public void updateSmallImage(long courseId, String imageString,
 		String imageTitle, String imageMimeType, ServiceContext serviceContext)

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ted.lms.inscription.teams.model.Schedule">
+		<field name="scheduleId" type="long" />
+		<field name="teamId" type="long" />
+		<field name="startDate" type="Date" />
+		<field name="endDate" type="Date" />
+	</model>
+</model-hints>

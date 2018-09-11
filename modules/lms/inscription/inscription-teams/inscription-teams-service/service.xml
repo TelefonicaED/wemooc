@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.0.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_0_0.dtd">
+
+<service-builder package-path="com.ted.lms.inscription.teams">
+	<namespace>iteam</namespace>
+	<entity name="Schedule" local-service="true" remote-service="false" json-enabled="false">
+        <column name="scheduleId" type="long" primary="true"></column>
+        <column name="teamId" type="long"></column>
+    	<column name="startDate" type="Date"></column>     
+        <column name="endDate" type="Date"></column>
+        <finder name="TeamId" return-type="Schedule">
+			<finder-column name="teamId" />
+		</finder>
+		
+		<reference entity="Team" package-path="com.liferay.portal" />
+    </entity>
+</service-builder>

@@ -61,4 +61,19 @@ public interface Course extends CourseModel, PersistedModel {
 	public void addCourseExtraDataJSON(String key, Object value);
 
 	public com.liferay.portal.kernel.json.JSONObject getCourseEvalJSON();
+
+	public boolean isRegistredUser(long userId);
+
+	public CourseResult getResultUser(long userId);
+
+	public com.liferay.portal.kernel.model.Group getGroup();
+
+	public boolean canUnsubscribe(long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public boolean canEnroll(long userId, java.util.Locale locale,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.ted.lms.exception.InscriptionException;
 }

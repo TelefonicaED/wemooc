@@ -131,6 +131,14 @@ public class CourseServiceWrapper implements CourseService,
 			goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
 	}
 
+	@Override
+	public int countCourses(long companyId, String title, String description,
+		String language, int status, long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
+		return _courseService.countCourses(companyId, title, description,
+			language, status, parentCourseId, groupId, params, andOperator);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -139,6 +147,21 @@ public class CourseServiceWrapper implements CourseService,
 	@Override
 	public String getOSGiServiceIdentifier() {
 		return _courseService.getOSGiServiceIdentifier();
+	}
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Override
+	public java.util.List<com.ted.lms.model.Course> searchCourses(
+		long companyId, String title, String description, String language,
+		int status, long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
+		return _courseService.searchCourses(companyId, title, description,
+			language, status, parentCourseId, groupId, params, andOperator,
+			start, end, obc);
 	}
 
 	@Override

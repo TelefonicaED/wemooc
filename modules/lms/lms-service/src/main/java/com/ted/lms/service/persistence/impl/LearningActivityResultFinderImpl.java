@@ -5,6 +5,8 @@ import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.impl.LearningActivityResultImpl;
@@ -17,6 +19,8 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 	
 	public static final String FIND_REQUIRED_LEARNING_ACTIVITY_RESULTS = LearningActivityResultFinder.class.getName() + ".findRequiredLearningActivityResults";
 	
+	private static final Log log = LogFactoryUtil.getLog(LearningActivityResultFinderImpl.class);
+	
 	@Override
 	public List<LearningActivityResult> findRequiredLearningActivityResults(long groupId, long userId) {
 
@@ -28,6 +32,7 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 			session = openSession();
 
 			String sql = customSQL.get(getClass(), FIND_REQUIRED_LEARNING_ACTIVITY_RESULTS);
+			log.debug("********sql: " + sql);
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 

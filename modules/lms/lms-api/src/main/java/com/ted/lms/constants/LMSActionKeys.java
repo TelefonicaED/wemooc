@@ -8,4 +8,5 @@ package com.ted.lms.constants;
 public class LMSActionKeys {
 	public static final String ADD_COURSE = "ADD_COURSE";
 	public static final String ADD_MODULE = "ADD_MODULE";
+	public static final String REGISTER = "REGISTER";
 }

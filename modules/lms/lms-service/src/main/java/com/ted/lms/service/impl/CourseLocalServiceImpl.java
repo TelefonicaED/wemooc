@@ -19,13 +19,20 @@ import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.blogs.kernel.exception.EntrySmallImageScaleException;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.MembershipRequestConstants;
+import com.liferay.portal.kernel.model.ModelHintsConstants;
+import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -34,30 +41,44 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
+import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelectorProcessor;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.sites.kernel.util.SitesUtil;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LMSPropsKeys;
+import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.Course;
+import com.ted.lms.model.CourseResult;
 import com.ted.lms.service.base.CourseLocalServiceBaseImpl;
 import com.ted.lms.settings.CoursesGroupServiceSettings;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * The implementation of the course local service.
@@ -111,7 +132,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public Course addCourse(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, String summary, String friendlyURL, long parentCourseId, 
-			ImageSelector smallImageImageSelector, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, 
+			ImageSelector smallImageSelector, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, 
 			long layoutSetPrototypeId,int typeSite, long inscriptionType, long courseEvalId, long calificationType, int maxUsers, boolean welcome, 
 			String welcomeSubject, String welcomeMsg, boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status, 
 			ServiceContext serviceContext) {
@@ -137,13 +158,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 					GroupConstants.MEMBERSHIP_RESTRICTION_TO_PARENT_SITE_MEMBERS;
 			}
 			
-			//Creamos el group asociado
-			Group group = GroupServiceUtil.addGroup(
-					GroupConstants.DEFAULT_PARENT_GROUP_ID, 0, titleMap,
-					descriptionMap, typeSite, true, membershipRestriction,
-					friendlyURL, true, false, true, serviceContext);
-
-			LiveUsers.joinGroup(serviceContext.getCompanyId(), group.getGroupId(), serviceContext.getUserId());
 				
 			course = coursePersistence.create(counterLocalService.increment(Course.class.getName()));
 			
@@ -155,7 +169,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			course.setModifiedDate(now);
 			
 			course.setParentCourseId(parentCourseId);
-			course.setGroupCreatedId(group.getGroupId());
 			course.setTitleMap(titleMap);
 			course.setDescriptionMap(descriptionMap);
 			course.setRegistrationStartDate(registrationStartDate);
@@ -176,9 +189,27 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			course.setStatusByUserId(serviceContext.getUserId());
 			course.setStatusByUserName(user.getFullName());
 			course.setStatusDate(now);
-			course.setSmallImageId(addSmallImageCourse(serviceContext.getUserId(), serviceContext.getScopeGroupId(), course.getCourseId(), smallImageImageSelector));
+			if(smallImageSelector != null) {
+				course.setSmallImageId(addSmallImageCourse(serviceContext.getUserId(), serviceContext.getScopeGroupId(), course.getCourseId(), smallImageSelector));
+			}
 			
 			coursePersistence.update(course);
+			
+			//Creamos el group asociado, le cambiamos al nombre al grupo porque no deja crear dos con el mismo nombre por el groupKey
+			Map<Locale,String> titleMapGroup = new HashMap<Locale,String>();
+			final long courseId = course.getCourseId();
+			
+			titleMap.forEach((k,v)->titleMapGroup.put(k, v + " (" + courseId + ")"));
+			
+			Group group = GroupServiceUtil.addGroup(
+					GroupConstants.DEFAULT_PARENT_GROUP_ID, 0, titleMapGroup,
+					descriptionMap, typeSite, true, membershipRestriction,
+					getFriendlyURL(serviceContext.getCompanyId(), friendlyURL, titleMap), true, false, true, serviceContext);
+			
+			course.setGroupCreatedId(group.getGroupId());
+			coursePersistence.update(course);
+
+			LiveUsers.joinGroup(serviceContext.getCompanyId(), group.getGroupId(), serviceContext.getUserId());
 			
 			//Añadimos la imagen del curso
 			
@@ -191,13 +222,19 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			boolean editorRoleToCreator = GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.COURSE_ADD_TEACHER_ROLE_TO_CREATOR));
 			
 			if(teacherRoleToCreator){
-				long[] teacherRoleId = {PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_TEACHER_ROLE)};
-				UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(), course.getGroupCreatedId(), teacherRoleId);
+				long teacherRole = PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_TEACHER_ROLE,0);
+				if(teacherRole > 0) {
+					long[] teacherRoleId = {PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_TEACHER_ROLE)};
+					UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(), course.getGroupCreatedId(), teacherRoleId);
+				}
 			}
 
 			if(editorRoleToCreator){
-				long[] editorRoleId = {PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_EDITOR_ROLE)};
-				UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(),	course.getGroupCreatedId(), editorRoleId);
+				long editorRole = PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_EDITOR_ROLE);
+				if(editorRole > 0) {
+					long[] editorRoleId = {PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_EDITOR_ROLE)};
+					UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(),	course.getGroupCreatedId(), editorRoleId);
+				}
 			}	
 			
 			//Cargamos la plantilla de curso en el grupo creado
@@ -213,6 +250,52 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		}
 		
 		return course;
+	}
+	
+	private String getFriendlyURL(long companyId, String friendlyURL, Map<Locale, String> titleMap) {
+		//Se asegura que la longitud de friendlyURL no supere el maximo
+		int maxLength  = GetterUtil.getInteger(
+							ModelHintsUtil.getHints(Group.class.getName(), "friendlyURL").get("max-length"),
+							GetterUtil.getInteger(ModelHintsConstants.TEXT_MAX_LENGTH));
+		
+		String title = null;
+		if(titleMap.containsKey(Locale.getDefault())){
+			title = titleMap.get(Locale.getDefault());
+		}else{
+			//Cogemos el primero
+			Entry<Locale, String> entry = titleMap.entrySet().iterator().next();
+			title = entry.getValue();
+		}
+		
+		if(Validator.isNull(friendlyURL)) {
+			friendlyURL = StringPool.SLASH + FriendlyURLNormalizerUtil.normalize(title);
+			if(friendlyURL.length()>maxLength) {
+				friendlyURL = friendlyURL.substring(0, maxLength);
+			}
+			int  i = 0;
+			boolean friendlyNotExit = false;
+			while(!friendlyNotExit) {
+				Group exist = groupLocalService.fetchFriendlyURLGroup(companyId, friendlyURL);
+				if (Validator.isNotNull(exist)){
+					String iString = String.valueOf(i);
+					if(friendlyURL.length()+iString.length()>maxLength) {
+						if(iString.length()>maxLength) {
+							throw new SystemException();
+						}
+						friendlyURL =friendlyURL.substring(0, maxLength-iString.length())+iString;
+					}
+					else {
+						friendlyURL =friendlyURL+iString;
+					}
+				}else{
+					friendlyNotExit = true;
+				}
+				i++;
+			}				
+		}
+		
+		friendlyURL = StringPool.SLASH+friendlyURL.replaceAll("[^a-zA-Z0-9_-]+", "");
+		return friendlyURL;
 	}
 	
 	/**
@@ -368,6 +451,100 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	
 	public Course getCourseByGroupCreatedId(long groupCreatedId) {
 		return coursePersistence.fetchByGroupCreatedId(groupCreatedId);
+	}
+	
+	/**
+	 * Método para buscar cursos
+	 */
+	public List<Course> searchCourses(long companyId, String freeText, String language, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, int start, int end,
+			OrderByComparator<Course> obc){
+		return courseFinder.findByKeywords(companyId, freeText, language, status, parentCourseId, groupId, params, start, end, obc);
+	}
+	
+	/**
+	 * Método para buscar cursos
+	 */
+	public int countCourses(long companyId, String freeText, String language, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params){
+		return courseFinder.countByKeywords(companyId, freeText, language, status, parentCourseId, groupId, params, false);
+	}
+	
+	/**
+	 * Método para buscar cursos
+	 */
+	public List<Course> searchCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, 
+			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end,
+			OrderByComparator<Course> obc){
+		return courseFinder.findByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator, start, end, obc);
+	}
+	
+	/**
+	 * Método para buscar cursos
+	 */
+	public int countCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
+			boolean andOperator){
+		return courseFinder.countByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator);
+	}
+	
+	public List<Course> getChildsRegistredUser(long parentCourseId, long userId){
+		return courseFinder.findChildRegistredUser(parentCourseId, userId);
+	}
+	
+	public CourseResult enrollStudent(Course course, long userId, ServiceContext serviceContext, PermissionChecker permissionChecker ) throws PortalException, InscriptionException {
+		
+		CourseResult courseResult = null;
+		
+		if(course.canEnroll(userId, serviceContext.getLocale(), permissionChecker)) {
+			Group group = groupLocalService.getGroup(course.getGroupCreatedId());
+			if(group.getType()==GroupConstants.TYPE_SITE_OPEN){
+				Role sitemember=RoleLocalServiceUtil.getRole(course.getCompanyId(), RoleConstants.SITE_MEMBER) ;
+				
+			/*	if(teamId>0){
+        			long[] userIds = new long[1];
+        			userIds[0] = userId;	
+        			if(!UserLocalServiceUtil.hasTeamUser(teamId, userId)){
+        				UserLocalServiceUtil.addTeamUsers(teamId, userIds);	
+        			}			
+        		}*/
+				
+				GroupLocalServiceUtil.addUserGroups(userId, new long[]{group.getGroupId()});
+				UserGroupRoleLocalServiceUtil.addUserGroupRoles(new long[] { userId }, group.getGroupId(), sitemember.getRoleId());
+				SocialActivityLocalServiceUtil.addActivity(userId, group.getGroupId(), Group.class.getName(), group.getGroupId(), SocialActivityConstants.TYPE_SUBSCRIBE, "", userId);
+				
+				courseResult = courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
+				if(courseResult == null) {
+					courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
+				}
+				
+				log.debug("Inscribimos usuario con id: " + userId + " en la comunidad con id: " + group.getGroupId() + " (" + group.getName() + ")");
+			}else if(group.getType()==GroupConstants.TYPE_SITE_RESTRICTED && !MembershipRequestLocalServiceUtil.hasMembershipRequest(userId, group.getGroupId(), MembershipRequestConstants.STATUS_PENDING)){
+				MembershipRequestLocalServiceUtil.addMembershipRequest(userId, group.getGroupId(), "Enroll petition", serviceContext);
+				SocialActivityLocalServiceUtil.addActivity(userId, group.getGroupId(), Group.class.getName(), group.getGroupId(), SocialActivityConstants.TYPE_SUBSCRIBE, "", userId);
+				log.debug("Lanzamos peticion de inscripcion del usuario " + userId + " en la comunidad con id: " + group.getGroupId() + " (" + group.getName() + ")");
+			}
+		}else {
+			courseResult = courseResultPersistence.fetchByCourseIdUserId(course.getCourseId(), userId);
+			//Debería tenerlo, pero lo creo si no lo tiene
+			if(courseResult == null) {
+				courseResult = courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
+			}
+		}
+		return courseResult;
+	}
+	
+	public boolean unsubscribeStudent(Course course, long userId, PermissionChecker permissionChecker) throws PortalException {
+		boolean resultUnsubscribe = true;
+		//Eliminamos la membresia
+		log.debug("CourseLocalServiceImpl::unsubscribeStudent::courseId::" + course.getCourseId());
+		log.debug("CourseLocalServiceImpl::unsubscribeStudent::userId::" + userId);
+		if (course.canUnsubscribe(userId, permissionChecker)) {
+			long[] groupIds = new long[] {course.getGroupCreatedId()};
+			GroupLocalServiceUtil.unsetUserGroups(userId, groupIds);
+			SocialActivityLocalServiceUtil.addActivity(userId, course.getGroupId(), Course.class.getName(), course.getCourseId(), SocialActivityConstants.TYPE_UNSUBSCRIBE, "", course.getUserId());
+			
+		}else {
+			resultUnsubscribe = false;
+		}
+		return resultUnsubscribe;
 	}
 	
 	private static final String SMALL_IMAGE_FOLDER_NAME = "Small Image";

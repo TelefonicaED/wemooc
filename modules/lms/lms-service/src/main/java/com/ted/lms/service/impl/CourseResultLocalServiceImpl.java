@@ -15,21 +15,40 @@
 package com.ted.lms.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.MembershipRequestConstants;
+import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.social.kernel.model.SocialActivityConstants;
+import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
+import com.ted.lms.constants.LMSActionKeys;
+import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.Postcondition;
 import com.ted.lms.registry.PostconditionRegistryUtil;
+import com.ted.lms.security.permission.resource.CoursePermission;
 import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * The implementation of the course result local service.
@@ -52,6 +71,8 @@ public class CourseResultLocalServiceImpl
 	 *
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseResultLocalServiceUtil} to access the course result local service.
 	 */
+	
+	private static final Log log = LogFactoryUtil.getLog(CourseResultLocalServiceImpl.class);
 	
 	public List<CourseResult> getCourseResults(long courseId){
 		
@@ -114,35 +135,5 @@ public class CourseResultLocalServiceImpl
 		}
 		return super.updateCourseResult(courseResult);
 	}
-	
-	public CourseResult enrollStudent(Course course, long userId, ServiceContext serviceContext) {
-		
-		CourseResult courseResult = null;
-		
-		//Comprobamos que no esté ya inscrito
-		if(!GroupLocalServiceUtil.hasUserGroup(userId, course.getGroupCreatedId())) {
-			
-			//Comprobamos que se cumplan todos los prerequisitos
-			List<Prerequisite> listPrerequiste = PrerequisiteRelationLocalServiceUtil.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), course.getCourseId());
-			boolean isPassed = true;
-			int i = 0;
-			while(isPassed && listPrerequiste.size() > i) {
-				isPassed = listPrerequiste.get(i).isPassed(userId);
-			}
-			if(isPassed) {
-				
-			}
-		}else {
-			courseResult = courseResultPersistence.fetchByCourseIdUserId(course.getCourseId(), userId);
-			//Debería tenerlo, pero lo creo si no lo tiene
-			if(courseResult == null) {
-				courseResult = courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
-			}
-		}
-		return courseResult;
-	}
-	
-	public boolean unsubscribeStudent(Course course, long userId) {
-		return true;
-	}
+
 }

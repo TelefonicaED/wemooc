@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -37,11 +38,14 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.Course;
+import com.ted.lms.model.CourseResult;
 
 import java.io.Serializable;
 
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -117,6 +121,20 @@ public interface CourseLocalService extends BaseLocalService,
 		boolean welcome, String welcomeSubject, String welcomeMsg,
 		boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status,
 		ServiceContext serviceContext);
+
+	/**
+	* Método para buscar cursos
+	*/
+	public int countCourses(long companyId, String freeText, String language,
+		int status, long parentCourseId, long groupId,
+		LinkedHashMap<String, Object> params);
+
+	/**
+	* Método para buscar cursos
+	*/
+	public int countCourses(long companyId, String title, String description,
+		String language, int status, long parentCourseId, long groupId,
+		LinkedHashMap<String, Object> params, boolean andOperator);
 
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
@@ -212,6 +230,10 @@ public interface CourseLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
+	public CourseResult enrollStudent(Course course, long userId,
+		ServiceContext serviceContext, PermissionChecker permissionChecker)
+		throws PortalException, InscriptionException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Course fetchCourse(long courseId);
 
@@ -227,6 +249,9 @@ public interface CourseLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Course> getChildsRegistredUser(long parentCourseId, long userId);
 
 	/**
 	* Returns the course with the primary key.
@@ -318,6 +343,27 @@ public interface CourseLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Course> searchCourses(long companyId, String freeText,
+		String language, int status, long parentCourseId, long groupId,
+		LinkedHashMap<String, Object> params, int start, int end,
+		OrderByComparator<Course> obc);
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Course> searchCourses(long companyId, String title,
+		String description, String language, int status, long parentCourseId,
+		long groupId, LinkedHashMap<String, Object> params,
+		boolean andOperator, int start, int end, OrderByComparator<Course> obc);
+
+	public boolean unsubscribeStudent(Course course, long userId,
+		PermissionChecker permissionChecker) throws PortalException;
 
 	/**
 	* Actualiza el estado del asset correspondiente al curso

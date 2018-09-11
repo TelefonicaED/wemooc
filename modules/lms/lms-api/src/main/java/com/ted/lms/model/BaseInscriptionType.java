@@ -1,9 +1,12 @@
 package com.ted.lms.model;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
+import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil;
-import com.ted.lms.service.CourseResultLocalService;
+import com.ted.lms.service.CourseLocalService;
 
 import javax.portlet.PortletResponse;
 
@@ -17,20 +20,21 @@ public abstract class BaseInscriptionType implements InscriptionType {
 	protected Course course;
 	protected ServiceContext serviceContext;
 
-	public BaseInscriptionType(Course course, ServiceContext serviceContext, CourseResultLocalService courseResultLocalService) {
+	public BaseInscriptionType(Course course, ServiceContext serviceContext, CourseLocalService courseLocalService) {
 		this.course = course;
 		this.serviceContext = serviceContext;
-		this.courseResultLocalService = courseResultLocalService;
+		this.courseLocalService = courseLocalService;
 	}
 	
-	public CourseResult enrollUser(long userId) {
-		return courseResultLocalService.enrollStudent(course, userId);
+	@Override
+	public CourseResult enrollUser(long userId, PermissionChecker permissionChecker) throws PortalException, InscriptionException {
+		return courseLocalService.enrollStudent(course, userId, serviceContext, permissionChecker);
 	}
 	
-	public boolean unsubscribeUser(long userId) {
-		return courseResultLocalService.unsubscribeStudent(course, userId);
+	@Override
+	public boolean unsubscribeUser(long userId, PermissionChecker permissionChecker) throws PortalException {
+		return courseLocalService.unsubscribeStudent(course, userId, permissionChecker);
 	}
-	
 	
 	@Override
 	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
@@ -53,5 +57,5 @@ public abstract class BaseInscriptionType implements InscriptionType {
 	
 	private InscriptionTypeFactory calificationTypeFactory;
 	
-	private CourseResultLocalService courseResultLocalService;
+	protected CourseLocalService courseLocalService;
 }

@@ -15,10 +15,10 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 @Component(
-	    immediate = true,
-	    property = {},
-	    service = CourseEvalFactory.class
-	)
+    immediate = true,
+    property = {},
+    service = CourseEvalFactory.class
+)
 public class PonderatedCourseEvalFactory extends BaseCourseEvalFactory{
 	
 	public static final long TYPE = 3;

@@ -37,8 +37,6 @@ public abstract class BaseCalificationTypeFactory implements CalificationTypeFac
 			ResourceActionsUtil.getModelResourceNamePrefix();
 
 		String key = modelResourceNamePrefix.concat(getClassName());
-		
-		System.out.println("key: " + key);
 
 		String value = LanguageUtil.get(locale, key, null);
 

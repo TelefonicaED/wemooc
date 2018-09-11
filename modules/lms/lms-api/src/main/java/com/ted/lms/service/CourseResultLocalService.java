@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 
 import java.io.Serializable;
@@ -169,9 +168,6 @@ public interface CourseResultLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
-	public CourseResult enrollStudent(Course course, long userId,
-		ServiceContext serviceContext);
-
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public CourseResult fetchCourseResult(long crId);
 
@@ -236,8 +232,6 @@ public interface CourseResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
-
-	public boolean unsubscribeStudent(Course course, long userId);
 
 	/**
 	* Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

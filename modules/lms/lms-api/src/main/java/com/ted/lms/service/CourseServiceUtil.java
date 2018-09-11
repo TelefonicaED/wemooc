@@ -141,6 +141,15 @@ public class CourseServiceUtil {
 			goodbyeSubject, goodbyeMsg, status, serviceContext);
 	}
 
+	public static int countCourses(long companyId, String title,
+		String description, String language, int status, long parentCourseId,
+		long groupId, java.util.LinkedHashMap<String, Object> params,
+		boolean andOperator) {
+		return getService()
+				   .countCourses(companyId, title, description, language,
+			status, parentCourseId, groupId, params, andOperator);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -148,6 +157,21 @@ public class CourseServiceUtil {
 	*/
 	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
+	}
+
+	/**
+	* Método para buscar cursos
+	*/
+	public static java.util.List<com.ted.lms.model.Course> searchCourses(
+		long companyId, String title, String description, String language,
+		int status, long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
+		return getService()
+				   .searchCourses(companyId, title, description, language,
+			status, parentCourseId, groupId, params, andOperator, start, end,
+			obc);
 	}
 
 	public static void updateSmallImage(long courseId, String imageString,

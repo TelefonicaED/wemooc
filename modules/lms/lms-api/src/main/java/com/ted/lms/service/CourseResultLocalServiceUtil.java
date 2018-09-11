@@ -180,12 +180,6 @@ public class CourseResultLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static com.ted.lms.model.CourseResult enrollStudent(
-		com.ted.lms.model.Course course, long userId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return getService().enrollStudent(course, userId, serviceContext);
-	}
-
 	public static com.ted.lms.model.CourseResult fetchCourseResult(long crId) {
 		return getService().fetchCourseResult(crId);
 	}
@@ -268,11 +262,6 @@ public class CourseResultLocalServiceUtil {
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);
-	}
-
-	public static boolean unsubscribeStudent(com.ted.lms.model.Course course,
-		long userId) {
-		return getService().unsubscribeStudent(course, userId);
 	}
 
 	/**

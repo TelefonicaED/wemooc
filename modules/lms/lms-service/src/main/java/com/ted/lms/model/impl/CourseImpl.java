@@ -14,13 +14,33 @@
 
 package com.ted.lms.model.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.MembershipRequestConstants;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.model.impl.GroupImpl;
 import com.ted.lms.constants.CourseConstants;
+import com.ted.lms.constants.LMSActionKeys;
+import com.ted.lms.exception.InscriptionException;
+import com.ted.lms.model.Course;
+import com.ted.lms.model.CourseResult;
+import com.ted.lms.security.permission.resource.CoursePermission;
+import com.ted.lms.service.CourseResultLocalServiceUtil;
+import com.ted.prerequisite.model.Prerequisite;
+import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -66,24 +86,19 @@ public class CourseImpl extends CourseBaseImpl {
 
 	@Override
 	public JSONObject getCourseExtraDataJSON() {
-		System.out.println("extraData: " + extraData);
 		if(extraData == null) {
-			System.out.println("extraData no cargado todavía");
 			try {
-				System.out.println("cargamos extraDatA: " + getCourseExtraData());
 				extraData = JSONFactoryUtil.createJSONObject(getCourseExtraData());
 			} catch (JSONException e) {
 				e.printStackTrace();
 				extraData = JSONFactoryUtil.createJSONObject();
 			}
 		}
-		System.out.println("devolvemos: " + extraData.toJSONString());
 		return extraData;
 	}
 	
 	@Override
 	public void setCourseExtraData(String courseExtraData) {
-		System.out.println("setextraData: " + courseExtraData);
 		try {
 			extraData = JSONFactoryUtil.createJSONObject(courseExtraData);
 		} catch (JSONException e) {
@@ -102,6 +117,118 @@ public class CourseImpl extends CourseBaseImpl {
 	
 	public JSONObject getCourseEvalJSON() {
 		return getCourseExtraDataJSON().getJSONObject(CourseConstants.JSON_COURSE_EVAL);
+	}
+	
+	public boolean isRegistredUser(long userId) {
+		return GroupLocalServiceUtil.hasUserGroup(userId,getGroupCreatedId());
+	}
+	
+	public CourseResult getResultUser(long userId) {
+		return CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), userId);
+	}
+	
+	public Group getGroup() {
+		if (_group == NULL_GROUP) {
+			return null;
+		}
+
+		if (_group == null) {
+			Group group = GroupLocalServiceUtil.fetchGroup(getGroupCreatedId());
+
+			if (group == null) {
+				_group = NULL_GROUP;
+			}
+			else {
+				_group = group;
+			}
+		}
+
+		return _group;
+	}
+	
+	public boolean canUnsubscribe(long userId, PermissionChecker permissionChecker) throws PortalException {
+		Date now = new Date();
+		
+		System.out.println("pertenezco: " + GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId()));
+		System.out.println("getRegistrationStartDate().after(now): " + getRegistrationStartDate().before(now));
+		System.out.println("getRegistrationEndDate().before(now): " + getRegistrationEndDate().after(now));
+		System.out.println("CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER): " + CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER));
+		
+		if (GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId()) && getRegistrationStartDate().before(now) && 
+				getRegistrationEndDate().after(now) && CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER)) {
+			CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), userId); 
+			Group group = GroupLocalServiceUtil.getGroup(getGroupCreatedId());
+
+			return courseResult == null || courseResult.getPassedDate() == null || (group.getType() == GroupConstants.TYPE_SITE_OPEN);
+		}else {
+			return false;
+		}
+	}
+	
+	public boolean canEnroll(long userId, Locale locale, PermissionChecker permissionChecker) throws PortalException, InscriptionException {
+		//1.Comprobamos que no esté ya inscrito
+		if(!GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId())) {
+			Date now = new Date();
+			
+			/*Date startDate = course.getStartDate();
+			Date endDate = course.getEndDate();
+			
+			if(teamId>0){
+				Schedule sch = scheduleLocalService.getScheduleByTeamId(teamId);	
+				if(sch!=null){
+					startDate = sch.getStartDate();
+					endDate = sch.getEndDate();
+				}
+			}*/
+			if(CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER)){
+				//2. Fecha actual dentro del periodo de inscripcion
+				if((getRegistrationStartDate().before(now) && getRegistrationEndDate().after(now))){
+	
+					//3.Comprobamos que se cumplan todos los prerequisitos
+					List<Prerequisite> listPrerequiste = PrerequisiteRelationLocalServiceUtil.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), getCourseId());
+					boolean isPassed = true;
+					int i = 0;
+					while(isPassed && listPrerequiste.size() > i) {
+						isPassed = listPrerequiste.get(i).isPassed(userId);
+						i++;
+					}
+					if(isPassed) {
+						// 4. El mÃ¡ximo de inscripciones del curso no ha sido superado
+						if(getMaxUsers()<=0 || UserLocalServiceUtil.getGroupUsersCount(getGroupCreatedId()) < getMaxUsers()){
+							//5. Comprobamos el tipo de inscripción
+							Group group = GroupLocalServiceUtil.getGroup(getGroupCreatedId());
+							if(group.getType()==GroupConstants.TYPE_SITE_OPEN){
+								return true;
+							}else{
+								if(group.getType()==GroupConstants.TYPE_SITE_RESTRICTED){
+									if(!MembershipRequestLocalServiceUtil.hasMembershipRequest(userId, group.getGroupId(), MembershipRequestConstants.STATUS_PENDING)){
+										return true;
+									}
+								}else{
+									if(group.getType()==GroupConstants.TYPE_SITE_PRIVATE){
+										//Debería lanzar una excepción indicando que es privado y que no se puede
+										throw new InscriptionException("site-private", LanguageUtil.get(locale, "inscription.error.site-private"));
+									}
+								}
+							}
+						}else {
+							throw new InscriptionException("max-users", LanguageUtil.get(locale, "inscription.error.max-users"));
+						}
+					}else {
+						//Debería lanzar una excepción indicando que no se cumplen los prerequisitos
+						throw new InscriptionException("prerequisites", LanguageUtil.get(locale, "inscription.error.prerequisites"));
+					}
+				}else {
+					//Debería lanzar una excepción indicando que está en periodo de ejecución
+					throw new InscriptionException("registration-dates", LanguageUtil.get(locale, "inscription.error.registration-dates"));
+				}
+			}else {
+				throw new InscriptionException("permission-register", LanguageUtil.get(locale, "inscription.error.permission-register"));
+			}
+			return false;
+		}else {
+			return false;
+		}
 	}
 	
 }

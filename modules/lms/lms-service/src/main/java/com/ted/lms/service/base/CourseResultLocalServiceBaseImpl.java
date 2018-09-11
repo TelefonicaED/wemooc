@@ -46,6 +46,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.service.CourseResultLocalService;
+import com.ted.lms.service.persistence.CourseFinder;
 import com.ted.lms.service.persistence.CoursePersistence;
 import com.ted.lms.service.persistence.CourseResultPersistence;
 import com.ted.lms.service.persistence.LearningActivityPersistence;
@@ -358,6 +359,24 @@ public abstract class CourseResultLocalServiceBaseImpl
 	 */
 	public void setCoursePersistence(CoursePersistence coursePersistence) {
 		this.coursePersistence = coursePersistence;
+	}
+
+	/**
+	 * Returns the course finder.
+	 *
+	 * @return the course finder
+	 */
+	public CourseFinder getCourseFinder() {
+		return courseFinder;
+	}
+
+	/**
+	 * Sets the course finder.
+	 *
+	 * @param courseFinder the course finder
+	 */
+	public void setCourseFinder(CourseFinder courseFinder) {
+		this.courseFinder = courseFinder;
 	}
 
 	/**
@@ -867,6 +886,8 @@ public abstract class CourseResultLocalServiceBaseImpl
 	protected com.ted.lms.service.CourseLocalService courseLocalService;
 	@BeanReference(type = CoursePersistence.class)
 	protected CoursePersistence coursePersistence;
+	@BeanReference(type = CourseFinder.class)
+	protected CourseFinder courseFinder;
 	@BeanReference(type = CourseResultLocalService.class)
 	protected CourseResultLocalService courseResultLocalService;
 	@BeanReference(type = CourseResultPersistence.class)

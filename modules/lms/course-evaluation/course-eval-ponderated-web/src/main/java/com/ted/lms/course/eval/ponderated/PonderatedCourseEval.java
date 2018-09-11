@@ -232,7 +232,6 @@ public class PonderatedCourseEval extends BaseCourseEval{
 			long actId = 0;
 			for(int i=0; i < reqElements.length(); i++){
 				actId = reqElements.getJSONObject(i).getLong(PonderatedConstants.JSON_ACT_ID);
-				System.out.println("actId: " + actId);
 				larn = learningActivityLocalService.fetchLearningActivity(actId);
 				if(larn!=null && larn.getGroupId()==course.getGroupCreatedId() && larn.isRequired()){
 					result.add(actId);

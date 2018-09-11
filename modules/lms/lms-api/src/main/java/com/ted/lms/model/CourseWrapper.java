@@ -297,6 +297,21 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	@Override
+	public boolean canEnroll(long userId, java.util.Locale locale,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.ted.lms.exception.InscriptionException {
+		return _course.canEnroll(userId, locale, permissionChecker);
+	}
+
+	@Override
+	public boolean canUnsubscribe(long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _course.canUnsubscribe(userId, permissionChecker);
+	}
+
+	@Override
 	public Object clone() {
 		return new CourseWrapper((Course)_course.clone());
 	}
@@ -522,6 +537,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getGoodbyeSubject();
 	}
 
+	@Override
+	public com.liferay.portal.kernel.model.Group getGroup() {
+		return _course.getGroup();
+	}
+
 	/**
 	* Returns the group created ID of this course.
 	*
@@ -615,6 +635,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public Date getRegistrationStartDate() {
 		return _course.getRegistrationStartDate();
+	}
+
+	@Override
+	public CourseResult getResultUser(long userId) {
+		return _course.getResultUser(userId);
 	}
 
 	/**
@@ -921,6 +946,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public boolean isPending() {
 		return _course.isPending();
+	}
+
+	@Override
+	public boolean isRegistredUser(long userId) {
+		return _course.isRegistredUser(userId);
 	}
 
 	/**

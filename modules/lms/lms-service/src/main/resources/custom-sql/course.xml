@@ -1,0 +1,117 @@
+<custom-sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.findByC">
+		<![CDATA[
+			SELECT
+				DISTINCT Lms_Course.*
+			FROM
+				Lms_Course
+			INNER JOIN 
+				group_ 
+					ON Lms_Course.groupCreatedId = group_.groupId
+			[$JOIN$]
+			WHERE
+				[$WHERE$]
+				(Lms_Course.companyId = ?)
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.countC">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT Lms_Course.courseId) AS COUNT_VALUE
+			FROM
+				Lms_Course
+			INNER JOIN 
+				group_ 
+					ON Lms_Course.groupCreatedId = group_.groupId
+			[$JOIN$]
+			WHERE
+				[$WHERE$]
+				(Lms_Course.companyId = ? || ? = 0) 
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.whereTitleDescription">
+		WHERE 
+		(
+			(IF (ExtractValue(Lms_Course.title, '//Title[@language-id=\"[$LANGUAGE$]\"]' )='', ExtractValue(Lms_Course.title, '//root[@default-locale]//Title'), ExtractValue(Lms_Course.title, '//Title[@language-id=\"[$LANGUAGE$]\"]' )) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
+			(IF (ExtractValue(Lms_Course.description, '//Description[@language-id=\"[$LANGUAGE$]\"]' )='', ExtractValue(Lms_Course.description, '//root[@default-locale]//Description' ), ExtractValue(Lms_Course.description, '//Description[@language-id=\"[$LANGUAGE$]\"]' )) LIKE ? [$AND_OR_NULL_CHECK$])
+		) 
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.whereGroupId">
+		WHERE
+			(Lms_Course.groupId = ?)
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.whereStatus">
+		WHERE
+			(Lms_Course.status = ?)
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.whereParentCourseId">
+		WHERE
+			(Lms_Course.parentCourseId = ? OR (0 = ? AND Lms_Course.parentCourseId IS NULL))
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.joinC_ByAssetEntry">
+		<![CDATA[
+			INNER JOIN 
+				assetentry ae 
+					ON ae.classNameId = [$CLASSNAMEID$]
+						AND ae.classPK = Lms_Course.courseId
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.joinC_ByAssetCategory">
+		<![CDATA[
+			INNER JOIN 
+				assetentries_assetcategories aac[$i$] 
+					ON aac[$i$].entryId = ae.entryId AND aac[$i$].categoryId IN ([$CATEGORYIDS$])
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.joinC_ByAssetTag">
+		<![CDATA[
+			INNER JOIN 
+				assetentries_assettags aat[$i$] 
+					ON aat[$i$].entryId = ae.entryId AND aat[$i$].tagId IN ([$TAGIDS$])	
+		]]>
+	</sql>
+	
+	<sql id="com.ted.lms.service.persistence.CourseFinder.joinC_ByTemplates">
+		<![CDATA[
+			INNER JOIN 
+				 layoutset 
+				 	ON layoutset.groupId = Lms_Course.groupCreatedId 
+			WHERE
+				layoutset.layoutSetPrototypeUuid IN ([$TEMPLATES$])
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.whereVisible">
+		<![CDATA[
+			WHERE (ae.visible = ?)
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.whereType">
+		<![CDATA[
+			WHERE
+				(group_.type_ IN ([$TYPE$]))
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.joinCustomAttribute">
+		<![CDATA[
+			INNER JOIN 
+				expandovalue ev 
+					ON ev.companyId = Lms_Course.companyId 
+						AND ev.classPK = Lms_Course.courseId
+			WHERE
+				(ev.data_ LIKE ? AND ev.tableId = ?	AND ev.columnId = ?)
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.findChildRegistredUser">
+		<![CDATA[
+			SELECT 
+				DISTINCT c.*
+			FROM 
+				lms_course c
+			INNER JOIN 
+				users_groups ug 
+					ON c.groupCreatedId = ug.groupId AND ug.userId = ?
+			WHERE 
+				c.parentCourseId = ? 
+		]]>
+	</sql>
+</custom-sql>

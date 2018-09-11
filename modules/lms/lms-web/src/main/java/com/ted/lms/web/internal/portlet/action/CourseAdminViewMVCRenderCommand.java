@@ -1,13 +1,10 @@
 package com.ted.lms.web.internal.portlet.action;
 
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalServiceUtil;
-
-import java.util.List;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;

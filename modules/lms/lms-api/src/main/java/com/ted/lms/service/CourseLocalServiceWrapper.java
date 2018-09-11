@@ -95,6 +95,28 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	/**
+	* Método para buscar cursos
+	*/
+	@Override
+	public int countCourses(long companyId, String freeText, String language,
+		int status, long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params) {
+		return _courseLocalService.countCourses(companyId, freeText, language,
+			status, parentCourseId, groupId, params);
+	}
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Override
+	public int countCourses(long companyId, String title, String description,
+		String language, int status, long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
+		return _courseLocalService.countCourses(companyId, title, description,
+			language, status, parentCourseId, groupId, params, andOperator);
+	}
+
+	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
 	*
 	* @param courseId the primary key for the new course
@@ -225,6 +247,17 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
+	public com.ted.lms.model.CourseResult enrollStudent(
+		com.ted.lms.model.Course course, long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.ted.lms.exception.InscriptionException {
+		return _courseLocalService.enrollStudent(course, userId,
+			serviceContext, permissionChecker);
+	}
+
+	@Override
 	public com.ted.lms.model.Course fetchCourse(long courseId) {
 		return _courseLocalService.fetchCourse(courseId);
 	}
@@ -245,6 +278,12 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _courseLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.Course> getChildsRegistredUser(
+		long parentCourseId, long userId) {
+		return _courseLocalService.getChildsRegistredUser(parentCourseId, userId);
 	}
 
 	/**
@@ -365,6 +404,43 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Override
+	public java.util.List<com.ted.lms.model.Course> searchCourses(
+		long companyId, String freeText, String language, int status,
+		long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
+		return _courseLocalService.searchCourses(companyId, freeText, language,
+			status, parentCourseId, groupId, params, start, end, obc);
+	}
+
+	/**
+	* Método para buscar cursos
+	*/
+	@Override
+	public java.util.List<com.ted.lms.model.Course> searchCourses(
+		long companyId, String title, String description, String language,
+		int status, long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
+		return _courseLocalService.searchCourses(companyId, title, description,
+			language, status, parentCourseId, groupId, params, andOperator,
+			start, end, obc);
+	}
+
+	@Override
+	public boolean unsubscribeStudent(com.ted.lms.model.Course course,
+		long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.unsubscribeStudent(course, userId,
+			permissionChecker);
 	}
 
 	/**

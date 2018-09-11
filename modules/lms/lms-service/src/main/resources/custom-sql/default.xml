@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<custom-sql>
+	<sql file="custom-sql/moduleresult.xml" />
+	<sql file="custom-sql/learningactivityresult.xml" />
+	<sql file="custom-sql/course.xml" />
+</custom-sql>

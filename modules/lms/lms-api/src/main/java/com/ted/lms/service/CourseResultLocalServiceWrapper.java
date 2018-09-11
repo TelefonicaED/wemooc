@@ -185,14 +185,6 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 	}
 
 	@Override
-	public com.ted.lms.model.CourseResult enrollStudent(
-		com.ted.lms.model.Course course, long userId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _courseResultLocalService.enrollStudent(course, userId,
-			serviceContext);
-	}
-
-	@Override
 	public com.ted.lms.model.CourseResult fetchCourseResult(long crId) {
 		return _courseResultLocalService.fetchCourseResult(crId);
 	}
@@ -286,12 +278,6 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseResultLocalService.getPersistedModel(primaryKeyObj);
-	}
-
-	@Override
-	public boolean unsubscribeStudent(com.ted.lms.model.Course course,
-		long userId) {
-		return _courseResultLocalService.unsubscribeStudent(course, userId);
 	}
 
 	/**

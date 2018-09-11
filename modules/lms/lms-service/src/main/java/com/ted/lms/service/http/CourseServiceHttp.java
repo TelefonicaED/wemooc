@@ -187,6 +187,69 @@ public class CourseServiceHttp {
 		}
 	}
 
+	public static java.util.List<com.ted.lms.model.Course> searchCourses(
+		HttpPrincipal httpPrincipal, long companyId, String title,
+		String description, String language, int status, long parentCourseId,
+		long groupId, java.util.LinkedHashMap<String, Object> params,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
+		try {
+			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
+					"searchCourses", _searchCoursesParameterTypes3);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					companyId, title, description, language, status,
+					parentCourseId, groupId, params, andOperator, start, end,
+					obc);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.util.List<com.ted.lms.model.Course>)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static int countCourses(HttpPrincipal httpPrincipal, long companyId,
+		String title, String description, String language, int status,
+		long parentCourseId, long groupId,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
+		try {
+			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
+					"countCourses", _countCoursesParameterTypes4);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					companyId, title, description, language, status,
+					parentCourseId, groupId, params, andOperator);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return ((Integer)returnObj).intValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(CourseServiceHttp.class);
 	private static final Class<?>[] _addCourseParameterTypes0 = new Class[] {
 			java.util.Map.class, java.util.Map.class, String.class, String.class,
@@ -209,5 +272,15 @@ public class CourseServiceHttp {
 	private static final Class<?>[] _updateSmallImageParameterTypes2 = new Class[] {
 			long.class, String.class, String.class, String.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _searchCoursesParameterTypes3 = new Class[] {
+			long.class, String.class, String.class, String.class, int.class,
+			long.class, long.class, java.util.LinkedHashMap.class, boolean.class,
+			int.class, int.class,
+			com.liferay.portal.kernel.util.OrderByComparator.class
+		};
+	private static final Class<?>[] _countCoursesParameterTypes4 = new Class[] {
+			long.class, String.class, String.class, String.class, int.class,
+			long.class, long.class, java.util.LinkedHashMap.class, boolean.class
 		};
 }

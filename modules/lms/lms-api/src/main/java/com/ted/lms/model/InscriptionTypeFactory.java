@@ -1,6 +1,7 @@
 package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 
 import java.util.Locale;
@@ -17,13 +18,13 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface InscriptionTypeFactory {
 
-	public InscriptionType getInscriptionType(Course course) throws PortalException;
+	public InscriptionType getInscriptionType(Course course, ServiceContext serviceContext) throws PortalException;
 
 	public String getClassName();
 
 	public long getClassNameId();
 
-	public int getType();
+	public long getType();
 
 	public String getTitle(Locale locale);
 	

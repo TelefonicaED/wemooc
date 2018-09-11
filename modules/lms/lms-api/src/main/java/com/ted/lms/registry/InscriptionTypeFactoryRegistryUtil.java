@@ -58,7 +58,7 @@ public class InscriptionTypeFactoryRegistryUtil {
 	}
 
 	public static InscriptionTypeFactory getInscriptionTypeFactoryByType(
-		int type) {
+		long type) {
 
 		return _inscriptionFactoriesMapByClassType.get(type);
 	}
@@ -159,7 +159,7 @@ public class InscriptionTypeFactoryRegistryUtil {
 
 	private static final Map<String, InscriptionTypeFactory>
 		_inscriptionFactoriesMapByClassName = new ConcurrentHashMap<>();
-	private static final Map<Integer, InscriptionTypeFactory>
+	private static final Map<Long, InscriptionTypeFactory>
 		_inscriptionFactoriesMapByClassType = new ConcurrentHashMap<>();
 	private static final ServiceRegistrationMap<InscriptionTypeFactory>
 		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
@@ -200,7 +200,7 @@ public class InscriptionTypeFactoryRegistryUtil {
 							String.valueOf(inscriptionFactory)));
 				}
 	
-				int type = inscriptionFactory.getType();
+				long type = inscriptionFactory.getType();
 	
 				InscriptionTypeFactory typeInscriptionTypeFactory =
 					_inscriptionFactoriesMapByClassType.put(

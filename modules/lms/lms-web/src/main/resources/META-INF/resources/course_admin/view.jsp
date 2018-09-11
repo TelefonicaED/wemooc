@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.service.LearningActivityResultLocalServiceUtil"%>
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.liferay.portal.kernel.service.ServiceContext"%>
 <%@page import="com.ted.lms.model.CourseEval"%>
 <%@page import="com.liferay.portal.kernel.service.ServiceContextFactory"%>
@@ -18,6 +20,8 @@
 <p>
 *****************Métodos calificación***************************
 <%
+
+LearningActivityResultLocalServiceUtil.getRequiredLearningActivityResults(themeDisplay.getScopeGroupId(), themeDisplay.getUserId());
 List<CalificationTypeFactory> calificationFactories = CalificationTypeFactoryRegistryUtil.getCalificationFactories(themeDisplay.getCompanyId());
 List<Course> courses = CourseLocalServiceUtil.getCourses(-1, -1);
 
@@ -27,11 +31,14 @@ for (CalificationTypeFactory calificationFactory : calificationFactories) {
 	calificación: <%=calificationFactory.getTitle(themeDisplay.getLocale()) %>
 	<br/>
 	<%=calificationFactory.getDescription(themeDisplay.getLocale()) %>
-	<%Course course = courses.get(0);
-	CalificationType calification = calificationFactory.getCalificationType(course); %>
-	<%=calificationFactory.getType()%>
-	<%=calification.getMaxValue() %>
-	
+	<%
+	if(Validator.isNotNull(courses)){
+		Course course = courses.get(0);
+		
+		CalificationType calification = calificationFactory.getCalificationType(course); %>
+		<%=calificationFactory.getType()%>
+		<%=calification.getMaxValue() %>
+	<%} %>
 	<liferay-util:include page="<%=calificationFactory.getURLSpecificContent() %>" portletId="<%=calificationFactory.getPortletId() %>">
 	
 	</liferay-util:include>
@@ -54,11 +61,14 @@ for (CourseEvalFactory calificationFactory : evaluationsFactories) {
 	calificación: <%=calificationFactory.getTitle(themeDisplay.getLocale()) %>
 	<br/>
 	<%=calificationFactory.getDescription(themeDisplay.getLocale()) %>
-	<%Course course = courses.get(0);
-	ServiceContext serviceContext = ServiceContextFactory.getInstance(request);
-	CourseEval calification = calificationFactory.getCourseEval(course, serviceContext); %>
-	<%=calificationFactory.getType()%>
+	<%
+	if(Validator.isNotNull(courses)){
+		Course course = courses.get(0);
 	
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(request);
+		CourseEval calification = calificationFactory.getCourseEval(course, serviceContext); %>
+		<%=calificationFactory.getType()%>
+	<%} %>
 	<liferay-util:include page="<%=calificationFactory.getURLSpecificContent() %>" portletId="<%=calificationFactory.getPortletId() %>">
 	
 	</liferay-util:include>

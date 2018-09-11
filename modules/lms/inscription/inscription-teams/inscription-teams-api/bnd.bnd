@@ -1,0 +1,10 @@
+Bundle-Name: inscription-teams-api
+Bundle-SymbolicName: com.ted.lms.inscription.teams.api
+Bundle-Version: 1.0.0
+Export-Package: \
+	com.ted.lms.inscription.teams.constants,\
+	com.ted.lms.inscription.teams.exception,\
+	com.ted.lms.inscription.teams.model,\
+	com.ted.lms.inscription.teams.service,\
+	com.ted.lms.inscription.teams.service.persistence
+-includeresource: META-INF/service.xml=../inscription-teams-service/service.xml

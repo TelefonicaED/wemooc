@@ -14,9 +14,6 @@
 
 package com.ted.lms.service.impl;
 
-import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil;
-import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -30,6 +27,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Course;
@@ -37,6 +35,8 @@ import com.ted.lms.service.base.CourseServiceBaseImpl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -174,5 +174,19 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 		
 		courseLocalService.updateSmallImage(courseId,smallImageSelector, serviceContext);
 		
+	}
+	
+	/**
+	 * Método para buscar cursos
+	 */
+	public List<Course> searchCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, 
+			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end,
+			OrderByComparator<Course> obc){
+		return courseFinder.filterByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator, start, end, obc);
+	}
+	
+	public int countCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
+			boolean andOperator){
+		return courseFinder.filterCountByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator);
 	}
 }

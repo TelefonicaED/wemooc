@@ -2,3 +2,7 @@ Bundle-Name: lms-web
 Bundle-SymbolicName: com.ted.lms.web
 Bundle-Version: 1.0.0
 Export-Package: com.ted.lms.web.internal.portlet.constants
+-jsp: *.jsp,*.jspf
+-plugin.bundle: com.liferay.ant.bnd.resource.bundle.ResourceBundleLoaderAnalyzerPlugin
+-plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin
+-sources: true
