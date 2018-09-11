@@ -1,9 +1,10 @@
 Bundle-Name: prerequisite-api
-Bundle-SymbolicName: prerequisite.api
+Bundle-SymbolicName: com.ted.prerequisite.api
 Bundle-Version: 1.0.0
-Export-Package:\
-	prerequisite.exception,\
-	prerequisite.model,\
-	prerequisite.service,\
-	prerequisite.service.persistence
+Export-Package: \
+	com.ted.prerequisite.exception,\
+	com.ted.prerequisite.model,\
+	com.ted.prerequisite.service,\
+	com.ted.prerequisite.service.persistence,\
+	com.ted.prerequisite.registry
 -includeresource: META-INF/service.xml=../prerequisite-service/service.xml

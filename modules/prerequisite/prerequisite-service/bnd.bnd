@@ -1,5 +1,5 @@
 Bundle-Name: prerequisite-service
-Bundle-SymbolicName: prerequisite.service
+Bundle-SymbolicName: com.ted.prerequisite.service
 Bundle-Version: 1.0.0
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
