@@ -86,7 +86,7 @@ public class CourseLocalServiceUtil {
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, String summary,
 		String friendlyURL, long parentCourseId,
-		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
 		java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, long layoutSetPrototypeId,
@@ -97,7 +97,7 @@ public class CourseLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 		return getService()
 				   .addCourse(titleMap, descriptionMap, summary, friendlyURL,
-			parentCourseId, smallImageImageSelector, registrationStartDate,
+			parentCourseId, smallImageSelector, registrationStartDate,
 			registrationEndDate, executionStartDate, executionEndDate,
 			layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId,
 			calificationType, maxUsers, welcome, welcomeSubject, welcomeMsg,

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<beans
+	default-destroy-method="destroy"
+	default-init-method="afterPropertiesSet"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+>
+	<bean class="com.ted.audit.db.service.impl.AuditEntryLocalServiceImpl" id="com.ted.audit.db.service.AuditEntryLocalService" />
+	<bean class="com.ted.audit.db.service.persistence.impl.AuditEntryPersistenceImpl" id="com.ted.audit.db.service.persistence.AuditEntryPersistence" parent="basePersistence" />
+</beans>

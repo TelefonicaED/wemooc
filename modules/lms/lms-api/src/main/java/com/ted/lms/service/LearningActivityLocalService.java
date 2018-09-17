@@ -242,6 +242,9 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getLearningActivitiesCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getLearningActivitiesOfModuleCount(long moduleId);
+
 	/**
 	* Returns the learning activity with the primary key.
 	*

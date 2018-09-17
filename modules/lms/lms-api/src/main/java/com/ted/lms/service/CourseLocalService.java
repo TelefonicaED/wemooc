@@ -113,7 +113,7 @@ public interface CourseLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Course addCourse(Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, String summary, String friendlyURL,
-		long parentCourseId, ImageSelector smallImageImageSelector,
+		long parentCourseId, ImageSelector smallImageSelector,
 		Date registrationStartDate, Date registrationEndDate,
 		Date executionStartDate, Date executionEndDate,
 		long layoutSetPrototypeId, int typeSite, long inscriptionType,

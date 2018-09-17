@@ -74,6 +74,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		attributes.put("startDate", getStartDate());
 		attributes.put("endDate", getEndDate());
 		attributes.put("allowedTime", getAllowedTime());
+		attributes.put("moduleEvalId", getModuleEvalId());
 		attributes.put("moduleExtraData", getModuleExtraData());
 		attributes.put("status", getStatus());
 		attributes.put("statusByUserId", getStatusByUserId());
@@ -173,6 +174,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 
 		if (allowedTime != null) {
 			setAllowedTime(allowedTime);
+		}
+
+		Long moduleEvalId = (Long)attributes.get("moduleEvalId");
+
+		if (moduleEvalId != null) {
+			setModuleEvalId(moduleEvalId);
 		}
 
 		String moduleExtraData = (String)attributes.get("moduleExtraData");
@@ -365,6 +372,16 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public Date getModifiedDate() {
 		return _module.getModifiedDate();
+	}
+
+	/**
+	* Returns the module eval ID of this module.
+	*
+	* @return the module eval ID of this module
+	*/
+	@Override
+	public long getModuleEvalId() {
+		return _module.getModuleEvalId();
 	}
 
 	/**
@@ -862,6 +879,16 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
 		_module.setModifiedDate(modifiedDate);
+	}
+
+	/**
+	* Sets the module eval ID of this module.
+	*
+	* @param moduleEvalId the module eval ID of this module
+	*/
+	@Override
+	public void setModuleEvalId(long moduleEvalId) {
+		_module.setModuleEvalId(moduleEvalId);
 	}
 
 	/**

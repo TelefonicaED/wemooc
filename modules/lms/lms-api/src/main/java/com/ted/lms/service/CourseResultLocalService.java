@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.CourseResult;
+import com.ted.lms.model.ModuleResult;
 
 import java.io.Serializable;
 
@@ -241,4 +242,7 @@ public interface CourseResultLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public CourseResult updateCourseResult(CourseResult courseResult);
+
+	public CourseResult updateCourseResult(ModuleResult moduleResult,
+		ServiceContext serviceContext);
 }

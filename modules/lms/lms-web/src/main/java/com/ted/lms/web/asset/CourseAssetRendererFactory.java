@@ -124,7 +124,7 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 	private CourseLocalService courseLocalService;
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

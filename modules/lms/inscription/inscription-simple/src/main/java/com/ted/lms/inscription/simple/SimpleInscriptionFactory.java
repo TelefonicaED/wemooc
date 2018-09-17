@@ -45,13 +45,13 @@ public class SimpleInscriptionFactory extends BaseInscriptionTypeFactory{
 	}
 	
 	@Reference(
-			target = "(bundle.symbolic.name=com.ted.lms.inscription.simple)", unbind = "-"
-		)
-		public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
+		unbind = "-"
+	)
+	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 
-			this.resourceBundleLoader = resourceBundleLoader;
-		}
+		this.resourceBundleLoader = resourceBundleLoader;
+	}
 
-		protected ResourceBundleLoader resourceBundleLoader;
+	protected ResourceBundleLoader resourceBundleLoader;
 
 }

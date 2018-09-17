@@ -12,12 +12,13 @@ import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.impl.LearningActivityResultImpl;
 import com.ted.lms.service.persistence.LearningActivityResultFinder;
 
- 
+import java.util.Iterator;
 import java.util.List;
 
 public class LearningActivityResultFinderImpl extends LearningActivityResultFinderBaseImpl implements LearningActivityResultFinder{
 	
 	public static final String FIND_REQUIRED_LEARNING_ACTIVITY_RESULTS = LearningActivityResultFinder.class.getName() + ".findRequiredLearningActivityResults";
+	public static final String COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS_BY_MODULE = LearningActivityResultFinder.class.getName() + ".countRequiredLearningActivityResultsByModule";
 	
 	private static final Log log = LogFactoryUtil.getLog(LearningActivityResultFinderImpl.class);
 	
@@ -53,6 +54,48 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 		}
 		
 		return listLearningActivityResults;
+	}
+	
+	@Override
+	public int countRequiredLearningActivityResultsByModule(long moduleId, long userId) {
+
+		Session session = null;
+		
+		int countLearningActivities = 0;
+
+		try {
+			session = openSession();
+
+			String sql = customSQL.get(getClass(), COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS_BY_MODULE);
+			log.debug("********sql: " + sql);
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addEntity("lms_learningactivityresult", LearningActivityResultImpl.class);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(moduleId);
+			qPos.add(userId);
+
+			Iterator<Integer> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Integer count = itr.next();
+
+				if (count != null) {
+					countLearningActivities = count.intValue();
+				}
+			}
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		
+		return countLearningActivities;
 	}
 	
 	@ServiceReference(type=CustomSQL.class)

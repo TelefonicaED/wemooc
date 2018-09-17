@@ -56,7 +56,7 @@ public class PercentCalificationTypeFactory extends BaseCalificationTypeFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.calification.percent.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

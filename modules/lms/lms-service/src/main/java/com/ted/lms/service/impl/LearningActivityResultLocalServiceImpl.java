@@ -48,4 +48,8 @@ public class LearningActivityResultLocalServiceImpl
 	public LearningActivityResult getLearningActivityResult(long actId, long userId) {
 		return learningActivityResultPersistence.fetchByActIdUserId(actId, userId);
 	}
+	
+	public int getRequiredLearningActivityResultsByModuleCount(long moduleId, long userId){
+		return learningActivityResultFinder.countRequiredLearningActivityResultsByModule(moduleId, userId);
+	}
 }

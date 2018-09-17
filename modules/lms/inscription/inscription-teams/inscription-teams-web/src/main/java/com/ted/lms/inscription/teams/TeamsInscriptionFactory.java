@@ -51,7 +51,7 @@ public class TeamsInscriptionFactory extends BaseInscriptionTypeFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.inscription.teams.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

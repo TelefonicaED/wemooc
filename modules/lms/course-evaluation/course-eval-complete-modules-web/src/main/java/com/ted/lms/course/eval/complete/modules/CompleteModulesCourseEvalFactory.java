@@ -53,7 +53,7 @@ public class CompleteModulesCourseEvalFactory extends BaseCourseEvalFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.course.eval.complete.modules.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

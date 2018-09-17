@@ -40,7 +40,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public boolean updateCourse(long userId) throws SystemException {
+	public CourseResult updateCourse(long userId) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
 		long courseId = course.getCourseId();
 		CourseResult courseResult = courseResultLocalService.getByCourseIdUserId(courseId, userId);
@@ -51,9 +51,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 		
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
 		
-		updateCourseResult(courseResult, userId, lresult);
-
-		return true;
+		return updateCourseResult(courseResult, userId, lresult);
 	}
 
 	@Override
@@ -67,7 +65,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public boolean recalculateCourse(long userId) throws SystemException {
+	public CourseResult recalculateCourse(long userId) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
 
 		CourseResult courseResult = courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
@@ -79,12 +77,12 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 		}
 
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
-			updateCourseResult(courseResult, userId, lresult);
+			courseResult = updateCourseResult(courseResult, userId, lresult);
 		}
-		return true;	
+		return courseResult;	
 	}
 	
-	public void updateCourseResult(CourseResult courseResult, long userId, List<LearningActivityResult> lresult) {
+	public CourseResult updateCourseResult(CourseResult courseResult, long userId, List<LearningActivityResult> lresult) {
 		
 		long groupCreatedId = course.getGroupCreatedId();
 		
@@ -171,7 +169,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 			courseResult.setPassedDate(new Date());
 		}
 		log.debug("---Course Passed Date "+courseResult.getPassedDate());
-		courseResultLocalService.updateCourseResult(courseResult);
+		return courseResultLocalService.updateCourseResult(courseResult);
 	}
 	
 	@Override

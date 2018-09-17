@@ -30,8 +30,7 @@ public class LearningActivityActivityInterpreter extends BaseSocialActivityInter
 	
 	@Reference(
 		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(bundle.symbolic.name=com.ted.lms.web)"
+		policyOption = ReferencePolicyOption.GREEDY
 	)
 	private volatile ResourceBundleLoader resourceBundleLoader;
 	

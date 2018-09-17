@@ -2,6 +2,7 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 
 import java.util.Locale;
@@ -21,13 +22,13 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface ModuleEvalFactory {
 
-	public ModuleEval getModuleEval(Module module) throws PortalException;
+	public ModuleEval getModuleEval(Module module, ServiceContext serviceContext) throws PortalException;
 
 	public String getClassName();
 
 	public long getClassNameId();
 
-	public int getType();
+	public long getType();
 
 	public String getTitle(Locale locale);
 	

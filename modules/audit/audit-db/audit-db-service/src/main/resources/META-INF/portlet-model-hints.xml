@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ted.audit.db.model.AuditEntry">
+		<field name="auditId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="classNameId" type="long" />
+		<field name="classPK" type="long" />
+		<field name="associationClassPK" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="startDate" type="Date" />
+		<field name="endDate" type="Date" />
+		<field name="actionId" type="int" />
+		<field name="extradata" type="String" />
+	</model>
+</model-hints>

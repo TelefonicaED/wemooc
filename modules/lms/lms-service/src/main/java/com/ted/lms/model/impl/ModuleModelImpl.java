@@ -96,6 +96,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 			{ "startDate", Types.TIMESTAMP },
 			{ "endDate", Types.TIMESTAMP },
 			{ "allowedTime", Types.BIGINT },
+			{ "moduleEvalId", Types.BIGINT },
 			{ "moduleExtraData", Types.VARCHAR },
 			{ "status", Types.INTEGER },
 			{ "statusByUserId", Types.BIGINT },
@@ -120,6 +121,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		TABLE_COLUMNS_MAP.put("startDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("allowedTime", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("moduleEvalId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("moduleExtraData", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("statusByUserId", Types.BIGINT);
@@ -127,7 +129,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_Module (uuid_ VARCHAR(75) null,moduleId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title STRING null,description STRING null,smallImageId LONG,order_ LONG,startDate DATE null,endDate DATE null,allowedTime LONG,moduleExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_Module (uuid_ VARCHAR(75) null,moduleId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,title STRING null,description STRING null,smallImageId LONG,order_ LONG,startDate DATE null,endDate DATE null,allowedTime LONG,moduleEvalId LONG,moduleExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_Module";
 	public static final String ORDER_BY_JPQL = " ORDER BY module.order ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_Module.order_ ASC";
@@ -176,6 +178,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		model.setStartDate(soapModel.getStartDate());
 		model.setEndDate(soapModel.getEndDate());
 		model.setAllowedTime(soapModel.getAllowedTime());
+		model.setModuleEvalId(soapModel.getModuleEvalId());
 		model.setModuleExtraData(soapModel.getModuleExtraData());
 		model.setStatus(soapModel.getStatus());
 		model.setStatusByUserId(soapModel.getStatusByUserId());
@@ -260,6 +263,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		attributes.put("startDate", getStartDate());
 		attributes.put("endDate", getEndDate());
 		attributes.put("allowedTime", getAllowedTime());
+		attributes.put("moduleEvalId", getModuleEvalId());
 		attributes.put("moduleExtraData", getModuleExtraData());
 		attributes.put("status", getStatus());
 		attributes.put("statusByUserId", getStatusByUserId());
@@ -362,6 +366,12 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 		if (allowedTime != null) {
 			setAllowedTime(allowedTime);
+		}
+
+		Long moduleEvalId = (Long)attributes.get("moduleEvalId");
+
+		if (moduleEvalId != null) {
+			setModuleEvalId(moduleEvalId);
 		}
 
 		String moduleExtraData = (String)attributes.get("moduleExtraData");
@@ -808,6 +818,17 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 	@JSON
 	@Override
+	public long getModuleEvalId() {
+		return _moduleEvalId;
+	}
+
+	@Override
+	public void setModuleEvalId(long moduleEvalId) {
+		_moduleEvalId = moduleEvalId;
+	}
+
+	@JSON
+	@Override
 	public String getModuleExtraData() {
 		if (_moduleExtraData == null) {
 			return "";
@@ -1101,6 +1122,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		moduleImpl.setStartDate(getStartDate());
 		moduleImpl.setEndDate(getEndDate());
 		moduleImpl.setAllowedTime(getAllowedTime());
+		moduleImpl.setModuleEvalId(getModuleEvalId());
 		moduleImpl.setModuleExtraData(getModuleExtraData());
 		moduleImpl.setStatus(getStatus());
 		moduleImpl.setStatusByUserId(getStatusByUserId());
@@ -1275,6 +1297,8 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 		moduleCacheModel.allowedTime = getAllowedTime();
 
+		moduleCacheModel.moduleEvalId = getModuleEvalId();
+
 		moduleCacheModel.moduleExtraData = getModuleExtraData();
 
 		String moduleExtraData = moduleCacheModel.moduleExtraData;
@@ -1309,7 +1333,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(41);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1341,6 +1365,8 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		sb.append(getEndDate());
 		sb.append(", allowedTime=");
 		sb.append(getAllowedTime());
+		sb.append(", moduleEvalId=");
+		sb.append(getModuleEvalId());
 		sb.append(", moduleExtraData=");
 		sb.append(getModuleExtraData());
 		sb.append(", status=");
@@ -1358,7 +1384,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(64);
+		StringBundler sb = new StringBundler(67);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.model.Module");
@@ -1425,6 +1451,10 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 		sb.append(getAllowedTime());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>moduleEvalId</column-name><column-value><![CDATA[");
+		sb.append(getModuleEvalId());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>moduleExtraData</column-name><column-value><![CDATA[");
 		sb.append(getModuleExtraData());
 		sb.append("]]></column-value></column>");
@@ -1477,6 +1507,7 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	private Date _startDate;
 	private Date _endDate;
 	private long _allowedTime;
+	private long _moduleEvalId;
 	private String _moduleExtraData;
 	private int _status;
 	private long _statusByUserId;

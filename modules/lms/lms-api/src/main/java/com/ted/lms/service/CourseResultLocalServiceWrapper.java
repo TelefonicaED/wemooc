@@ -293,6 +293,14 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 	}
 
 	@Override
+	public com.ted.lms.model.CourseResult updateCourseResult(
+		com.ted.lms.model.ModuleResult moduleResult,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _courseResultLocalService.updateCourseResult(moduleResult,
+			serviceContext);
+	}
+
+	@Override
 	public CourseResultLocalService getWrappedService() {
 		return _courseResultLocalService;
 	}

@@ -116,7 +116,7 @@ public class LearningActivityAssetRendererFactory extends BaseAssetRendererFacto
 	private LearningActivityLocalService learningActivityLocalService;
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

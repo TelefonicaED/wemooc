@@ -42,6 +42,11 @@ public class ModuleResultLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.ModuleResultLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.ted.lms.model.ModuleResult addModuleResult(
+		long moduleId, long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().addModuleResult(moduleId, userId, serviceContext);
+	}
 
 	/**
 	* Adds the module result to the database. Also notifies the appropriate model listeners.
@@ -202,6 +207,11 @@ public class ModuleResultLocalServiceUtil {
 		return getService().getModuleResult(mrId);
 	}
 
+	public static com.ted.lms.model.ModuleResult getModuleResult(
+		long moduleId, long userId) {
+		return getService().getModuleResult(moduleId, userId);
+	}
+
 	/**
 	* Returns a range of all the module results.
 	*
@@ -245,6 +255,13 @@ public class ModuleResultLocalServiceUtil {
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static com.ted.lms.model.ModuleResult updateModuleResult(
+		com.ted.lms.model.LearningActivityResult learningActivityResult,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService()
+				   .updateModuleResult(learningActivityResult, serviceContext);
 	}
 
 	/**

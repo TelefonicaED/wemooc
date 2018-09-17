@@ -90,7 +90,8 @@ public class CourseEvalFactoryRegistryUtil {
 
 	public static void register(CourseEvalFactory courseEvalFactory) {
 		Registry registry = RegistryUtil.getRegistry();
-
+		
+		_log.debug("register: " + courseEvalFactory.getClassName());
 		ServiceRegistration<CourseEvalFactory> serviceRegistration =
 			registry.registerService(
 				(Class<CourseEvalFactory>)(Class<?>)
@@ -105,14 +106,14 @@ public class CourseEvalFactoryRegistryUtil {
 
 		for (CourseEvalFactory courseEvalFactory :
 				courseEvalFactories) {
-
+			_log.debug("register: " + courseEvalFactory.getClassName());
 			register(courseEvalFactory);
 		}
 	}
 
 	public static void unregister(
 		CourseEvalFactory courseEvalFactory) {
-
+		_log.debug("unregister: " + courseEvalFactory.getClassName());
 		ServiceRegistration<CourseEvalFactory> serviceRegistration =
 			_serviceRegistrations.remove(courseEvalFactory);
 
@@ -126,7 +127,7 @@ public class CourseEvalFactoryRegistryUtil {
 
 		for (CourseEvalFactory courseEvalFactory :
 				courseEvalFactories) {
-
+			_log.debug("unregister: " + courseEvalFactory.getClassName());
 			unregister(courseEvalFactory);
 		}
 	}
@@ -174,7 +175,7 @@ public class CourseEvalFactoryRegistryUtil {
 		@Override
 		public CourseEvalFactory addingService(
 			ServiceReference<CourseEvalFactory> serviceReference) {
-
+			_log.debug("addService: " + serviceReference.getClass().getName());
 			Registry registry = RegistryUtil.getRegistry();
 			
 			CourseEvalFactory courseEvalFactory = null;
@@ -185,7 +186,7 @@ public class CourseEvalFactoryRegistryUtil {
 					serviceReference);
 	
 				String className = courseEvalFactory.getClassName();
-	
+				_log.debug("className: " + className);
 				CourseEvalFactory classNameCourseEvalFactory =
 					_courseEvalFactoriesMapByClassName.put(
 						className, courseEvalFactory);
@@ -231,7 +232,7 @@ public class CourseEvalFactoryRegistryUtil {
 		public void removedService(
 			ServiceReference<CourseEvalFactory> serviceReference,
 			CourseEvalFactory courseEvalFactory) {
-
+			_log.debug("removedService: " + courseEvalFactory.getClassName());
 			Registry registry = RegistryUtil.getRegistry();
 
 			registry.ungetService(serviceReference);

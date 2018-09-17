@@ -155,6 +155,7 @@
 		<field name="startDate" type="Date" />
 		<field name="endDate" type="Date" />
 		<field name="allowedTime" type="long" />
+		<field name="moduleEvalId" type="long" />
 		<field name="moduleExtraData" type="String">
 			<hint name="max-length">500000</hint>
 		</field>

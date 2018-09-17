@@ -272,6 +272,11 @@ public class LearningActivityLocalServiceWrapper
 		return _learningActivityLocalService.getLearningActivitiesCount();
 	}
 
+	@Override
+	public int getLearningActivitiesOfModuleCount(long moduleId) {
+		return _learningActivityLocalService.getLearningActivitiesOfModuleCount(moduleId);
+	}
+
 	/**
 	* Returns the learning activity with the primary key.
 	*

@@ -137,6 +137,7 @@ create table LMS_Module (
 	startDate DATE null,
 	endDate DATE null,
 	allowedTime LONG,
+	moduleEvalId LONG,
 	moduleExtraData TEXT null,
 	status INTEGER,
 	statusByUserId LONG,

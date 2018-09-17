@@ -49,4 +49,8 @@ public class LearningActivityLocalServiceImpl
 		return learningActivityPersistence.findByModuleIdRequired(moduleId, true);
 	}
 	
+	public int getLearningActivitiesOfModuleCount(long moduleId) {
+		return learningActivityPersistence.countByModuleId(moduleId);
+	}
+	
 }

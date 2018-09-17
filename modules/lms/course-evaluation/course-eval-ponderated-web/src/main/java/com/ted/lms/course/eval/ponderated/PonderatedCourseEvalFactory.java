@@ -51,7 +51,7 @@ public class PonderatedCourseEvalFactory extends BaseCourseEvalFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.course.eval.ponderated.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

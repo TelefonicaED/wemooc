@@ -29,11 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @ProviderType
 public class ModuleEvalFactoryRegistryUtil {
 
-	public static List<ModuleEvalFactory> getCalificationFactories(
+	public static List<ModuleEvalFactory> getModuleEvalFactories(
 		long companyId) {
 
 		return ListUtil.fromMapValues(
-			_filterCalificationFactories(
+			_filterModuleEvalFactories(
 				companyId, _moduleEvalFactoriesMapByClassName));
 	}
 
@@ -58,7 +58,7 @@ public class ModuleEvalFactoryRegistryUtil {
 	}
 
 	public static ModuleEvalFactory getModuleEvalFactoryByType(
-		int type) {
+		long type) {
 
 		return _moduleEvalFactoriesMapByClassType.get(type);
 	}
@@ -69,7 +69,7 @@ public class ModuleEvalFactoryRegistryUtil {
 			_moduleEvalFactoriesMapByClassName;
 
 		if (companyId > 0) {
-			moduleEvalFactories = _filterCalificationFactories(
+			moduleEvalFactories = _filterModuleEvalFactories(
 				companyId, _moduleEvalFactoriesMapByClassName);
 		}
 
@@ -132,11 +132,11 @@ public class ModuleEvalFactoryRegistryUtil {
 	}
 
 	private static Map<String, ModuleEvalFactory>
-		_filterCalificationFactories(
+		_filterModuleEvalFactories(
 			long companyId,
 			Map<String, ModuleEvalFactory> moduleEvalFactories) {
 
-		Map<String, ModuleEvalFactory> filteredCalificationFactories =
+		Map<String, ModuleEvalFactory> filteredModuleEvalFactories =
 			new ConcurrentHashMap<>();
 
 		for (Map.Entry<String, ModuleEvalFactory> entry :
@@ -144,11 +144,11 @@ public class ModuleEvalFactoryRegistryUtil {
 
 			ModuleEvalFactory moduleEvalFactory = entry.getValue();
 
-			filteredCalificationFactories.put(
+			filteredModuleEvalFactories.put(
 				entry.getKey(), moduleEvalFactory);
 		}
 
-		return filteredCalificationFactories;
+		return filteredModuleEvalFactories;
 	}
 
 	private ModuleEvalFactoryRegistryUtil() {
@@ -159,7 +159,7 @@ public class ModuleEvalFactoryRegistryUtil {
 
 	private static final Map<String, ModuleEvalFactory>
 		_moduleEvalFactoriesMapByClassName = new ConcurrentHashMap<>();
-	private static final Map<Integer, ModuleEvalFactory>
+	private static final Map<Long, ModuleEvalFactory>
 		_moduleEvalFactoriesMapByClassType = new ConcurrentHashMap<>();
 	private static final ServiceRegistrationMap<ModuleEvalFactory>
 		_serviceRegistrations = new ServiceRegistrationMapImpl<>();
@@ -201,7 +201,7 @@ public class ModuleEvalFactoryRegistryUtil {
 							String.valueOf(moduleEvalFactory)));
 				}
 	
-				int type = moduleEvalFactory.getType();
+				long type = moduleEvalFactory.getType();
 	
 				ModuleEvalFactory typeModuleEvalFactory =
 					_moduleEvalFactoriesMapByClassType.put(

@@ -65,7 +65,7 @@ public class EvaluationAvgCourseEvalFactory extends BaseCourseEvalFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.course.eval.evaluation.avg.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

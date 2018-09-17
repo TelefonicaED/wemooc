@@ -12,4 +12,17 @@
 				la.required = true AND la.groupId = ? AND lar.userId = ?
 		]]>
 	</sql>
+	<sql id="com.ted.lms.service.persistence.LearningActivityResultFinder.countRequiredLearningActivityResultsByModule">
+		<![CDATA[   			
+			SELECT 
+				COUNT(lar.actId) AS COUNT_VALUE 
+			FROM 
+				lms_learningactivityresult lar
+			INNER JOIN 
+				lms_learningactivity la 
+					ON lar.actId = la.actId
+			WHERE 
+				la.required = true AND la.moduleId = ? AND lar.userId = ?
+		]]>
+	</sql>
 </custom-sql>

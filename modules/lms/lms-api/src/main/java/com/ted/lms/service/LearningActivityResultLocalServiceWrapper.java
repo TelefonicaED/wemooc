@@ -335,6 +335,13 @@ public class LearningActivityResultLocalServiceWrapper
 			userId);
 	}
 
+	@Override
+	public int getRequiredLearningActivityResultsByModuleCount(long moduleId,
+		long userId) {
+		return _learningActivityResultLocalService.getRequiredLearningActivityResultsByModuleCount(moduleId,
+			userId);
+	}
+
 	/**
 	* Updates the learning activity result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

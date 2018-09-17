@@ -27,11 +27,13 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.ModuleResult;
 
 import java.io.Serializable;
@@ -60,6 +62,8 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ModuleResultLocalServiceUtil} to access the module result local service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleResultLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public ModuleResult addModuleResult(long moduleId, long userId,
+		ServiceContext serviceContext);
 
 	/**
 	* Adds the module result to the database. Also notifies the appropriate model listeners.
@@ -185,6 +189,9 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ModuleResult getModuleResult(long mrId) throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ModuleResult getModuleResult(long moduleId, long userId);
+
 	/**
 	* Returns a range of all the module results.
 	*
@@ -221,6 +228,10 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	public ModuleResult updateModuleResult(
+		LearningActivityResult learningActivityResult,
+		ServiceContext serviceContext);
 
 	/**
 	* Updates the module result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

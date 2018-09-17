@@ -61,19 +61,19 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public boolean updateCourse(long userId) throws SystemException {
+	public CourseResult updateCourse(long userId) throws SystemException {
 		
 		JSONObject courseExtraData = course.getCourseExtraDataJSON();
 		
 		if(Validator.isNull(courseExtraData)) {
-			return false;
+			return null;
 		}
 		
 		double passPuntuation = getPassPuntuation();
 		
 		Map<Long,Long> evaluations=getEvaluations();
 		if(evaluations.size()==0){
-			return false;
+			return null;
 		}
 		
 		CourseResult courseResult=courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
@@ -81,11 +81,10 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 			courseResult=courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
 		}
 		
-		updateCourseResult(courseResult, passPuntuation, evaluations, userId);	
-		return true;
+		return updateCourseResult(courseResult, passPuntuation, evaluations, userId);	
 	}
 	
-	private void updateCourseResult(CourseResult courseResult, double passPuntuation, Map<Long, Long> evaluations, long userId) throws SystemException {
+	private CourseResult updateCourseResult(CourseResult courseResult, double passPuntuation, Map<Long, Long> evaluations, long userId) throws SystemException {
 		double[] values=new double[evaluations.size()];
 		double[] weights=new double[evaluations.size()];
 		int i=0;
@@ -113,7 +112,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		}
 		courseResult.setPassed(passed);
 
-		courseResultLocalService.updateCourseResult(courseResult);
+		return courseResultLocalService.updateCourseResult(courseResult);
 	}
 	
 	private double calculateMean(double[] values, double[] weights) {
@@ -203,12 +202,12 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public boolean recalculateCourse(long userId) throws SystemException {
+	public CourseResult recalculateCourse(long userId) throws SystemException {
 		
 		JSONObject courseExtraData = course.getCourseExtraDataJSON();
 		
 		if(Validator.isNull(courseExtraData)) {
-			return false;
+			return null;
 		}
 		
 		CourseResult courseResult=courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
@@ -220,16 +219,16 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		
 		Map<Long,Long> evaluations=getEvaluations();
 		if(evaluations.size()==0){
-			return false;
+			return null;
 		}
 		
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
 
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
-			updateCourseResult(courseResult, passPuntuation, evaluations, userId);	
+			courseResult = updateCourseResult(courseResult, passPuntuation, evaluations, userId);	
 		}
 		
-		return true;
+		return courseResult;
 	}
 	
 	@Override

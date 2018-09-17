@@ -1,8 +1,10 @@
 package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
+import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.lms.service.ModuleResultLocalServiceUtil;
 
 import java.util.List;
@@ -13,12 +15,15 @@ import javax.portlet.PortletResponse;
  * @author Virginia Martín Agudo
  *
  */
-public abstract class BaseModuleEval<T> implements ModuleEval {
+public abstract class BaseModuleEval implements ModuleEval {
 	
-	private Module module;
+	protected Module module;
+	protected ServiceContext serviceContext;
 
-	public BaseModuleEval(Module module) {
+	public BaseModuleEval(Module module, ServiceContext serviceContext, ModuleResultLocalService moduleResultLocalService) {
 		this.module = module;
+		this.serviceContext = serviceContext;
+		this.moduleResultLocalService = moduleResultLocalService;
 	}
 	
 	public void setModule(Module module) {
@@ -49,16 +54,19 @@ public abstract class BaseModuleEval<T> implements ModuleEval {
 		
 		return true;
 	}
+	
+	public boolean recalculateModule() throws SystemException {
+		List<ModuleResult> moduleResults = ModuleResultLocalServiceUtil.getModuleResults(module.getModuleId());
+		for(ModuleResult moduleResult: moduleResults) {
+			recalculateModule(moduleResult.getUserId());
+		}
+		
+		return true;
+	}
 
 	public void setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
 		
 	}
 	
-	public void onOpenModule() throws SystemException{
-		
-	}
-	
-	public void onCloseModule() throws SystemException{
-		
-	}
+	protected ModuleResultLocalService moduleResultLocalService;
 }

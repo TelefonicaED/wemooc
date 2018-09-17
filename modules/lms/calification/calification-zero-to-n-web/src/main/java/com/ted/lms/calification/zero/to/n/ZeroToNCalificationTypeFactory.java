@@ -67,7 +67,7 @@ public class ZeroToNCalificationTypeFactory extends BaseCalificationTypeFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.calification.zero.to.n.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

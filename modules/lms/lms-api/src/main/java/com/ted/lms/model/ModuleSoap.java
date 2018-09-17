@@ -49,6 +49,7 @@ public class ModuleSoap implements Serializable {
 		soapModel.setStartDate(model.getStartDate());
 		soapModel.setEndDate(model.getEndDate());
 		soapModel.setAllowedTime(model.getAllowedTime());
+		soapModel.setModuleEvalId(model.getModuleEvalId());
 		soapModel.setModuleExtraData(model.getModuleExtraData());
 		soapModel.setStatus(model.getStatus());
 		soapModel.setStatusByUserId(model.getStatusByUserId());
@@ -226,6 +227,14 @@ public class ModuleSoap implements Serializable {
 		_allowedTime = allowedTime;
 	}
 
+	public long getModuleEvalId() {
+		return _moduleEvalId;
+	}
+
+	public void setModuleEvalId(long moduleEvalId) {
+		_moduleEvalId = moduleEvalId;
+	}
+
 	public String getModuleExtraData() {
 		return _moduleExtraData;
 	}
@@ -281,6 +290,7 @@ public class ModuleSoap implements Serializable {
 	private Date _startDate;
 	private Date _endDate;
 	private long _allowedTime;
+	private long _moduleEvalId;
 	private String _moduleExtraData;
 	private int _status;
 	private long _statusByUserId;

@@ -56,7 +56,7 @@ public class ZeroToTenCalificationTypeFactory extends BaseCalificationTypeFactor
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.calification.zero.to.ten.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 

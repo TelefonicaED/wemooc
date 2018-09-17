@@ -64,7 +64,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(41);
+		StringBundler sb = new StringBundler(43);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -96,6 +96,8 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		sb.append(endDate);
 		sb.append(", allowedTime=");
 		sb.append(allowedTime);
+		sb.append(", moduleEvalId=");
+		sb.append(moduleEvalId);
 		sb.append(", moduleExtraData=");
 		sb.append(moduleExtraData);
 		sb.append(", status=");
@@ -180,6 +182,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		}
 
 		moduleImpl.setAllowedTime(allowedTime);
+		moduleImpl.setModuleEvalId(moduleEvalId);
 
 		if (moduleExtraData == null) {
 			moduleImpl.setModuleExtraData("");
@@ -234,6 +237,8 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		endDate = objectInput.readLong();
 
 		allowedTime = objectInput.readLong();
+
+		moduleEvalId = objectInput.readLong();
 		moduleExtraData = objectInput.readUTF();
 
 		status = objectInput.readInt();
@@ -293,6 +298,8 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 
 		objectOutput.writeLong(allowedTime);
 
+		objectOutput.writeLong(moduleEvalId);
+
 		if (moduleExtraData == null) {
 			objectOutput.writeUTF("");
 		}
@@ -329,6 +336,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 	public long startDate;
 	public long endDate;
 	public long allowedTime;
+	public long moduleEvalId;
 	public String moduleExtraData;
 	public int status;
 	public long statusByUserId;

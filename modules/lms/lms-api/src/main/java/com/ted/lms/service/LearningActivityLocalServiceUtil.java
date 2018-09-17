@@ -261,6 +261,10 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getLearningActivitiesCount();
 	}
 
+	public static int getLearningActivitiesOfModuleCount(long moduleId) {
+		return getService().getLearningActivitiesOfModuleCount(moduleId);
+	}
+
 	/**
 	* Returns the learning activity with the primary key.
 	*

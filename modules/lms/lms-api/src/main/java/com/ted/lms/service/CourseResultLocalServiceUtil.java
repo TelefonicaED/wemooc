@@ -275,6 +275,12 @@ public class CourseResultLocalServiceUtil {
 		return getService().updateCourseResult(courseResult);
 	}
 
+	public static com.ted.lms.model.CourseResult updateCourseResult(
+		com.ted.lms.model.ModuleResult moduleResult,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().updateCourseResult(moduleResult, serviceContext);
+	}
+
 	public static CourseResultLocalService getService() {
 		return _serviceTracker.getService();
 	}

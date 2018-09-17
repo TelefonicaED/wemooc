@@ -1,0 +1,9 @@
+Bundle-Name: audit-db-api
+Bundle-SymbolicName: com.ted.audit.db.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.ted.audit.db.exception,\
+	com.ted.audit.db.model,\
+	com.ted.audit.db.service,\
+	com.ted.audit.db.service.persistence
+-includeresource: META-INF/service.xml=../audit-db-service/service.xml

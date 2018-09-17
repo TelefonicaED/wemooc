@@ -1,3 +1,11 @@
+<%@page import="com.ted.lms.model.ModuleEval"%>
+<%@page import="com.ted.lms.registry.ModuleEvalFactoryRegistryUtil"%>
+<%@page import="com.ted.lms.model.ModuleEvalFactory"%>
+<%@page import="com.ted.audit.api.registry.AuditRegistryUtil"%>
+<%@page import="com.ted.audit.api.Audit"%>
+<%@page import="com.ted.lms.model.InscriptionType"%>
+<%@page import="com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil"%>
+<%@page import="com.ted.lms.model.InscriptionTypeFactory"%>
 <%@page import="com.ted.lms.service.LearningActivityResultLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.liferay.portal.kernel.service.ServiceContext"%>
@@ -18,12 +26,77 @@
 <%@ include file="../init.jsp" %>
 
 <p>
+*****************Métodos inscripción***************************
+<%
+
+List<InscriptionTypeFactory> inscriptionFactories = InscriptionTypeFactoryRegistryUtil.getInscriptionFactories(themeDisplay.getCompanyId());
+List<Course> courses = CourseLocalServiceUtil.getCourses(-1, -1);
+
+for (InscriptionTypeFactory inscriptionFactory : inscriptionFactories) {
+%>
+<p>
+	calificación: <%=inscriptionFactory.getTitle(themeDisplay.getLocale()) %>
+	<br/>
+	<%=inscriptionFactory.getDescription(themeDisplay.getLocale()) %>
+	<%
+	if(Validator.isNotNull(courses)){
+		Course course = courses.get(0);
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(request);
+		InscriptionType inscription = inscriptionFactory.getInscriptionType(course, serviceContext); %>
+		<%=inscriptionFactory.getType()%>
+	<%} %>
+	<liferay-util:include page="<%=inscriptionFactory.getURLSpecificContent() %>" portletId="<%=inscriptionFactory.getPortletId() %>">
+	
+	</liferay-util:include>
+</p>
+<%
+}%>
+*****************************************************************
+</p>
+
+<p>
+*****************Auditoría***************************
+<%
+
+List<Audit> audits = AuditRegistryUtil.getAudits(themeDisplay.getCompanyId());
+
+for (Audit audit : audits) {
+%>
+<p>
+	audit: <%=audit.getClassName() %>
+	<%audit.audit(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), 1, Course.class.getName(), 1, 2, themeDisplay.getUserId(), themeDisplay.getUser().getFullName(), ""); %>
+</p>
+<%
+}%>
+
+
+
+*****************************************************************
+
+<p>
+*****************Métodos evaluación de módulo***************************
+<%
+
+List<ModuleEvalFactory> moduleEvalFactories = ModuleEvalFactoryRegistryUtil.getModuleEvalFactories(themeDisplay.getCompanyId());
+
+for (ModuleEvalFactory moduleEvalFactory : moduleEvalFactories) {
+%>
+<p>
+	moduleEvalFactory: <%=moduleEvalFactory.getTitle(themeDisplay.getLocale()) %>
+	<br/>
+	<%=moduleEvalFactory.getDescription(themeDisplay.getLocale()) %>
+	<%=moduleEvalFactory.getType()%>
+</p>
+<%
+}%>
+*****************************************************************
+</p>
+
+<p>
 *****************Métodos calificación***************************
 <%
 
-LearningActivityResultLocalServiceUtil.getRequiredLearningActivityResults(themeDisplay.getScopeGroupId(), themeDisplay.getUserId());
 List<CalificationTypeFactory> calificationFactories = CalificationTypeFactoryRegistryUtil.getCalificationFactories(themeDisplay.getCompanyId());
-List<Course> courses = CourseLocalServiceUtil.getCourses(-1, -1);
 
 for (CalificationTypeFactory calificationFactory : calificationFactories) {
 %>
@@ -45,9 +118,6 @@ for (CalificationTypeFactory calificationFactory : calificationFactories) {
 </p>
 <%
 }%>
-
-
-
 *****************************************************************
 </p>
 <p>
@@ -81,13 +151,15 @@ for (CourseEvalFactory calificationFactory : evaluationsFactories) {
 *****************************************************************
 </p>
 <p>
-*****************************************************************
+**************************Actividades***************************************
 <%
 List<LearningActivityTypeFactory> assetRendererFactories = LearningActivityTypeFactoryRegistryUtil.getLearningActivityFactories(themeDisplay.getCompanyId());
 
 for (LearningActivityTypeFactory assetRendererFactory : assetRendererFactories) {
 %>
+<p>
 	activity: <%=assetRendererFactory.getClassName() %>
+</p>
 <%}%>
 
 Total: <%=assetRendererFactories.size()%>

@@ -14,9 +14,23 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.ted.lms.model.Course;
+import com.ted.lms.model.CourseEval;
+import com.ted.lms.model.CourseEvalFactory;
+import com.ted.lms.model.CourseResult;
+import com.ted.lms.model.LearningActivityResult;
+import com.ted.lms.model.Module;
+import com.ted.lms.model.ModuleEval;
+import com.ted.lms.model.ModuleEvalFactory;
 import com.ted.lms.model.ModuleResult;
+import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
+import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
 import com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -47,5 +61,47 @@ public class ModuleResultLocalServiceImpl
 	
 	public int countModulesUserPassed(long groupId, long userId) {
 		return moduleResultFinder.countModulesUserPassed(groupId, userId);
+	}
+	
+	public ModuleResult getModuleResult(long moduleId, long userId) {
+		return moduleResultPersistence.fetchByModuleIdUserId(moduleId, userId);
+	}
+	
+	public ModuleResult addModuleResult(long moduleId, long userId, ServiceContext serviceContext) {
+		ModuleResult moduleResult = moduleResultPersistence.create(counterLocalService.increment(ModuleResult.class.getName()));
+		moduleResult.setModuleId(moduleId);
+		moduleResult.setPassed(false);
+		moduleResult.setUserId(userId);
+		moduleResult.setStartDate(new Date());
+		moduleResult.setResult(0);
+		moduleResult.setCompanyId(serviceContext.getCompanyId());
+		moduleResult.setCreateDate(new Date());
+		moduleResult.setGroupId(serviceContext.getScopeGroupId());
+		moduleResult.setModifiedDate(moduleResult.getCreateDate());
+		moduleResult.setUserModifiedId(serviceContext.getUserId());
+		User user = userLocalService.fetchUser(serviceContext.getUserId());
+		if(user != null) {
+			moduleResult.setUserModifiedName(user.getFullName());
+		}
+		return moduleResultPersistence.update(moduleResult);
+	}
+	
+	public ModuleResult updateModuleResult(LearningActivityResult learningActivityResult, ServiceContext serviceContext) {
+		ModuleResult moduleResult = null;
+		
+		Module module = modulePersistence.fetchByPrimaryKey(moduleResult.getModuleId());
+		
+		if(module!=null){
+			ModuleEvalFactory moduleEvalFactory = ModuleEvalFactoryRegistryUtil.getModuleEvalFactoryByType(module.getModuleEvalId());
+			try {
+				ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module, serviceContext);
+				moduleResult = moduleEval.updateModule(learningActivityResult.getUserId());
+			} catch (PortalException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return moduleResult;
 	}
 }

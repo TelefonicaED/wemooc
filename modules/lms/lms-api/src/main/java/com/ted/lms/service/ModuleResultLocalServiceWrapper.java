@@ -33,6 +33,14 @@ public class ModuleResultLocalServiceWrapper implements ModuleResultLocalService
 		_moduleResultLocalService = moduleResultLocalService;
 	}
 
+	@Override
+	public com.ted.lms.model.ModuleResult addModuleResult(long moduleId,
+		long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _moduleResultLocalService.addModuleResult(moduleId, userId,
+			serviceContext);
+	}
+
 	/**
 	* Adds the module result to the database. Also notifies the appropriate model listeners.
 	*
@@ -209,6 +217,12 @@ public class ModuleResultLocalServiceWrapper implements ModuleResultLocalService
 		return _moduleResultLocalService.getModuleResult(mrId);
 	}
 
+	@Override
+	public com.ted.lms.model.ModuleResult getModuleResult(long moduleId,
+		long userId) {
+		return _moduleResultLocalService.getModuleResult(moduleId, userId);
+	}
+
 	/**
 	* Returns a range of all the module results.
 	*
@@ -257,6 +271,14 @@ public class ModuleResultLocalServiceWrapper implements ModuleResultLocalService
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _moduleResultLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public com.ted.lms.model.ModuleResult updateModuleResult(
+		com.ted.lms.model.LearningActivityResult learningActivityResult,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _moduleResultLocalService.updateModuleResult(learningActivityResult,
+			serviceContext);
 	}
 
 	/**

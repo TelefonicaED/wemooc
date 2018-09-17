@@ -486,6 +486,20 @@ public interface ModuleModel extends BaseModel<Module>, GroupedModel,
 	public void setAllowedTime(long allowedTime);
 
 	/**
+	 * Returns the module eval ID of this module.
+	 *
+	 * @return the module eval ID of this module
+	 */
+	public long getModuleEvalId();
+
+	/**
+	 * Sets the module eval ID of this module.
+	 *
+	 * @param moduleEvalId the module eval ID of this module
+	 */
+	public void setModuleEvalId(long moduleEvalId);
+
+	/**
 	 * Returns the module extra data of this module.
 	 *
 	 * @return the module extra data of this module

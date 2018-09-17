@@ -51,7 +51,7 @@ public class MandatoryAvgCourseEvalFactory extends BaseCourseEvalFactory{
 	}
 	
 	@Reference(
-		target = "(bundle.symbolic.name=com.ted.lms.course.eval.mandatory.avg.web)", unbind = "-"
+		unbind = "-"
 	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 
