@@ -75,13 +75,10 @@ public class InscriptionPortlet extends MVCPortlet {
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 		
 		ThemeDisplay themeDisplay  =(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-	
-		System.out.println("course: " + themeDisplay.getScopeGroupId());
 		
 		Course course=courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		
 		try {
-			System.out.println("course: " + course);
 			log.debug("permission VIEW: " + CoursePermission.contains(themeDisplay.getPermissionChecker(), course, ActionKeys.VIEW));
 			
 			if (course==null || !CoursePermission.contains(themeDisplay.getPermissionChecker(), course, ActionKeys.VIEW)) {
@@ -116,7 +113,6 @@ public class InscriptionPortlet extends MVCPortlet {
 							//Ya estoy inscrito, mando el curso y que estoy inscrito
 							renderRequest.setAttribute("registredUser", true);
 							renderRequest.setAttribute("course", course);
-							System.out.println("registredUse curso padre");
 						}else {
 							//Comprobamos si estoy inscrita en alguna de las hijas
 							long courseParentId = course.getCourseId();
@@ -128,7 +124,6 @@ public class InscriptionPortlet extends MVCPortlet {
 								//Estoy inscrita en alguna convocatoria de las hijas, mando qeu estoy inscrita y las convocatorias en las que estoy
 								renderRequest.setAttribute("registredUser", true);
 								renderRequest.setAttribute("listChildCourses", listChildCourses);
-								System.out.println("registredUser curso hijo");
 							}else {
 								//Comprobamos los prerequisitos del curso padre (tanto si tiene convocatorias como si no)
 								List<Prerequisite> listPrerequisites = prerequisiteRelationLocalService.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), 

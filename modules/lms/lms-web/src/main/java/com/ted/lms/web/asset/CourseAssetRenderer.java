@@ -15,15 +15,14 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSKeys;
 import com.ted.lms.constants.LMSPortletKeys;
-import com.ted.lms.constants.LMSPropsKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.security.permission.resource.CoursePermission;
+import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.lms.web.internal.util.CourseUtil;
 
 import java.util.Locale;
@@ -124,7 +123,7 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 	 */
 	@Override
 	public String getDiscussionPath() {
-	    if (PrefsPropsUtil.getBoolean(LMSPropsKeys.COURSE_ENTRY_COMMENTS_ENABLED, false)) {
+	    if (LMSPrefsPropsValues.getCourseCommentsEnabled(course.getCompanyId())) {
 	        return "edit_entry_discussion";
 	    }
 	    else {

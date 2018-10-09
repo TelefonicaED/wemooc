@@ -33,7 +33,7 @@ public class LearningActivityAssetRenderer extends BaseJSPAssetRenderer<Learning
 		this.resourceBundleLoader = resourceBundleLoader;
 		this.learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(learningActivity.getTypeId());
 		try {
-			this.learningActivityType = this.learningActivityTypeFactory.getLearningActivityType(activity, activity.getTypeId());
+			this.learningActivityType = this.learningActivityTypeFactory.getLearningActivityType(activity);
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

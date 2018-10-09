@@ -10,7 +10,7 @@
 		<liferay-ui:error key="error-enroll-user" />
 		<liferay-ui:error message="lms.inscription.unsusbscribe.error" key="unsusbscribe" />
 		
-		<div id="caja_inscripcion">
+		<div id="caja_inscripcion container">
 			<c:choose>
 				<c:when test="${themeDisplay.isSignedIn() && registredUser}">
 					<div class="mensaje_marcado">
@@ -69,7 +69,7 @@
 									<aui:fieldset>
 										<h2>${course.getTitle(themeDisplay.getLocale())}</h2>
 									</aui:fieldset>
-									<div class="col-md-12 header">
+									<div class="row header">
 										<div class="col-md-3">
 											<liferay-ui:message key="courseadmin.edition"/>
 										</div>
@@ -82,7 +82,7 @@
 										<div class="col-md-3"></div>
 									</div>
 									<c:forEach items="${listChildCourses}" var="childCourse">
-										<div class="col-md-12 body">
+										<div class="row body">
 											<div class="col-md-3">
 												<span>${childCourse.getTitle(themeDisplay.getLocale())}</span>
 											</div>
