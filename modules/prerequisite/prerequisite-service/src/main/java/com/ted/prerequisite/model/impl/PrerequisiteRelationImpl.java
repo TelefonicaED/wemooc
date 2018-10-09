@@ -14,6 +14,10 @@
 
 package com.ted.prerequisite.model.impl;
 
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -32,6 +36,33 @@ public class PrerequisiteRelationImpl extends PrerequisiteRelationBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a prerequisite relation model instance should use the {@link com.ted.prerequisite.model.PrerequisiteRelation} interface instead.
 	 */
+	
+	private JSONObject extraData = null;
+	
 	public PrerequisiteRelationImpl() {
+	}
+	
+	@Override
+	public JSONObject getExtraDataJSON() {
+		if(extraData == null) {
+			try {
+				extraData = JSONFactoryUtil.createJSONObject(getExtraData());
+			} catch (JSONException e) {
+				e.printStackTrace();
+				extraData = JSONFactoryUtil.createJSONObject();
+			}
+		}
+		return extraData;
+	}
+	
+	@Override
+	public void setExtraData(String prerequisiteExtraData) {
+		try {
+			extraData = JSONFactoryUtil.createJSONObject(prerequisiteExtraData);
+		} catch (JSONException e) {
+			extraData = JSONFactoryUtil.createJSONObject();
+		}
+		
+		super.setExtraData(prerequisiteExtraData);
 	}
 }

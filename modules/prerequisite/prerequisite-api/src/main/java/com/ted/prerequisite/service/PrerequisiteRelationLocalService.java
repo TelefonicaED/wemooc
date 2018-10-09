@@ -61,6 +61,8 @@ public interface PrerequisiteRelationLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link PrerequisiteRelationLocalServiceUtil} to access the prerequisite relation local service. Add custom service methods to {@link com.ted.prerequisite.service.impl.PrerequisiteRelationLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public PrerequisiteRelation addPrerequisiteRelation(
+		long classNamePrerequisiteId, long classNameId, long classPK);
 
 	/**
 	* Adds the prerequisite relation to the database. Also notifies the appropriate model listeners.
@@ -201,6 +203,10 @@ public interface PrerequisiteRelationLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PrerequisiteRelation getPrerequisiteRelation(
 		long prerequisiteRelationId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public PrerequisiteRelation getPrerequisiteRelation(
+		long classNamePrerequisiteId, long classNameId, long classPK);
 
 	/**
 	* Returns a range of all the prerequisite relations.

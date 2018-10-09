@@ -1,11 +1,13 @@
 package com.ted.prerequisite.model;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
 
 import java.util.Locale;
+
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * Base para la factoría de los métodos de evaluación del curso
@@ -14,10 +16,6 @@ import java.util.Locale;
  */
 public abstract class BasePrerequisiteFactory implements PrerequisiteFactory {
 
-	@Override
-	public Prerequisite getPrerequisite(PrerequisiteRelation prerequisiteRelation) throws PortalException {	
-		return null;
-	}
 
 	@Override
 	public long getClassNameId() {

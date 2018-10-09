@@ -34,6 +34,13 @@ public class PrerequisiteRelationLocalServiceWrapper
 		_prerequisiteRelationLocalService = prerequisiteRelationLocalService;
 	}
 
+	@Override
+	public com.ted.prerequisite.model.PrerequisiteRelation addPrerequisiteRelation(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+		return _prerequisiteRelationLocalService.addPrerequisiteRelation(classNamePrerequisiteId,
+			classNameId, classPK);
+	}
+
 	/**
 	* Adds the prerequisite relation to the database. Also notifies the appropriate model listeners.
 	*
@@ -225,6 +232,13 @@ public class PrerequisiteRelationLocalServiceWrapper
 		long prerequisiteRelationId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _prerequisiteRelationLocalService.getPrerequisiteRelation(prerequisiteRelationId);
+	}
+
+	@Override
+	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+		return _prerequisiteRelationLocalService.getPrerequisiteRelation(classNamePrerequisiteId,
+			classNameId, classPK);
 	}
 
 	/**

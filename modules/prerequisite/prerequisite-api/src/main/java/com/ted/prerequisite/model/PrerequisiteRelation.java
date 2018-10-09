@@ -55,4 +55,6 @@ public interface PrerequisiteRelation extends PrerequisiteRelationModel,
 				return PrerequisiteRelation.class;
 			}
 		};
+
+	public com.liferay.portal.kernel.json.JSONObject getExtraDataJSON();
 }

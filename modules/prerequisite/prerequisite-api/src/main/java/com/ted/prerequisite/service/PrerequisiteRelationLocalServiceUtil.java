@@ -42,6 +42,12 @@ public class PrerequisiteRelationLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.prerequisite.service.impl.PrerequisiteRelationLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.ted.prerequisite.model.PrerequisiteRelation addPrerequisiteRelation(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+		return getService()
+				   .addPrerequisiteRelation(classNamePrerequisiteId,
+			classNameId, classPK);
+	}
 
 	/**
 	* Adds the prerequisite relation to the database. Also notifies the appropriate model listeners.
@@ -215,6 +221,13 @@ public class PrerequisiteRelationLocalServiceUtil {
 		long prerequisiteRelationId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPrerequisiteRelation(prerequisiteRelationId);
+	}
+
+	public static com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+		return getService()
+				   .getPrerequisiteRelation(classNamePrerequisiteId,
+			classNameId, classPK);
 	}
 
 	/**

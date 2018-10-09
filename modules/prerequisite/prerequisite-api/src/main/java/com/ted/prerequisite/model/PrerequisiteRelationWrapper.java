@@ -174,6 +174,11 @@ public class PrerequisiteRelationWrapper implements PrerequisiteRelation,
 		return _prerequisiteRelation.getExtraData();
 	}
 
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject getExtraDataJSON() {
+		return _prerequisiteRelation.getExtraDataJSON();
+	}
+
 	/**
 	* Returns the prerequisite relation ID of this prerequisite relation.
 	*

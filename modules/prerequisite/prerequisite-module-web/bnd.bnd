@@ -1,0 +1,4 @@
+Bundle-Name: prerequisite-module-web
+Bundle-SymbolicName: com.ted.prerequisite.module.web
+Bundle-Version: 1.0.0
+Export-Package: com.ted.prerequisite.module.web.constants
