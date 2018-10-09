@@ -1,7 +1,7 @@
 package com.ted.audit.api;
 
 /**
- * @author JE10436
+ * @author Virginia Martín Agudo
  */
 public interface Audit {
 	
