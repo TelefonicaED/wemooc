@@ -42,6 +42,7 @@ public class LearningActivitySoap implements Serializable {
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
+		soapModel.setLastPublishDate(model.getLastPublishDate());
 		soapModel.setModuleId(model.getModuleId());
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
@@ -176,6 +177,14 @@ public class LearningActivitySoap implements Serializable {
 
 	public void setModifiedDate(Date modifiedDate) {
 		_modifiedDate = modifiedDate;
+	}
+
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
 	}
 
 	public long getModuleId() {
@@ -338,6 +347,7 @@ public class LearningActivitySoap implements Serializable {
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
+	private Date _lastPublishDate;
 	private long _moduleId;
 	private String _title;
 	private String _description;

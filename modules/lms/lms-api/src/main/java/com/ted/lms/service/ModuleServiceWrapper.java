@@ -32,6 +32,32 @@ public class ModuleServiceWrapper implements ModuleService,
 		_moduleService = moduleService;
 	}
 
+	@Override
+	public com.ted.lms.model.Module addModule(
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean startDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean endDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleService.addModule(titleMap, descriptionMap, startDate,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute, endDate, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, allowedHours, allowedMinutes,
+			smallImageImageSelector, moduleEvalId, serviceContext);
+	}
+
+	@Override
+	public void deleteModule(long moduleId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_moduleService.deleteModule(moduleId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -40,6 +66,33 @@ public class ModuleServiceWrapper implements ModuleService,
 	@Override
 	public String getOSGiServiceIdentifier() {
 		return _moduleService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public com.ted.lms.model.Module moveModuleToTrash(long moduleId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleService.moveModuleToTrash(moduleId);
+	}
+
+	@Override
+	public com.ted.lms.model.Module updateModule(long moduleId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean startDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean endDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleService.updateModule(moduleId, titleMap, descriptionMap,
+			startDate, startDateMonth, startDateDay, startDateYear,
+			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay,
+			endDateYear, endDateHour, endDateMinute, allowedHours,
+			allowedMinutes, smallImageImageSelector, moduleEvalId,
+			serviceContext);
 	}
 
 	@Override

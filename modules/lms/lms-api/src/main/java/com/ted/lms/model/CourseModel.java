@@ -22,10 +22,9 @@ import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
-import com.liferay.portal.kernel.model.StagedAuditedModel;
+import com.liferay.portal.kernel.model.StagedGroupedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
@@ -49,8 +48,8 @@ import java.util.Map;
  * @generated
  */
 @ProviderType
-public interface CourseModel extends BaseModel<Course>, GroupedModel,
-	LocalizedModel, ShardedModel, StagedAuditedModel, WorkflowedModel {
+public interface CourseModel extends BaseModel<Course>, LocalizedModel,
+	ShardedModel, StagedGroupedModel, WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -214,6 +213,22 @@ public interface CourseModel extends BaseModel<Course>, GroupedModel,
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate);
+
+	/**
+	 * Returns the last publish date of this course.
+	 *
+	 * @return the last publish date of this course
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this course.
+	 *
+	 * @param lastPublishDate the last publish date of this course
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
 
 	/**
 	 * Returns the parent course ID of this course.

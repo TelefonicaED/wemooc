@@ -1,8 +1,6 @@
 package com.ted.lms.model;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -18,8 +16,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
-
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -61,10 +57,7 @@ public abstract class BaseModuleEvalFactory implements ModuleEvalFactory {
 	}
 
 	@Override
-	public PortletURL getURLSpecificContent(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws PortalException{
+	public PortletURL getURLSpecificContent(){
 		return null;
 	}
 

@@ -21,7 +21,7 @@ public interface LearningActivityTypeFactory {
 
 	public LearningActivityType getLearningActivityType(long actId) throws PortalException;
 
-	public LearningActivityType getLearningActivityType(LearningActivity activity, long type) throws PortalException;
+	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException;
 
 	public String getClassName();
 
@@ -35,29 +35,17 @@ public interface LearningActivityTypeFactory {
 	
 	public String getDescription(Locale locale);
 	
+	public String getURLSpecificContent();
+	
 	public String getIconCssClass();
 
-	public PortletURL getURLView(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws PortalException;
+	public PortletURL getURLView(LiferayPortletResponse liferayPortletResponse,WindowState windowState) throws PortalException;
 
-	public boolean hasAddPermission(
-			PermissionChecker permissionChecker, long groupId, long classTypeId)
-		throws Exception;
+	public boolean hasAddPermission(PermissionChecker permissionChecker, long groupId, long classTypeId) throws Exception;
 
-	public boolean hasPermission(
-			PermissionChecker permissionChecker, long actId,
-			String actionId)
-		throws Exception;
-
-	public boolean isActive(long companyId);
+	public boolean hasPermission(PermissionChecker permissionChecker, long actId, String actionId) throws Exception;
 	
 	public boolean isActive(long companyId, long groupId);
 
 	public boolean isCategorizable();
-
-	public void setClassName(String className);
-
-	public void setPortletId(String portletId);
 }

@@ -76,4 +76,8 @@ public interface Course extends CourseModel, PersistedModel {
 		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.ted.lms.exception.InscriptionException;
+
+	public java.util.Calendar getExecutionStartDateCalendar();
+
+	public java.util.Calendar getExecutionEndDateCalendar();
 }

@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -39,7 +40,10 @@ import com.ted.lms.model.LearningActivity;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the local service interface for LearningActivity. Methods of this
@@ -74,6 +78,15 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public LearningActivity addLearningActivity(
 		LearningActivity learningActivity);
 
+	@Indexable(type = IndexableType.REINDEX)
+	public LearningActivity addLearningActivity(long groupId, long userId,
+		long moduleId, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, long typeId, Date startDate,
+		Date endDate, int tries, int passPuntuation, long priority,
+		String extraContent, String feedbackCorrect, String feedbackNoCorrect,
+		boolean required, boolean commentsActivated,
+		ServiceContext serviceContext);
+
 	/**
 	* Creates a new learning activity with the primary key. Does not add the learning activity to the database.
 	*
@@ -82,6 +95,8 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	*/
 	@Transactional(enabled = false)
 	public LearningActivity createLearningActivity(long actId);
+
+	public void deleteLearningActivities(long moduleId);
 
 	/**
 	* Deletes the learning activity from the database. Also notifies the appropriate model listeners.
@@ -288,6 +303,10 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public List<LearningActivity> getRequiredLearningActivitiesOfModule(
 		long moduleId);
 
+	public void updateAsset(long userId, LearningActivity activity,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds, Double priority) throws PortalException;
+
 	/**
 	* Updates the learning activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -297,4 +316,12 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public LearningActivity updateLearningActivity(
 		LearningActivity learningActivity);
+
+	@Indexable(type = IndexableType.REINDEX)
+	public LearningActivity updateLearningActivity(long actId, long moduleId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		long typeId, Date startDate, Date endDate, int tries,
+		int passPuntuation, long priority, String extraContent,
+		String feedbackCorrect, String feedbackNoCorrect, boolean required,
+		boolean commentsActivated, ServiceContext serviceContext);
 }

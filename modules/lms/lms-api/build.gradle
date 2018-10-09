@@ -6,4 +6,5 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.registry.api", version: "2.0.2"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "2.0.0"
 	compileOnly group: "javax.servlet", name: "javax.servlet-api", version: "3.0.1"
+	compileOnly project(":modules:prerequisite:prerequisite-api")
 }

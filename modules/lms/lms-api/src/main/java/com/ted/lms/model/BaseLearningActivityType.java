@@ -4,13 +4,12 @@ import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.service.LearningActivityResultLocalService;
 
-import java.util.HashMap;
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletResponse;
@@ -21,6 +20,14 @@ import javax.portlet.PortletResponse;
  *
  */
 public abstract class BaseLearningActivityType implements LearningActivityType {
+	
+	protected LearningActivity activity;
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	
+	public BaseLearningActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.activity = activity;
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
 
 	@Override
 	public boolean isScoreConfigurable() {
@@ -59,12 +66,11 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 
 	@Override
 	public String getDefaultFeedbackNoCorrect() {
-		// TODO Auto-generated method stub
 		return "";
 	}
 
 	@Override
-	public AssetRenderer<LearningActivity> getAssetRenderer(LearningActivity learningActivity) {
+	public AssetRenderer<LearningActivity> getAssetRenderer() {
 		return null;
 	}
 
@@ -79,7 +85,7 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public boolean setManualCalification(long actId, long userId, long score) {
+	public boolean setManualCalification(long userId, long score) {
 		return true;
 	}
 
@@ -94,9 +100,7 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse,
-			LearningActivity learningActivity) {
-		return null;
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
 	}
 
 	@Override
@@ -105,14 +109,12 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public void afterInsertOrUpdate(UploadRequest uploadRequest, PortletResponse portletResponse,
-			LearningActivity learningActivity) {
+	public void afterInsertOrUpdate(UploadRequest uploadRequest, PortletResponse portletResponse) {
 		
 	}
 
 	@Override
-	public boolean onDelete(ActionRequest actionRequest, ActionResponse actionResponse,
-			LearningActivity learningActivity) {
+	public boolean onDelete(ActionRequest actionRequest, ActionResponse actionResponse) {
 		return true;
 	}
 
@@ -122,20 +124,12 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public String importLearningActivity(LearningActivity learningActivity, Element actElement, Element rootElement,
-			PortletDataContext portletDataContext, ServiceContext serviceContext) {
+	public String doImportStagedModel(PortletDataContext portletDataContext, Element activityElement) {
 		return null;
 	}
 
 	@Override
-	public String onAfterImportLearningActivity(LearningActivity learningActivity,
-			HashMap<Long, Long> relationActivities) {
-		return null;
-	}
-
-	@Override
-	public String exportLearningActivity(LearningActivity learningActivity, Element actElement,
-			PortletDataContext portletDataContext) {
+	public String doExportStagedModel(PortletDataContext portletDataContext, Element activityElement) {
 		return null;
 	}
 
@@ -178,14 +172,33 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public boolean hasViewPermission(PermissionChecker permissionChecker)
-		throws PortalException {
+	public boolean hasViewPermission(PermissionChecker permissionChecker) throws PortalException {
 
 		return true;
+	}
+	
+	@Override
+	public boolean isDone(long userId) {
+		LearningActivityResult lar=learningActivityResultLocalService.getLearningActivityResult(activity.getActId(), userId);
+		if(lar==null){
+			return false;
+		} else {
+			return lar.getEndDate()!=null;
+		}
 	}
 	
 	@Override 
 	public long getTypeId() {
 		return getLearningActivityTypeFactory().getType();
+	}
+	
+	@Override
+	public String getPortletId() {
+		return getLearningActivityTypeFactory().getPortletId();
+	}
+	
+	@Override
+	public boolean deleteLearningActivityTry(LearningActivityTry learningActiityTry) {
+		return false;
 	}
 }

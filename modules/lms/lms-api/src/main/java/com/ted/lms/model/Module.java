@@ -55,4 +55,30 @@ public interface Module extends ModuleModel, PersistedModel {
 		};
 
 	public java.util.List<LearningActivity> getRequiredLearningActivities();
+
+	public String getSmallImageType()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public void setSmallImageType(String smallImageType);
+
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries(
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries(
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public long getImagesFolderId();
+
+	public String getDescriptionMapAsXML();
+
+	public java.util.Calendar getStartDateCalendar();
+
+	public java.util.Calendar getEndDateCalendar();
+
+	public void setImagesFolderId(long imagesFolderId);
 }

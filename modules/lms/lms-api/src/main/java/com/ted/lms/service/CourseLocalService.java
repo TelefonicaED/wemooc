@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -72,6 +73,8 @@ public interface CourseLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link CourseLocalServiceUtil} to access the course local service. Add custom service methods to {@link com.ted.lms.service.impl.CourseLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public Folder addAttachmentsFolder(long userId, long groupId)
+		throws PortalException;
 
 	/**
 	* Adds the course to the database. Also notifies the appropriate model listeners.
@@ -164,6 +167,8 @@ public interface CourseLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.DELETE)
 	public Course deleteCourse(long courseId) throws PortalException;
 
+	public void deleteCourses(long groupId);
+
 	/**
 	* @throws PortalException
 	*/
@@ -233,6 +238,9 @@ public interface CourseLocalService extends BaseLocalService,
 	public CourseResult enrollStudent(Course course, long userId,
 		ServiceContext serviceContext, PermissionChecker permissionChecker)
 		throws PortalException, InscriptionException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Folder fetchAttachmentsFolder(long userId, long groupId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Course fetchCourse(long courseId);

@@ -32,6 +32,13 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		_courseLocalService = courseLocalService;
 	}
 
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder addAttachmentsFolder(
+		long userId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.addAttachmentsFolder(userId, groupId);
+	}
+
 	/**
 	* Adds the course to the database. Also notifies the appropriate model listeners.
 	*
@@ -152,6 +159,11 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		return _courseLocalService.deleteCourse(courseId);
 	}
 
+	@Override
+	public void deleteCourses(long groupId) {
+		_courseLocalService.deleteCourses(groupId);
+	}
+
 	/**
 	* @throws PortalException
 	*/
@@ -255,6 +267,12 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 			com.ted.lms.exception.InscriptionException {
 		return _courseLocalService.enrollStudent(course, userId,
 			serviceContext, permissionChecker);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder fetchAttachmentsFolder(
+		long userId, long groupId) {
+		return _courseLocalService.fetchAttachmentsFolder(userId, groupId);
 	}
 
 	@Override

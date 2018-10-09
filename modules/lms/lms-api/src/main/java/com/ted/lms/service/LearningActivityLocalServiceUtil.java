@@ -54,6 +54,22 @@ public class LearningActivityLocalServiceUtil {
 		return getService().addLearningActivity(learningActivity);
 	}
 
+	public static com.ted.lms.model.LearningActivity addLearningActivity(
+		long groupId, long userId, long moduleId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
+		java.util.Date startDate, java.util.Date endDate, int tries,
+		int passPuntuation, long priority, String extraContent,
+		String feedbackCorrect, String feedbackNoCorrect, boolean required,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService()
+				   .addLearningActivity(groupId, userId, moduleId, titleMap,
+			descriptionMap, typeId, startDate, endDate, tries, passPuntuation,
+			priority, extraContent, feedbackCorrect, feedbackNoCorrect,
+			required, commentsActivated, serviceContext);
+	}
+
 	/**
 	* Creates a new learning activity with the primary key. Does not add the learning activity to the database.
 	*
@@ -63,6 +79,10 @@ public class LearningActivityLocalServiceUtil {
 	public static com.ted.lms.model.LearningActivity createLearningActivity(
 		long actId) {
 		return getService().createLearningActivity(actId);
+	}
+
+	public static void deleteLearningActivities(long moduleId) {
+		getService().deleteLearningActivities(moduleId);
 	}
 
 	/**
@@ -316,6 +336,15 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getRequiredLearningActivitiesOfModule(moduleId);
 	}
 
+	public static void updateAsset(long userId,
+		com.ted.lms.model.LearningActivity activity, long[] assetCategoryIds,
+		String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.updateAsset(userId, activity, assetCategoryIds, assetTagNames,
+			assetLinkEntryIds, priority);
+	}
+
 	/**
 	* Updates the learning activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -325,6 +354,22 @@ public class LearningActivityLocalServiceUtil {
 	public static com.ted.lms.model.LearningActivity updateLearningActivity(
 		com.ted.lms.model.LearningActivity learningActivity) {
 		return getService().updateLearningActivity(learningActivity);
+	}
+
+	public static com.ted.lms.model.LearningActivity updateLearningActivity(
+		long actId, long moduleId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
+		java.util.Date startDate, java.util.Date endDate, int tries,
+		int passPuntuation, long priority, String extraContent,
+		String feedbackCorrect, String feedbackNoCorrect, boolean required,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService()
+				   .updateLearningActivity(actId, moduleId, titleMap,
+			descriptionMap, typeId, startDate, endDate, tries, passPuntuation,
+			priority, extraContent, feedbackCorrect, feedbackNoCorrect,
+			required, commentsActivated, serviceContext);
 	}
 
 	public static LearningActivityLocalService getService() {

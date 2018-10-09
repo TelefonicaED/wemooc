@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -39,7 +41,10 @@ import com.ted.lms.model.Module;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the local service interface for Module. Methods of this
@@ -63,6 +68,20 @@ public interface ModuleLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ModuleLocalServiceUtil} to access the module local service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public Module addModule(long userId, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, boolean hasStartDate,
+		int startDateMonth, int startDateDay, int startDateYear,
+		int startDateHour, int startDateMinute, boolean hasEndDate,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, int allowedHours, int allowedMinutes,
+		ImageSelector smallImageImageSelector, long moduleEvalId,
+		ServiceContext serviceContext) throws PortalException;
+
+	public Module addModule(long userId, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, Date startDate, Date endDate,
+		long allowedTime, ImageSelector smallImageImageSelector,
+		long moduleEvalId, String moduleExtraData, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Adds the module to the database. Also notifies the appropriate model listeners.
@@ -72,6 +91,9 @@ public interface ModuleLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Module addModule(Module module);
+
+	public long addOriginalImageFileEntry(long userId, long groupId,
+		long entryId, ImageSelector imageSelector) throws PortalException;
 
 	/**
 	* Creates a new module with the primary key. Does not add the module to the database.
@@ -100,6 +122,8 @@ public interface ModuleLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.DELETE)
 	public Module deleteModule(Module module);
+
+	public void deleteModules(long groupId);
 
 	/**
 	* @throws PortalException
@@ -228,6 +252,9 @@ public interface ModuleLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Module> getModules(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Module> getModules(long groupId, int start, int end);
+
 	/**
 	* Returns all the modules matching the UUID and company.
 	*
@@ -273,6 +300,30 @@ public interface ModuleLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public Module moveModuleToTrash(long userId, long moduleId)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	public Module moveModuleToTrash(long userId, Module module)
+		throws PortalException;
+
+	public Module updateModule(long userId, long moduleId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		boolean hasStartDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean hasEndDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes, ImageSelector smallImageImageSelector,
+		long moduleEvalId, String moduleExtraData, ServiceContext serviceContext)
+		throws PortalException;
+
+	public Module updateModule(long userId, long moduleId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		Date startDate, Date endDate, long allowedTime,
+		ImageSelector smallImageImageSelector, long moduleEvalId,
+		String moduleExtraData, ServiceContext serviceContext)
+		throws PortalException;
+
 	/**
 	* Updates the module in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -281,4 +332,11 @@ public interface ModuleLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Module updateModule(Module module);
+
+	public Module updateOrder(Module module, long order);
+
+	@Indexable(type = IndexableType.REINDEX)
+	public Module updateStatus(long userId, long moduleId, int status,
+		ServiceContext serviceContext, Map<String, Serializable> workflowContext)
+		throws PortalException;
 }

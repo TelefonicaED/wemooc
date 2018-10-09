@@ -68,6 +68,7 @@ public class LearningActivityWrapper implements LearningActivity,
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("moduleId", getModuleId());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
@@ -138,6 +139,12 @@ public class LearningActivityWrapper implements LearningActivity,
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long moduleId = (Long)attributes.get("moduleId");
@@ -438,6 +445,16 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public long getGroupId() {
 		return _learningActivity.getGroupId();
+	}
+
+	/**
+	* Returns the last publish date of this learning activity.
+	*
+	* @return the last publish date of this learning activity
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _learningActivity.getLastPublishDate();
 	}
 
 	/**
@@ -1010,6 +1027,16 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public void setGroupId(long groupId) {
 		_learningActivity.setGroupId(groupId);
+	}
+
+	/**
+	* Sets the last publish date of this learning activity.
+	*
+	* @param lastPublishDate the last publish date of this learning activity
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_learningActivity.setLastPublishDate(lastPublishDate);
 	}
 
 	/**

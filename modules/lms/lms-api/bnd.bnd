@@ -9,5 +9,6 @@ Export-Package: \
 	com.ted.lms.constants,\
 	com.ted.lms.settings,\
 	com.ted.lms.registry,\
-	com.ted.lms.security.permission.resource
+	com.ted.lms.security.permission.resource,\
+	com.ted.lms.util
 -includeresource: META-INF/service.xml=../lms-service/service.xml

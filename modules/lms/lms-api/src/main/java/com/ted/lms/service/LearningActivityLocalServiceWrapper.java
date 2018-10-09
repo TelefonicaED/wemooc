@@ -46,6 +46,23 @@ public class LearningActivityLocalServiceWrapper
 		return _learningActivityLocalService.addLearningActivity(learningActivity);
 	}
 
+	@Override
+	public com.ted.lms.model.LearningActivity addLearningActivity(
+		long groupId, long userId, long moduleId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
+		java.util.Date startDate, java.util.Date endDate, int tries,
+		int passPuntuation, long priority, String extraContent,
+		String feedbackCorrect, String feedbackNoCorrect, boolean required,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _learningActivityLocalService.addLearningActivity(groupId,
+			userId, moduleId, titleMap, descriptionMap, typeId, startDate,
+			endDate, tries, passPuntuation, priority, extraContent,
+			feedbackCorrect, feedbackNoCorrect, required, commentsActivated,
+			serviceContext);
+	}
+
 	/**
 	* Creates a new learning activity with the primary key. Does not add the learning activity to the database.
 	*
@@ -55,6 +72,11 @@ public class LearningActivityLocalServiceWrapper
 	@Override
 	public com.ted.lms.model.LearningActivity createLearningActivity(long actId) {
 		return _learningActivityLocalService.createLearningActivity(actId);
+	}
+
+	@Override
+	public void deleteLearningActivities(long moduleId) {
+		_learningActivityLocalService.deleteLearningActivities(moduleId);
 	}
 
 	/**
@@ -335,6 +357,15 @@ public class LearningActivityLocalServiceWrapper
 		return _learningActivityLocalService.getRequiredLearningActivitiesOfModule(moduleId);
 	}
 
+	@Override
+	public void updateAsset(long userId,
+		com.ted.lms.model.LearningActivity activity, long[] assetCategoryIds,
+		String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_learningActivityLocalService.updateAsset(userId, activity,
+			assetCategoryIds, assetTagNames, assetLinkEntryIds, priority);
+	}
+
 	/**
 	* Updates the learning activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -345,6 +376,22 @@ public class LearningActivityLocalServiceWrapper
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
 		com.ted.lms.model.LearningActivity learningActivity) {
 		return _learningActivityLocalService.updateLearningActivity(learningActivity);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity updateLearningActivity(
+		long actId, long moduleId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
+		java.util.Date startDate, java.util.Date endDate, int tries,
+		int passPuntuation, long priority, String extraContent,
+		String feedbackCorrect, String feedbackNoCorrect, boolean required,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _learningActivityLocalService.updateLearningActivity(actId,
+			moduleId, titleMap, descriptionMap, typeId, startDate, endDate,
+			tries, passPuntuation, priority, extraContent, feedbackCorrect,
+			feedbackNoCorrect, required, commentsActivated, serviceContext);
 	}
 
 	@Override

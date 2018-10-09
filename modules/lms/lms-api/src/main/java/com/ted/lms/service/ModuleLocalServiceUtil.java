@@ -42,6 +42,39 @@ public class ModuleLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.ModuleLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.ted.lms.model.Module addModule(long userId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean hasStartDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean hasEndDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addModule(userId, titleMap, descriptionMap, hasStartDate,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute, hasEndDate, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, allowedHours, allowedMinutes,
+			smallImageImageSelector, moduleEvalId, serviceContext);
+	}
+
+	public static com.ted.lms.model.Module addModule(long userId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		java.util.Date startDate, java.util.Date endDate, long allowedTime,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId, String moduleExtraData,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addModule(userId, titleMap, descriptionMap, startDate,
+			endDate, allowedTime, smallImageImageSelector, moduleEvalId,
+			moduleExtraData, serviceContext);
+	}
 
 	/**
 	* Adds the module to the database. Also notifies the appropriate model listeners.
@@ -52,6 +85,15 @@ public class ModuleLocalServiceUtil {
 	public static com.ted.lms.model.Module addModule(
 		com.ted.lms.model.Module module) {
 		return getService().addModule(module);
+	}
+
+	public static long addOriginalImageFileEntry(long userId, long groupId,
+		long entryId,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector imageSelector)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addOriginalImageFileEntry(userId, groupId, entryId,
+			imageSelector);
 	}
 
 	/**
@@ -85,6 +127,10 @@ public class ModuleLocalServiceUtil {
 	public static com.ted.lms.model.Module deleteModule(
 		com.ted.lms.model.Module module) {
 		return getService().deleteModule(module);
+	}
+
+	public static void deleteModules(long groupId) {
+		getService().deleteModules(groupId);
 	}
 
 	/**
@@ -251,6 +297,11 @@ public class ModuleLocalServiceUtil {
 		return getService().getModules(start, end);
 	}
 
+	public static java.util.List<com.ted.lms.model.Module> getModules(
+		long groupId, int start, int end) {
+		return getService().getModules(groupId, start, end);
+	}
+
 	/**
 	* Returns all the modules matching the UUID and company.
 	*
@@ -305,6 +356,53 @@ public class ModuleLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static com.ted.lms.model.Module moveModuleToTrash(long userId,
+		long moduleId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveModuleToTrash(userId, moduleId);
+	}
+
+	public static com.ted.lms.model.Module moveModuleToTrash(long userId,
+		com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveModuleToTrash(userId, module);
+	}
+
+	public static com.ted.lms.model.Module updateModule(long userId,
+		long moduleId, java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean hasStartDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean hasEndDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId, String moduleExtraData,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateModule(userId, moduleId, titleMap, descriptionMap,
+			hasStartDate, startDateMonth, startDateDay, startDateYear,
+			startDateHour, startDateMinute, hasEndDate, endDateMonth,
+			endDateDay, endDateYear, endDateHour, endDateMinute, allowedHours,
+			allowedMinutes, smallImageImageSelector, moduleEvalId,
+			moduleExtraData, serviceContext);
+	}
+
+	public static com.ted.lms.model.Module updateModule(long userId,
+		long moduleId, java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		java.util.Date startDate, java.util.Date endDate, long allowedTime,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId, String moduleExtraData,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateModule(userId, moduleId, titleMap, descriptionMap,
+			startDate, endDate, allowedTime, smallImageImageSelector,
+			moduleEvalId, moduleExtraData, serviceContext);
+	}
+
 	/**
 	* Updates the module in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -314,6 +412,21 @@ public class ModuleLocalServiceUtil {
 	public static com.ted.lms.model.Module updateModule(
 		com.ted.lms.model.Module module) {
 		return getService().updateModule(module);
+	}
+
+	public static com.ted.lms.model.Module updateOrder(
+		com.ted.lms.model.Module module, long order) {
+		return getService().updateOrder(module, order);
+	}
+
+	public static com.ted.lms.model.Module updateStatus(long userId,
+		long moduleId, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		java.util.Map<String, java.io.Serializable> workflowContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateStatus(userId, moduleId, status, serviceContext,
+			workflowContext);
 	}
 
 	public static ModuleLocalService getService() {

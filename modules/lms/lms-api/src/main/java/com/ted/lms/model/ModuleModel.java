@@ -20,12 +20,13 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
-import com.liferay.portal.kernel.model.StagedAuditedModel;
+import com.liferay.portal.kernel.model.StagedGroupedModel;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
@@ -49,8 +50,8 @@ import java.util.Map;
  * @generated
  */
 @ProviderType
-public interface ModuleModel extends BaseModel<Module>, GroupedModel,
-	LocalizedModel, ShardedModel, StagedAuditedModel, WorkflowedModel {
+public interface ModuleModel extends BaseModel<Module>, LocalizedModel,
+	ShardedModel, StagedGroupedModel, TrashedModel, WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -214,6 +215,22 @@ public interface ModuleModel extends BaseModel<Module>, GroupedModel,
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate);
+
+	/**
+	 * Returns the last publish date of this module.
+	 *
+	 * @return the last publish date of this module
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this module.
+	 *
+	 * @param lastPublishDate the last publish date of this module
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
 
 	/**
 	 * Returns the title of this module.
@@ -594,6 +611,55 @@ public interface ModuleModel extends BaseModel<Module>, GroupedModel,
 	 */
 	@Override
 	public void setStatusDate(Date statusDate);
+
+	/**
+	 * Returns the trash entry created when this module was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this module.
+	 *
+	 * @return the trash entry created when this module was moved to the Recycle Bin
+	 */
+	@Override
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
+		throws PortalException;
+
+	/**
+	 * Returns the class primary key of the trash entry for this module.
+	 *
+	 * @return the class primary key of the trash entry for this module
+	 */
+	@Override
+	public long getTrashEntryClassPK();
+
+	/**
+	 * Returns the trash handler for this module.
+	 *
+	 * @return the trash handler for this module
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler();
+
+	/**
+	 * Returns <code>true</code> if this module is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if this module is in the Recycle Bin; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInTrash();
+
+	/**
+	 * Returns <code>true</code> if the parent of this module is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if the parent of this module is in the Recycle Bin; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInTrashContainer();
+
+	@Override
+	public boolean isInTrashExplicitly();
+
+	@Override
+	public boolean isInTrashImplicitly();
 
 	/**
 	 * Returns <code>true</code> if this module is approved.

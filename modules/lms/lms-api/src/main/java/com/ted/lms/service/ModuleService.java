@@ -21,9 +21,16 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Transactional;
+
+import com.ted.lms.model.Module;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the remote service interface for Module. Methods of this
@@ -49,6 +56,16 @@ public interface ModuleService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ModuleServiceUtil} to access the module remote service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public Module addModule(Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, boolean startDate,
+		int startDateMonth, int startDateDay, int startDateYear,
+		int startDateHour, int startDateMinute, boolean endDate,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, int allowedHours, int allowedMinutes,
+		ImageSelector smallImageImageSelector, long moduleEvalId,
+		ServiceContext serviceContext) throws PortalException;
+
+	public void deleteModule(long moduleId) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -56,4 +73,15 @@ public interface ModuleService extends BaseService {
 	* @return the OSGi service identifier
 	*/
 	public String getOSGiServiceIdentifier();
+
+	public Module moveModuleToTrash(long moduleId) throws PortalException;
+
+	public Module updateModule(long moduleId, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, boolean startDate,
+		int startDateMonth, int startDateDay, int startDateYear,
+		int startDateHour, int startDateMinute, boolean endDate,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, int allowedHours, int allowedMinutes,
+		ImageSelector smallImageImageSelector, long moduleEvalId,
+		ServiceContext serviceContext) throws PortalException;
 }

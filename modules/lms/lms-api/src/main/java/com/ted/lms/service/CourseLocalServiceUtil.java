@@ -42,6 +42,11 @@ public class CourseLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.CourseLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.portal.kernel.repository.model.Folder addAttachmentsFolder(
+		long userId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().addAttachmentsFolder(userId, groupId);
+	}
 
 	/**
 	* Adds the course to the database. Also notifies the appropriate model listeners.
@@ -160,6 +165,10 @@ public class CourseLocalServiceUtil {
 		return getService().deleteCourse(courseId);
 	}
 
+	public static void deleteCourses(long groupId) {
+		getService().deleteCourses(groupId);
+	}
+
 	/**
 	* @throws PortalException
 	*/
@@ -256,6 +265,11 @@ public class CourseLocalServiceUtil {
 		return getService()
 				   .enrollStudent(course, userId, serviceContext,
 			permissionChecker);
+	}
+
+	public static com.liferay.portal.kernel.repository.model.Folder fetchAttachmentsFolder(
+		long userId, long groupId) {
+		return getService().fetchAttachmentsFolder(userId, groupId);
 	}
 
 	public static com.ted.lms.model.Course fetchCourse(long courseId) {

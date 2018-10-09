@@ -42,6 +42,7 @@ public class ModuleSoap implements Serializable {
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
+		soapModel.setLastPublishDate(model.getLastPublishDate());
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setSmallImageId(model.getSmallImageId());
@@ -171,6 +172,14 @@ public class ModuleSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
+	}
+
 	public String getTitle() {
 		return _title;
 	}
@@ -283,6 +292,7 @@ public class ModuleSoap implements Serializable {
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
+	private Date _lastPublishDate;
 	private String _title;
 	private String _description;
 	private long _smallImageId;

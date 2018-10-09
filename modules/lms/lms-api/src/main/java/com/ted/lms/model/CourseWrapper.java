@@ -67,6 +67,7 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("parentCourseId", getParentCourseId());
 		attributes.put("groupCreatedId", getGroupCreatedId());
 		attributes.put("title", getTitle());
@@ -143,6 +144,12 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long parentCourseId = (Long)attributes.get("parentCourseId");
@@ -487,6 +494,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getExecutionEndDate();
 	}
 
+	@Override
+	public java.util.Calendar getExecutionEndDateCalendar() {
+		return _course.getExecutionEndDateCalendar();
+	}
+
 	/**
 	* Returns the execution start date of this course.
 	*
@@ -495,6 +507,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public Date getExecutionStartDate() {
 		return _course.getExecutionStartDate();
+	}
+
+	@Override
+	public java.util.Calendar getExecutionStartDateCalendar() {
+		return _course.getExecutionStartDateCalendar();
 	}
 
 	@Override
@@ -570,6 +587,16 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public long getInscriptionType() {
 		return _course.getInscriptionType();
+	}
+
+	/**
+	* Returns the last publish date of this course.
+	*
+	* @return the last publish date of this course
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _course.getLastPublishDate();
 	}
 
 	/**
@@ -1212,6 +1239,16 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setInscriptionType(long inscriptionType) {
 		_course.setInscriptionType(inscriptionType);
+	}
+
+	/**
+	* Sets the last publish date of this course.
+	*
+	* @param lastPublishDate the last publish date of this course
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_course.setLastPublishDate(lastPublishDate);
 	}
 
 	/**

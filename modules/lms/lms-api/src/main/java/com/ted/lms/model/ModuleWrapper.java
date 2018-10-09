@@ -67,6 +67,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
 		attributes.put("smallImageId", getSmallImageId());
@@ -132,6 +133,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		String title = (String)attributes.get("title");
@@ -339,6 +346,11 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		return _module.getDescriptionMap();
 	}
 
+	@Override
+	public String getDescriptionMapAsXML() {
+		return _module.getDescriptionMapAsXML();
+	}
+
 	/**
 	* Returns the end date of this module.
 	*
@@ -347,6 +359,11 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public Date getEndDate() {
 		return _module.getEndDate();
+	}
+
+	@Override
+	public java.util.Calendar getEndDateCalendar() {
+		return _module.getEndDateCalendar();
 	}
 
 	@Override
@@ -362,6 +379,41 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public long getGroupId() {
 		return _module.getGroupId();
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _module.getImagesFileEntries();
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries(
+		int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _module.getImagesFileEntries(start, end);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries(
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _module.getImagesFileEntries(start, end, obc);
+	}
+
+	@Override
+	public long getImagesFolderId() {
+		return _module.getImagesFolderId();
+	}
+
+	/**
+	* Returns the last publish date of this module.
+	*
+	* @return the last publish date of this module
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _module.getLastPublishDate();
 	}
 
 	/**
@@ -444,6 +496,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		return _module.getSmallImageId();
 	}
 
+	@Override
+	public String getSmallImageType()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _module.getSmallImageType();
+	}
+
 	/**
 	* Returns the start date of this module.
 	*
@@ -452,6 +510,11 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public Date getStartDate() {
 		return _module.getStartDate();
+	}
+
+	@Override
+	public java.util.Calendar getStartDateCalendar() {
+		return _module.getStartDateCalendar();
 	}
 
 	/**
@@ -581,6 +644,39 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	/**
+	* Returns the trash entry created when this module was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this module.
+	*
+	* @return the trash entry created when this module was moved to the Recycle Bin
+	*/
+	@Override
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _module.getTrashEntry();
+	}
+
+	/**
+	* Returns the class primary key of the trash entry for this module.
+	*
+	* @return the class primary key of the trash entry for this module
+	*/
+	@Override
+	public long getTrashEntryClassPK() {
+		return _module.getTrashEntryClassPK();
+	}
+
+	/**
+	* Returns the trash handler for this module.
+	*
+	* @return the trash handler for this module
+	* @deprecated As of 7.0.0, with no direct replacement
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler() {
+		return _module.getTrashHandler();
+	}
+
+	/**
 	* Returns the user ID of this module.
 	*
 	* @return the user ID of this module
@@ -693,6 +789,36 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public boolean isIncomplete() {
 		return _module.isIncomplete();
+	}
+
+	/**
+	* Returns <code>true</code> if this module is in the Recycle Bin.
+	*
+	* @return <code>true</code> if this module is in the Recycle Bin; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInTrash() {
+		return _module.isInTrash();
+	}
+
+	/**
+	* Returns <code>true</code> if the parent of this module is in the Recycle Bin.
+	*
+	* @return <code>true</code> if the parent of this module is in the Recycle Bin; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInTrashContainer() {
+		return _module.isInTrashContainer();
+	}
+
+	@Override
+	public boolean isInTrashExplicitly() {
+		return _module.isInTrashExplicitly();
+	}
+
+	@Override
+	public boolean isInTrashImplicitly() {
+		return _module.isInTrashImplicitly();
 	}
 
 	@Override
@@ -871,6 +997,21 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		_module.setGroupId(groupId);
 	}
 
+	@Override
+	public void setImagesFolderId(long imagesFolderId) {
+		_module.setImagesFolderId(imagesFolderId);
+	}
+
+	/**
+	* Sets the last publish date of this module.
+	*
+	* @param lastPublishDate the last publish date of this module
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_module.setLastPublishDate(lastPublishDate);
+	}
+
 	/**
 	* Sets the modified date of this module.
 	*
@@ -949,6 +1090,11 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public void setSmallImageId(long smallImageId) {
 		_module.setSmallImageId(smallImageId);
+	}
+
+	@Override
+	public void setSmallImageType(String smallImageType) {
+		_module.setSmallImageType(smallImageType);
 	}
 
 	/**

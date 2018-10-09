@@ -1,7 +1,6 @@
 package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 
@@ -9,8 +8,6 @@ import java.util.Locale;
 
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
-
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -36,10 +33,7 @@ public interface ModuleEvalFactory {
 	
 	public String getIconCssClass();
 
-	public PortletURL getURLSpecificContent(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws PortalException;
+	public PortletURL getURLSpecificContent();
 	
 	public String getPortletId();
 	

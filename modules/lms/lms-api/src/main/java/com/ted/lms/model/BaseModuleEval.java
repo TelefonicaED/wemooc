@@ -1,14 +1,15 @@
 package com.ted.lms.model;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.upload.UploadRequest;
 import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
 import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.lms.service.ModuleResultLocalServiceUtil;
 
 import java.util.List;
-import javax.portlet.PortletResponse;
+
+import javax.portlet.ActionRequest;
 
 /**
  * Base para el método de evaluación de un módulo
@@ -46,6 +47,7 @@ public abstract class BaseModuleEval implements ModuleEval {
 	
 	private ModuleEvalFactory moduleEvalFactory;
 	
+	@Override
 	public boolean updateModule() throws SystemException {
 		List<ModuleResult> moduleResults = ModuleResultLocalServiceUtil.getModuleResults(module.getModuleId());
 		for(ModuleResult moduleResult: moduleResults) {
@@ -55,6 +57,7 @@ public abstract class BaseModuleEval implements ModuleEval {
 		return true;
 	}
 	
+	@Override
 	public boolean recalculateModule() throws SystemException {
 		List<ModuleResult> moduleResults = ModuleResultLocalServiceUtil.getModuleResults(module.getModuleId());
 		for(ModuleResult moduleResult: moduleResults) {
@@ -64,7 +67,8 @@ public abstract class BaseModuleEval implements ModuleEval {
 		return true;
 	}
 
-	public void setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
+	@Override
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException{
 		
 	}
 	

@@ -8,11 +8,11 @@ import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.ted.lms.constants.LMSPropsKeys;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,11 +36,11 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		throws PortalException {
 		LearningActivity activity = getLearningActivity(actId);
 		
-		return getLearningActivityType(activity, activity.getTypeId());
+		return getLearningActivityType(activity);
 	}
 
 	@Override
-	public LearningActivityType getLearningActivityType(LearningActivity activity, long type) throws PortalException {
+	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
 
 		return null;
 	}
@@ -53,6 +53,11 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	@Override
 	public String getIconCssClass() {
 		return "activity";
+	}
+	
+	@Override
+	public boolean isCategorizable() {
+		return false;
 	}
 
 	@Override
@@ -101,34 +106,26 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 			PermissionChecker permissionChecker, long groupId, long classTypeId)
 		throws Exception {
 
-		return false;
+		return true;
 	}
 
 	@Override
-	public boolean hasPermission(
-			PermissionChecker permissionChecker, long classPK, String actionId)
-		throws Exception {
-
-		return _PERMISSION;
+	public boolean hasPermission(PermissionChecker permissionChecker, long classPK, String actionId) throws Exception {
+		return true;
 	}
-
+	
 	@Override
-	public boolean isActive(long companyId) {
+	public boolean isActive(long companyId, long groupId) {
 		if (Validator.isNull(getPortletId())) {
 			return true;
 		}
 
 		//Comprobamos que esté activa la actividad para esa companyId
-		boolean active = PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_TYPE + "." + getType(), false);
+		boolean active = LMSPrefsPropsValues.getLearningActivityType(companyId, getType());
 		
 		return active;
 	}
 	
-	@Override
-	public boolean isActive(long companyId, long groupId) {
-		return isActive(companyId);
-	}
-
-	private static final boolean _PERMISSION = true;
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
 }
