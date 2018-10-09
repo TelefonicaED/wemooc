@@ -89,6 +89,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
+			{ "lastPublishDate", Types.TIMESTAMP },
 			{ "moduleId", Types.BIGINT },
 			{ "title", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
@@ -119,6 +120,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("moduleId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
@@ -139,7 +141,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_LearningActivity (uuid_ VARCHAR(75) null,actId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,moduleId LONG,title STRING null,description STRING null,typeId LONG,startDate DATE null,endDate DATE null,tries INTEGER,passPuntuation INTEGER,priority LONG,extraContent TEXT null,feedbackCorrect VARCHAR(75) null,feedbackNoCorrect VARCHAR(75) null,required BOOLEAN,commentsActivated BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_LearningActivity (uuid_ VARCHAR(75) null,actId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,moduleId LONG,title STRING null,description STRING null,typeId LONG,startDate DATE null,endDate DATE null,tries INTEGER,passPuntuation INTEGER,priority LONG,extraContent TEXT null,feedbackCorrect VARCHAR(75) null,feedbackNoCorrect VARCHAR(75) null,required BOOLEAN,commentsActivated BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_LearningActivity";
 	public static final String ORDER_BY_JPQL = " ORDER BY learningActivity.moduleId ASC, learningActivity.priority ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_LearningActivity.moduleId ASC, LMS_LearningActivity.priority ASC";
@@ -183,6 +185,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setLastPublishDate(soapModel.getLastPublishDate());
 		model.setModuleId(soapModel.getModuleId());
 		model.setTitle(soapModel.getTitle());
 		model.setDescription(soapModel.getDescription());
@@ -274,6 +277,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("moduleId", getModuleId());
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
@@ -347,6 +351,12 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long moduleId = (Long)attributes.get("moduleId");
@@ -608,6 +618,17 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		_setModifiedDate = true;
 
 		_modifiedDate = modifiedDate;
+	}
+
+	@JSON
+	@Override
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
 	}
 
 	@JSON
@@ -1269,6 +1290,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		learningActivityImpl.setUserName(getUserName());
 		learningActivityImpl.setCreateDate(getCreateDate());
 		learningActivityImpl.setModifiedDate(getModifiedDate());
+		learningActivityImpl.setLastPublishDate(getLastPublishDate());
 		learningActivityImpl.setModuleId(getModuleId());
 		learningActivityImpl.setTitle(getTitle());
 		learningActivityImpl.setDescription(getDescription());
@@ -1438,6 +1460,15 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			learningActivityCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		Date lastPublishDate = getLastPublishDate();
+
+		if (lastPublishDate != null) {
+			learningActivityCacheModel.lastPublishDate = lastPublishDate.getTime();
+		}
+		else {
+			learningActivityCacheModel.lastPublishDate = Long.MIN_VALUE;
+		}
+
 		learningActivityCacheModel.moduleId = getModuleId();
 
 		learningActivityCacheModel.title = getTitle();
@@ -1536,7 +1567,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(53);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1554,6 +1585,8 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
 		sb.append(getModifiedDate());
+		sb.append(", lastPublishDate=");
+		sb.append(getLastPublishDate());
 		sb.append(", moduleId=");
 		sb.append(getModuleId());
 		sb.append(", title=");
@@ -1597,7 +1630,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(82);
+		StringBundler sb = new StringBundler(85);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.model.LearningActivity");
@@ -1634,6 +1667,10 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		sb.append(
 			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
 		sb.append(getModifiedDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
+		sb.append(getLastPublishDate());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>moduleId</column-name><column-value><![CDATA[");
@@ -1731,6 +1768,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private Date _lastPublishDate;
 	private long _moduleId;
 	private long _originalModuleId;
 	private boolean _setOriginalModuleId;

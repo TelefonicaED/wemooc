@@ -14,10 +14,21 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
+import com.ted.lms.constants.LMSActionKeys;
+import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.base.ModuleServiceBaseImpl;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The implementation of the module remote service.
@@ -45,5 +56,54 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 	    ModelResourcePermissionFactory.getInstance(
 	        ModuleServiceImpl.class,
 	        "moduleModelResourcePermission", Module.class);
+	
+	private static volatile PortletResourcePermission portletResourcePermission =
+        PortletResourcePermissionFactory.getInstance(
+            ModuleServiceImpl.class, "portletResourcePermission",
+            LMSConstants.RESOURCE_NAME);
+	
+	@Override
+	public Module addModule(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean startDate, int startDateMonth, 
+			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean endDate, int endDateMonth, int endDateDay,
+			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
+			long moduleEvalId, ServiceContext serviceContext) throws PortalException {
+
+		portletResourcePermission.check(
+			getPermissionChecker(), serviceContext.getScopeGroupId(),
+			LMSActionKeys.ADD_MODULE);
+
+		return moduleLocalService.addModule(
+			getUserId(), titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
+			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
+			allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId, serviceContext);
+	}
+	
+	@Override
+	public Module updateModule(long moduleId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean startDate, int startDateMonth, 
+			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean endDate, int endDateMonth, int endDateDay,
+			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
+			long moduleEvalId, ServiceContext serviceContext)  throws PortalException {
+
+		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.UPDATE);
+
+		return moduleLocalService.updateModule(getUserId(), moduleId, titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
+			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
+			allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId, null, serviceContext);
+	}
+	
+	@Override
+	public Module moveModuleToTrash(long moduleId) throws PortalException {
+		moduleModelResourcePermission.check(
+			getPermissionChecker(), moduleId, ActionKeys.DELETE);
+
+		return moduleLocalService.moveModuleToTrash(getUserId(), moduleId);
+	}
+	
+	@Override
+	public void deleteModule(long moduleId) throws PortalException {
+		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.DELETE);
+
+		moduleLocalService.deleteModule(moduleId);
+	}
 
 }

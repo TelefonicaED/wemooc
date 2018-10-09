@@ -13,12 +13,16 @@
 			<supports>
 				<action-key>ADD_COURSE</action-key>
 				<action-key>PERMISSIONS</action-key>
+				<action-key>ADD_MODULE</action-key>
+				<action-key>ACCESSLOCK</action-key>
+				<action-key>VIEW_RESULTS</action-key>
 			</supports>
 			<site-member-defaults/>
 			<guest-defaults />
 			<guest-unsupported>
 				<action-key>ADD_COURSE</action-key>
 				<action-key>PERMISSIONS</action-key>
+				<action-key>ADD_MODULE</action-key>
 			</guest-unsupported>
 		</permissions>
 	</model-resource>
@@ -40,9 +44,6 @@
 				<action-key>REGISTER</action-key>
 				<action-key>ASSIGN_MEMBERS</action-key>
 				<action-key>ACCESS</action-key>
-				<action-key>ADD_MODULE</action-key>
-				<action-key>ACCESSLOCK</action-key>
-				<action-key>VIEW_RESULTS</action-key>
 			</supports>
 			<site-member-defaults>
 				<action-key>VIEW</action-key>
@@ -59,7 +60,6 @@
 				<action-key>UPDATE</action-key>
 				<action-key>REGISTER</action-key>
 				<action-key>ASSIGN_MEMBERS</action-key>
-				<action-key>ADD_MODULE</action-key>
 			</guest-unsupported>
 		</permissions>
 	</model-resource>

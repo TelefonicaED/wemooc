@@ -14,10 +14,22 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.base.LearningActivityLocalServiceBaseImpl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The implementation of the learning activity local service.
@@ -51,6 +63,125 @@ public class LearningActivityLocalServiceImpl
 	
 	public int getLearningActivitiesOfModuleCount(long moduleId) {
 		return learningActivityPersistence.countByModuleId(moduleId);
+	}
+	
+	public void deleteLearningActivities(long moduleId) {
+		List<LearningActivity> listLearningActivities = learningActivityPersistence.findByModuleId(moduleId);
+		for(LearningActivity learningActivity: listLearningActivities) {
+			learningActivityPersistence.remove(learningActivity);
+		}
+	}
+	
+	@Indexable(type = IndexableType.REINDEX)
+	public LearningActivity addLearningActivity(long groupId, long userId, long moduleId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, long typeId, Date startDate, Date endDate, int tries, int passPuntuation, long priority,
+			String extraContent, String feedbackCorrect, String feedbackNoCorrect, boolean required, boolean commentsActivated,
+			ServiceContext serviceContext) {
+		LearningActivity activity = null;
+		try {
+			activity = learningActivityPersistence.create(counterLocalService.increment(LearningActivity.class.getName()));
+			activity.setGroupId(groupId);
+			activity.setCompanyId(serviceContext.getCompanyId());
+			activity.setUserId(userId);
+			User user = userLocalService.fetchUser(userId);
+			if(user != null) {
+				activity.setUserName(user.getFullName());
+				activity.setStatusByUserName(user.getFullName());
+			}
+			activity.setCreateDate(new Date());
+			activity.setModifiedDate(activity.getCreateDate());
+			activity.setModuleId(moduleId);
+			activity.setTitleMap(titleMap);
+			activity.setDescriptionMap(descriptionMap);
+			activity.setTypeId(typeId);
+			activity.setStartDate(startDate);
+			activity.setEndDate(endDate);
+			activity.setTries(tries);
+			activity.setPassPuntuation(passPuntuation);
+			activity.setPriority(priority);
+			activity.setExtraContent(extraContent);
+			activity.setFeedbackCorrect(feedbackCorrect);
+			activity.setFeedbackNoCorrect(feedbackNoCorrect);
+			activity.setRequired(required);
+			activity.setCommentsActivated(commentsActivated);
+			activity.setStatus(WorkflowConstants.STATUS_APPROVED);
+			activity.setStatusByUserId(userId);
+			activity.setStatusDate(activity.getCreateDate());
+			
+			activity = learningActivityPersistence.update(activity);
+		
+			resourceLocalService.addResources(activity.getCompanyId(), activity.getGroupId(), activity.getUserId(),  LearningActivity.class.getName(), 
+					activity.getActId(), false, true, false);
+			
+			updateAsset(serviceContext.getUserId(), activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
+					serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority());
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return activity;
+		
+	}
+	
+	@Indexable(type = IndexableType.REINDEX)
+	public LearningActivity updateLearningActivity(long actId, long moduleId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, long typeId, Date startDate, Date endDate, int tries, int passPuntuation, long priority,
+			String extraContent, String feedbackCorrect, String feedbackNoCorrect, boolean required, boolean commentsActivated,
+			ServiceContext serviceContext) {
+		LearningActivity activity = null;
+		try {
+			activity = learningActivityPersistence.fetchByPrimaryKey(actId);
+			activity.setModifiedDate(new Date());
+			activity.setModuleId(moduleId);
+			activity.setTitleMap(titleMap);
+			activity.setDescriptionMap(descriptionMap);
+			activity.setTypeId(typeId);
+			activity.setStartDate(startDate);
+			activity.setEndDate(endDate);
+			activity.setTries(tries);
+			activity.setPassPuntuation(passPuntuation);
+			activity.setPriority(priority);
+			activity.setExtraContent(extraContent);
+			activity.setFeedbackCorrect(feedbackCorrect);
+			activity.setFeedbackNoCorrect(feedbackNoCorrect);
+			activity.setRequired(required);
+			activity.setCommentsActivated(commentsActivated);
+			
+			activity = learningActivityPersistence.update(activity);
+			
+			updateAsset(serviceContext.getUserId(), activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
+					serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority());
+		} catch (PortalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return activity;
+		
+	}
+	
+	public void updateAsset(
+			long userId, LearningActivity activity, long[] assetCategoryIds,
+			String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
+		throws PortalException {
+
+		Date publishDate = null;
+		if (activity.isApproved()) {
+			publishDate = activity.getCreateDate();
+		}
+
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+			userId, activity.getGroupId(), activity.getCreateDate(),
+			activity.getModifiedDate(), LearningActivity.class.getName(),
+			activity.getActId(), activity.getUuid(), 0, assetCategoryIds,
+			assetTagNames, true, activity.isApproved(), null, null, publishDate,
+			null, ContentTypes.TEXT_HTML, activity.getTitle(), activity.getDescription(), null, null,
+			null, 0, 0, priority);
+
+		assetLinkLocalService.updateLinks(
+			userId, assetEntry.getEntryId(), assetLinkEntryIds,
+			AssetLinkConstants.TYPE_RELATED);
 	}
 	
 }

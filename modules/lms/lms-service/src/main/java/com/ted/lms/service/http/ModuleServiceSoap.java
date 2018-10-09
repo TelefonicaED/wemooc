@@ -16,9 +16,20 @@ package com.ted.lms.service.http;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
+
+import com.ted.lms.service.ModuleServiceUtil;
+
+import java.rmi.RemoteException;
+
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Provides the SOAP utility for the
- * {@link com.ted.lms.service.ModuleServiceUtil} service utility. The
+ * {@link ModuleServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -53,9 +64,104 @@ import aQute.bnd.annotation.ProviderType;
  * @author Brian Wing Shun Chan
  * @see ModuleServiceHttp
  * @see com.ted.lms.model.ModuleSoap
- * @see com.ted.lms.service.ModuleServiceUtil
+ * @see ModuleServiceUtil
  * @generated
  */
 @ProviderType
 public class ModuleServiceSoap {
+	public static com.ted.lms.model.ModuleSoap addModule(
+		String[] titleMapLanguageIds, String[] titleMapValues,
+		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
+		boolean startDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean endDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
+					descriptionMapValues);
+
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.addModule(titleMap,
+					descriptionMap, startDate, startDateMonth, startDateDay,
+					startDateYear, startDateHour, startDateMinute, endDate,
+					endDateMonth, endDateDay, endDateYear, endDateHour,
+					endDateMinute, allowedHours, allowedMinutes,
+					smallImageImageSelector, moduleEvalId, serviceContext);
+
+			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.ModuleSoap updateModule(long moduleId,
+		String[] titleMapLanguageIds, String[] titleMapValues,
+		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
+		boolean startDate, int startDateMonth, int startDateDay,
+		int startDateYear, int startDateHour, int startDateMinute,
+		boolean endDate, int endDateMonth, int endDateDay, int endDateYear,
+		int endDateHour, int endDateMinute, int allowedHours,
+		int allowedMinutes,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
+		long moduleEvalId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
+					descriptionMapValues);
+
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.updateModule(moduleId,
+					titleMap, descriptionMap, startDate, startDateMonth,
+					startDateDay, startDateYear, startDateHour,
+					startDateMinute, endDate, endDateMonth, endDateDay,
+					endDateYear, endDateHour, endDateMinute, allowedHours,
+					allowedMinutes, smallImageImageSelector, moduleEvalId,
+					serviceContext);
+
+			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.ModuleSoap moveModuleToTrash(long moduleId)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveModuleToTrash(moduleId);
+
+			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void deleteModule(long moduleId) throws RemoteException {
+		try {
+			ModuleServiceUtil.deleteModule(moduleId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(ModuleServiceSoap.class);
 }

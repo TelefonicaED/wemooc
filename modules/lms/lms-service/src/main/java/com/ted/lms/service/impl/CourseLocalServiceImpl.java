@@ -19,7 +19,21 @@ import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.blogs.kernel.exception.EntrySmallImageScaleException;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.util.DLUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
+import com.liferay.exportimport.kernel.lar.ManifestSummary;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Conjunction;
+import com.liferay.portal.kernel.dao.orm.Criterion;
+import com.liferay.portal.kernel.dao.orm.Disjunction;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.Property;
+import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
+import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
@@ -54,22 +68,22 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.PrefsPropsUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSConstants;
-import com.ted.lms.constants.LMSPropsKeys;
 import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.service.base.CourseLocalServiceBaseImpl;
 import com.ted.lms.settings.CoursesGroupServiceSettings;
+import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.io.IOException;
 import java.util.Date;
@@ -218,21 +232,21 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			updateAsset(serviceContext.getUserId(), course, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority(), summary);
 			
 			//Añadimos rol de editor o tutor al creador
-			boolean teacherRoleToCreator = GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.COURSE_ADD_TEACHER_ROLE_TO_CREATOR));
-			boolean editorRoleToCreator = GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.COURSE_ADD_TEACHER_ROLE_TO_CREATOR));
+			boolean teacherRoleToCreator = LMSPrefsPropsValues.getCourseAddTeacherRoleToCreator(course.getCourseId());
+			boolean editorRoleToCreator = LMSPrefsPropsValues.getCourseAddEditorRoleToCreator(course.getCourseId());
 			
 			if(teacherRoleToCreator){
-				long teacherRole = PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_TEACHER_ROLE,0);
+				long teacherRole = LMSPrefsPropsValues.getLMSPrefsTeacherRole(course.getCourseId());
 				if(teacherRole > 0) {
-					long[] teacherRoleId = {PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_TEACHER_ROLE)};
+					long[] teacherRoleId = {teacherRole};
 					UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(), course.getGroupCreatedId(), teacherRoleId);
 				}
 			}
 
 			if(editorRoleToCreator){
-				long editorRole = PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_EDITOR_ROLE);
+				long editorRole = LMSPrefsPropsValues.getLMSPrefsEditorRole(course.getCompanyId());
 				if(editorRole > 0) {
-					long[] editorRoleId = {PrefsPropsUtil.getLong(serviceContext.getCompanyId(), LMSPropsKeys.LMS_PREFS_EDITOR_ROLE)};
+					long[] editorRoleId = {editorRole};
 					UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(),	course.getGroupCreatedId(), editorRoleId);
 				}
 			}	
@@ -545,6 +559,145 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			resultUnsubscribe = false;
 		}
 		return resultUnsubscribe;
+	}
+	
+	public void deleteCourses(long groupId) {
+		List<Course> listCourses = coursePersistence.findByGroupId(groupId);
+		for(Course course: listCourses) {
+			coursePersistence.remove(course);
+		}
+	}
+	
+	@Override
+	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		final PortletDataContext portletDataContext) {
+		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
+				@Override
+				public long performCount() throws PortalException {
+					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
+
+					StagedModelType stagedModelType = getStagedModelType();
+
+					long modelAdditionCount = super.performCount();
+
+					manifestSummary.addModelAdditionCount(stagedModelType,
+						modelAdditionCount);
+
+					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
+							stagedModelType);
+
+					manifestSummary.addModelDeletionCount(stagedModelType,
+						modelDeletionCount);
+
+					return modelAdditionCount;
+				}
+			};
+
+		initActionableDynamicQuery(exportActionableDynamicQuery);
+
+		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+				@Override
+				public void addCriteria(DynamicQuery dynamicQuery) {
+					Criterion modifiedDateCriterion = portletDataContext.getDateRangeCriteria(
+							"modifiedDate");
+
+					if (modifiedDateCriterion != null) {
+						Conjunction conjunction = RestrictionsFactoryUtil.conjunction();
+
+						conjunction.add(modifiedDateCriterion);
+
+						Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
+
+						disjunction.add(RestrictionsFactoryUtil.gtProperty(
+								"modifiedDate", "lastPublishDate"));
+
+						Property lastPublishDateProperty = PropertyFactoryUtil.forName(
+								"lastPublishDate");
+
+						disjunction.add(lastPublishDateProperty.isNull());
+
+						conjunction.add(disjunction);
+
+						modifiedDateCriterion = conjunction;
+					}
+
+					Criterion statusDateCriterion = portletDataContext.getDateRangeCriteria(
+							"statusDate");
+
+					if ((modifiedDateCriterion != null) &&
+							(statusDateCriterion != null)) {
+						Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
+
+						disjunction.add(modifiedDateCriterion);
+						disjunction.add(statusDateCriterion);
+
+						dynamicQuery.add(disjunction);
+					}
+
+					Property workflowStatusProperty = PropertyFactoryUtil.forName(
+							"status");
+
+					if (portletDataContext.isInitialPublication()) {
+						dynamicQuery.add(workflowStatusProperty.ne(
+								WorkflowConstants.STATUS_IN_TRASH));
+					}
+					else {
+						/*StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(Course.class.getName());
+
+						dynamicQuery.add(workflowStatusProperty.in(
+								stagedModelDataHandler.getExportableStatuses()));*/
+					}
+				}
+			});
+
+		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
+
+		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
+
+		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<Course>() {
+				@Override
+				public void performAction(Course course)
+					throws PortalException {
+					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
+						course);
+				}
+			});
+		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
+				PortalUtil.getClassNameId(Course.class.getName())));
+
+		return exportActionableDynamicQuery;
+	}
+	
+	@Override
+	public Folder fetchAttachmentsFolder(long userId, long groupId) {
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGroupPermissions(true);
+		serviceContext.setAddGuestPermissions(true);
+
+		Repository repository =
+			PortletFileRepositoryUtil.fetchPortletRepository(
+				groupId, LMSConstants.SERVICE_NAME);
+
+		try {
+			return PortletFileRepositoryUtil.getPortletFolder(
+				repository.getRepositoryId(),
+				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+				LMSConstants.SERVICE_NAME);
+		}
+		catch (Exception e) {
+			if (log.isDebugEnabled()) {
+				log.debug(e, e);
+			}
+		}
+
+		return null;
+	}
+	
+	@Override
+	public Folder addAttachmentsFolder(long userId, long groupId) throws PortalException {
+
+		return doAddFolder(userId, groupId, LMSConstants.SERVICE_NAME);
 	}
 	
 	private static final String SMALL_IMAGE_FOLDER_NAME = "Small Image";

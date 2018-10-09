@@ -2,8 +2,8 @@ package com.ted.lms.internal.search;
 
 import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.expando.kernel.util.ExpandoBridgeIndexerUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -151,6 +151,8 @@ public class CourseIndexer extends BaseIndexer<Course> {
 		addAssetCategoryTitles(
 				document, Field.ASSET_CATEGORY_TITLES, assetCategories);
 		
+		ExpandoBridgeIndexerUtil.addAttributes(document, course.getExpandoBridge());
+		
 		return document;
 	}
 	
@@ -255,27 +257,6 @@ public class CourseIndexer extends BaseIndexer<Course> {
 					};
 
 					dynamicQuery.add(statusProperty.in(statuses));
-					
-					/*DynamicQuery assetEntryDynamicQuery = DynamicQueryFactoryUtil.forClass(AssetEntry.class);
-					
-					Property visibleProperty = PropertyFactoryUtil.forName(
-							"visible");
-					
-					assetEntryDynamicQuery.add(visibleProperty.eq(true));
-					
-					Property classNameIdProperty = PropertyFactoryUtil.forName(
-							"classNameId");
-					
-					assetEntryDynamicQuery.add(classNameIdProperty.eq(PortalUtil.getClassNameId(Course.class.getName())));
-					
-					Property companyIdProperty = PropertyFactoryUtil.forName(
-							"companyId");
-					
-					assetEntryDynamicQuery.add(companyIdProperty.eq(companyId));
-					
-					assetEntryDynamicQuery.setProjection(ProjectionFactoryUtil.distinct(ProjectionFactoryUtil.property("classPK")));
-					
-					dynamicQuery.add(PropertyFactoryUtil.forName("courseId").in(assetEntryDynamicQuery));*/
 				}
 
 			});
@@ -324,12 +305,6 @@ public class CourseIndexer extends BaseIndexer<Course> {
 	}
 	
 	private AssetEntryLocalService assetEntryLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setAssetCategoryLocalService(AssetCategoryLocalService assetCategoryLocalService) {
-		this.assetCategoryLocalService = assetCategoryLocalService;
-	}
-	private AssetCategoryLocalService assetCategoryLocalService;
 	
 	@Reference
 	protected IndexWriterHelper indexWriterHelper;

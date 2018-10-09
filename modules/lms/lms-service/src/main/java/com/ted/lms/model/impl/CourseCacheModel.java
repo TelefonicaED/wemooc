@@ -64,7 +64,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(65);
+		StringBundler sb = new StringBundler(67);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -82,6 +82,8 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
 		sb.append(", parentCourseId=");
 		sb.append(parentCourseId);
 		sb.append(", groupCreatedId=");
@@ -170,6 +172,13 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		}
 		else {
 			courseImpl.setModifiedDate(new Date(modifiedDate));
+		}
+
+		if (lastPublishDate == Long.MIN_VALUE) {
+			courseImpl.setLastPublishDate(null);
+		}
+		else {
+			courseImpl.setLastPublishDate(new Date(lastPublishDate));
 		}
 
 		courseImpl.setParentCourseId(parentCourseId);
@@ -298,6 +307,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		lastPublishDate = objectInput.readLong();
 
 		parentCourseId = objectInput.readLong();
 
@@ -362,6 +372,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+		objectOutput.writeLong(lastPublishDate);
 
 		objectOutput.writeLong(parentCourseId);
 
@@ -456,6 +467,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public long lastPublishDate;
 	public long parentCourseId;
 	public long groupCreatedId;
 	public String title;

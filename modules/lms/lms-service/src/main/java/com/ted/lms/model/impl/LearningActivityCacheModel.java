@@ -65,7 +65,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(53);
+		StringBundler sb = new StringBundler(55);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -83,6 +83,8 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
 		sb.append(", moduleId=");
 		sb.append(moduleId);
 		sb.append(", title=");
@@ -159,6 +161,13 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 		}
 		else {
 			learningActivityImpl.setModifiedDate(new Date(modifiedDate));
+		}
+
+		if (lastPublishDate == Long.MIN_VALUE) {
+			learningActivityImpl.setLastPublishDate(null);
+		}
+		else {
+			learningActivityImpl.setLastPublishDate(new Date(lastPublishDate));
 		}
 
 		learningActivityImpl.setModuleId(moduleId);
@@ -256,6 +265,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		lastPublishDate = objectInput.readLong();
 
 		moduleId = objectInput.readLong();
 		title = objectInput.readUTF();
@@ -312,6 +322,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+		objectOutput.writeLong(lastPublishDate);
 
 		objectOutput.writeLong(moduleId);
 
@@ -386,6 +397,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public long lastPublishDate;
 	public long moduleId;
 	public String title;
 	public String description;

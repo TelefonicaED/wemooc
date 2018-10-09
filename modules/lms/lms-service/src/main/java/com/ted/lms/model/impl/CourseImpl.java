@@ -38,6 +38,7 @@ import com.ted.lms.service.CourseResultLocalServiceUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -148,12 +149,7 @@ public class CourseImpl extends CourseBaseImpl {
 	
 	public boolean canUnsubscribe(long userId, PermissionChecker permissionChecker) throws PortalException {
 		Date now = new Date();
-		
-		System.out.println("pertenezco: " + GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId()));
-		System.out.println("getRegistrationStartDate().after(now): " + getRegistrationStartDate().before(now));
-		System.out.println("getRegistrationEndDate().before(now): " + getRegistrationEndDate().after(now));
-		System.out.println("CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER): " + CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER));
-		
+			
 		if (GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId()) && getRegistrationStartDate().before(now) && 
 				getRegistrationEndDate().after(now) && CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER)) {
 			CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), userId); 
@@ -231,4 +227,15 @@ public class CourseImpl extends CourseBaseImpl {
 		}
 	}
 	
+	public Calendar getExecutionStartDateCalendar() {
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTime(getExecutionStartDate());
+		return startDate;
+	}
+	
+	public Calendar getExecutionEndDateCalendar() {
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(getExecutionEndDate());
+		return endDate;
+	}
 }

@@ -64,7 +64,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(43);
+		StringBundler sb = new StringBundler(45);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -82,6 +82,8 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
 		sb.append(", title=");
 		sb.append(title);
 		sb.append(", description=");
@@ -148,6 +150,13 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		}
 		else {
 			moduleImpl.setModifiedDate(new Date(modifiedDate));
+		}
+
+		if (lastPublishDate == Long.MIN_VALUE) {
+			moduleImpl.setLastPublishDate(null);
+		}
+		else {
+			moduleImpl.setLastPublishDate(new Date(lastPublishDate));
 		}
 
 		if (title == null) {
@@ -227,6 +236,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		lastPublishDate = objectInput.readLong();
 		title = objectInput.readUTF();
 		description = objectInput.readUTF();
 
@@ -275,6 +285,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+		objectOutput.writeLong(lastPublishDate);
 
 		if (title == null) {
 			objectOutput.writeUTF("");
@@ -329,6 +340,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public long lastPublishDate;
 	public String title;
 	public String description;
 	public long smallImageId;

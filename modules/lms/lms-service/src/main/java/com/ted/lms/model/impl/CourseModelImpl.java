@@ -89,6 +89,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
+			{ "lastPublishDate", Types.TIMESTAMP },
 			{ "parentCourseId", Types.BIGINT },
 			{ "groupCreatedId", Types.BIGINT },
 			{ "title", Types.VARCHAR },
@@ -125,6 +126,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("parentCourseId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupCreatedId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
@@ -151,7 +153,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,parentCourseId LONG,groupCreatedId LONG,title STRING null,description STRING null,smallImageId LONG,registrationStartDate DATE null,registrationEndDate DATE null,executionStartDate DATE null,executionEndDate DATE null,maxUsers INTEGER,inscriptionType LONG,courseEvalId LONG,calificationType LONG,welcome BOOLEAN,welcomeSubject VARCHAR(75) null,welcomeMsg TEXT null,goodbye BOOLEAN,goodbyeSubject VARCHAR(75) null,goodbyeMsg TEXT null,courseExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,parentCourseId LONG,groupCreatedId LONG,title STRING null,description STRING null,smallImageId LONG,registrationStartDate DATE null,registrationEndDate DATE null,executionStartDate DATE null,executionEndDate DATE null,maxUsers INTEGER,inscriptionType LONG,courseEvalId LONG,calificationType LONG,welcome BOOLEAN,welcomeSubject VARCHAR(75) null,welcomeMsg TEXT null,goodbye BOOLEAN,goodbyeSubject VARCHAR(75) null,goodbyeMsg TEXT null,courseExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_Course";
 	public static final String ORDER_BY_JPQL = " ORDER BY course.courseId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_Course.courseId ASC";
@@ -195,6 +197,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setLastPublishDate(soapModel.getLastPublishDate());
 		model.setParentCourseId(soapModel.getParentCourseId());
 		model.setGroupCreatedId(soapModel.getGroupCreatedId());
 		model.setTitle(soapModel.getTitle());
@@ -291,6 +294,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("parentCourseId", getParentCourseId());
 		attributes.put("groupCreatedId", getGroupCreatedId());
 		attributes.put("title", getTitle());
@@ -370,6 +374,12 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long parentCourseId = (Long)attributes.get("parentCourseId");
@@ -670,6 +680,17 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		_setModifiedDate = true;
 
 		_modifiedDate = modifiedDate;
+	}
+
+	@JSON
+	@Override
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
 	}
 
 	@JSON
@@ -1405,6 +1426,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		courseImpl.setUserName(getUserName());
 		courseImpl.setCreateDate(getCreateDate());
 		courseImpl.setModifiedDate(getModifiedDate());
+		courseImpl.setLastPublishDate(getLastPublishDate());
 		courseImpl.setParentCourseId(getParentCourseId());
 		courseImpl.setGroupCreatedId(getGroupCreatedId());
 		courseImpl.setTitle(getTitle());
@@ -1566,6 +1588,15 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			courseCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		Date lastPublishDate = getLastPublishDate();
+
+		if (lastPublishDate != null) {
+			courseCacheModel.lastPublishDate = lastPublishDate.getTime();
+		}
+		else {
+			courseCacheModel.lastPublishDate = Long.MIN_VALUE;
+		}
+
 		courseCacheModel.parentCourseId = getParentCourseId();
 
 		courseCacheModel.groupCreatedId = getGroupCreatedId();
@@ -1702,7 +1733,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(65);
+		StringBundler sb = new StringBundler(67);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1720,6 +1751,8 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
 		sb.append(getModifiedDate());
+		sb.append(", lastPublishDate=");
+		sb.append(getLastPublishDate());
 		sb.append(", parentCourseId=");
 		sb.append(getParentCourseId());
 		sb.append(", groupCreatedId=");
@@ -1775,7 +1808,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(100);
+		StringBundler sb = new StringBundler(103);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.model.Course");
@@ -1812,6 +1845,10 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(
 			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
 		sb.append(getModifiedDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
+		sb.append(getLastPublishDate());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>parentCourseId</column-name><column-value><![CDATA[");
@@ -1933,6 +1970,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private Date _lastPublishDate;
 	private long _parentCourseId;
 	private long _originalParentCourseId;
 	private boolean _setOriginalParentCourseId;
