@@ -1,7 +1,7 @@
 package com.ted.lms.inscription.teams.constants;
 
 /**
- * @author JE10436
+ * @author Virginia Martín Agudo
  */
 public class InscriptionTeamsPortletKeys {
 

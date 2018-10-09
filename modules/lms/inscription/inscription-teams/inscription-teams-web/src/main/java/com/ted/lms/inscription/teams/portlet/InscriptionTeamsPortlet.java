@@ -47,7 +47,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author JE10436
+ * @author Virginia Martín Agudo
  */
 @Component(
 	immediate = true,
@@ -69,13 +69,10 @@ public class InscriptionTeamsPortlet extends MVCPortlet {
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 		
 		ThemeDisplay themeDisplay  =(ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-	
-		System.out.println("course: " + themeDisplay.getScopeGroupId());
 		
 		Course course=courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		
 		try {
-			System.out.println("course: " + course);
 			log.debug("permission VIEW: " + CoursePermission.contains(themeDisplay.getPermissionChecker(), course, ActionKeys.VIEW));
 			
 			if (course==null || !CoursePermission.contains(themeDisplay.getPermissionChecker(), course, ActionKeys.VIEW) || course.getInscriptionType() != TeamsInscriptionFactory.TYPE) {
@@ -92,7 +89,6 @@ public class InscriptionTeamsPortlet extends MVCPortlet {
 						//Ya estoy inscrito, mando el curso y que estoy inscrito
 						renderRequest.setAttribute("registredUser", true);
 						renderRequest.setAttribute("course", course);
-						System.out.println("registredUse curso padre");
 					}else {
 
 						//Comprobamos los prerequisitos del curso padre (tanto si tiene convocatorias como si no)
