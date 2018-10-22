@@ -1,0 +1,97 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+
+<service-builder package-path="com.ted.lms.learning.activity.p2p">
+	<namespace>LMS</namespace>
+
+	<entity name="P2PActivity" uuid="true" local-service="true" remote-service="false" >
+		<!-- PK fields -->
+		<column name="p2pActivityId" type="long" primary="true" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userCreateId" type="long" />
+		<column name="userCreateName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="actId" type="long" />
+		<column name="userId" type="long" />
+		<column name="fileEntryId" type="long" />
+		<column name="countCorrections" type="long" />
+		<column name="description" type="String" />
+		<column name="date" type="Date" />
+        <column name="asignationsCompleted" type="boolean" />
+        
+		<order by="asc">
+			<order-column name="countCorrections" />
+			<order-column name="p2pActivityId"  />
+		</order>
+		<finder name="ActIdUserId" return-type="P2PActivity" unique="true">
+			<finder-column name="actId" />
+			<finder-column name="userId" />
+		</finder>
+		<finder name="ActId" return-type="Collection">
+			<finder-column name="actId" />
+		</finder>
+		<finder name="UserId" return-type="Collection">
+			<finder-column name="userId" />
+		</finder>	
+		<finder name="AsignationsCompleted"  return-type="Collection">
+			<finder-column name="asignationsCompleted"  />
+		</finder>			
+		
+		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
+	</entity>
+	
+	<entity name="P2PActivityCorrections" uuid="true" local-service="true" remote-service="false" >
+		<column name="p2pActivityCorrectionsId" type="long" primary="true" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userCreateId" type="long" />
+		<column name="userCreateName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="p2pActivityId" type="long" />
+		<column name="userId" type="long" />
+		<column name="actId" type="long" />
+		<column name="description" type="String" />
+		<column name="date" type="Date" />
+		<column name="fileEntryId" type="long" />
+		<column name="result" type="long" />
+		
+		<finder name="P2PActivityId" return-type="Collection">
+			<finder-column name="p2pActivityId" />
+		</finder>
+		<finder name="ActIdAndUserId" return-type="Collection">
+			<finder-column name="actId" />
+			<finder-column name="userId" />
+		</finder>
+		<finder name="P2PActivityIdAndUserId" return-type="Collection">
+			<finder-column name="p2pActivityId" />
+			<finder-column name="userId" />
+		</finder>
+		<finder name="UserId" return-type="Collection">
+			<finder-column name="userId" />
+		</finder>			
+		<finder name="P2PActivityIdDateNotNull" return-type="Collection" where="date IS NOT null">
+			<finder-column name="p2pActivityId" />
+		</finder>	
+		<finder name="ActIdUserIdDateNotNull" return-type="Collection" where="date IS NOT null">
+			<finder-column name="actId" />
+			<finder-column name="userId" />
+		</finder>	
+	</entity>
+</service-builder>

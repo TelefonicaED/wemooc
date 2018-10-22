@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+
+<service-builder package-path="com.ted.lms.learning.activity.question">
+	<namespace>LMS</namespace>
+	
+	<entity name="Question" uuid="true" local-service="true" remote-service="true" >
+
+		<!-- PK fields -->
+
+		<column name="questionId" type="long" primary="true" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="actId" type="long" />
+		<column name="title" type="String" />
+		<column name="text" type="String" />
+		<column name="questionType" type="long" />
+		<column name="active" type="boolean" />
+		<column name="weight" type="long" />
+		<column name="penalize" type="boolean" />
+		<column name="orderedAnswers" type="boolean" />	
+		<column name="extraContent" type="String"></column>
+			
+		<order by="asc">
+			<order-column name="questionId"  />
+		</order>
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
+		<finder name="ActId" return-type="Collection">
+			<finder-column name="actId" />
+		</finder>
+	</entity>
+	
+	<entity name="Answer" uuid="true" local-service="true" remote-service="true" json-enabled="false">
+	
+		<!-- PK fields -->
+	
+		<column name="answerId" type="long" primary="true" />
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+		
+		<column name="questionId" type="long" />
+		<column name="precedence" type="long" />
+		<column name="answer" type="String" />
+		<column name="correct" type="boolean" />
+		<column name="points" type="boolean" />
+		<column name="feedbackCorrect" type="String" />
+		<column name="feedbackIncorrect" type="String" />
+		
+		<order by="asc">
+			<order-column name="answerId" />
+		</order>
+		
+		<finder name="GroupId" return-type="Collection">
+			<finder-column name="groupId" />
+		</finder>
+		<finder name="QuestionId" return-type="Collection">
+			<finder-column name="questionId" />
+		</finder>
+	</entity>
+</service-builder>

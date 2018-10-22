@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ted.lms.learning.activity.p2p.model.P2PActivity">
+		<field name="uuid" type="String" />
+		<field name="p2pActivityId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userCreateId" type="long" />
+		<field name="userCreateName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="actId" type="long" />
+		<field name="userId" type="long" />
+		<field name="fileEntryId" type="long" />
+		<field name="countCorrections" type="long" />
+		<field name="description" type="String" />
+		<field name="date" type="Date" />
+		<field name="asignationsCompleted" type="boolean" />
+	</model>
+	<model name="com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections">
+		<field name="uuid" type="String" />
+		<field name="p2pActivityCorrectionsId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userCreateId" type="long" />
+		<field name="userCreateName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="p2pActivityId" type="long" />
+		<field name="userId" type="long" />
+		<field name="actId" type="long" />
+		<field name="description" type="String" />
+		<field name="date" type="Date" />
+		<field name="fileEntryId" type="long" />
+		<field name="result" type="long" />
+	</model>
+</model-hints>

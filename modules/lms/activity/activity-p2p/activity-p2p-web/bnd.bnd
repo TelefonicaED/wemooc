@@ -1,0 +1,4 @@
+Bundle-Name: activity-p2p-web
+Bundle-SymbolicName: com.ted.lms.learning.activity.p2p.web
+Bundle-Version: 1.0.0
+Export-Package: com.ted.lms.learning.activity.p2p.web.constants
