@@ -1,0 +1,6 @@
+Bundle-Name: LMS Item Selector API
+Bundle-SymbolicName: com.ted.lms.item.selector.api
+Bundle-Version: 1.0.0
+Export-Package: \
+	com.ted.lms.item.selector.constants,\
+	com.ted.lms.item.selector.criterion

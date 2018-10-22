@@ -1,0 +1,6 @@
+Bundle-Name: lms-item-selector-web
+Bundle-SymbolicName: com.ted.lms.item.selector.web
+Bundle-Version: 1.0.0
+Include-Resource:\
+        META-INF/resources=src/main/resources/META-INF/resources
+Web-ContextPath: /lms-item-selector-web
