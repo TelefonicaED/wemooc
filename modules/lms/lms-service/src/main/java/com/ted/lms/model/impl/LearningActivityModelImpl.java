@@ -161,8 +161,9 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 	public static final long MODULEID_COLUMN_BITMASK = 4L;
 	public static final long REQUIRED_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long PRIORITY_COLUMN_BITMASK = 32L;
+	public static final long TYPEID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long PRIORITY_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -864,7 +865,19 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 	@Override
 	public void setTypeId(long typeId) {
+		_columnBitmask |= TYPEID_COLUMN_BITMASK;
+
+		if (!_setOriginalTypeId) {
+			_setOriginalTypeId = true;
+
+			_originalTypeId = _typeId;
+		}
+
 		_typeId = typeId;
+	}
+
+	public long getOriginalTypeId() {
+		return _originalTypeId;
 	}
 
 	@JSON
@@ -1407,6 +1420,10 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 		learningActivityModelImpl._setOriginalModuleId = false;
 
+		learningActivityModelImpl._originalTypeId = learningActivityModelImpl._typeId;
+
+		learningActivityModelImpl._setOriginalTypeId = false;
+
 		learningActivityModelImpl._originalRequired = learningActivityModelImpl._required;
 
 		learningActivityModelImpl._setOriginalRequired = false;
@@ -1777,6 +1794,8 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	private String _description;
 	private String _descriptionCurrentLanguageId;
 	private long _typeId;
+	private long _originalTypeId;
+	private boolean _setOriginalTypeId;
 	private Date _startDate;
 	private Date _endDate;
 	private int _tries;

@@ -184,4 +184,8 @@ public class LearningActivityLocalServiceImpl
 			AssetLinkConstants.TYPE_RELATED);
 	}
 	
+	public List<LearningActivity> getLearningActivitiesByTypeId(long typeId){
+		return learningActivityPersistence.findByTypeId(typeId);
+	}
+	
 }

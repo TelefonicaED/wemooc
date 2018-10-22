@@ -14,6 +14,10 @@
 
 package com.ted.lms.model.impl;
 
+import com.liferay.friendly.url.model.FriendlyURLEntry;
+import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
+import com.liferay.friendly.url.service.FriendlyURLEntryLocalServiceUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -26,7 +30,10 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.GroupImpl;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActionKeys;
@@ -40,8 +47,10 @@ import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -237,5 +246,56 @@ public class CourseImpl extends CourseBaseImpl {
 		Calendar endDate = Calendar.getInstance();
 		endDate.setTime(getExecutionEndDate());
 		return endDate;
+	}
+	
+	@Override
+	public String getDescriptionMapAsXML() {
+		return LocalizationUtil.updateLocalization(
+			getDescriptionMap(), StringPool.BLANK, "Description",
+			getDefaultLanguageId());
+	}
+	
+	@Override
+	public String getFriendlyURLsXML() throws PortalException {
+		Map<Locale, String> friendlyURLMap = getFriendlyURLMap();
+
+		return LocalizationUtil.updateLocalization(
+			friendlyURLMap, StringPool.BLANK, "FriendlyURL",
+			LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
+	}
+	
+	@Override
+	public Map<Locale, String> getFriendlyURLMap() throws PortalException {
+		Map<Locale, String> friendlyURLMap = new HashMap<>();
+
+		long classNameId = PortalUtil.getClassNameId(Group.class);
+
+		List<FriendlyURLEntry> friendlyURLEntries = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntries(getGroupId(), classNameId, getGroupCreatedId());
+
+		if (friendlyURLEntries.isEmpty()) {
+			friendlyURLMap.put(LocaleUtil.fromLanguageId(getDefaultLanguageId()),getFriendlyURL());
+
+			return friendlyURLMap;
+		}
+
+		FriendlyURLEntry friendlyURLEntry = FriendlyURLEntryLocalServiceUtil.getMainFriendlyURLEntry(classNameId, getGroupCreatedId());
+
+		List<FriendlyURLEntryLocalization> friendlyURLEntryLocalizations = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntryLocalizations(friendlyURLEntry.getFriendlyURLEntryId());
+
+		for (FriendlyURLEntryLocalization friendlyURLEntryLocalization : friendlyURLEntryLocalizations) {
+
+			Locale locale = LocaleUtil.fromLanguageId(friendlyURLEntryLocalization.getLanguageId());
+			friendlyURLMap.put(locale, friendlyURLEntryLocalization.getUrlTitle());
+		}
+
+		Locale defaultSiteLocale = LocaleUtil.getSiteDefault();
+
+		if (Validator.isNull(friendlyURLMap.get(defaultSiteLocale))) {
+			Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
+
+			friendlyURLMap.put(defaultSiteLocale, friendlyURLMap.get(defaultLocale));
+		}
+
+		return friendlyURLMap;
 	}
 }

@@ -14,6 +14,10 @@
 
 package com.ted.lms.model.impl;
 
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -32,6 +36,40 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a learning activity model instance should use the {@link com.ted.lms.model.LearningActivity} interface instead.
 	 */
+	private JSONObject extraContent = null;
+	
 	public LearningActivityImpl() {
 	}
+	
+	@Override
+	public JSONObject getExtraContentJSON() {
+		if(extraContent == null) {
+			try {
+				extraContent = JSONFactoryUtil.createJSONObject(getExtraContent());
+			} catch (JSONException e) {
+				e.printStackTrace();
+				extraContent = JSONFactoryUtil.createJSONObject();
+			}
+		}
+		return extraContent;
+	}
+	
+	@Override
+	public void setExtraContent(String activityExtraContent) {
+		try {
+			extraContent = JSONFactoryUtil.createJSONObject(activityExtraContent);
+		} catch (JSONException e) {
+			extraContent = JSONFactoryUtil.createJSONObject();
+		}
+		
+		super.setExtraContent(activityExtraContent);
+	}
+	
+	@Override
+	public void addExtraContentJSON(String key, Object value) {
+		JSONObject extraContent = getExtraContentJSON();
+		extraContent.put(key, value);
+		this.extraContent = extraContent;
+	}
+	
 }

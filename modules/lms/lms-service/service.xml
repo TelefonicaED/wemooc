@@ -329,6 +329,9 @@
 			<finder-column name="groupId" />
 			<finder-column name="required" />
 		</finder>
+		<finder name="TypeId" return-type="Collection">
+			<finder-column name="typeId" />
+		</finder>
 
 		<!-- References -->
 
