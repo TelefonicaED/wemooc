@@ -53,4 +53,8 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 				return LearningActivity.class;
 			}
 		};
+
+	public com.liferay.portal.kernel.json.JSONObject getExtraContentJSON();
+
+	public void addExtraContentJSON(String key, Object value);
 }

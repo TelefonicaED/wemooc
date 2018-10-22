@@ -252,6 +252,12 @@ public class LearningActivityLocalServiceWrapper
 		return _learningActivityLocalService.getLearningActivities(start, end);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getLearningActivitiesByTypeId(
+		long typeId) {
+		return _learningActivityLocalService.getLearningActivitiesByTypeId(typeId);
+	}
+
 	/**
 	* Returns all the learning activities matching the UUID and company.
 	*

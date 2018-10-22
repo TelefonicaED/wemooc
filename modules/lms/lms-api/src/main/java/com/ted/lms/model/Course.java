@@ -80,4 +80,12 @@ public interface Course extends CourseModel, PersistedModel {
 	public java.util.Calendar getExecutionStartDateCalendar();
 
 	public java.util.Calendar getExecutionEndDateCalendar();
+
+	public String getDescriptionMapAsXML();
+
+	public String getFriendlyURLsXML()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.Map<java.util.Locale, String> getFriendlyURLMap()
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

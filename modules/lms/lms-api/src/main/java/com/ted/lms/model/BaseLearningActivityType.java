@@ -4,15 +4,11 @@ import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.upload.UploadRequest;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.LearningActivityResultLocalService;
 
 import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.PortletResponse;
 
 /**
  * Base para los tipos de actividades
@@ -30,58 +26,8 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public boolean isScoreConfigurable() {
-		return false;
-	}
-
-	@Override
-	public long getDefaultScore() {
-		return 0;
-	}
-
-	@Override
-	public boolean isTriesConfigurable() {
-		return false;
-	}
-
-	@Override
-	public long getDefaultTries() {
-		return 0;
-	}
-
-	@Override
-	public boolean isFeedbackCorrectConfigurable() {
-		return false;
-	}
-
-	@Override
-	public String getDefaultFeedbackCorrect() {
-		return "";
-	}
-
-	@Override
-	public boolean isFeedbackNoCorrectConfigurable() {
-		return false;
-	}
-
-	@Override
-	public String getDefaultFeedbackNoCorrect() {
-		return "";
-	}
-
-	@Override
 	public AssetRenderer<LearningActivity> getAssetRenderer() {
 		return null;
-	}
-
-	@Override
-	public String getURLIcon() {
-		return null;
-	}
-
-	@Override
-	public boolean isManualCalificationAllowed() {
-		return false;
 	}
 
 	@Override
@@ -90,37 +36,7 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public boolean hasDeleteTries() {
-		return false;
-	}
-
-	@Override
-	public String getSpecificContentPage() {
-		return null;
-	}
-
-	@Override
-	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
-	}
-
-	@Override
-	public boolean specificValidations(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		return true;
-	}
-
-	@Override
-	public void afterInsertOrUpdate(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		
-	}
-
-	@Override
-	public boolean onDelete(ActionRequest actionRequest, ActionResponse actionResponse) {
-		return true;
-	}
-
-	@Override
-	public boolean isAutoCorrect() {
-		return false;
+	public void onDelete(ActionRequest actionRequest) throws PortalException {
 	}
 
 	@Override
@@ -133,16 +49,6 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 		return null;
 	}
 
-	@Override
-	public boolean canBeSeenResults() {
-		return false;
-	}
-
-	@Override
-	public String getSpecificResultsPage() {
-		return null;
-	}
-	
 	@Override
 	public LearningActivityTypeFactory getLearningActivityTypeFactory() {
 		if (learningActivityTypeFactory != null) {
@@ -159,10 +65,6 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	
 	private LearningActivityTypeFactory learningActivityTypeFactory;
 
-	@Override
-	public int getStatus() {
-		return WorkflowConstants.STATUS_APPROVED;
-	}
 	
 	@Override
 	public boolean hasEditPermission(PermissionChecker permissionChecker)
@@ -193,12 +95,26 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 	
 	@Override
-	public String getPortletId() {
-		return getLearningActivityTypeFactory().getPortletId();
+	public boolean deleteLearningActivityTry(LearningActivityTry learningActiityTry) {
+		return false;
+	}
+
+	@Override
+	public void afterInsertOrUpdate(ActionRequest actionRequest) throws PortalException {
+		
 	}
 	
 	@Override
-	public boolean deleteLearningActivityTry(LearningActivityTry learningActiityTry) {
-		return false;
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
+	}
+	
+	@Override
+	public boolean isPassed(LearningActivityTry learningActivityTry) {
+		return learningActivityTry.getResult()>=activity.getPassPuntuation();
+	}
+	
+	@Override
+	public double calculateResult(LearningActivityTry learningActivityTry) {
+		return learningActivityTry.getResult();
 	}
 }

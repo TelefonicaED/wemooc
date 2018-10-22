@@ -223,6 +223,9 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LearningActivity> getLearningActivities(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivity> getLearningActivitiesByTypeId(long typeId);
+
 	/**
 	* Returns all the learning activities matching the UUID and company.
 	*

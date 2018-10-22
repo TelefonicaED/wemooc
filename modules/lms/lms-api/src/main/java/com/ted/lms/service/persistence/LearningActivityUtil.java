@@ -1500,6 +1500,161 @@ public class LearningActivityUtil {
 	}
 
 	/**
+	* Returns all the learning activities where typeId = &#63;.
+	*
+	* @param typeId the type ID
+	* @return the matching learning activities
+	*/
+	public static List<LearningActivity> findByTypeId(long typeId) {
+		return getPersistence().findByTypeId(typeId);
+	}
+
+	/**
+	* Returns a range of all the learning activities where typeId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param typeId the type ID
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @return the range of matching learning activities
+	*/
+	public static List<LearningActivity> findByTypeId(long typeId, int start,
+		int end) {
+		return getPersistence().findByTypeId(typeId, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the learning activities where typeId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param typeId the type ID
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching learning activities
+	*/
+	public static List<LearningActivity> findByTypeId(long typeId, int start,
+		int end, OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .findByTypeId(typeId, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the learning activities where typeId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param typeId the type ID
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching learning activities
+	*/
+	public static List<LearningActivity> findByTypeId(long typeId, int start,
+		int end, OrderByComparator<LearningActivity> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByTypeId(typeId, start, end, orderByComparator,
+			retrieveFromCache);
+	}
+
+	/**
+	* Returns the first learning activity in the ordered set where typeId = &#63;.
+	*
+	* @param typeId the type ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity
+	* @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	*/
+	public static LearningActivity findByTypeId_First(long typeId,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence().findByTypeId_First(typeId, orderByComparator);
+	}
+
+	/**
+	* Returns the first learning activity in the ordered set where typeId = &#63;.
+	*
+	* @param typeId the type ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	*/
+	public static LearningActivity fetchByTypeId_First(long typeId,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence().fetchByTypeId_First(typeId, orderByComparator);
+	}
+
+	/**
+	* Returns the last learning activity in the ordered set where typeId = &#63;.
+	*
+	* @param typeId the type ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity
+	* @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	*/
+	public static LearningActivity findByTypeId_Last(long typeId,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence().findByTypeId_Last(typeId, orderByComparator);
+	}
+
+	/**
+	* Returns the last learning activity in the ordered set where typeId = &#63;.
+	*
+	* @param typeId the type ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	*/
+	public static LearningActivity fetchByTypeId_Last(long typeId,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence().fetchByTypeId_Last(typeId, orderByComparator);
+	}
+
+	/**
+	* Returns the learning activities before and after the current learning activity in the ordered set where typeId = &#63;.
+	*
+	* @param actId the primary key of the current learning activity
+	* @param typeId the type ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next learning activity
+	* @throws NoSuchLearningActivityException if a learning activity with the primary key could not be found
+	*/
+	public static LearningActivity[] findByTypeId_PrevAndNext(long actId,
+		long typeId, OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByTypeId_PrevAndNext(actId, typeId, orderByComparator);
+	}
+
+	/**
+	* Removes all the learning activities where typeId = &#63; from the database.
+	*
+	* @param typeId the type ID
+	*/
+	public static void removeByTypeId(long typeId) {
+		getPersistence().removeByTypeId(typeId);
+	}
+
+	/**
+	* Returns the number of learning activities where typeId = &#63;.
+	*
+	* @param typeId the type ID
+	* @return the number of matching learning activities
+	*/
+	public static int countByTypeId(long typeId) {
+		return getPersistence().countByTypeId(typeId);
+	}
+
+	/**
 	* Caches the learning activity in the entity cache if it is enabled.
 	*
 	* @param learningActivity the learning activity

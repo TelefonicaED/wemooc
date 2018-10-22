@@ -2,7 +2,6 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortletBag;
 import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -11,14 +10,12 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import javax.portlet.PortletURL;
-import javax.portlet.WindowState;
+import javax.portlet.ActionRequest;
 
 /**
  * Base para la factoría de los tipos de actividad
@@ -26,6 +23,10 @@ import javax.portlet.WindowState;
  *
  */
 public abstract class BaseLearningActivityTypeFactory implements LearningActivityTypeFactory {
+	
+	public static final int DEFAULT_TRIES = 0;
+	public static final double DEFAULT_SCORE = 0;
+	
 	@Override
 	public LearningActivity getLearningActivity(long actId) throws PortalException {
 		return LearningActivityLocalServiceUtil.getLearningActivity(actId);
@@ -55,10 +56,10 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		return "activity";
 	}
 	
-	@Override
+/*	@Override
 	public boolean isCategorizable() {
 		return false;
-	}
+	}*/
 
 	@Override
 	public String getName(Locale locale) {
@@ -92,14 +93,14 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		return "";
 	}
 
-	@Override
+/*	@Override
 	public PortletURL getURLView(
 			LiferayPortletResponse liferayPortletResponse,
 			WindowState windowState)
 		throws PortalException {
 
 		return null;
-	}
+	}*/
 
 	@Override
 	public boolean hasAddPermission(
@@ -126,6 +127,77 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		return active;
 	}
 	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	@Override
+	public boolean isScoreConfigurable() {
+		return false;
+	}
 	
+	@Override
+	public double getDefaultScore() {
+		return DEFAULT_SCORE;
+	}
+	
+	@Override
+	public boolean isTriesConfigurable() {
+		return false;
+	}
+	
+	@Override
+	public int getDefaultTries() {
+		return DEFAULT_TRIES;
+	}
+	
+	@Override
+	public boolean isFeedbackCorrectConfigurable() {
+		return false;
+	}
+	
+	@Override
+	public String getDefaultFeedbackCorrect() {
+		return "";
+	}
+	
+	@Override
+	public boolean isFeedbackNoCorrectConfigurable() {
+		return false;
+	}
+	
+	@Override
+	public String getDefaultFeedbackNoCorrect() {
+		return "";
+	}
+	
+	@Override
+	public boolean isManualCalificationAllowed() {
+		return true;
+	}
+	
+	@Override
+	public boolean canDeleteTries() {
+		return false;
+	}
+	
+	@Override
+	public boolean isAutoCorrect() {
+		return true;
+	}
+	
+	@Override
+	public boolean canBeSeenResults() {
+		return false;
+	}
+	
+	@Override
+	public String getSpecificResultsPage() {
+		return null;
+	}
+	
+	@Override
+	public void specificValidations(ActionRequest actionRequest) throws PortalException {
+		
+	}
+	
+	public String getURLSpecificContent() {
+		return null;
+	}
 }

@@ -1,6 +1,8 @@
 package com.ted.lms.exception;
 
-public class InscriptionException extends Exception {
+import com.liferay.portal.kernel.exception.PortalException;
+
+public class InscriptionException extends PortalException {
 	
 	private String key;
 	

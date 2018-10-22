@@ -241,6 +241,11 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getLearningActivities(start, end);
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getLearningActivitiesByTypeId(
+		long typeId) {
+		return getService().getLearningActivitiesByTypeId(typeId);
+	}
+
 	/**
 	* Returns all the learning activities matching the UUID and company.
 	*

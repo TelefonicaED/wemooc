@@ -484,6 +484,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getDescriptionMap();
 	}
 
+	@Override
+	public String getDescriptionMapAsXML() {
+		return _course.getDescriptionMapAsXML();
+	}
+
 	/**
 	* Returns the execution end date of this course.
 	*
@@ -522,6 +527,18 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public String getFriendlyURL() {
 		return _course.getFriendlyURL();
+	}
+
+	@Override
+	public Map<java.util.Locale, String> getFriendlyURLMap()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _course.getFriendlyURLMap();
+	}
+
+	@Override
+	public String getFriendlyURLsXML()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _course.getFriendlyURLsXML();
 	}
 
 	/**

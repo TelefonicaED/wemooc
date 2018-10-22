@@ -257,6 +257,11 @@ public class LearningActivityWrapper implements LearningActivity,
 	}
 
 	@Override
+	public void addExtraContentJSON(String key, Object value) {
+		_learningActivity.addExtraContentJSON(key, value);
+	}
+
+	@Override
 	public Object clone() {
 		return new LearningActivityWrapper((LearningActivity)_learningActivity.clone());
 	}
@@ -415,6 +420,11 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public String getExtraContent() {
 		return _learningActivity.getExtraContent();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject getExtraContentJSON() {
+		return _learningActivity.getExtraContentJSON();
 	}
 
 	/**
