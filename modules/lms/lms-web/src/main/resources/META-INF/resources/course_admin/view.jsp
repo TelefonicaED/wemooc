@@ -1,45 +1,10 @@
-<%@page import="com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil"%>
-<%@page import="com.ted.prerequisite.model.PrerequisiteFactory"%>
-<%@page import="com.liferay.item.selector.ItemSelectorCriterionHandler"%>
-<%@page import="com.ted.lms.model.ModuleEval"%>
-<%@page import="com.ted.lms.registry.ModuleEvalFactoryRegistryUtil"%>
-<%@page import="com.ted.lms.model.ModuleEvalFactory"%>
-<%@page import="com.ted.audit.api.registry.AuditRegistryUtil"%>
-<%@page import="com.ted.audit.api.Audit"%>
-<%@page import="com.ted.lms.model.InscriptionType"%>
-<%@page import="com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil"%>
-<%@page import="com.ted.lms.model.InscriptionTypeFactory"%>
-<%@page import="com.ted.lms.service.LearningActivityResultLocalServiceUtil"%>
-<%@page import="com.liferay.portal.kernel.util.Validator"%>
-<%@page import="com.liferay.portal.kernel.service.ServiceContext"%>
-<%@page import="com.ted.lms.model.CourseEval"%>
-<%@page import="com.liferay.portal.kernel.service.ServiceContextFactory"%>
-<%@page import="com.ted.lms.registry.CourseEvalFactoryRegistryUtil"%>
-<%@page import="com.ted.lms.model.CourseEvalFactory"%>
-<%@page import="com.ted.lms.service.CourseLocalServiceUtil"%>
-<%@page import="com.ted.lms.model.CalificationType"%>
-<%@page import="com.ted.lms.model.Course"%>
-<%@page import="com.ted.lms.registry.CalificationTypeFactoryRegistryUtil"%>
-<%@page import="com.ted.lms.model.CalificationTypeFactory"%>
-<%@page import="com.ted.lms.model.LearningActivityTypeFactory"%>
-<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
-<%@page import="com.liferay.portal.kernel.util.ListUtil"%>
-<%@page import="java.util.List"%>
+<%@ include file="init.jsp" %>
 
-<%@ include file="../init.jsp" %>
+<liferay-trash:undo
+	portletURL="${restoreTrashEntriesURL}"
+/>
 
-<liferay-portlet:renderURL var="addCourseURL">
-	<portlet:param name="mvcRenderCommandName" value="/lms/edit_course" />
-</liferay-portlet:renderURL>
-
-	<liferay-frontend:add-menu
-      inline="true"
-    >
-      <liferay-frontend:add-menu-item
-        title='new-course'
-        url="${addCourseURL }"
-      />
-    </liferay-frontend:add-menu>
+<liferay-util:include page="/course/nav.jsp" servletContext="<%= application %>" />
 
 <liferay-ui:search-container
 	id="courses"
@@ -68,7 +33,7 @@
 			>
 			
 				<portlet:renderURL var="editCourseURL">
-					<portlet:param name="mvcRenderCommandName" value="/lms/edit_course" />
+					<portlet:param name="mvcRenderCommandName" value="/courses/edit_course" />
 					<portlet:param name="courseId" value="${course.courseId }" />
 				</portlet:renderURL>
 			

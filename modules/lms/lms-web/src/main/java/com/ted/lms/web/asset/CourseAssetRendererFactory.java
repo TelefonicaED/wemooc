@@ -79,7 +79,7 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 		log.debug("CourseAssetRendererFactory::getURLAdd::"+classTypeId);
 	    PortletURL portletURL = _portal.getControlPanelPortletURL(liferayPortletRequest, getGroup(liferayPortletRequest),
 	    															LMSPortletKeys.COURSE, 0, 0, PortletRequest.RENDER_PHASE);
-	    portletURL.setParameter("mvcRenderCommandName", "/lms/edit_course");
+	    portletURL.setParameter("mvcRenderCommandName", "/courses/edit_course");
 
 	    return portletURL;
 	}

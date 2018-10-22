@@ -175,7 +175,7 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 
 	    PortletURL portletURL = PortalUtil.getControlPanelPortletURL(liferayPortletRequest, group, LMSPortletKeys.COURSE, 0, 0,PortletRequest.RENDER_PHASE);
 
-	    portletURL.setParameter("mvcRenderCommandName", "/lms/edit_course");
+	    portletURL.setParameter("mvcRenderCommandName", "/courses/edit_course");
 	    portletURL.setParameter("courseId", String.valueOf(course.getCourseId()));
 
 	    return portletURL;

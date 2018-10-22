@@ -1,4 +1,4 @@
-<%@ include file="../init.jsp" %>
+<%@ include file="init.jsp" %>
 
 <liferay-ui:icon-menu
 	direction="left-side"
@@ -9,7 +9,7 @@
 >
 
 	<portlet:renderURL var="editCourseURL">
-		<portlet:param name="mvcRenderCommandName" value="/lms/edit_course" />
+		<portlet:param name="mvcRenderCommandName" value="/courses/edit_course" />
 		<portlet:param name="courseId" value="${course.courseId }" />
 	</portlet:renderURL>
 
