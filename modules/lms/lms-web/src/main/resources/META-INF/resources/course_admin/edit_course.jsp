@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="com.liferay.frontend.taglib.clay.servlet.taglib.util.JSPNavigationItemList"%>
@@ -35,7 +36,12 @@ long courseId = ParamUtil.getLong(renderRequest, "courseId", 0);%>
 		} %>"
 />
 
-<aui:form name="fm">
+<portlet:actionURL name="/courses/edit_course" var="editCourseURL" />
+
+<aui:form name="fm" enctype="multipart/form-data" method="post" action="${editCourseURL}" >
+
+	<aui:input name="<%= Constants.CMD %>" value="${cmd }" type="hidden" />
+	<aui:input name="redirect" type="hidden" value="${redirect}" />
 
 	<c:choose>
 		<c:when test='<%= navigation.equals("description") %>'>

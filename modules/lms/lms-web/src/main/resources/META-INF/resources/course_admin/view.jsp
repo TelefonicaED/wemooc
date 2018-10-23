@@ -34,6 +34,7 @@
 			
 				<portlet:renderURL var="editCourseURL">
 					<portlet:param name="mvcRenderCommandName" value="/courses/edit_course" />
+					<portlet:param name="redirect" value="${redirect }" />
 					<portlet:param name="courseId" value="${course.courseId }" />
 				</portlet:renderURL>
 			

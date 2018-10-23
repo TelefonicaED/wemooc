@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.model.Course"%>
 <%@ include file="../init.jsp" %>
 
 <aui:input id="${renderResponse.getNamespace()}inputFiltersShowOptions" name="inputFiltersShowOptions" type="hidden" value="${inputFiltersShowOptions}" />
@@ -23,13 +24,14 @@
 	<liferay-ui:icon-help message="input-filters-more-options-help" />
 </span>
 
-<a ${inputFiltersShowOptions ? '' : 'hide'} href="javascript:${renderResponse.getNamespace()}inputFiltersHideOptions();" 
+<a class="${inputFiltersShowOptions ? '' : 'hide'}" href="javascript:${renderResponse.getNamespace()}inputFiltersHideOptions();" 
 		id="${renderResponse.getNamespace()}inputFiltersHideOptionsLink">
 	<liferay-ui:message key="hide-options" />
 </a>
 
 <div class="course-advanced-options ${inputFiltersShowOptions ? '' :'hide'}" id="${renderResponse.getNamespace()}inputFiltersOptions">
-	
+	<liferay-ui:asset-categories-selector  className="<%= Course.class.getName() %>" curCategoryIds="" />
+	<liferay-ui:asset-tags-selector />
 </div>
 
 <aui:script>
