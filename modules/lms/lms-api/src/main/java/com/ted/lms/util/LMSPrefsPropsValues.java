@@ -41,7 +41,7 @@ public class LMSPrefsPropsValues {
 	
 	public static String[] getCourseImageExtensions(long companyId) {
 		String[] defaultValues = LMSPropsValues.COURSE_IMAGE_EXTENSIONS;
-		if(Validator.isNull(defaultValues)) {
+		if(Validator.isNull(defaultValues) || defaultValues.length == 0) {
 			defaultValues = StringUtil.split(".gif,.jpeg,.jpg,.png", StringPool.COMMA);
 		}
 		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.COURSE_IMAGE_EXTENSIONS, StringPool.COMMA, defaultValues);
@@ -53,7 +53,7 @@ public class LMSPrefsPropsValues {
 	
 	public static String[] getModuleImageExtensions(long companyId) {
 		String[] defaultValues = LMSPropsValues.MODULE_IMAGE_EXTENSIONS;
-		if(Validator.isNull(defaultValues)) {
+		if(Validator.isNull(defaultValues) || defaultValues.length == 0) {
 			defaultValues = StringUtil.split(".gif,.jpeg,.jpg,.png", StringPool.COMMA);
 		}
 		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.COURSE_IMAGE_EXTENSIONS, StringPool.COMMA, defaultValues);
@@ -66,4 +66,5 @@ public class LMSPrefsPropsValues {
 	public static String[] getPrerequisitesOfModule(long companyId){
 		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.PREREQUISITES_MODULE, StringPool.COMMA, LMSPropsValues.PREREQUISITES_MODULE);
 	}
+	
 }

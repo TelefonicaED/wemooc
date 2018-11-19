@@ -1,10 +1,10 @@
 package com.ted.lms.model;
 
-import com.liferay.portal.kernel.upload.UploadRequest;
+import com.liferay.portal.kernel.exception.PortalException;
+
 import java.util.Locale;
 
-import javax.portlet.PortletResponse;
-
+import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -21,7 +21,7 @@ public interface CalificationType {
 	
 	public String getClassName();
 	
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse);
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException;
 	
 	public CalificationTypeFactory getCalificationTypeFactory();
 	

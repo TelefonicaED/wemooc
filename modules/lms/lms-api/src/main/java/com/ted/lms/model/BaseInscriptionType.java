@@ -8,6 +8,7 @@ import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletResponse;
 
 /**
@@ -37,8 +38,7 @@ public abstract class BaseInscriptionType implements InscriptionType {
 	}
 	
 	@Override
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		return null;
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
 	}
 	
 	@Override

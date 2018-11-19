@@ -64,49 +64,35 @@ public class CourseLocalServiceUtil {
 	*
 	* @param titleMap título del curso con las traducciones
 	* @param descriptionMap descripción del curso con las traducciones
-	* @param summary resumen del curso
-	* @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	* @param summaryMap resumen del curso con las traducciones
+	* @param indexer si el curso se muestra en las búsquedas
+	* @param friendlyURLMap url del curso, si es vacío se autogenera a partir del nombre con las traducciones
+	* @param layoutSetPrototypeId identificador de la plantilla de sitio web
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param smallImageImageSelector imagen seleccionada para el curso
-	* @param registrationStartDate fecha de inicio de inscripción
-	* @param registrationEndDate fecha de fin de inscripción
-	* @param executionStartDate fecha de inicio de ejecución
-	* @param executionEndDate fecha de fin de ejecución
-	* @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
-	* @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
-	* @param inscriptionType tipo de inscripción al curso
-	* @param courseEvalId tipo de evaluación del curso
-	* @param calificationType tipo de calificación del curso
-	* @param maxUsers máximo de usuarios que se pueden inscribir al curso
-	* @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
-	* @param welcomeSubject asunto del mensaje de bienvenida
-	* @param welcomeMsg cuerpo del mensaje de bienvenida
-	* @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
-	* @param goodbyeSubject asunto del mensaje de despedida
-	* @param goodbyeMsg cuerpo del mensaje de despedida
-	* @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
 	* @param serviceContext contexto de la creación del curso
 	*/
 	public static com.ted.lms.model.Course addCourse(
 		java.util.Map<java.util.Locale, String> titleMap,
-		java.util.Map<java.util.Locale, String> descriptionMap, String summary,
-		String friendlyURL, long parentCourseId,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
+		long layoutSetPrototypeId, long parentCourseId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
-		java.util.Date registrationStartDate,
-		java.util.Date registrationEndDate, java.util.Date executionStartDate,
-		java.util.Date executionEndDate, long layoutSetPrototypeId,
-		int typeSite, long inscriptionType, long courseEvalId,
-		long calificationType, int maxUsers, boolean welcome,
-		String welcomeSubject, String welcomeMsg, boolean goodbye,
-		String goodbyeSubject, String goodbyeMsg, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 		return getService()
-				   .addCourse(titleMap, descriptionMap, summary, friendlyURL,
-			parentCourseId, smallImageSelector, registrationStartDate,
-			registrationEndDate, executionStartDate, executionEndDate,
-			layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId,
-			calificationType, maxUsers, welcome, welcomeSubject, welcomeMsg,
-			goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
+				   .addCourse(titleMap, descriptionMap, summaryMap, indexer,
+			friendlyURLMap, layoutSetPrototypeId, parentCourseId,
+			smallImageSelector, serviceContext);
+	}
+
+	public static long addOriginalImageFileEntry(long userId, long groupId,
+		long entryId,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector imageSelector)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addOriginalImageFileEntry(userId, groupId, entryId,
+			imageSelector);
 	}
 
 	/**
@@ -383,6 +369,11 @@ public class CourseLocalServiceUtil {
 		return getService().getCoursesCount();
 	}
 
+	public static java.util.List<com.liferay.portal.kernel.model.Group> getDistinctCourseGroups(
+		long companyId) {
+		return getService().getDistinctCourseGroups(companyId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext) {
 		return getService().getExportActionableDynamicQuery(portletDataContext);
@@ -455,12 +446,11 @@ public class CourseLocalServiceUtil {
 	*/
 	public static void updateAsset(long userId,
 		com.ted.lms.model.Course course, long[] assetCategoryIds,
-		String[] assetTagNames, long[] assetLinkEntryIds, Double priority,
-		String summary)
+		String[] assetTagNames, long[] assetLinkEntryIds)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateAsset(userId, course, assetCategoryIds, assetTagNames,
-			assetLinkEntryIds, priority, summary);
+			assetLinkEntryIds);
 	}
 
 	/**
@@ -472,6 +462,179 @@ public class CourseLocalServiceUtil {
 	public static com.ted.lms.model.Course updateCourse(
 		com.ted.lms.model.Course course) {
 		return getService().updateCourse(course);
+	}
+
+	/**
+	* Actualiza el paso de los mensajes de la modificación de curso
+	*
+	* @param courseId identificador del curso
+	* @param welcome si se habilita el mensaje de bienvenida
+	* @param welcomeSubjectMap asunto del mensaje de bienvenida
+	* @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	* @param goodbye si se habilita el mensaje de despedida
+	* @param goodbyeSubjectMap asunto del mensaje de despedida
+	* @param goodbyeMsgMap cuerpo del mensaje de despedida
+	* @param serviceContext contexto de la modificación del curso
+	* @return curso modificado
+	* @throws NoSuchCourseException
+	*/
+	public static com.ted.lms.model.Course updateCourse(long courseId,
+		boolean welcome,
+		java.util.Map<java.util.Locale, String> welcomeSubjectMap,
+		java.util.Map<java.util.Locale, String> welcomeMsgMap, boolean goodbye,
+		java.util.Map<java.util.Locale, String> goodbyeSubjectMap,
+		java.util.Map<java.util.Locale, String> goodbyeMsgMap,
+		boolean deniedInscription,
+		java.util.Map<java.util.Locale, String> deniedInscriptionSubjectMap,
+		java.util.Map<java.util.Locale, String> deniedInscriptionMsgMap,
+		int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.ted.lms.exception.NoSuchCourseException {
+		return getService()
+				   .updateCourse(courseId, welcome, welcomeSubjectMap,
+			welcomeMsgMap, goodbye, goodbyeSubjectMap, goodbyeMsgMap,
+			deniedInscription, deniedInscriptionSubjectMap,
+			deniedInscriptionMsgMap, status, serviceContext);
+	}
+
+	/**
+	* Actualiza el segundo paso de un curso
+	*
+	* @param courseId identificador del curso
+	* @param registrationStartDate fecha de inicio de inscripción
+	* @param registrationEndDate fecha de fin de inscripción
+	* @param executionStartDate fecha de inicio de ejecución
+	* @param executionEndDate fecha de fin de ejecución
+	* @param typeSite tipo de sitio (público, restringido y privado). Ver GroupConstants
+	* @param inscriptionType tipo de inscripción
+	* @param courseEvalId método de evaluación
+	* @param calificationType tipo de calificación
+	* @param maxUsers máximo de usuarios que se permite inscribir en el curso
+	* @param status estado del curso (ver WorkflowConstants)
+	* @param serviceContext contexto de la modificación del curso
+	* @throws Exception
+	* @return curso modificado
+	* @throws PortalException
+	*/
+	public static com.ted.lms.model.Course updateCourse(long courseId,
+		java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, int typeSite, long inscriptionType,
+		long courseEvalId, long calificationType, int maxUsers, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateCourse(courseId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			typeSite, inscriptionType, courseEvalId, calificationType,
+			maxUsers, status, serviceContext);
+	}
+
+	/**
+	* Actualiza el segundo paso de un curso
+	*
+	* @param courseId identificador del curso
+	* @param registrationStartMonth mes de la fecha de inicio de inscripción
+	* @param registrationStartDay día de la fecha de inicio de inscripción
+	* @param registrationStartYear año de la fecha de inicio de inscripción
+	* @param registrationStartHour hora de la fecha de inicio de inscripción
+	* @param registrationStartMinute minuto de la fecha de inicio de inscripción
+	* @param registrationEndMonth mes de la fecha de fin de inscripción
+	* @param registrationEndDay día de la fecha de fin de inscripción
+	* @param registrationEndYear año de la fecha de fin de inscripción
+	* @param registrationEndHour hora de la fecha de fin de inscripción
+	* @param registrationEndMinute minuto de la fecha de fin de inscripción
+	* @param executionStartMonth mes de la fecha de inicio de ejecución
+	* @param executionStartDay día de la fecha de inicio de ejecución
+	* @param executionStartYear año de la fecha de inicio de ejecución
+	* @param executionStartHour hora de la fecha de inicio de ejecución
+	* @param executionStartMinute minuto de la fecha de inicio de ejecución
+	* @param executionEndMonth mes de la fecha de fin de ejecución
+	* @param executionEndDay día de la fecha de fin de ejecución
+	* @param executionEndYear año de la fecha de fin de ejecución
+	* @param executionEndHour hora de la fecha de fin de ejecución
+	* @param executionEndMinute minuto de la fecha de fin de ejecución
+	* @param typeSite tipo de sitio (público, restringido y privado). Ver GroupConstants
+	* @param inscriptionType tipo de inscripción
+	* @param courseEvalId método de evaluación
+	* @param calificationType tipo de calificación
+	* @param maxUsers máximo de usuarios que se permite inscribir en el curso
+	* @param status estado del curso (ver WorkflowConstants)
+	* @param serviceContext contexto de la modificación del curso
+	* @throws Exception
+	* @return curso modificado
+	*/
+	public static com.ted.lms.model.Course updateCourse(long courseId,
+		int registrationStartMonth, int registrationStartDay,
+		int registrationStartYear, int registrationStartHour,
+		int registrationStartMinute, int registrationEndMonth,
+		int registrationEndDay, int registrationEndYear,
+		int registrationEndHour, int registrationEndMinute,
+		int executionStartMonth, int executionStartDay, int executionStartYear,
+		int executionStartHour, int executionStartMinute,
+		int executionEndMonth, int executionEndDay, int executionEndYear,
+		int executionEndHour, int executionEndMinute, int typeSite,
+		long inscriptionType, long courseEvalId, long calificationType,
+		int maxUsers, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateCourse(courseId, registrationStartMonth,
+			registrationStartDay, registrationStartYear, registrationStartHour,
+			registrationStartMinute, registrationEndMonth, registrationEndDay,
+			registrationEndYear, registrationEndHour, registrationEndMinute,
+			executionStartMonth, executionStartDay, executionStartYear,
+			executionStartHour, executionStartMinute, executionEndMonth,
+			executionEndDay, executionEndYear, executionEndHour,
+			executionEndMinute, typeSite, inscriptionType, courseEvalId,
+			calificationType, maxUsers, status, serviceContext);
+	}
+
+	/**
+	* Actualiza los contenidos relacionados y el estado
+	*
+	* @param courseId identificador del curso
+	* @param status estado del curso
+	* @param serviceContext contexto de la modificación del curso
+	* @return curso modificado
+	* @throws PrincipalException
+	* @throws PortalException
+	*/
+	public static com.ted.lms.model.Course updateCourse(long courseId,
+		int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException,
+			com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateCourse(courseId, status, serviceContext);
+	}
+
+	/**
+	* Actualiza el paso de descripción de la modificación de curso
+	*
+	* @param courseId identificador del curso
+	* @param titleMap título del curso con las traducciones
+	* @param descriptionMap descripción del curso con las traducciones
+	* @param summaryMap resumen del curso con las traducciones
+	* @param indexer si el curso aparece las búsquedas
+	* @param friendlyURL url para el curso
+	* @param smallImageSelector selector con la imagen de la imagen del curso
+	* @param serviceContext contexto de modificación del curso
+	* @return curso modificado
+	* @throws PortalException
+	*/
+	public static com.ted.lms.model.Course updateCourse(long courseId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
+		long layoutSetPrototypeId,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return getService()
+				   .updateCourse(courseId, titleMap, descriptionMap,
+			summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+			smallImageSelector, serviceContext);
 	}
 
 	/**

@@ -109,6 +109,9 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			{ "goodbye", Types.BOOLEAN },
 			{ "goodbyeSubject", Types.VARCHAR },
 			{ "goodbyeMsg", Types.CLOB },
+			{ "deniedInscription", Types.BOOLEAN },
+			{ "deniedInscriptionSubject", Types.VARCHAR },
+			{ "deniedInscriptionMsg", Types.VARCHAR },
 			{ "courseExtraData", Types.VARCHAR },
 			{ "status", Types.INTEGER },
 			{ "statusByUserId", Types.BIGINT },
@@ -146,6 +149,9 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		TABLE_COLUMNS_MAP.put("goodbye", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("goodbyeSubject", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("goodbyeMsg", Types.CLOB);
+		TABLE_COLUMNS_MAP.put("deniedInscription", Types.BOOLEAN);
+		TABLE_COLUMNS_MAP.put("deniedInscriptionSubject", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("deniedInscriptionMsg", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("courseExtraData", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("status", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("statusByUserId", Types.BIGINT);
@@ -153,7 +159,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,parentCourseId LONG,groupCreatedId LONG,title STRING null,description STRING null,smallImageId LONG,registrationStartDate DATE null,registrationEndDate DATE null,executionStartDate DATE null,executionEndDate DATE null,maxUsers INTEGER,inscriptionType LONG,courseEvalId LONG,calificationType LONG,welcome BOOLEAN,welcomeSubject VARCHAR(75) null,welcomeMsg TEXT null,goodbye BOOLEAN,goodbyeSubject VARCHAR(75) null,goodbyeMsg TEXT null,courseExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_Course (uuid_ VARCHAR(75) null,courseId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,parentCourseId LONG,groupCreatedId LONG,title STRING null,description STRING null,smallImageId LONG,registrationStartDate DATE null,registrationEndDate DATE null,executionStartDate DATE null,executionEndDate DATE null,maxUsers INTEGER,inscriptionType LONG,courseEvalId LONG,calificationType LONG,welcome BOOLEAN,welcomeSubject STRING null,welcomeMsg TEXT null,goodbye BOOLEAN,goodbyeSubject STRING null,goodbyeMsg TEXT null,deniedInscription BOOLEAN,deniedInscriptionSubject STRING null,deniedInscriptionMsg STRING null,courseExtraData TEXT null,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_Course";
 	public static final String ORDER_BY_JPQL = " ORDER BY course.courseId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_Course.courseId ASC";
@@ -217,6 +223,9 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		model.setGoodbye(soapModel.isGoodbye());
 		model.setGoodbyeSubject(soapModel.getGoodbyeSubject());
 		model.setGoodbyeMsg(soapModel.getGoodbyeMsg());
+		model.setDeniedInscription(soapModel.isDeniedInscription());
+		model.setDeniedInscriptionSubject(soapModel.getDeniedInscriptionSubject());
+		model.setDeniedInscriptionMsg(soapModel.getDeniedInscriptionMsg());
 		model.setCourseExtraData(soapModel.getCourseExtraData());
 		model.setStatus(soapModel.getStatus());
 		model.setStatusByUserId(soapModel.getStatusByUserId());
@@ -314,6 +323,9 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		attributes.put("goodbye", isGoodbye());
 		attributes.put("goodbyeSubject", getGoodbyeSubject());
 		attributes.put("goodbyeMsg", getGoodbyeMsg());
+		attributes.put("deniedInscription", isDeniedInscription());
+		attributes.put("deniedInscriptionSubject", getDeniedInscriptionSubject());
+		attributes.put("deniedInscriptionMsg", getDeniedInscriptionMsg());
 		attributes.put("courseExtraData", getCourseExtraData());
 		attributes.put("status", getStatus());
 		attributes.put("statusByUserId", getStatusByUserId());
@@ -495,6 +507,26 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 		if (goodbyeMsg != null) {
 			setGoodbyeMsg(goodbyeMsg);
+		}
+
+		Boolean deniedInscription = (Boolean)attributes.get("deniedInscription");
+
+		if (deniedInscription != null) {
+			setDeniedInscription(deniedInscription);
+		}
+
+		String deniedInscriptionSubject = (String)attributes.get(
+				"deniedInscriptionSubject");
+
+		if (deniedInscriptionSubject != null) {
+			setDeniedInscriptionSubject(deniedInscriptionSubject);
+		}
+
+		String deniedInscriptionMsg = (String)attributes.get(
+				"deniedInscriptionMsg");
+
+		if (deniedInscriptionMsg != null) {
+			setDeniedInscriptionMsg(deniedInscriptionMsg);
 		}
 
 		String courseExtraData = (String)attributes.get("courseExtraData");
@@ -1069,8 +1101,95 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	}
 
 	@Override
+	public String getWelcomeSubject(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getWelcomeSubject(languageId);
+	}
+
+	@Override
+	public String getWelcomeSubject(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getWelcomeSubject(languageId, useDefault);
+	}
+
+	@Override
+	public String getWelcomeSubject(String languageId) {
+		return LocalizationUtil.getLocalization(getWelcomeSubject(), languageId);
+	}
+
+	@Override
+	public String getWelcomeSubject(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getWelcomeSubject(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getWelcomeSubjectCurrentLanguageId() {
+		return _welcomeSubjectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getWelcomeSubjectCurrentValue() {
+		Locale locale = getLocale(_welcomeSubjectCurrentLanguageId);
+
+		return getWelcomeSubject(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getWelcomeSubjectMap() {
+		return LocalizationUtil.getLocalizationMap(getWelcomeSubject());
+	}
+
+	@Override
 	public void setWelcomeSubject(String welcomeSubject) {
 		_welcomeSubject = welcomeSubject;
+	}
+
+	@Override
+	public void setWelcomeSubject(String welcomeSubject, Locale locale) {
+		setWelcomeSubject(welcomeSubject, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setWelcomeSubject(String welcomeSubject, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(welcomeSubject)) {
+			setWelcomeSubject(LocalizationUtil.updateLocalization(
+					getWelcomeSubject(), "WelcomeSubject", welcomeSubject,
+					languageId, defaultLanguageId));
+		}
+		else {
+			setWelcomeSubject(LocalizationUtil.removeLocalization(
+					getWelcomeSubject(), "WelcomeSubject", languageId));
+		}
+	}
+
+	@Override
+	public void setWelcomeSubjectCurrentLanguageId(String languageId) {
+		_welcomeSubjectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setWelcomeSubjectMap(Map<Locale, String> welcomeSubjectMap) {
+		setWelcomeSubjectMap(welcomeSubjectMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setWelcomeSubjectMap(Map<Locale, String> welcomeSubjectMap,
+		Locale defaultLocale) {
+		if (welcomeSubjectMap == null) {
+			return;
+		}
+
+		setWelcomeSubject(LocalizationUtil.updateLocalization(
+				welcomeSubjectMap, getWelcomeSubject(), "WelcomeSubject",
+				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -1085,8 +1204,94 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	}
 
 	@Override
+	public String getWelcomeMsg(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getWelcomeMsg(languageId);
+	}
+
+	@Override
+	public String getWelcomeMsg(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getWelcomeMsg(languageId, useDefault);
+	}
+
+	@Override
+	public String getWelcomeMsg(String languageId) {
+		return LocalizationUtil.getLocalization(getWelcomeMsg(), languageId);
+	}
+
+	@Override
+	public String getWelcomeMsg(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getWelcomeMsg(), languageId,
+			useDefault);
+	}
+
+	@Override
+	public String getWelcomeMsgCurrentLanguageId() {
+		return _welcomeMsgCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getWelcomeMsgCurrentValue() {
+		Locale locale = getLocale(_welcomeMsgCurrentLanguageId);
+
+		return getWelcomeMsg(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getWelcomeMsgMap() {
+		return LocalizationUtil.getLocalizationMap(getWelcomeMsg());
+	}
+
+	@Override
 	public void setWelcomeMsg(String welcomeMsg) {
 		_welcomeMsg = welcomeMsg;
+	}
+
+	@Override
+	public void setWelcomeMsg(String welcomeMsg, Locale locale) {
+		setWelcomeMsg(welcomeMsg, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setWelcomeMsg(String welcomeMsg, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(welcomeMsg)) {
+			setWelcomeMsg(LocalizationUtil.updateLocalization(getWelcomeMsg(),
+					"WelcomeMsg", welcomeMsg, languageId, defaultLanguageId));
+		}
+		else {
+			setWelcomeMsg(LocalizationUtil.removeLocalization(getWelcomeMsg(),
+					"WelcomeMsg", languageId));
+		}
+	}
+
+	@Override
+	public void setWelcomeMsgCurrentLanguageId(String languageId) {
+		_welcomeMsgCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setWelcomeMsgMap(Map<Locale, String> welcomeMsgMap) {
+		setWelcomeMsgMap(welcomeMsgMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setWelcomeMsgMap(Map<Locale, String> welcomeMsgMap,
+		Locale defaultLocale) {
+		if (welcomeMsgMap == null) {
+			return;
+		}
+
+		setWelcomeMsg(LocalizationUtil.updateLocalization(welcomeMsgMap,
+				getWelcomeMsg(), "WelcomeMsg",
+				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -1118,8 +1323,95 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	}
 
 	@Override
+	public String getGoodbyeSubject(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getGoodbyeSubject(languageId);
+	}
+
+	@Override
+	public String getGoodbyeSubject(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getGoodbyeSubject(languageId, useDefault);
+	}
+
+	@Override
+	public String getGoodbyeSubject(String languageId) {
+		return LocalizationUtil.getLocalization(getGoodbyeSubject(), languageId);
+	}
+
+	@Override
+	public String getGoodbyeSubject(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getGoodbyeSubject(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getGoodbyeSubjectCurrentLanguageId() {
+		return _goodbyeSubjectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getGoodbyeSubjectCurrentValue() {
+		Locale locale = getLocale(_goodbyeSubjectCurrentLanguageId);
+
+		return getGoodbyeSubject(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getGoodbyeSubjectMap() {
+		return LocalizationUtil.getLocalizationMap(getGoodbyeSubject());
+	}
+
+	@Override
 	public void setGoodbyeSubject(String goodbyeSubject) {
 		_goodbyeSubject = goodbyeSubject;
+	}
+
+	@Override
+	public void setGoodbyeSubject(String goodbyeSubject, Locale locale) {
+		setGoodbyeSubject(goodbyeSubject, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setGoodbyeSubject(String goodbyeSubject, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(goodbyeSubject)) {
+			setGoodbyeSubject(LocalizationUtil.updateLocalization(
+					getGoodbyeSubject(), "GoodbyeSubject", goodbyeSubject,
+					languageId, defaultLanguageId));
+		}
+		else {
+			setGoodbyeSubject(LocalizationUtil.removeLocalization(
+					getGoodbyeSubject(), "GoodbyeSubject", languageId));
+		}
+	}
+
+	@Override
+	public void setGoodbyeSubjectCurrentLanguageId(String languageId) {
+		_goodbyeSubjectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setGoodbyeSubjectMap(Map<Locale, String> goodbyeSubjectMap) {
+		setGoodbyeSubjectMap(goodbyeSubjectMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setGoodbyeSubjectMap(Map<Locale, String> goodbyeSubjectMap,
+		Locale defaultLocale) {
+		if (goodbyeSubjectMap == null) {
+			return;
+		}
+
+		setGoodbyeSubject(LocalizationUtil.updateLocalization(
+				goodbyeSubjectMap, getGoodbyeSubject(), "GoodbyeSubject",
+				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -1134,8 +1426,331 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	}
 
 	@Override
+	public String getGoodbyeMsg(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getGoodbyeMsg(languageId);
+	}
+
+	@Override
+	public String getGoodbyeMsg(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getGoodbyeMsg(languageId, useDefault);
+	}
+
+	@Override
+	public String getGoodbyeMsg(String languageId) {
+		return LocalizationUtil.getLocalization(getGoodbyeMsg(), languageId);
+	}
+
+	@Override
+	public String getGoodbyeMsg(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getGoodbyeMsg(), languageId,
+			useDefault);
+	}
+
+	@Override
+	public String getGoodbyeMsgCurrentLanguageId() {
+		return _goodbyeMsgCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getGoodbyeMsgCurrentValue() {
+		Locale locale = getLocale(_goodbyeMsgCurrentLanguageId);
+
+		return getGoodbyeMsg(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getGoodbyeMsgMap() {
+		return LocalizationUtil.getLocalizationMap(getGoodbyeMsg());
+	}
+
+	@Override
 	public void setGoodbyeMsg(String goodbyeMsg) {
 		_goodbyeMsg = goodbyeMsg;
+	}
+
+	@Override
+	public void setGoodbyeMsg(String goodbyeMsg, Locale locale) {
+		setGoodbyeMsg(goodbyeMsg, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setGoodbyeMsg(String goodbyeMsg, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(goodbyeMsg)) {
+			setGoodbyeMsg(LocalizationUtil.updateLocalization(getGoodbyeMsg(),
+					"GoodbyeMsg", goodbyeMsg, languageId, defaultLanguageId));
+		}
+		else {
+			setGoodbyeMsg(LocalizationUtil.removeLocalization(getGoodbyeMsg(),
+					"GoodbyeMsg", languageId));
+		}
+	}
+
+	@Override
+	public void setGoodbyeMsgCurrentLanguageId(String languageId) {
+		_goodbyeMsgCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setGoodbyeMsgMap(Map<Locale, String> goodbyeMsgMap) {
+		setGoodbyeMsgMap(goodbyeMsgMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setGoodbyeMsgMap(Map<Locale, String> goodbyeMsgMap,
+		Locale defaultLocale) {
+		if (goodbyeMsgMap == null) {
+			return;
+		}
+
+		setGoodbyeMsg(LocalizationUtil.updateLocalization(goodbyeMsgMap,
+				getGoodbyeMsg(), "GoodbyeMsg",
+				LocaleUtil.toLanguageId(defaultLocale)));
+	}
+
+	@JSON
+	@Override
+	public boolean getDeniedInscription() {
+		return _deniedInscription;
+	}
+
+	@JSON
+	@Override
+	public boolean isDeniedInscription() {
+		return _deniedInscription;
+	}
+
+	@Override
+	public void setDeniedInscription(boolean deniedInscription) {
+		_deniedInscription = deniedInscription;
+	}
+
+	@JSON
+	@Override
+	public String getDeniedInscriptionSubject() {
+		if (_deniedInscriptionSubject == null) {
+			return "";
+		}
+		else {
+			return _deniedInscriptionSubject;
+		}
+	}
+
+	@Override
+	public String getDeniedInscriptionSubject(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getDeniedInscriptionSubject(languageId);
+	}
+
+	@Override
+	public String getDeniedInscriptionSubject(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getDeniedInscriptionSubject(languageId, useDefault);
+	}
+
+	@Override
+	public String getDeniedInscriptionSubject(String languageId) {
+		return LocalizationUtil.getLocalization(getDeniedInscriptionSubject(),
+			languageId);
+	}
+
+	@Override
+	public String getDeniedInscriptionSubject(String languageId,
+		boolean useDefault) {
+		return LocalizationUtil.getLocalization(getDeniedInscriptionSubject(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getDeniedInscriptionSubjectCurrentLanguageId() {
+		return _deniedInscriptionSubjectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getDeniedInscriptionSubjectCurrentValue() {
+		Locale locale = getLocale(_deniedInscriptionSubjectCurrentLanguageId);
+
+		return getDeniedInscriptionSubject(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getDeniedInscriptionSubjectMap() {
+		return LocalizationUtil.getLocalizationMap(getDeniedInscriptionSubject());
+	}
+
+	@Override
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject) {
+		_deniedInscriptionSubject = deniedInscriptionSubject;
+	}
+
+	@Override
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
+		Locale locale) {
+		setDeniedInscriptionSubject(deniedInscriptionSubject, locale,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
+		Locale locale, Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(deniedInscriptionSubject)) {
+			setDeniedInscriptionSubject(LocalizationUtil.updateLocalization(
+					getDeniedInscriptionSubject(), "DeniedInscriptionSubject",
+					deniedInscriptionSubject, languageId, defaultLanguageId));
+		}
+		else {
+			setDeniedInscriptionSubject(LocalizationUtil.removeLocalization(
+					getDeniedInscriptionSubject(), "DeniedInscriptionSubject",
+					languageId));
+		}
+	}
+
+	@Override
+	public void setDeniedInscriptionSubjectCurrentLanguageId(String languageId) {
+		_deniedInscriptionSubjectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setDeniedInscriptionSubjectMap(
+		Map<Locale, String> deniedInscriptionSubjectMap) {
+		setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setDeniedInscriptionSubjectMap(
+		Map<Locale, String> deniedInscriptionSubjectMap, Locale defaultLocale) {
+		if (deniedInscriptionSubjectMap == null) {
+			return;
+		}
+
+		setDeniedInscriptionSubject(LocalizationUtil.updateLocalization(
+				deniedInscriptionSubjectMap, getDeniedInscriptionSubject(),
+				"DeniedInscriptionSubject",
+				LocaleUtil.toLanguageId(defaultLocale)));
+	}
+
+	@JSON
+	@Override
+	public String getDeniedInscriptionMsg() {
+		if (_deniedInscriptionMsg == null) {
+			return "";
+		}
+		else {
+			return _deniedInscriptionMsg;
+		}
+	}
+
+	@Override
+	public String getDeniedInscriptionMsg(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getDeniedInscriptionMsg(languageId);
+	}
+
+	@Override
+	public String getDeniedInscriptionMsg(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getDeniedInscriptionMsg(languageId, useDefault);
+	}
+
+	@Override
+	public String getDeniedInscriptionMsg(String languageId) {
+		return LocalizationUtil.getLocalization(getDeniedInscriptionMsg(),
+			languageId);
+	}
+
+	@Override
+	public String getDeniedInscriptionMsg(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getDeniedInscriptionMsg(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getDeniedInscriptionMsgCurrentLanguageId() {
+		return _deniedInscriptionMsgCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getDeniedInscriptionMsgCurrentValue() {
+		Locale locale = getLocale(_deniedInscriptionMsgCurrentLanguageId);
+
+		return getDeniedInscriptionMsg(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getDeniedInscriptionMsgMap() {
+		return LocalizationUtil.getLocalizationMap(getDeniedInscriptionMsg());
+	}
+
+	@Override
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg) {
+		_deniedInscriptionMsg = deniedInscriptionMsg;
+	}
+
+	@Override
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
+		Locale locale) {
+		setDeniedInscriptionMsg(deniedInscriptionMsg, locale,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
+		Locale locale, Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(deniedInscriptionMsg)) {
+			setDeniedInscriptionMsg(LocalizationUtil.updateLocalization(
+					getDeniedInscriptionMsg(), "DeniedInscriptionMsg",
+					deniedInscriptionMsg, languageId, defaultLanguageId));
+		}
+		else {
+			setDeniedInscriptionMsg(LocalizationUtil.removeLocalization(
+					getDeniedInscriptionMsg(), "DeniedInscriptionMsg",
+					languageId));
+		}
+	}
+
+	@Override
+	public void setDeniedInscriptionMsgCurrentLanguageId(String languageId) {
+		_deniedInscriptionMsgCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setDeniedInscriptionMsgMap(
+		Map<Locale, String> deniedInscriptionMsgMap) {
+		setDeniedInscriptionMsgMap(deniedInscriptionMsgMap,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setDeniedInscriptionMsgMap(
+		Map<Locale, String> deniedInscriptionMsgMap, Locale defaultLocale) {
+		if (deniedInscriptionMsgMap == null) {
+			return;
+		}
+
+		setDeniedInscriptionMsg(LocalizationUtil.updateLocalization(
+				deniedInscriptionMsgMap, getDeniedInscriptionMsg(),
+				"DeniedInscriptionMsg", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -1348,6 +1963,72 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			}
 		}
 
+		Map<Locale, String> welcomeSubjectMap = getWelcomeSubjectMap();
+
+		for (Map.Entry<Locale, String> entry : welcomeSubjectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> welcomeMsgMap = getWelcomeMsgMap();
+
+		for (Map.Entry<Locale, String> entry : welcomeMsgMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> goodbyeSubjectMap = getGoodbyeSubjectMap();
+
+		for (Map.Entry<Locale, String> entry : goodbyeSubjectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> goodbyeMsgMap = getGoodbyeMsgMap();
+
+		for (Map.Entry<Locale, String> entry : goodbyeMsgMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> deniedInscriptionSubjectMap = getDeniedInscriptionSubjectMap();
+
+		for (Map.Entry<Locale, String> entry : deniedInscriptionSubjectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> deniedInscriptionMsgMap = getDeniedInscriptionMsgMap();
+
+		for (Map.Entry<Locale, String> entry : deniedInscriptionMsgMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
 		return availableLanguageIds.toArray(new String[availableLanguageIds.size()]);
 	}
 
@@ -1402,6 +2083,70 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			setDescription(getDescription(defaultLocale), defaultLocale,
 				defaultLocale);
 		}
+
+		String welcomeSubject = getWelcomeSubject(defaultLocale);
+
+		if (Validator.isNull(welcomeSubject)) {
+			setWelcomeSubject(getWelcomeSubject(modelDefaultLanguageId),
+				defaultLocale);
+		}
+		else {
+			setWelcomeSubject(getWelcomeSubject(defaultLocale), defaultLocale,
+				defaultLocale);
+		}
+
+		String welcomeMsg = getWelcomeMsg(defaultLocale);
+
+		if (Validator.isNull(welcomeMsg)) {
+			setWelcomeMsg(getWelcomeMsg(modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setWelcomeMsg(getWelcomeMsg(defaultLocale), defaultLocale,
+				defaultLocale);
+		}
+
+		String goodbyeSubject = getGoodbyeSubject(defaultLocale);
+
+		if (Validator.isNull(goodbyeSubject)) {
+			setGoodbyeSubject(getGoodbyeSubject(modelDefaultLanguageId),
+				defaultLocale);
+		}
+		else {
+			setGoodbyeSubject(getGoodbyeSubject(defaultLocale), defaultLocale,
+				defaultLocale);
+		}
+
+		String goodbyeMsg = getGoodbyeMsg(defaultLocale);
+
+		if (Validator.isNull(goodbyeMsg)) {
+			setGoodbyeMsg(getGoodbyeMsg(modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setGoodbyeMsg(getGoodbyeMsg(defaultLocale), defaultLocale,
+				defaultLocale);
+		}
+
+		String deniedInscriptionSubject = getDeniedInscriptionSubject(defaultLocale);
+
+		if (Validator.isNull(deniedInscriptionSubject)) {
+			setDeniedInscriptionSubject(getDeniedInscriptionSubject(
+					modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setDeniedInscriptionSubject(getDeniedInscriptionSubject(
+					defaultLocale), defaultLocale, defaultLocale);
+		}
+
+		String deniedInscriptionMsg = getDeniedInscriptionMsg(defaultLocale);
+
+		if (Validator.isNull(deniedInscriptionMsg)) {
+			setDeniedInscriptionMsg(getDeniedInscriptionMsg(
+					modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setDeniedInscriptionMsg(getDeniedInscriptionMsg(defaultLocale),
+				defaultLocale, defaultLocale);
+		}
 	}
 
 	@Override
@@ -1446,6 +2191,9 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		courseImpl.setGoodbye(isGoodbye());
 		courseImpl.setGoodbyeSubject(getGoodbyeSubject());
 		courseImpl.setGoodbyeMsg(getGoodbyeMsg());
+		courseImpl.setDeniedInscription(isDeniedInscription());
+		courseImpl.setDeniedInscriptionSubject(getDeniedInscriptionSubject());
+		courseImpl.setDeniedInscriptionMsg(getDeniedInscriptionMsg());
 		courseImpl.setCourseExtraData(getCourseExtraData());
 		courseImpl.setStatus(getStatus());
 		courseImpl.setStatusByUserId(getStatusByUserId());
@@ -1699,6 +2447,26 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 			courseCacheModel.goodbyeMsg = null;
 		}
 
+		courseCacheModel.deniedInscription = isDeniedInscription();
+
+		courseCacheModel.deniedInscriptionSubject = getDeniedInscriptionSubject();
+
+		String deniedInscriptionSubject = courseCacheModel.deniedInscriptionSubject;
+
+		if ((deniedInscriptionSubject != null) &&
+				(deniedInscriptionSubject.length() == 0)) {
+			courseCacheModel.deniedInscriptionSubject = null;
+		}
+
+		courseCacheModel.deniedInscriptionMsg = getDeniedInscriptionMsg();
+
+		String deniedInscriptionMsg = courseCacheModel.deniedInscriptionMsg;
+
+		if ((deniedInscriptionMsg != null) &&
+				(deniedInscriptionMsg.length() == 0)) {
+			courseCacheModel.deniedInscriptionMsg = null;
+		}
+
 		courseCacheModel.courseExtraData = getCourseExtraData();
 
 		String courseExtraData = courseCacheModel.courseExtraData;
@@ -1733,7 +2501,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(67);
+		StringBundler sb = new StringBundler(73);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -1791,6 +2559,12 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getGoodbyeSubject());
 		sb.append(", goodbyeMsg=");
 		sb.append(getGoodbyeMsg());
+		sb.append(", deniedInscription=");
+		sb.append(isDeniedInscription());
+		sb.append(", deniedInscriptionSubject=");
+		sb.append(getDeniedInscriptionSubject());
+		sb.append(", deniedInscriptionMsg=");
+		sb.append(getDeniedInscriptionMsg());
 		sb.append(", courseExtraData=");
 		sb.append(getCourseExtraData());
 		sb.append(", status=");
@@ -1808,7 +2582,7 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(103);
+		StringBundler sb = new StringBundler(112);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.model.Course");
@@ -1927,6 +2701,18 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 		sb.append(getGoodbyeMsg());
 		sb.append("]]></column-value></column>");
 		sb.append(
+			"<column><column-name>deniedInscription</column-name><column-value><![CDATA[");
+		sb.append(isDeniedInscription());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>deniedInscriptionSubject</column-name><column-value><![CDATA[");
+		sb.append(getDeniedInscriptionSubject());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>deniedInscriptionMsg</column-name><column-value><![CDATA[");
+		sb.append(getDeniedInscriptionMsg());
+		sb.append("]]></column-value></column>");
+		sb.append(
 			"<column><column-name>courseExtraData</column-name><column-value><![CDATA[");
 		sb.append(getCourseExtraData());
 		sb.append("]]></column-value></column>");
@@ -1992,10 +2778,19 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	private long _calificationType;
 	private boolean _welcome;
 	private String _welcomeSubject;
+	private String _welcomeSubjectCurrentLanguageId;
 	private String _welcomeMsg;
+	private String _welcomeMsgCurrentLanguageId;
 	private boolean _goodbye;
 	private String _goodbyeSubject;
+	private String _goodbyeSubjectCurrentLanguageId;
 	private String _goodbyeMsg;
+	private String _goodbyeMsgCurrentLanguageId;
+	private boolean _deniedInscription;
+	private String _deniedInscriptionSubject;
+	private String _deniedInscriptionSubjectCurrentLanguageId;
+	private String _deniedInscriptionMsg;
+	private String _deniedInscriptionMsgCurrentLanguageId;
 	private String _courseExtraData;
 	private int _status;
 	private long _statusByUserId;

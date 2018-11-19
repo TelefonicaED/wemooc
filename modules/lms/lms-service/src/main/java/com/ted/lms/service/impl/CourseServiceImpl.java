@@ -26,15 +26,12 @@ import com.liferay.portal.kernel.security.permission.resource.PortletResourcePer
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.util.Base64;
-import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.base.CourseServiceBaseImpl;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -74,91 +71,145 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	            CourseServiceImpl.class, "portletResourcePermission",
 	            LMSConstants.RESOURCE_NAME);
 	
+	
 	/**
 	 * Crea un nuevo curso
 	 * @param titleMap título del curso con las traducciones
 	 * @param descriptionMap descripción del curso con las traducciones
-	 * @param summary resumen del curso
+	 * @param summaryMap resumen del curso con las traducciones
+	 * @param indexer si el curso se mostrará en las búsquedas
 	 * @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	 * @param layoutSetPrototypeId identificador de la plantilla de sitio web
 	 * @param parentCourseId identificador del curso padre, si es cero se considera curso padre
-	 * @param smallImageId identificador de la imagen del curso
-	 * @param registrationStartDate fecha de inicio de inscripción
-	 * @param registrationEndDate fecha de fin de inscripción
-	 * @param executionStartDate fecha de inicio de ejecución
-	 * @param executionEndDate fecha de fin de ejecución
-	 * @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
-	 * @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
-	 * @param inscriptionType tipo de inscripción al curso
-	 * @param courseEvalId tipo de evaluación del curso
-	 * @param calificationType tipo de calificación del curso
-	 * @param maxUsers máximo de usuarios que se pueden inscribir al curso
-	 * @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
-	 * @param welcomeSubject asunto del mensaje de bienvenida
-	 * @param welcomeMsg cuerpo del mensaje de bienvenida
-	 * @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
-	 * @param goodbyeSubject asunto del mensaje de despedida
-	 * @param goodbyeMsg cuerpo del mensaje de despedida
-	 * @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	 * @param ImageSelector imagen selector
 	 * @param serviceContext contexto de la creación del curso
 	 */
-	public Course addCourse(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, String summary, String friendlyURL, long parentCourseId, 
-			ImageSelector smallImageSelector, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, long layoutSetPrototypeId,int typeSite, 
-			long inscriptionType, long courseEvalId, long calificationType, int maxUsers, boolean welcome, String welcomeSubject, String welcomeMsg, 
-			boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status, ServiceContext serviceContext) throws PortalException {
+	@Override
+	public Course addCourse(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap,  Map<Locale,String> summaryMap, boolean indexer, 
+			Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, long parentCourseId, ImageSelector smallImageSelector, 
+			ServiceContext serviceContext) throws PortalException {
 		
 		portletResourcePermission.check(
 				getPermissionChecker(), serviceContext.getScopeGroupId(),
 				LMSActionKeys.ADD_COURSE);
 		
-		return courseLocalService.addCourse(titleMap, descriptionMap, summary, friendlyURL, parentCourseId, smallImageSelector, registrationStartDate, 
-				registrationEndDate, executionStartDate, executionEndDate, layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId, calificationType, 
-				maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
+		return courseLocalService.addCourse(titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+				parentCourseId, smallImageSelector, serviceContext);
 		
 	}
 	
 	/**
-	 * Crea un nuevo curso
-	 * @param title título del curso
-	 * @param description descripción del curso
-	 * @param summary resumen del curso
+	 * Actualiza un curso
+	 * @param courseId identificador del curso
+	 * @param titleMap título del curso con las traducciones
+	 * @param descriptionMap descripción del curso con las traducciones
+	 * @param summaryMap resumen del curso con las traducciones
+	 * @param indexer si el curso se mostrará en las búsquedas
 	 * @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
-	 * @param parentCourseId identificador del curso padre, si es cero se considera curso padre
-	 * @param registrationStartDate fecha de inicio de inscripción
-	 * @param registrationEndDate fecha de fin de inscripción
-	 * @param executionStartDate fecha de inicio de ejecución
-	 * @param executionEndDate fecha de fin de ejecución
-	 * @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
-	 * @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
-	 * @param inscriptionType tipo de inscripción al curso
-	 * @param courseEvalId tipo de evaluación del curso
-	 * @param calificationType tipo de calificación del curso
-	 * @param maxUsers máximo de usuarios que se pueden inscribir al curso
-	 * @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
-	 * @param welcomeSubject asunto del mensaje de bienvenida
-	 * @param welcomeMsg cuerpo del mensaje de bienvenida
-	 * @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
-	 * @param goodbyeSubject asunto del mensaje de despedida
-	 * @param goodbyeMsg cuerpo del mensaje de despedida
-	 * @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	 * @param ImageSelector imagen selector
 	 * @param serviceContext contexto de la creación del curso
+	 * @throws PortalException 
+	 * @throws PrincipalException 
 	 */
-	public Course addCourse(String title, String description, String summary, String friendlyURL, long parentCourseId, 
-			Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, long layoutSetPrototypeId,int typeSite, 
-			long inscriptionType, long courseEvalId, long calificationType, int maxUsers, boolean welcome, String welcomeSubject, String welcomeMsg, 
-			boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status, ServiceContext serviceContext) throws PortalException {
+	public Course updateCourse(long courseId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+			Map<Locale, String> summaryMap, boolean indexer, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
+			ImageSelector smallImageImageSelector, ServiceContext serviceContext) throws Exception {
 		
-		portletResourcePermission.check(
-				getPermissionChecker(), serviceContext.getScopeGroupId(),
-				LMSActionKeys.ADD_COURSE);
-		Map<Locale, String> titleMap = new HashMap<Locale,String>();
-		titleMap.put(LocaleUtil.getDefault(), title);
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		
-		Map<Locale, String> descriptionMap = new HashMap<Locale,String>();
-		descriptionMap.put(LocaleUtil.getDefault(), description);
+		return courseLocalService.updateCourse(courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+				smallImageImageSelector, serviceContext);
+	}
+	
+	/**
+	 * Actualiza el segundo paso de un curso
+	 * @param courseId identificador del curso
+	 * @param registrationStartMonth mes de la fecha de inicio de inscripción
+	 * @param registrationStartDay día de la fecha de inicio de inscripción
+	 * @param registrationStartYear año de la fecha de inicio de inscripción
+	 * @param registrationStartHour hora de la fecha de inicio de inscripción
+	 * @param registrationStartMinute minuto de la fecha de inicio de inscripción
+	 * @param registrationEndMonth mes de la fecha de fin de inscripción
+	 * @param registrationEndDay día de la fecha de fin de inscripción
+	 * @param registrationEndYear año de la fecha de fin de inscripción
+	 * @param registrationEndHour hora de la fecha de fin de inscripción
+	 * @param registrationEndMinute minuto de la fecha de fin de inscripción
+	 * @param executionStartMonth mes de la fecha de inicio de ejecución
+	 * @param executionStartDay día de la fecha de inicio de ejecución
+	 * @param executionStartYear año de la fecha de inicio de ejecución
+	 * @param executionStartHour hora de la fecha de inicio de ejecución
+	 * @param executionStartMinute minuto de la fecha de inicio de ejecución
+	 * @param executionEndMonth mes de la fecha de fin de ejecución
+	 * @param executionEndDay día de la fecha de fin de ejecución
+	 * @param executionEndYear año de la fecha de fin de ejecución
+	 * @param executionEndHour hora de la fecha de fin de ejecución
+	 * @param executionEndMinute minuto de la fecha de fin de ejecución
+	 * @param typeSite tipo de sitio (público, restringido y privado). Ver GroupConstants
+	 * @param inscriptionType tipo de inscripción
+	 * @param courseEvalId método de evaluación
+	 * @param calificationType tipo de calificación
+	 * @param maxUsers máximo de usuarios que se permite inscribir en el curso
+	 * @param status estado del curso (ver WorkflowConstants)
+	 * @param serviceContext contexto de la modificación del curso
+	 * @throws Exception 
+	 * @return curso modificado
+	 */
+	public Course updateCourse(long courseId, int registrationStartMonth, int registrationStartDay, int registrationStartYear, int registrationStartHour, 
+			int registrationStartMinute, int registrationEndMonth, int registrationEndDay, int registrationEndYear, int registrationEndHour, 
+			int registrationEndMinute, int executionStartMonth, int executionStartDay, int executionStartYear, int executionStartHour, 
+			int executionStartMinute, int executionEndMonth, int executionEndDay, int executionEndYear, int executionEndHour, int executionEndMinute, 
+			int typeSite, long inscriptionType, long courseEvalId, long calificationType, int maxUsers, int status,
+			ServiceContext serviceContext) throws PortalException {
 		
-		return courseLocalService.addCourse(titleMap, descriptionMap, summary, friendlyURL, parentCourseId, null, registrationStartDate, 
-				registrationEndDate, executionStartDate, executionEndDate, layoutSetPrototypeId, typeSite, inscriptionType, courseEvalId, calificationType, 
-				maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye, goodbyeSubject, goodbyeMsg, status, serviceContext);
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
+		
+		return courseLocalService.updateCourse(courseId, registrationStartMonth, registrationStartDay, registrationStartYear, registrationStartHour, 
+				registrationStartMinute, registrationEndMonth, registrationEndDay, registrationEndYear, registrationEndHour, registrationEndMinute, 
+				executionStartMonth, executionStartDay, executionStartYear, executionStartHour, executionStartMinute, executionEndMonth, executionEndDay, 
+				executionEndYear, executionEndHour, executionEndMinute, typeSite, inscriptionType, courseEvalId, calificationType, 
+				maxUsers, status, serviceContext);
+	}
+	
+	/**
+	 * 
+	 * @param courseId identificador del curso
+	 * @param welcome si se habilita el mensaje de bienvenida
+	 * @param welcomeSubjectMap asunto del mensaje de bienvenida
+	 * @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	 * @param goodbye si se habilita el mensaje de despedida
+	 * @param goodbyeSubjectMap asunto del mensaje de despedida
+	 * @param goodbyeMsgMap cuerpo del mensaje de despedida
+	 * @param serviceContext contexto de la modificación del curso
+	 * @return curso modificado
+	 * @throws PortalException 
+	 * @throws PrincipalException 
+	 */
+	@Override
+	public Course updateCourse(long courseId, boolean welcome, Map<Locale, String> welcomeSubjectMap,
+			Map<Locale, String> welcomeMsgMap, boolean goodbye, Map<Locale, String> goodbyeSubjectMap,
+			Map<Locale, String> goodbyeMsgMap, boolean deniedInscription, Map<Locale, String> deniedInscriptionSubjectMap,
+			Map<Locale, String> deniedInscriptionMsgMap, int status, ServiceContext serviceContext) throws PrincipalException, PortalException {
+		
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
+		
+		return courseLocalService.updateCourse(courseId, welcome, welcomeSubjectMap, welcomeMsgMap, goodbye, goodbyeSubjectMap, goodbyeMsgMap, 
+				deniedInscription, deniedInscriptionSubjectMap, deniedInscriptionMsgMap, status, serviceContext);
+		
+	}
+	
+	/**
+	 * Actualiza los contenidos relacionados y el estado
+	 * @param courseId identificador del curso
+	 * @param status estado del curso
+	 * @param serviceContext contexto de la modificación del curso
+	 * @return curso modificado
+	 * @throws PrincipalException
+	 * @throws PortalException
+	 */
+	public Course updateCourse(long courseId, int status, ServiceContext serviceContext) throws PrincipalException, PortalException {
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
+		
+		return courseLocalService.updateCourse(courseId, status, serviceContext);
 	}
 	
 	public void updateSmallImage(long courseId, String imageString, String imageTitle, String imageMimeType, ServiceContext serviceContext) throws PrincipalException, PortalException {

@@ -5,6 +5,7 @@ import aQute.bnd.annotation.ProviderType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -28,6 +29,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ProviderType
 public class LearningActivityTypeFactoryRegistryUtil {
+	
+	public static String[] getLearningActivityFactories() {
+		return (String[]) _learningActivityFactoriesMapByClassName.entrySet().toArray();
+	}
 
 	public static List<LearningActivityTypeFactory> getLearningActivityFactories(
 		long companyId) {

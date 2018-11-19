@@ -1,9 +1,8 @@
 package com.ted.lms.model;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.upload.UploadRequest;
-import javax.portlet.PortletResponse;
-
+import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -31,7 +30,7 @@ public interface CourseEval {
 
 	public double getPassPuntuation();
 
-	public void setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse);
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException;
 	
 	public void onOpenCourse();
 	public void onCloseCourse();

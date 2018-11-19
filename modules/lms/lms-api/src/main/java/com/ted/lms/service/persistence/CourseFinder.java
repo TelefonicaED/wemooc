@@ -48,6 +48,9 @@ public interface CourseFinder {
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc);
 
+	public java.util.List<com.liferay.portal.kernel.model.Group> getDistinctCourseGroups(
+		long companyId);
+
 	public java.util.List<com.ted.lms.model.Course> doFindByC(long companyId,
 		String title, String description, String languageId, int status,
 		long parentCourseId, long groupId,

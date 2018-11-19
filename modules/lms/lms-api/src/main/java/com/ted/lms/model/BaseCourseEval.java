@@ -1,5 +1,6 @@
 package com.ted.lms.model;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
@@ -7,6 +8,8 @@ import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
 
 import java.util.List;
+
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletResponse;
 
 /**
@@ -62,8 +65,7 @@ public abstract class BaseCourseEval implements CourseEval {
 		return true;
 	}
 
-	public void setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException {	
 	}
 	
 	public void onOpenCourse(){

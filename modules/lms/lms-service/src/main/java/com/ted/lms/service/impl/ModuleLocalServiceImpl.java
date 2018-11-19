@@ -79,8 +79,8 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	private static final Log log = LogFactoryUtil.getLog(ModuleLocalServiceImpl.class);
 	
 	@Override
-	public Module addModule(long userId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean hasStartDate, int startDateMonth, 
-			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean hasEndDate, int endDateMonth, int endDateDay,
+	public Module addModule(long userId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean useStartExecutionDateCourse, int startDateMonth, 
+			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, ServiceContext serviceContext) throws PortalException {
 		
@@ -88,7 +88,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		Date startDate = null;
 		
-		if(hasStartDate) {	
+		if(!useStartExecutionDateCourse) {	
 			startDate = PortalUtil.getDate(
 					startDateMonth, startDateDay, startDateYear, startDateHour,
 					startDateMinute, user.getTimeZone(),
@@ -97,7 +97,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		Date endDate = null;
 		
-		if(hasEndDate) {
+		if(!useEndExecutionDateCourse) {
 			endDate = PortalUtil.getDate(
 					endDateMonth, endDateDay, endDateYear, endDateHour,
 					endDateMinute, user.getTimeZone(),
@@ -167,8 +167,8 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
-	public Module updateModule(long userId, long moduleId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean hasStartDate, int startDateMonth, 
-			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean hasEndDate, int endDateMonth, int endDateDay,
+	public Module updateModule(long userId, long moduleId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean useStartExecutionDateCourse, int startDateMonth, 
+			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, String moduleExtraData, ServiceContext serviceContext) throws PortalException {
 		
@@ -176,7 +176,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		Date startDate = null;
 		
-		if(hasStartDate) {	
+		if(!useStartExecutionDateCourse) {	
 			startDate = PortalUtil.getDate(
 					startDateMonth, startDateDay, startDateYear, startDateHour,
 					startDateMinute, user.getTimeZone(),
@@ -185,7 +185,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		Date endDate = null;
 		
-		if(hasEndDate) {
+		if(!useEndExecutionDateCourse) {
 			endDate = PortalUtil.getDate(
 					endDateMonth, endDateDay, endDateYear, endDateHour,
 					endDateMinute, user.getTimeZone(),

@@ -5,4 +5,4 @@
 CourseDisplayContext courseDisplayContext = new CourseDisplayContext(request, liferayPortletRequest, liferayPortletResponse, portletPreferences, trashHelper);
 
 pageContext.setAttribute("courseDisplayContext", courseDisplayContext);
-%>
+%> 

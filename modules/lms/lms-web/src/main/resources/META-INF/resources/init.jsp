@@ -11,6 +11,8 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <%@taglib uri="http://liferay.com/tld/clay" prefix="clay" %>
 <%@taglib uri="http://liferay.com/tld/item-selector" prefix="liferay-item-selector" %>
 <%@taglib uri="http://liferay.com/tld/trash" prefix="liferay-trash" %>
+<%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %>
+<%@taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %>
 
 <liferay-theme:defineObjects />
 <liferay-trash:defineObjects />

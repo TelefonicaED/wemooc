@@ -280,8 +280,8 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		log.debug("titleMap: " + titleMap);
 		log.debug("descriptionMap: " + descriptionMap);
 		
-		boolean startDate = ParamUtil.getBoolean(actionRequest, "startDate");
-		log.debug("startDate: " + startDate);
+		boolean useStartExecutionDateCourse = ParamUtil.getBoolean(actionRequest, "useStartExecutionDateCourse");
+		log.debug("useStartExecutionDateCourse: " + useStartExecutionDateCourse);
 
 		int startDateMonth = ParamUtil.getInteger(actionRequest, "startDateMonth");
 		int startDateDay = ParamUtil.getInteger(actionRequest, "startDateDay");
@@ -300,8 +300,8 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 			startDateHour += 12;
 		}
 		
-		boolean endDate = ParamUtil.getBoolean(actionRequest, "endDate");
-		log.debug("endDate: " + endDate);
+		boolean useEndExecutionDateCourse = ParamUtil.getBoolean(actionRequest, "useEndExecutionDateCourse");
+		log.debug("useEndExecutionDateCourse: " + useEndExecutionDateCourse);
 		
 		int endDateMonth = ParamUtil.getInteger(actionRequest, "endDateMonth");
 		int endDateDay = ParamUtil.getInteger(actionRequest, "endDateDay");
@@ -325,12 +325,9 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 			Module module = moduleLocalService.getModule(moduleId);
 
 			oldSmallImageId = module.getSmallImageId();
-			System.out.println("oldSmallImageId: " + oldSmallImageId);
 		}
 		
 		long smallImageFileEntryId = ParamUtil.getLong(actionRequest, "smallImageFileEntryId");
-		
-		System.out.println("smallImageFileEntryId: " + smallImageFileEntryId);
 
 		ModuleImageSelectorHelper moduleSmallImageSelectorHelper = new ModuleImageSelectorHelper(oldSmallImageId, smallImageFileEntryId);
 
@@ -345,16 +342,14 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		if (moduleId <= 0) {
 
 			// Añadir módulo
-			module = moduleService.addModule(titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
-					startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
+			module = moduleService.addModule(titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, startDateDay, startDateYear,
+					startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
 					allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId, serviceContext);
 		} else {
-
 			// Actualizamos el módulo
- 
 			module = moduleService.updateModule(
-				moduleId, titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
-				startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
+				moduleId, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, startDateDay, startDateYear,
+				startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
 				allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId,  serviceContext);
 		} 
 		

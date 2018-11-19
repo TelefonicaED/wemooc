@@ -1,3 +1,5 @@
+<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%@page import="com.ted.lms.model.Module"%>
 <%@page import="com.liferay.portal.kernel.util.Constants"%>
 <%@page import="com.liferay.portal.kernel.security.permission.ActionKeys"%>
@@ -36,6 +38,22 @@ portletURL.setParameter("mvcRenderCommandName", "/modules/view");
 		<liferay-ui:icon
 			message="edit"
 			url="${editModuleURL }"
+		/>
+	</c:if>
+	<c:if test="<%= ModulePermission.contains(permissionChecker, module, ActionKeys.PERMISSIONS) %>">
+		<liferay-security:permissionsURL
+			modelResource="<%= Module.class.getName() %>"
+			modelResourceDescription="<%= HtmlUtil.escape(module.getTitle(themeDisplay.getLocale())) %>"
+			resourcePrimKey="<%= String.valueOf(module.getModuleId()) %>"
+			var="permissionsURL"
+			windowState="<%= LiferayWindowState.POP_UP.toString() %>"
+		/>
+
+		<liferay-ui:icon
+			message="permissions"
+			method="get"
+			url="<%=permissionsURL %>"
+			useDialog="<%= true %>"
 		/>
 	</c:if>
 	<c:if test="<%= ModulePermission.contains(permissionChecker, module, ActionKeys.DELETE) %>">

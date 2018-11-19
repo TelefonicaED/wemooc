@@ -1,17 +1,25 @@
 package com.ted.lms.web.internal.portlet;
 
 import com.ted.lms.constants.LMSPortletKeys;
+import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 
+import java.util.Map;
+
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 
 import javax.portlet.Portlet;
+import javax.portlet.PortletException;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 
 /**
  * @author Virginia Martín Agudo
  */
 @Component(
+	configurationPid = "com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration",
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=wemooc",

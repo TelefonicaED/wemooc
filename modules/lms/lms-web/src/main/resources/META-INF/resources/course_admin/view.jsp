@@ -1,10 +1,6 @@
 <%@ include file="init.jsp" %>
 
-<liferay-trash:undo
-	portletURL="${restoreTrashEntriesURL}"
-/>
-
-<liferay-util:include page="/course/nav.jsp" servletContext="<%= application %>" />
+<liferay-util:include page="/course_admin/nav.jsp" servletContext="<%= application %>" />
 
 <liferay-ui:search-container
 	id="courses"
@@ -18,32 +14,14 @@
 
 		<liferay-ui:search-container-column-text
 			cssClass="important table-cell-content"
-			href="/web${course.friendlyURL }"
+			href="${course.isApproved() ? course.friendlyURL : '' }"
 			name="name"
 			value="${course.getTitle(themeDisplay.locale) }"
 		/>
-
-		<liferay-ui:search-container-column-text>
-			<liferay-ui:icon-menu
-				direction="left-side"
-				icon=""
-				markupView="lexicon"
-				message=""
-				showWhenSingleIcon="true"
-			>
-			
-				<portlet:renderURL var="editCourseURL">
-					<portlet:param name="mvcRenderCommandName" value="/courses/edit_course" />
-					<portlet:param name="redirect" value="${redirect }" />
-					<portlet:param name="courseId" value="${course.courseId }" />
-				</portlet:renderURL>
-			
-				<liferay-ui:icon
-					message="edit"
-					url="${editCourseURL}"
-				/>
-			</liferay-ui:icon-menu>
-		</liferay-ui:search-container-column-text>
+		
+		<liferay-ui:search-container-column-jsp
+			path="/course_admin/course_action.jsp"
+		/>
 	</liferay-ui:search-container-row>
 
 	<liferay-ui:search-iterator

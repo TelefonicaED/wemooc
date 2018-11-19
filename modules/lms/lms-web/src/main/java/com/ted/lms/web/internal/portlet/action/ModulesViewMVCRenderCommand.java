@@ -49,18 +49,11 @@ public class ModulesViewMVCRenderCommand implements MVCRenderCommand {
 	/*	ModulesDisplayContext modulesDisplayContext = new ModulesDisplayContext(liferayPortletRequest);
 
 		blogEntriesDisplayContext.populateResults(entriesSearchContainer);*/
-
-		ModulesManagementToolbarDisplayContext modulesManagementToolbarDisplayContext = new ModulesManagementToolbarDisplayContext(PortalUtil.getLiferayPortletRequest(renderRequest), 
-				liferayPortletResponse, PortalUtil.getHttpServletRequest(renderRequest), portletURL, trashHelper);
-
-		String displayStyle = modulesManagementToolbarDisplayContext.getDisplayStyle();
 		
 		searchContainer.setResults(moduleLocalService.getModules(searchContainer.getStart(), searchContainer.getEnd()));
 		searchContainer.setTotal(moduleLocalService.getModulesCount());
 		
 		renderRequest.setAttribute("searchContainer", searchContainer);
-		renderRequest.setAttribute("displayStyle", displayStyle);
-		renderRequest.setAttribute("modulesManagementToolbarDisplayContext", modulesManagementToolbarDisplayContext);
 		renderRequest.setAttribute("portletURL", portletURL);
 		renderRequest.setAttribute("trashHelper", trashHelper);
 		

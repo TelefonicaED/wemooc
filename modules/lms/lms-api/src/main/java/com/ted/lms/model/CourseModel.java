@@ -610,8 +610,58 @@ public interface CourseModel extends BaseModel<Course>, LocalizedModel,
 	 *
 	 * @return the welcome subject of this course
 	 */
-	@AutoEscape
 	public String getWelcomeSubject();
+
+	/**
+	 * Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized welcome subject of this course
+	 */
+	@AutoEscape
+	public String getWelcomeSubject(Locale locale);
+
+	/**
+	 * Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getWelcomeSubject(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized welcome subject of this course
+	 */
+	@AutoEscape
+	public String getWelcomeSubject(String languageId);
+
+	/**
+	 * Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome subject of this course
+	 */
+	@AutoEscape
+	public String getWelcomeSubject(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getWelcomeSubjectCurrentLanguageId();
+
+	@AutoEscape
+	public String getWelcomeSubjectCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized welcome subjects of this course.
+	 *
+	 * @return the locales and localized welcome subjects of this course
+	 */
+	public Map<Locale, String> getWelcomeSubjectMap();
 
 	/**
 	 * Sets the welcome subject of this course.
@@ -621,12 +671,98 @@ public interface CourseModel extends BaseModel<Course>, LocalizedModel,
 	public void setWelcomeSubject(String welcomeSubject);
 
 	/**
+	 * Sets the localized welcome subject of this course in the language.
+	 *
+	 * @param welcomeSubject the localized welcome subject of this course
+	 * @param locale the locale of the language
+	 */
+	public void setWelcomeSubject(String welcomeSubject, Locale locale);
+
+	/**
+	 * Sets the localized welcome subject of this course in the language, and sets the default locale.
+	 *
+	 * @param welcomeSubject the localized welcome subject of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setWelcomeSubject(String welcomeSubject, Locale locale,
+		Locale defaultLocale);
+
+	public void setWelcomeSubjectCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects.
+	 *
+	 * @param welcomeSubjectMap the locales and localized welcome subjects of this course
+	 */
+	public void setWelcomeSubjectMap(Map<Locale, String> welcomeSubjectMap);
+
+	/**
+	 * Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects, and sets the default locale.
+	 *
+	 * @param welcomeSubjectMap the locales and localized welcome subjects of this course
+	 * @param defaultLocale the default locale
+	 */
+	public void setWelcomeSubjectMap(Map<Locale, String> welcomeSubjectMap,
+		Locale defaultLocale);
+
+	/**
 	 * Returns the welcome msg of this course.
 	 *
 	 * @return the welcome msg of this course
 	 */
-	@AutoEscape
 	public String getWelcomeMsg();
+
+	/**
+	 * Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized welcome msg of this course
+	 */
+	@AutoEscape
+	public String getWelcomeMsg(Locale locale);
+
+	/**
+	 * Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getWelcomeMsg(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized welcome msg of this course
+	 */
+	@AutoEscape
+	public String getWelcomeMsg(String languageId);
+
+	/**
+	 * Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome msg of this course
+	 */
+	@AutoEscape
+	public String getWelcomeMsg(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getWelcomeMsgCurrentLanguageId();
+
+	@AutoEscape
+	public String getWelcomeMsgCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized welcome msgs of this course.
+	 *
+	 * @return the locales and localized welcome msgs of this course
+	 */
+	public Map<Locale, String> getWelcomeMsgMap();
 
 	/**
 	 * Sets the welcome msg of this course.
@@ -634,6 +770,42 @@ public interface CourseModel extends BaseModel<Course>, LocalizedModel,
 	 * @param welcomeMsg the welcome msg of this course
 	 */
 	public void setWelcomeMsg(String welcomeMsg);
+
+	/**
+	 * Sets the localized welcome msg of this course in the language.
+	 *
+	 * @param welcomeMsg the localized welcome msg of this course
+	 * @param locale the locale of the language
+	 */
+	public void setWelcomeMsg(String welcomeMsg, Locale locale);
+
+	/**
+	 * Sets the localized welcome msg of this course in the language, and sets the default locale.
+	 *
+	 * @param welcomeMsg the localized welcome msg of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setWelcomeMsg(String welcomeMsg, Locale locale,
+		Locale defaultLocale);
+
+	public void setWelcomeMsgCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs.
+	 *
+	 * @param welcomeMsgMap the locales and localized welcome msgs of this course
+	 */
+	public void setWelcomeMsgMap(Map<Locale, String> welcomeMsgMap);
+
+	/**
+	 * Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs, and sets the default locale.
+	 *
+	 * @param welcomeMsgMap the locales and localized welcome msgs of this course
+	 * @param defaultLocale the default locale
+	 */
+	public void setWelcomeMsgMap(Map<Locale, String> welcomeMsgMap,
+		Locale defaultLocale);
 
 	/**
 	 * Returns the goodbye of this course.
@@ -661,8 +833,58 @@ public interface CourseModel extends BaseModel<Course>, LocalizedModel,
 	 *
 	 * @return the goodbye subject of this course
 	 */
-	@AutoEscape
 	public String getGoodbyeSubject();
+
+	/**
+	 * Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized goodbye subject of this course
+	 */
+	@AutoEscape
+	public String getGoodbyeSubject(Locale locale);
+
+	/**
+	 * Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getGoodbyeSubject(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized goodbye subject of this course
+	 */
+	@AutoEscape
+	public String getGoodbyeSubject(String languageId);
+
+	/**
+	 * Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye subject of this course
+	 */
+	@AutoEscape
+	public String getGoodbyeSubject(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getGoodbyeSubjectCurrentLanguageId();
+
+	@AutoEscape
+	public String getGoodbyeSubjectCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized goodbye subjects of this course.
+	 *
+	 * @return the locales and localized goodbye subjects of this course
+	 */
+	public Map<Locale, String> getGoodbyeSubjectMap();
 
 	/**
 	 * Sets the goodbye subject of this course.
@@ -672,12 +894,98 @@ public interface CourseModel extends BaseModel<Course>, LocalizedModel,
 	public void setGoodbyeSubject(String goodbyeSubject);
 
 	/**
+	 * Sets the localized goodbye subject of this course in the language.
+	 *
+	 * @param goodbyeSubject the localized goodbye subject of this course
+	 * @param locale the locale of the language
+	 */
+	public void setGoodbyeSubject(String goodbyeSubject, Locale locale);
+
+	/**
+	 * Sets the localized goodbye subject of this course in the language, and sets the default locale.
+	 *
+	 * @param goodbyeSubject the localized goodbye subject of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setGoodbyeSubject(String goodbyeSubject, Locale locale,
+		Locale defaultLocale);
+
+	public void setGoodbyeSubjectCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects.
+	 *
+	 * @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
+	 */
+	public void setGoodbyeSubjectMap(Map<Locale, String> goodbyeSubjectMap);
+
+	/**
+	 * Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects, and sets the default locale.
+	 *
+	 * @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
+	 * @param defaultLocale the default locale
+	 */
+	public void setGoodbyeSubjectMap(Map<Locale, String> goodbyeSubjectMap,
+		Locale defaultLocale);
+
+	/**
 	 * Returns the goodbye msg of this course.
 	 *
 	 * @return the goodbye msg of this course
 	 */
-	@AutoEscape
 	public String getGoodbyeMsg();
+
+	/**
+	 * Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized goodbye msg of this course
+	 */
+	@AutoEscape
+	public String getGoodbyeMsg(Locale locale);
+
+	/**
+	 * Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getGoodbyeMsg(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized goodbye msg of this course
+	 */
+	@AutoEscape
+	public String getGoodbyeMsg(String languageId);
+
+	/**
+	 * Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye msg of this course
+	 */
+	@AutoEscape
+	public String getGoodbyeMsg(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getGoodbyeMsgCurrentLanguageId();
+
+	@AutoEscape
+	public String getGoodbyeMsgCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized goodbye msgs of this course.
+	 *
+	 * @return the locales and localized goodbye msgs of this course
+	 */
+	public Map<Locale, String> getGoodbyeMsgMap();
 
 	/**
 	 * Sets the goodbye msg of this course.
@@ -685,6 +993,270 @@ public interface CourseModel extends BaseModel<Course>, LocalizedModel,
 	 * @param goodbyeMsg the goodbye msg of this course
 	 */
 	public void setGoodbyeMsg(String goodbyeMsg);
+
+	/**
+	 * Sets the localized goodbye msg of this course in the language.
+	 *
+	 * @param goodbyeMsg the localized goodbye msg of this course
+	 * @param locale the locale of the language
+	 */
+	public void setGoodbyeMsg(String goodbyeMsg, Locale locale);
+
+	/**
+	 * Sets the localized goodbye msg of this course in the language, and sets the default locale.
+	 *
+	 * @param goodbyeMsg the localized goodbye msg of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setGoodbyeMsg(String goodbyeMsg, Locale locale,
+		Locale defaultLocale);
+
+	public void setGoodbyeMsgCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs.
+	 *
+	 * @param goodbyeMsgMap the locales and localized goodbye msgs of this course
+	 */
+	public void setGoodbyeMsgMap(Map<Locale, String> goodbyeMsgMap);
+
+	/**
+	 * Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs, and sets the default locale.
+	 *
+	 * @param goodbyeMsgMap the locales and localized goodbye msgs of this course
+	 * @param defaultLocale the default locale
+	 */
+	public void setGoodbyeMsgMap(Map<Locale, String> goodbyeMsgMap,
+		Locale defaultLocale);
+
+	/**
+	 * Returns the denied inscription of this course.
+	 *
+	 * @return the denied inscription of this course
+	 */
+	public boolean getDeniedInscription();
+
+	/**
+	 * Returns <code>true</code> if this course is denied inscription.
+	 *
+	 * @return <code>true</code> if this course is denied inscription; <code>false</code> otherwise
+	 */
+	public boolean isDeniedInscription();
+
+	/**
+	 * Sets whether this course is denied inscription.
+	 *
+	 * @param deniedInscription the denied inscription of this course
+	 */
+	public void setDeniedInscription(boolean deniedInscription);
+
+	/**
+	 * Returns the denied inscription subject of this course.
+	 *
+	 * @return the denied inscription subject of this course
+	 */
+	public String getDeniedInscriptionSubject();
+
+	/**
+	 * Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized denied inscription subject of this course
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionSubject(Locale locale);
+
+	/**
+	 * Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionSubject(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized denied inscription subject of this course
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionSubject(String languageId);
+
+	/**
+	 * Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription subject of this course
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionSubject(String languageId,
+		boolean useDefault);
+
+	@AutoEscape
+	public String getDeniedInscriptionSubjectCurrentLanguageId();
+
+	@AutoEscape
+	public String getDeniedInscriptionSubjectCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized denied inscription subjects of this course.
+	 *
+	 * @return the locales and localized denied inscription subjects of this course
+	 */
+	public Map<Locale, String> getDeniedInscriptionSubjectMap();
+
+	/**
+	 * Sets the denied inscription subject of this course.
+	 *
+	 * @param deniedInscriptionSubject the denied inscription subject of this course
+	 */
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject);
+
+	/**
+	 * Sets the localized denied inscription subject of this course in the language.
+	 *
+	 * @param deniedInscriptionSubject the localized denied inscription subject of this course
+	 * @param locale the locale of the language
+	 */
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
+		Locale locale);
+
+	/**
+	 * Sets the localized denied inscription subject of this course in the language, and sets the default locale.
+	 *
+	 * @param deniedInscriptionSubject the localized denied inscription subject of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
+		Locale locale, Locale defaultLocale);
+
+	public void setDeniedInscriptionSubjectCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects.
+	 *
+	 * @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
+	 */
+	public void setDeniedInscriptionSubjectMap(
+		Map<Locale, String> deniedInscriptionSubjectMap);
+
+	/**
+	 * Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects, and sets the default locale.
+	 *
+	 * @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
+	 * @param defaultLocale the default locale
+	 */
+	public void setDeniedInscriptionSubjectMap(
+		Map<Locale, String> deniedInscriptionSubjectMap, Locale defaultLocale);
+
+	/**
+	 * Returns the denied inscription msg of this course.
+	 *
+	 * @return the denied inscription msg of this course
+	 */
+	public String getDeniedInscriptionMsg();
+
+	/**
+	 * Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized denied inscription msg of this course
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionMsg(Locale locale);
+
+	/**
+	 * Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionMsg(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized denied inscription msg of this course
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionMsg(String languageId);
+
+	/**
+	 * Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription msg of this course
+	 */
+	@AutoEscape
+	public String getDeniedInscriptionMsg(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getDeniedInscriptionMsgCurrentLanguageId();
+
+	@AutoEscape
+	public String getDeniedInscriptionMsgCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized denied inscription msgs of this course.
+	 *
+	 * @return the locales and localized denied inscription msgs of this course
+	 */
+	public Map<Locale, String> getDeniedInscriptionMsgMap();
+
+	/**
+	 * Sets the denied inscription msg of this course.
+	 *
+	 * @param deniedInscriptionMsg the denied inscription msg of this course
+	 */
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg);
+
+	/**
+	 * Sets the localized denied inscription msg of this course in the language.
+	 *
+	 * @param deniedInscriptionMsg the localized denied inscription msg of this course
+	 * @param locale the locale of the language
+	 */
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
+		Locale locale);
+
+	/**
+	 * Sets the localized denied inscription msg of this course in the language, and sets the default locale.
+	 *
+	 * @param deniedInscriptionMsg the localized denied inscription msg of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
+		Locale locale, Locale defaultLocale);
+
+	public void setDeniedInscriptionMsgCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs.
+	 *
+	 * @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
+	 */
+	public void setDeniedInscriptionMsgMap(
+		Map<Locale, String> deniedInscriptionMsgMap);
+
+	/**
+	 * Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs, and sets the default locale.
+	 *
+	 * @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
+	 * @param defaultLocale the default locale
+	 */
+	public void setDeniedInscriptionMsgMap(
+		Map<Locale, String> deniedInscriptionMsgMap, Locale defaultLocale);
 
 	/**
 	 * Returns the course extra data of this course.

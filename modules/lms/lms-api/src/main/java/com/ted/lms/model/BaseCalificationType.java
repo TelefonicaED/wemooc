@@ -1,10 +1,12 @@
 package com.ted.lms.model;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
 
 import java.util.Locale;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletResponse;
 
 /**
@@ -29,8 +31,7 @@ public abstract class BaseCalificationType implements CalificationType{
 	}
 	
 	@Override
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		return null;
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
 	}
 	
 	@Override

@@ -76,9 +76,13 @@ public class CoursesManagementToolbarDisplayContext {
 		public CreationMenu getCreationMenu() {
 			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
 
+			//Comprobamos que el usuario tiene permisos para crear cursos
 			if (!LMSPermission.contains(themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(), LMSActionKeys.ADD_COURSE)) {
 				return null;
 			}
+			
+			//Comprobamos que tenemos alguna plantilla de sitio web
+			
 
 			CreationMenu creationMenu = new CreationMenu();
 

@@ -36,21 +36,21 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	public com.ted.lms.model.Module addModule(long userId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
-		boolean hasStartDate, int startDateMonth, int startDateDay,
-		int startDateYear, int startDateHour, int startDateMinute,
-		boolean hasEndDate, int endDateMonth, int endDateDay, int endDateYear,
-		int endDateHour, int endDateMinute, int allowedHours,
-		int allowedMinutes,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, int allowedHours, int allowedMinutes,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
 		long moduleEvalId,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _moduleLocalService.addModule(userId, titleMap, descriptionMap,
-			hasStartDate, startDateMonth, startDateDay, startDateYear,
-			startDateHour, startDateMinute, hasEndDate, endDateMonth,
-			endDateDay, endDateYear, endDateHour, endDateMinute, allowedHours,
-			allowedMinutes, smallImageImageSelector, moduleEvalId,
-			serviceContext);
+			useStartExecutionDateCourse, startDateMonth, startDateDay,
+			startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, allowedHours, allowedMinutes,
+			smallImageImageSelector, moduleEvalId, serviceContext);
 	}
 
 	@Override
@@ -388,21 +388,22 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	public com.ted.lms.model.Module updateModule(long userId, long moduleId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
-		boolean hasStartDate, int startDateMonth, int startDateDay,
-		int startDateYear, int startDateHour, int startDateMinute,
-		boolean hasEndDate, int endDateMonth, int endDateDay, int endDateYear,
-		int endDateHour, int endDateMinute, int allowedHours,
-		int allowedMinutes,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, int allowedHours, int allowedMinutes,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
 		long moduleEvalId, String moduleExtraData,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _moduleLocalService.updateModule(userId, moduleId, titleMap,
-			descriptionMap, hasStartDate, startDateMonth, startDateDay,
-			startDateYear, startDateHour, startDateMinute, hasEndDate,
-			endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
-			allowedHours, allowedMinutes, smallImageImageSelector,
-			moduleEvalId, moduleExtraData, serviceContext);
+			descriptionMap, useStartExecutionDateCourse, startDateMonth,
+			startDateDay, startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, allowedHours, allowedMinutes,
+			smallImageImageSelector, moduleEvalId, moduleExtraData,
+			serviceContext);
 	}
 
 	@Override

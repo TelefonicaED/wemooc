@@ -74,41 +74,22 @@ public class CourseServiceSoap {
 	*
 	* @param titleMap título del curso con las traducciones
 	* @param descriptionMap descripción del curso con las traducciones
-	* @param summary resumen del curso
+	* @param summaryMap resumen del curso con las traducciones
+	* @param indexer si el curso se mostrará en las búsquedas
 	* @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	* @param layoutSetPrototypeId identificador de la plantilla de sitio web
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
-	* @param smallImageId identificador de la imagen del curso
-	* @param registrationStartDate fecha de inicio de inscripción
-	* @param registrationEndDate fecha de fin de inscripción
-	* @param executionStartDate fecha de inicio de ejecución
-	* @param executionEndDate fecha de fin de ejecución
-	* @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
-	* @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
-	* @param inscriptionType tipo de inscripción al curso
-	* @param courseEvalId tipo de evaluación del curso
-	* @param calificationType tipo de calificación del curso
-	* @param maxUsers máximo de usuarios que se pueden inscribir al curso
-	* @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
-	* @param welcomeSubject asunto del mensaje de bienvenida
-	* @param welcomeMsg cuerpo del mensaje de bienvenida
-	* @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
-	* @param goodbyeSubject asunto del mensaje de despedida
-	* @param goodbyeMsg cuerpo del mensaje de despedida
-	* @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	* @param ImageSelector imagen selector
 	* @param serviceContext contexto de la creación del curso
 	*/
 	public static com.ted.lms.model.CourseSoap addCourse(
 		String[] titleMapLanguageIds, String[] titleMapValues,
 		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
-		String summary, String friendlyURL, long parentCourseId,
+		String[] summaryMapLanguageIds, String[] summaryMapValues,
+		boolean indexer, String[] friendlyURLMapLanguageIds,
+		String[] friendlyURLMapValues, long layoutSetPrototypeId,
+		long parentCourseId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
-		java.util.Date registrationStartDate,
-		java.util.Date registrationEndDate, java.util.Date executionStartDate,
-		java.util.Date executionEndDate, long layoutSetPrototypeId,
-		int typeSite, long inscriptionType, long courseEvalId,
-		long calificationType, int maxUsers, boolean welcome,
-		String welcomeSubject, String welcomeMsg, boolean goodbye,
-		String goodbyeSubject, String goodbyeMsg, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -116,15 +97,15 @@ public class CourseServiceSoap {
 					titleMapValues);
 			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
 					descriptionMapValues);
+			Map<Locale, String> summaryMap = LocalizationUtil.getLocalizationMap(summaryMapLanguageIds,
+					summaryMapValues);
+			Map<Locale, String> friendlyURLMap = LocalizationUtil.getLocalizationMap(friendlyURLMapLanguageIds,
+					friendlyURLMapValues);
 
 			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(titleMap,
-					descriptionMap, summary, friendlyURL, parentCourseId,
-					smallImageSelector, registrationStartDate,
-					registrationEndDate, executionStartDate, executionEndDate,
-					layoutSetPrototypeId, typeSite, inscriptionType,
-					courseEvalId, calificationType, maxUsers, welcome,
-					welcomeSubject, welcomeMsg, goodbye, goodbyeSubject,
-					goodbyeMsg, status, serviceContext);
+					descriptionMap, summaryMap, indexer, friendlyURLMap,
+					layoutSetPrototypeId, parentCourseId, smallImageSelector,
+					serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
 		}
@@ -136,51 +117,195 @@ public class CourseServiceSoap {
 	}
 
 	/**
-	* Crea un nuevo curso
+	* Actualiza un curso
 	*
-	* @param title título del curso
-	* @param description descripción del curso
-	* @param summary resumen del curso
+	* @param courseId identificador del curso
+	* @param titleMap título del curso con las traducciones
+	* @param descriptionMap descripción del curso con las traducciones
+	* @param summaryMap resumen del curso con las traducciones
+	* @param indexer si el curso se mostrará en las búsquedas
 	* @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
-	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
-	* @param registrationStartDate fecha de inicio de inscripción
-	* @param registrationEndDate fecha de fin de inscripción
-	* @param executionStartDate fecha de inicio de ejecución
-	* @param executionEndDate fecha de fin de ejecución
-	* @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
-	* @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
-	* @param inscriptionType tipo de inscripción al curso
-	* @param courseEvalId tipo de evaluación del curso
-	* @param calificationType tipo de calificación del curso
-	* @param maxUsers máximo de usuarios que se pueden inscribir al curso
-	* @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
-	* @param welcomeSubject asunto del mensaje de bienvenida
-	* @param welcomeMsg cuerpo del mensaje de bienvenida
-	* @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
-	* @param goodbyeSubject asunto del mensaje de despedida
-	* @param goodbyeMsg cuerpo del mensaje de despedida
-	* @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
+	* @param ImageSelector imagen selector
 	* @param serviceContext contexto de la creación del curso
+	* @throws PortalException
+	* @throws PrincipalException
 	*/
-	public static com.ted.lms.model.CourseSoap addCourse(String title,
-		String description, String summary, String friendlyURL,
-		long parentCourseId, java.util.Date registrationStartDate,
-		java.util.Date registrationEndDate, java.util.Date executionStartDate,
-		java.util.Date executionEndDate, long layoutSetPrototypeId,
-		int typeSite, long inscriptionType, long courseEvalId,
-		long calificationType, int maxUsers, boolean welcome,
-		String welcomeSubject, String welcomeMsg, boolean goodbye,
-		String goodbyeSubject, String goodbyeMsg, int status,
+	public static com.ted.lms.model.CourseSoap updateCourse(long courseId,
+		String[] titleMapLanguageIds, String[] titleMapValues,
+		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
+		String[] summaryMapLanguageIds, String[] summaryMapValues,
+		boolean indexer, String[] friendlyURLMapLanguageIds,
+		String[] friendlyURLMapValues, long layoutSetPrototypeId,
+		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageImageSelector,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
-			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(title,
-					description, summary, friendlyURL, parentCourseId,
-					registrationStartDate, registrationEndDate,
-					executionStartDate, executionEndDate, layoutSetPrototypeId,
-					typeSite, inscriptionType, courseEvalId, calificationType,
-					maxUsers, welcome, welcomeSubject, welcomeMsg, goodbye,
-					goodbyeSubject, goodbyeMsg, status, serviceContext);
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
+					descriptionMapValues);
+			Map<Locale, String> summaryMap = LocalizationUtil.getLocalizationMap(summaryMapLanguageIds,
+					summaryMapValues);
+			Map<Locale, String> friendlyURLMap = LocalizationUtil.getLocalizationMap(friendlyURLMapLanguageIds,
+					friendlyURLMapValues);
+
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.updateCourse(courseId,
+					titleMap, descriptionMap, summaryMap, indexer,
+					friendlyURLMap, layoutSetPrototypeId,
+					smallImageImageSelector, serviceContext);
+
+			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* Actualiza el segundo paso de un curso
+	*
+	* @param courseId identificador del curso
+	* @param registrationStartMonth mes de la fecha de inicio de inscripción
+	* @param registrationStartDay día de la fecha de inicio de inscripción
+	* @param registrationStartYear año de la fecha de inicio de inscripción
+	* @param registrationStartHour hora de la fecha de inicio de inscripción
+	* @param registrationStartMinute minuto de la fecha de inicio de inscripción
+	* @param registrationEndMonth mes de la fecha de fin de inscripción
+	* @param registrationEndDay día de la fecha de fin de inscripción
+	* @param registrationEndYear año de la fecha de fin de inscripción
+	* @param registrationEndHour hora de la fecha de fin de inscripción
+	* @param registrationEndMinute minuto de la fecha de fin de inscripción
+	* @param executionStartMonth mes de la fecha de inicio de ejecución
+	* @param executionStartDay día de la fecha de inicio de ejecución
+	* @param executionStartYear año de la fecha de inicio de ejecución
+	* @param executionStartHour hora de la fecha de inicio de ejecución
+	* @param executionStartMinute minuto de la fecha de inicio de ejecución
+	* @param executionEndMonth mes de la fecha de fin de ejecución
+	* @param executionEndDay día de la fecha de fin de ejecución
+	* @param executionEndYear año de la fecha de fin de ejecución
+	* @param executionEndHour hora de la fecha de fin de ejecución
+	* @param executionEndMinute minuto de la fecha de fin de ejecución
+	* @param typeSite tipo de sitio (público, restringido y privado). Ver GroupConstants
+	* @param inscriptionType tipo de inscripción
+	* @param courseEvalId método de evaluación
+	* @param calificationType tipo de calificación
+	* @param maxUsers máximo de usuarios que se permite inscribir en el curso
+	* @param status estado del curso (ver WorkflowConstants)
+	* @param serviceContext contexto de la modificación del curso
+	* @throws Exception
+	* @return curso modificado
+	*/
+	public static com.ted.lms.model.CourseSoap updateCourse(long courseId,
+		int registrationStartMonth, int registrationStartDay,
+		int registrationStartYear, int registrationStartHour,
+		int registrationStartMinute, int registrationEndMonth,
+		int registrationEndDay, int registrationEndYear,
+		int registrationEndHour, int registrationEndMinute,
+		int executionStartMonth, int executionStartDay, int executionStartYear,
+		int executionStartHour, int executionStartMinute,
+		int executionEndMonth, int executionEndDay, int executionEndYear,
+		int executionEndHour, int executionEndMinute, int typeSite,
+		long inscriptionType, long courseEvalId, long calificationType,
+		int maxUsers, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.updateCourse(courseId,
+					registrationStartMonth, registrationStartDay,
+					registrationStartYear, registrationStartHour,
+					registrationStartMinute, registrationEndMonth,
+					registrationEndDay, registrationEndYear,
+					registrationEndHour, registrationEndMinute,
+					executionStartMonth, executionStartDay, executionStartYear,
+					executionStartHour, executionStartMinute,
+					executionEndMonth, executionEndDay, executionEndYear,
+					executionEndHour, executionEndMinute, typeSite,
+					inscriptionType, courseEvalId, calificationType, maxUsers,
+					status, serviceContext);
+
+			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* @param courseId identificador del curso
+	* @param welcome si se habilita el mensaje de bienvenida
+	* @param welcomeSubjectMap asunto del mensaje de bienvenida
+	* @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	* @param goodbye si se habilita el mensaje de despedida
+	* @param goodbyeSubjectMap asunto del mensaje de despedida
+	* @param goodbyeMsgMap cuerpo del mensaje de despedida
+	* @param serviceContext contexto de la modificación del curso
+	* @return curso modificado
+	* @throws PortalException
+	* @throws PrincipalException
+	*/
+	public static com.ted.lms.model.CourseSoap updateCourse(long courseId,
+		boolean welcome, String[] welcomeSubjectMapLanguageIds,
+		String[] welcomeSubjectMapValues, String[] welcomeMsgMapLanguageIds,
+		String[] welcomeMsgMapValues, boolean goodbye,
+		String[] goodbyeSubjectMapLanguageIds,
+		String[] goodbyeSubjectMapValues, String[] goodbyeMsgMapLanguageIds,
+		String[] goodbyeMsgMapValues, boolean deniedInscription,
+		String[] deniedInscriptionSubjectMapLanguageIds,
+		String[] deniedInscriptionSubjectMapValues,
+		String[] deniedInscriptionMsgMapLanguageIds,
+		String[] deniedInscriptionMsgMapValues, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> welcomeSubjectMap = LocalizationUtil.getLocalizationMap(welcomeSubjectMapLanguageIds,
+					welcomeSubjectMapValues);
+			Map<Locale, String> welcomeMsgMap = LocalizationUtil.getLocalizationMap(welcomeMsgMapLanguageIds,
+					welcomeMsgMapValues);
+			Map<Locale, String> goodbyeSubjectMap = LocalizationUtil.getLocalizationMap(goodbyeSubjectMapLanguageIds,
+					goodbyeSubjectMapValues);
+			Map<Locale, String> goodbyeMsgMap = LocalizationUtil.getLocalizationMap(goodbyeMsgMapLanguageIds,
+					goodbyeMsgMapValues);
+			Map<Locale, String> deniedInscriptionSubjectMap = LocalizationUtil.getLocalizationMap(deniedInscriptionSubjectMapLanguageIds,
+					deniedInscriptionSubjectMapValues);
+			Map<Locale, String> deniedInscriptionMsgMap = LocalizationUtil.getLocalizationMap(deniedInscriptionMsgMapLanguageIds,
+					deniedInscriptionMsgMapValues);
+
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.updateCourse(courseId,
+					welcome, welcomeSubjectMap, welcomeMsgMap, goodbye,
+					goodbyeSubjectMap, goodbyeMsgMap, deniedInscription,
+					deniedInscriptionSubjectMap, deniedInscriptionMsgMap,
+					status, serviceContext);
+
+			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	/**
+	* Actualiza los contenidos relacionados y el estado
+	*
+	* @param courseId identificador del curso
+	* @param status estado del curso
+	* @param serviceContext contexto de la modificación del curso
+	* @return curso modificado
+	* @throws PrincipalException
+	* @throws PortalException
+	*/
+	public static com.ted.lms.model.CourseSoap updateCourse(long courseId,
+		int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.updateCourse(courseId,
+					status, serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
 		}

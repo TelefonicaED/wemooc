@@ -69,9 +69,10 @@ public interface ModuleLocalService extends BaseLocalService,
 	 * Never modify or reference this interface directly. Always use {@link ModuleLocalServiceUtil} to access the module local service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
 	public Module addModule(long userId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, boolean hasStartDate,
-		int startDateMonth, int startDateDay, int startDateYear,
-		int startDateHour, int startDateMinute, boolean hasEndDate,
+		Map<Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
 		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
 		int endDateMinute, int allowedHours, int allowedMinutes,
 		ImageSelector smallImageImageSelector, long moduleEvalId,
@@ -309,12 +310,13 @@ public interface ModuleLocalService extends BaseLocalService,
 
 	public Module updateModule(long userId, long moduleId,
 		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-		boolean hasStartDate, int startDateMonth, int startDateDay,
-		int startDateYear, int startDateHour, int startDateMinute,
-		boolean hasEndDate, int endDateMonth, int endDateDay, int endDateYear,
-		int endDateHour, int endDateMinute, int allowedHours,
-		int allowedMinutes, ImageSelector smallImageImageSelector,
-		long moduleEvalId, String moduleExtraData, ServiceContext serviceContext)
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, int allowedHours, int allowedMinutes,
+		ImageSelector smallImageImageSelector, long moduleEvalId,
+		String moduleExtraData, ServiceContext serviceContext)
 		throws PortalException;
 
 	public Module updateModule(long userId, long moduleId,

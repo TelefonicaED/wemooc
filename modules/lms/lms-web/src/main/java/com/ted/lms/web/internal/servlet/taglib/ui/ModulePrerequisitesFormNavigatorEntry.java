@@ -16,6 +16,7 @@ package com.ted.lms.web.internal.servlet.taglib.ui;
 
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.servlet.taglib.ui.FormNavigatorEntry;
+import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.model.Module;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
@@ -52,7 +53,7 @@ public class ModulePrerequisitesFormNavigatorEntry extends BaseModuleFormNavigat
 	
 	@Override
 	public boolean isVisible(User user, Module module) {
-		String[] prerequisitesOfModule = LMSPrefsPropsValues.getPrerequisitesOfModule(module.getCompanyId());
+		String[] prerequisitesOfModule = LMSPrefsPropsValues.getPrerequisitesOfModule(user.getCompanyId());
 		return prerequisitesOfModule != null && prerequisitesOfModule.length > 0;
 	}
 

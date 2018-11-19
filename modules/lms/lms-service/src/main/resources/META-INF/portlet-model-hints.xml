@@ -25,15 +25,18 @@
 		<field name="courseEvalId" type="long" />
 		<field name="calificationType" type="long" />
 		<field name="welcome" type="boolean" />
-		<field name="welcomeSubject" type="String" />
-		<field name="welcomeMsg" type="String">
+		<field localized="true" name="welcomeSubject" type="String" />
+		<field localized="true" name="welcomeMsg" type="String">
 			<hint-collection name="EDITOR" />
 		</field>
 		<field name="goodbye" type="boolean" />
-		<field name="goodbyeSubject" type="String" />
-		<field name="goodbyeMsg" type="String">
+		<field localized="true" name="goodbyeSubject" type="String" />
+		<field localized="true" name="goodbyeMsg" type="String">
 			<hint-collection name="EDITOR" />
 		</field>
+		<field name="deniedInscription" type="boolean" />
+		<field localized="true" name="deniedInscriptionSubject" type="String" />
+		<field localized="true" name="deniedInscriptionMsg" type="String" />
 		<field name="courseExtraData" type="String">
 			<hint name="max-length">500000</hint>
 		</field>

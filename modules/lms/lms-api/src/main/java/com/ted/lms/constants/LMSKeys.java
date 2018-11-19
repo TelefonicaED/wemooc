@@ -7,4 +7,5 @@ package com.ted.lms.constants;
  */
 public class LMSKeys {
 	public static final String COURSE = "COURSE";
+	public static final String MODULE = "MODULE";
 }

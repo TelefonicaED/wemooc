@@ -62,6 +62,9 @@ public class CourseSoap implements Serializable {
 		soapModel.setGoodbye(model.isGoodbye());
 		soapModel.setGoodbyeSubject(model.getGoodbyeSubject());
 		soapModel.setGoodbyeMsg(model.getGoodbyeMsg());
+		soapModel.setDeniedInscription(model.isDeniedInscription());
+		soapModel.setDeniedInscriptionSubject(model.getDeniedInscriptionSubject());
+		soapModel.setDeniedInscriptionMsg(model.getDeniedInscriptionMsg());
 		soapModel.setCourseExtraData(model.getCourseExtraData());
 		soapModel.setStatus(model.getStatus());
 		soapModel.setStatusByUserId(model.getStatusByUserId());
@@ -351,6 +354,34 @@ public class CourseSoap implements Serializable {
 		_goodbyeMsg = goodbyeMsg;
 	}
 
+	public boolean getDeniedInscription() {
+		return _deniedInscription;
+	}
+
+	public boolean isDeniedInscription() {
+		return _deniedInscription;
+	}
+
+	public void setDeniedInscription(boolean deniedInscription) {
+		_deniedInscription = deniedInscription;
+	}
+
+	public String getDeniedInscriptionSubject() {
+		return _deniedInscriptionSubject;
+	}
+
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject) {
+		_deniedInscriptionSubject = deniedInscriptionSubject;
+	}
+
+	public String getDeniedInscriptionMsg() {
+		return _deniedInscriptionMsg;
+	}
+
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg) {
+		_deniedInscriptionMsg = deniedInscriptionMsg;
+	}
+
 	public String getCourseExtraData() {
 		return _courseExtraData;
 	}
@@ -419,6 +450,9 @@ public class CourseSoap implements Serializable {
 	private boolean _goodbye;
 	private String _goodbyeSubject;
 	private String _goodbyeMsg;
+	private boolean _deniedInscription;
+	private String _deniedInscriptionSubject;
+	private String _deniedInscriptionMsg;
 	private String _courseExtraData;
 	private int _status;
 	private long _statusByUserId;

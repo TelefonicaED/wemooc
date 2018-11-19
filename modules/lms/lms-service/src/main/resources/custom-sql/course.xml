@@ -29,6 +29,18 @@
 				(Lms_Course.companyId = ? || ? = 0) 
 		]]>
 	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.getDistinctCourseGroups">
+		<![CDATA[   		
+			SELECT 
+				DISTINCT g.*
+			FROM 
+				group_ g
+			INNER JOIN 
+				Lms_course c 
+					ON g.groupId = c.groupId
+			WHERE g.companyId = ?
+		]]>
+	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereTitleDescription">
 		WHERE 
 		(

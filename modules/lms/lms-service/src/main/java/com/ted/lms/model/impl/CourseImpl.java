@@ -14,6 +14,8 @@
 
 package com.ted.lms.model.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalServiceUtil;
@@ -25,16 +27,21 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.MembershipRequestConstants;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.model.impl.GroupImpl;
+import com.liferay.portal.model.impl.LayoutSetImpl;
+import com.liferay.portlet.asset.model.impl.AssetEntryImpl;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.exception.InscriptionException;
@@ -42,15 +49,20 @@ import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.security.permission.resource.CoursePermission;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
+import com.ted.lms.service.util.DateUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -72,27 +84,20 @@ public class CourseImpl extends CourseBaseImpl {
 	 */
 	private Group _group;
 	private JSONObject extraData = null;
+	private LayoutSet layoutSet;
+	private AssetEntry assetEntry;
 	
 	public String getFriendlyURL() {
-		if (_group == NULL_GROUP) {
-			return null;
-		}
-
-		if (_group == null) {
-			Group group = GroupLocalServiceUtil.fetchGroup(getGroupCreatedId());
-
-			if (group == null) {
-				_group = NULL_GROUP;
-			}
-			else {
-				_group = group;
-			}
-		}
-
-		return _group.getFriendlyURL();
+		return "/web" + getGroup().getFriendlyURL();
 	}
 	
 	private static final Group NULL_GROUP = new GroupImpl();
+	private static final LayoutSet NULL_LAYOUT_SET = new LayoutSetImpl();
+	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
+	
+	public int getTypeSite() {
+		return getGroup().getType();
+	}
 
 	@Override
 	public JSONObject getCourseExtraDataJSON() {
@@ -154,6 +159,44 @@ public class CourseImpl extends CourseBaseImpl {
 		}
 
 		return _group;
+	}
+	
+	public AssetEntry getAssetEntry() {
+		if (assetEntry == NULL_ASSET_ENTRY) {
+			return null;
+		}
+
+		if (assetEntry == null) {
+			AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(PortalUtil.getClassNameId(Course.class), getCourseId());
+
+			if (assetEntry == null) {
+				this.assetEntry = NULL_ASSET_ENTRY;
+			}
+			else {
+				this.assetEntry = assetEntry;
+			}
+		}
+
+		return assetEntry;
+	}
+	
+	public LayoutSet getLayoutSet() {
+		if (layoutSet == NULL_LAYOUT_SET) {
+			return null;
+		}
+
+		if (layoutSet == null) {
+			LayoutSet layoutSet = LayoutSetLocalServiceUtil.fetchLayoutSet(getGroupCreatedId(), false);
+
+			if (layoutSet == null) {
+				this.layoutSet = NULL_LAYOUT_SET;
+			}
+			else {
+				this.layoutSet = layoutSet;
+			}
+		}
+
+		return layoutSet;
 	}
 	
 	public boolean canUnsubscribe(long userId, PermissionChecker permissionChecker) throws PortalException {
@@ -248,11 +291,38 @@ public class CourseImpl extends CourseBaseImpl {
 		return endDate;
 	}
 	
+	public String getExecutionStartDateFormat(Locale locale, TimeZone timeZone) {
+		return DateUtil.getSimpleDateFormatPattern(locale, timeZone).format(getExecutionStartDate());
+	}
+	
+	public String getExecutionEndDateFormat(Locale locale, TimeZone timeZone) {
+		return DateUtil.getSimpleDateFormatPattern(locale, timeZone).format(getExecutionEndDate());
+	}
+	
 	@Override
 	public String getDescriptionMapAsXML() {
 		return LocalizationUtil.updateLocalization(
 			getDescriptionMap(), StringPool.BLANK, "Description",
 			getDefaultLanguageId());
+	}
+	
+	@Override
+	public String getWelcomeMsgMapAsXML() {
+		return LocalizationUtil.updateLocalization(
+			getWelcomeMsgMap(), StringPool.BLANK, "WelcomeMsg",
+			getDefaultLanguageId());
+	}
+	
+	@Override
+	public String getGoodbyeMsgMapAsXML() {
+		return LocalizationUtil.updateLocalization(
+			getGoodbyeMsgMap(), StringPool.BLANK, "GoodbyeMsg",
+			getDefaultLanguageId());
+	}
+	
+	@Override 
+	public String getDeniedInscriptionMsgMapAsXML() {
+		return LocalizationUtil.updateLocalization(getDeniedInscriptionMsgMap(), StringPool.BLANK, "DeniedInscriptionMsg", getDefaultLanguageId());
 	}
 	
 	@Override
@@ -268,17 +338,17 @@ public class CourseImpl extends CourseBaseImpl {
 	public Map<Locale, String> getFriendlyURLMap() throws PortalException {
 		Map<Locale, String> friendlyURLMap = new HashMap<>();
 
-		long classNameId = PortalUtil.getClassNameId(Group.class);
+		long classNameId = PortalUtil.getClassNameId(Course.class);
 
-		List<FriendlyURLEntry> friendlyURLEntries = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntries(getGroupId(), classNameId, getGroupCreatedId());
+		List<FriendlyURLEntry> friendlyURLEntries = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntries(getGroupId(), classNameId, getCourseId());
 
 		if (friendlyURLEntries.isEmpty()) {
-			friendlyURLMap.put(LocaleUtil.fromLanguageId(getDefaultLanguageId()),getFriendlyURL());
+			friendlyURLMap.put(LocaleUtil.fromLanguageId(getDefaultLanguageId()),getFriendlyURL().substring(getFriendlyURL().lastIndexOf("/")));
 
 			return friendlyURLMap;
 		}
 
-		FriendlyURLEntry friendlyURLEntry = FriendlyURLEntryLocalServiceUtil.getMainFriendlyURLEntry(classNameId, getGroupCreatedId());
+		FriendlyURLEntry friendlyURLEntry = FriendlyURLEntryLocalServiceUtil.getMainFriendlyURLEntry(classNameId, getCourseId());
 
 		List<FriendlyURLEntryLocalization> friendlyURLEntryLocalizations = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntryLocalizations(friendlyURLEntry.getFriendlyURLEntryId());
 
@@ -297,5 +367,35 @@ public class CourseImpl extends CourseBaseImpl {
 		}
 
 		return friendlyURLMap;
+	}
+	
+	@Override
+	public boolean isTypeSiteOpen() {
+		return getGroup().getType() == GroupConstants.TYPE_SITE_OPEN;
+	}
+	
+	@Override
+	public boolean isTypeSiteRestricted() {
+		return getGroup().getType() == GroupConstants.TYPE_SITE_RESTRICTED;
+	}
+	
+	@Override
+	public boolean isTypeSitePrivate() {
+		return getGroup().getType() == GroupConstants.TYPE_SITE_PRIVATE; 
+	}
+	
+	@Override 
+	public long getLayoutSetPrototypeId() {
+		long layoutSetPrototypeId = 0;
+		LayoutSet layoutSet = getLayoutSet();
+		
+		if(layoutSet != null && layoutSet != NULL_LAYOUT_SET) {
+			try {
+				layoutSetPrototypeId = layoutSet.getLayoutSetPrototypeId();
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+		}
+		return layoutSetPrototypeId;
 	}
 }

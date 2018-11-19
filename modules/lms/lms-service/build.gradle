@@ -20,6 +20,10 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.xstream.configurator.api", version: "3.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.trash.api", version: "1.0.0"
 	compileOnly group: "com.liferay", name: "com.liferay.friendly.url.api", version: "1.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype.api", version: "1.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.persistence.api", version: "1.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.upgrade.api", version: "1.1.0"
+	compileOnly group: 'com.liferay', name: 'com.liferay.configuration.admin.api', version: '1.0.1'
 }
 
 buildService {

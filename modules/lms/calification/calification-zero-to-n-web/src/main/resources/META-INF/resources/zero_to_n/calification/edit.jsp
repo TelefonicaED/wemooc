@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.calification.zero.to.n.ZeroToNCalificationTypeFactory"%>
 <%@page import="com.ted.lms.calification.zero.to.n.ZeroToNCalificationType"%>
 <%@page import="com.ted.lms.model.Course"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
@@ -17,7 +18,17 @@ if(courseId > 0){
 }%>
 
 <aui:input type="text" name="calificationMaxValue" label="calification.zero-to-n.max-value" value="<%=maxValue%>" >
-	<aui:validator name="required"></aui:validator>
-	<aui:validator name="number"></aui:validator>
-	<aui:validator name="min">0</aui:validator>
+	<aui:validator name="required">
+		function(){
+			return AUI.$('#<portlet:namespace />calificationType').val() == '<%=ZeroToNCalificationTypeFactory.TYPE %>';
+		}
+	</aui:validator>
+	<aui:validator name="number">
+		function(){
+			return AUI.$('#<portlet:namespace />calificationType').val() == '<%=ZeroToNCalificationTypeFactory.TYPE %>';
+		}
+	</aui:validator>
+	<aui:validator name="min">
+		'0'
+	</aui:validator>
 </aui:input>

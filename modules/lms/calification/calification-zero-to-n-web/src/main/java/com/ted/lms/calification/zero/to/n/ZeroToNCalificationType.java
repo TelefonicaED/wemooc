@@ -1,5 +1,6 @@
 package com.ted.lms.calification.zero.to.n;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.upload.UploadRequest;
@@ -13,6 +14,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletResponse;
 
 /**
@@ -86,8 +88,8 @@ public class ZeroToNCalificationType extends BaseCalificationType{
 	}
 	
 	@Override
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
-		this.maxValue = ParamUtil.getDouble(uploadRequest, "calificationMaxValue", 0);
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException{
+		this.maxValue = ParamUtil.getDouble(actionRequest, "calificationMaxValue", 0);
 		
 		JSONObject extraData = course.getCourseExtraDataJSON();
 		JSONObject calification = extraData.getJSONObject(CourseConstants.JSON_CALIFICATION);
@@ -101,8 +103,6 @@ public class ZeroToNCalificationType extends BaseCalificationType{
 		extraData.put(CourseConstants.JSON_CALIFICATION, calification);
 		
 		course.setCourseExtraData(extraData.toJSONString());
-		
-		return null;
 	}
 	
 	public void setMaxValue(double maxValue) {

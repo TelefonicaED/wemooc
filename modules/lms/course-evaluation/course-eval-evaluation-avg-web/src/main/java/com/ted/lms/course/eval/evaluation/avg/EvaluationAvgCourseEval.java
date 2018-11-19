@@ -40,6 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import javax.portlet.ActionRequest;
 import javax.portlet.PortletResponse;
 
 public class EvaluationAvgCourseEval extends BaseCourseEval{
@@ -232,14 +233,14 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	}
 	
 	@Override
-	public void setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse) {
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
 		
-		String actionId = ParamUtil.getString(uploadRequest, Constants.CMD);
+		String actionId = ParamUtil.getString(actionRequest, Constants.CMD);
 		
 		if((Validator.isNumber(PropsUtil.get(EvaluationAvgPropsKeys.DEFAULT_EVALUATIONS)))&&(Constants.ADD.equals(actionId))) {
-			long numOfEvaluations = ParamUtil.getLong(uploadRequest, "numOfEvaluations",GetterUtil.getLong(PropsUtil.get(EvaluationAvgPropsKeys.DEFAULT_EVALUATIONS), -1));
+			long numOfEvaluations = ParamUtil.getLong(actionRequest, "numOfEvaluations",GetterUtil.getLong(PropsUtil.get(EvaluationAvgPropsKeys.DEFAULT_EVALUATIONS), -1));
 			
-			ThemeDisplay themeDisplay = (ThemeDisplay)uploadRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 			ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(themeDisplay.getLocale());
 			
 			for(int currentEvaluation=1;currentEvaluation<=numOfEvaluations;currentEvaluation++) {

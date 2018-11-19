@@ -24,6 +24,8 @@ import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.friendly.url.model.FriendlyURLEntry;
+import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Conjunction;
@@ -55,6 +57,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupServiceUtil;
@@ -67,21 +70,29 @@ import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelectorProcessor;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.liveusers.LiveUsers;
+import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSConstants;
+import com.ted.lms.exception.ExecutionEndDateException;
+import com.ted.lms.exception.ExecutionStartDateException;
 import com.ted.lms.exception.InscriptionException;
+import com.ted.lms.exception.NoSuchCourseException;
+import com.ted.lms.exception.RegistrationEndDateException;
+import com.ted.lms.exception.RegistrationStartDateException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.service.base.CourseLocalServiceBaseImpl;
+import com.ted.lms.service.util.SmallImageHelper;
 import com.ted.lms.settings.CoursesGroupServiceSettings;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
@@ -121,59 +132,26 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * Crea un nuevo curso
 	 * @param titleMap título del curso con las traducciones
 	 * @param descriptionMap descripción del curso con las traducciones
-	 * @param summary resumen del curso
-	 * @param friendlyURL url del curso, si es vacío se autogenera a partir del nombre
+	 * @param summaryMap resumen del curso con las traducciones
+	 * @param indexer si el curso se muestra en las búsquedas
+	 * @param friendlyURLMap url del curso, si es vacío se autogenera a partir del nombre con las traducciones
+	 * @param layoutSetPrototypeId identificador de la plantilla de sitio web
 	 * @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	 * @param smallImageImageSelector imagen seleccionada para el curso
-	 * @param registrationStartDate fecha de inicio de inscripción
-	 * @param registrationEndDate fecha de fin de inscripción
-	 * @param executionStartDate fecha de inicio de ejecución
-	 * @param executionEndDate fecha de fin de ejecución
-	 * @param layoutSetPrototypeId identificador de la plantilla de sitio web que tendrá el curso
-	 * @param typeSite tipo de sitio web (consultar constantes de GroupConstants que comienzan por TYPE_SITE)
-	 * @param inscriptionType tipo de inscripción al curso
-	 * @param courseEvalId tipo de evaluación del curso
-	 * @param calificationType tipo de calificación del curso
-	 * @param maxUsers máximo de usuarios que se pueden inscribir al curso
-	 * @param welcome si se les enviará un mensaje de bienvenida a los usuarios cuando se inscriban al curso
-	 * @param welcomeSubject asunto del mensaje de bienvenida
-	 * @param welcomeMsg cuerpo del mensaje de bienvenida
-	 * @param goodbye si se les enviará un mensaje de despedida a los usuarios cuanso se desinscriban del curso
-	 * @param goodbyeSubject asunto del mensaje de despedida
-	 * @param goodbyeMsg cuerpo del mensaje de despedida
-	 * @param status estado del curso cuando lo creamos (consultar los estados de Workflow)
 	 * @param serviceContext contexto de la creación del curso
 	 */
+	@Override
 	@Indexable(type = IndexableType.REINDEX)
-	public Course addCourse(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, String summary, String friendlyURL, long parentCourseId, 
-			ImageSelector smallImageSelector, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, 
-			long layoutSetPrototypeId,int typeSite, long inscriptionType, long courseEvalId, long calificationType, int maxUsers, boolean welcome, 
-			String welcomeSubject, String welcomeMsg, boolean goodbye, String goodbyeSubject, String goodbyeMsg, int status, 
+	public Course addCourse(Map<Locale, String> titleMap, Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap, boolean indexer, 
+			Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, long parentCourseId, ImageSelector smallImageSelector, 
 			ServiceContext serviceContext) {
-		
 		Course course = null;
 		try {
 			User user = userLocalService.getUser(serviceContext.getUserId());
 			Date now = new Date();
 			
-			long parentGroupId = GroupConstants.DEFAULT_PARENT_GROUP_ID;
-			if(parentCourseId != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
-				Course courseParent = coursePersistence.fetchByPrimaryKey(parentCourseId);
-				if(courseParent != null) {
-					parentGroupId = courseParent.getGroupCreatedId();
-				}
-			}
-			
-			int membershipRestriction = GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION;
-
-			if (parentGroupId != GroupConstants.DEFAULT_PARENT_GROUP_ID) {
-
-				membershipRestriction =
-					GroupConstants.MEMBERSHIP_RESTRICTION_TO_PARENT_SITE_MEMBERS;
-			}
-			
-				
-			course = coursePersistence.create(counterLocalService.increment(Course.class.getName()));
+			long courseId = counterLocalService.increment(Course.class.getName());
+			course = coursePersistence.create(courseId);
 			
 			course.setGroupId(serviceContext.getScopeGroupId());
 			course.setCompanyId(serviceContext.getCompanyId());
@@ -185,21 +163,11 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			course.setParentCourseId(parentCourseId);
 			course.setTitleMap(titleMap);
 			course.setDescriptionMap(descriptionMap);
-			course.setRegistrationStartDate(registrationStartDate);
-			course.setRegistrationEndDate(registrationEndDate);
-			course.setExecutionStartDate(executionStartDate);
-			course.setExecutionEndDate(executionEndDate);
-			course.setMaxUsers(maxUsers);
-			course.setInscriptionType(inscriptionType);
-			course.setCourseEvalId(courseEvalId);
-			course.setCalificationType(calificationType);
-			course.setWelcome(welcome);
-			course.setWelcomeSubject(welcomeSubject);
-			course.setWelcomeMsg(welcomeMsg);
-			course.setGoodbye(goodbye);
-			course.setGoodbyeSubject(goodbyeSubject);
-			course.setGoodbyeMsg(goodbyeMsg);
-			course.setStatus(status);
+			course.setCourseEvalId(-1);
+			course.setCalificationType(-1);
+			course.setInscriptionType(-1);
+			
+			course.setStatus(WorkflowConstants.STATUS_DRAFT);
 			course.setStatusByUserId(serviceContext.getUserId());
 			course.setStatusByUserName(user.getFullName());
 			course.setStatusDate(now);
@@ -207,29 +175,43 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 				course.setSmallImageId(addSmallImageCourse(serviceContext.getUserId(), serviceContext.getScopeGroupId(), course.getCourseId(), smallImageSelector));
 			}
 			
-			coursePersistence.update(course);
+			//Guardamos la url si no es vacía para cuando creemos el sitio web
+			// Friendly URLs
+
+			Map<String, String> urlGroupMap = getURLGroupMap(serviceContext.getScopeGroupId(), course.getCourseId(), friendlyURLMap);
 			
+			friendlyURLEntryLocalService.addFriendlyURLEntry(serviceContext.getScopeGroupId(), classNameLocalService.getClassNameId(Course.class),
+					course.getCourseId(), urlGroupMap, serviceContext);
+		
 			//Creamos el group asociado, le cambiamos al nombre al grupo porque no deja crear dos con el mismo nombre por el groupKey
 			Map<Locale,String> titleMapGroup = new HashMap<Locale,String>();
-			final long courseId = course.getCourseId();
 			
-			titleMap.forEach((k,v)->titleMapGroup.put(k, v + " (" + courseId + ")"));
+			course.getTitleMap().forEach((k,v)->titleMapGroup.put(k, v + " (" + courseId + ")"));
 			
-			Group group = GroupServiceUtil.addGroup(
-					GroupConstants.DEFAULT_PARENT_GROUP_ID, 0, titleMapGroup,
-					descriptionMap, typeSite, true, membershipRestriction,
-					getFriendlyURL(serviceContext.getCompanyId(), friendlyURL, titleMap), true, false, true, serviceContext);
+			int membershipRestriction = GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION;
+	
+			if (course.getParentCourseId() != GroupConstants.DEFAULT_PARENT_GROUP_ID) {
+				membershipRestriction =GroupConstants.MEMBERSHIP_RESTRICTION_TO_PARENT_SITE_MEMBERS;
+			}
+			
+			
+			long parentGroupId = GroupConstants.DEFAULT_PARENT_GROUP_ID;
+			if(course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
+				Course courseParent = coursePersistence.fetchByPrimaryKey(course.getParentCourseId());
+				if(courseParent != null) {
+					parentGroupId = courseParent.getGroupCreatedId();
+				}
+			}
+			
+			String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
+			
+			Group group = GroupServiceUtil.addGroup(parentGroupId, 0, titleMapGroup, course.getDescriptionMap(), 
+					GroupConstants.TYPE_SITE_OPEN, true, membershipRestriction, getFriendlyURL(serviceContext.getCompanyId(), urlGroup, course.getTitleMap()), 
+					true, false, true, serviceContext);
 			
 			course.setGroupCreatedId(group.getGroupId());
-			coursePersistence.update(course);
-
+			
 			LiveUsers.joinGroup(serviceContext.getCompanyId(), group.getGroupId(), serviceContext.getUserId());
-			
-			//Añadimos la imagen del curso
-			
-			resourceLocalService.addResources(course.getCompanyId(), course.getGroupId(), course.getUserId(),  Course.class.getName(), course.getCourseId(), false, true, false);
-			
-			updateAsset(serviceContext.getUserId(), course, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority(), summary);
 			
 			//Añadimos rol de editor o tutor al creador
 			boolean teacherRoleToCreator = LMSPrefsPropsValues.getCourseAddTeacherRoleToCreator(course.getCourseId());
@@ -250,17 +232,310 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 					UserGroupRoleLocalServiceUtil.addUserGroupRoles(serviceContext.getUserId(),	course.getGroupCreatedId(), editorRoleId);
 				}
 			}	
-			
-			//Cargamos la plantilla de curso en el grupo creado
 			SitesUtil.updateLayoutSetPrototypesLinks(group, layoutSetPrototypeId, 0, true,false);
+		
+			course = coursePersistence.update(course);
 			
-			Indexer<Course> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Course.class);
-			indexer.reindex(course);
+			resourceLocalService.addResources(course.getCompanyId(), course.getGroupId(), course.getUserId(),  Course.class.getName(), course.getCourseId(), false, true, false);
 			
+			AssetEntry assetEntry = assetEntryLocalService.updateEntry(
+					serviceContext.getUserId(), course.getGroupId(), course.getCreateDate(),
+					course.getModifiedDate(), Course.class.getName(),
+					course.getCourseId(), course.getUuid(), 0, serviceContext.getAssetCategoryIds(),
+					serviceContext.getAssetTagNames(), true, course.isApproved(), null, null, null,
+					null, ContentTypes.TEXT_HTML, course.getTitle(), course.getDescription(), null, null,
+					null, 0, 0, serviceContext.getAssetPriority());
+			
+			assetEntry.setSummaryMap(summaryMap);
+			assetEntryLocalService.updateAssetEntry(assetEntry);
+			
+
 		} catch (PortalException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		return course;
+	}
+	
+	/**
+	 * Actualiza el segundo paso de un curso
+	 * @param courseId identificador del curso
+	 * @param registrationStartMonth mes de la fecha de inicio de inscripción
+	 * @param registrationStartDay día de la fecha de inicio de inscripción
+	 * @param registrationStartYear año de la fecha de inicio de inscripción
+	 * @param registrationStartHour hora de la fecha de inicio de inscripción
+	 * @param registrationStartMinute minuto de la fecha de inicio de inscripción
+	 * @param registrationEndMonth mes de la fecha de fin de inscripción
+	 * @param registrationEndDay día de la fecha de fin de inscripción
+	 * @param registrationEndYear año de la fecha de fin de inscripción
+	 * @param registrationEndHour hora de la fecha de fin de inscripción
+	 * @param registrationEndMinute minuto de la fecha de fin de inscripción
+	 * @param executionStartMonth mes de la fecha de inicio de ejecución
+	 * @param executionStartDay día de la fecha de inicio de ejecución
+	 * @param executionStartYear año de la fecha de inicio de ejecución
+	 * @param executionStartHour hora de la fecha de inicio de ejecución
+	 * @param executionStartMinute minuto de la fecha de inicio de ejecución
+	 * @param executionEndMonth mes de la fecha de fin de ejecución
+	 * @param executionEndDay día de la fecha de fin de ejecución
+	 * @param executionEndYear año de la fecha de fin de ejecución
+	 * @param executionEndHour hora de la fecha de fin de ejecución
+	 * @param executionEndMinute minuto de la fecha de fin de ejecución
+	 * @param typeSite tipo de sitio (público, restringido y privado). Ver GroupConstants
+	 * @param inscriptionType tipo de inscripción
+	 * @param courseEvalId método de evaluación
+	 * @param calificationType tipo de calificación
+	 * @param maxUsers máximo de usuarios que se permite inscribir en el curso
+	 * @param status estado del curso (ver WorkflowConstants)
+	 * @param serviceContext contexto de la modificación del curso
+	 * @throws Exception 
+	 * @return curso modificado
+	 */
+	@Override
+	public Course updateCourse(long courseId, int registrationStartMonth, int registrationStartDay, int registrationStartYear, int registrationStartHour, int registrationStartMinute, 
+			int registrationEndMonth, int registrationEndDay, int registrationEndYear, int registrationEndHour, int registrationEndMinute, 
+			int executionStartMonth, int executionStartDay, int executionStartYear, int executionStartHour, int executionStartMinute, 
+			int executionEndMonth, int executionEndDay, int executionEndYear, int executionEndHour, int executionEndMinute, 
+			int typeSite, long inscriptionType, long courseEvalId, long calificationType, int maxUsers, int status,
+			ServiceContext serviceContext) throws PortalException {
+		
+		User user = userLocalService.getUser(serviceContext.getUserId());
+
+		Date registrationStartDate = PortalUtil.getDate(registrationStartMonth, registrationStartDay, registrationStartYear, registrationStartHour,
+				registrationStartMinute, user.getTimeZone(), RegistrationStartDateException.class);
+		Date registrationEndDate = PortalUtil.getDate(registrationEndMonth, registrationEndDay, registrationEndYear, registrationEndHour,
+				registrationEndMinute, user.getTimeZone(), RegistrationEndDateException.class);
+		Date executionStartDate = PortalUtil.getDate(executionStartMonth, executionStartDay, executionStartYear, executionStartHour,
+				executionStartMinute, user.getTimeZone(), ExecutionStartDateException.class);
+		Date executionEndDate = PortalUtil.getDate(executionEndMonth, executionEndDay, executionEndYear, executionEndHour,
+				executionEndMinute, user.getTimeZone(), ExecutionEndDateException.class);
+		
+		return updateCourse(courseId, registrationStartDate, registrationEndDate, executionStartDate, executionEndDate, 
+				typeSite, inscriptionType, courseEvalId, calificationType, maxUsers, status, serviceContext);
+	}
+	
+	/**
+	 * Actualiza el segundo paso de un curso
+	 * @param courseId identificador del curso
+	 * @param registrationStartDate fecha de inicio de inscripción
+	 * @param registrationEndDate fecha de fin de inscripción
+	 * @param executionStartDate fecha de inicio de ejecución
+	 * @param executionEndDate fecha de fin de ejecución
+	 * @param typeSite tipo de sitio (público, restringido y privado). Ver GroupConstants
+	 * @param inscriptionType tipo de inscripción
+	 * @param courseEvalId método de evaluación
+	 * @param calificationType tipo de calificación
+	 * @param maxUsers máximo de usuarios que se permite inscribir en el curso
+	 * @param status estado del curso (ver WorkflowConstants)
+	 * @param serviceContext contexto de la modificación del curso
+	 * @throws Exception 
+	 * @return curso modificado
+	 * @throws PortalException 
+	 */
+	@Override
+	public Course updateCourse(long courseId, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, 
+			int typeSite, long inscriptionType, long courseEvalId, long calificationType, int maxUsers, int status,
+			ServiceContext serviceContext) throws PortalException {
+		
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		course.setRegistrationStartDate(registrationStartDate);
+		course.setRegistrationEndDate(registrationEndDate);
+		course.setExecutionStartDate(executionStartDate);
+		course.setExecutionEndDate(executionEndDate);
+		course.setMaxUsers(maxUsers);
+		course.setInscriptionType(inscriptionType);
+		course.setCourseEvalId(courseEvalId);
+		course.setCalificationType(calificationType);
+		course.setExpandoBridgeAttributes(serviceContext);
+		if(status != course.getStatus()) {
+			course.setStatusByUserId(serviceContext.getUserId());
+			User user = userLocalService.getUser(serviceContext.getUserId());
+			course.setStatusByUserName(user.getFullName());
+			course.setStatusByUserUuid(user.getUserUuid());
+			course.setStatusDate(new Date());
+		}
+		course.setStatus(status);
+		course.setModifiedDate(new Date());
+		course = coursePersistence.update(course);
+		
+		//Actualizamos el tipo del sitio
+		Group group = groupLocalService.getGroup(course.getGroupCreatedId());
+		group.setType(typeSite);
+		groupLocalService.updateGroup(group);
+		
+		updateAsset(serviceContext.getUserId(), course, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(),
+				serviceContext.getAssetLinkEntryIds());
+
+		return course;
+	}
+	
+	/**
+	 * Actualiza el paso de los mensajes de la modificación de curso
+	 * @param courseId identificador del curso
+	 * @param welcome si se habilita el mensaje de bienvenida
+	 * @param welcomeSubjectMap asunto del mensaje de bienvenida
+	 * @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	 * @param goodbye si se habilita el mensaje de despedida
+	 * @param goodbyeSubjectMap asunto del mensaje de despedida
+	 * @param goodbyeMsgMap cuerpo del mensaje de despedida
+	 * @param serviceContext contexto de la modificación del curso
+	 * @return curso modificado
+	 * @throws NoSuchCourseException 
+	 */
+	@Override
+	public Course updateCourse(long courseId, boolean welcome, Map<Locale, String> welcomeSubjectMap,
+			Map<Locale, String> welcomeMsgMap, boolean goodbye, Map<Locale, String> goodbyeSubjectMap,
+			Map<Locale, String> goodbyeMsgMap, boolean deniedInscription, Map<Locale, String> deniedInscriptionSubjectMap,
+			Map<Locale, String> deniedInscriptionMsgMap, int status, ServiceContext serviceContext) throws NoSuchCourseException {
+		
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		course.setModifiedDate(new Date());
+		course.setWelcome(welcome);
+		if(welcome) {
+			course.setWelcomeSubjectMap(welcomeSubjectMap);
+			course.setWelcomeMsgMap(welcomeMsgMap);
+		}else {
+			course.setWelcomeSubject(null);
+			course.setWelcomeMsg(null);
+		}
+		course.setGoodbye(goodbye);
+		if(goodbye) {
+			course.setGoodbyeSubjectMap(goodbyeSubjectMap);
+			course.setGoodbyeMsgMap(goodbyeMsgMap);
+		}else {
+			course.setGoodbyeSubject(null);
+			course.setGoodbyeMsg(null);
+		}
+		course.setDeniedInscription(deniedInscription);
+		if(deniedInscription) {
+			course.setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap);
+			course.setDeniedInscriptionMsgMap(deniedInscriptionMsgMap);
+		}else {
+			course.setDeniedInscriptionSubject(null);
+			course.setDeniedInscriptionMsg(null);
+		}
+		if(status != course.getStatus()) {
+			course.setStatusByUserId(serviceContext.getUserId());
+			try {
+				User user = userLocalService.getUser(serviceContext.getUserId());			
+				course.setStatusByUserName(user.getFullName());
+				course.setStatusByUserUuid(user.getUserUuid());
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+			course.setStatusDate(new Date());
+		}
+		course.setStatus(status);
+		
+		course = coursePersistence.update(course);
+		
+		return course;
+	}
+	
+	/**
+	 * Actualiza los contenidos relacionados y el estado
+	 * @param courseId identificador del curso
+	 * @param status estado del curso
+	 * @param serviceContext contexto de la modificación del curso
+	 * @return curso modificado
+	 * @throws PrincipalException
+	 * @throws PortalException
+	 */
+	public Course updateCourse(long courseId, int status, ServiceContext serviceContext) throws PrincipalException, PortalException {
+
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		if(status != course.getStatus()) {
+			course.setStatusByUserId(serviceContext.getUserId());
+			try {
+				User user = userLocalService.getUser(serviceContext.getUserId());			
+				course.setStatusByUserName(user.getFullName());
+				course.setStatusByUserUuid(user.getUserUuid());
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+			course.setStatusDate(new Date());
+		}
+		course.setStatus(status);
+		
+		course = coursePersistence.update(course);
+		
+		assetLinkLocalService.updateLinks(serviceContext.getUserId(), course.getAssetEntry().getEntryId(), serviceContext.getAssetLinkEntryIds(),AssetLinkConstants.TYPE_RELATED);
+		
+		return course;
+	}
+	
+	/**
+	 * Actualiza el paso de descripción de la modificación de curso
+	 * @param courseId identificador del curso
+	 * @param titleMap título del curso con las traducciones
+	 * @param descriptionMap descripción del curso con las traducciones
+	 * @param summaryMap resumen del curso con las traducciones
+	 * @param indexer si el curso aparece las búsquedas
+	 * @param friendlyURL url para el curso
+	 * @param smallImageSelector selector con la imagen de la imagen del curso
+	 * @param serviceContext contexto de modificación del curso
+	 * @return curso modificado
+	 * @throws PortalException
+	 */
+	public Course updateCourse(long courseId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+			Map<Locale, String> summaryMap, boolean indexer, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
+			ImageSelector smallImageSelector, ServiceContext serviceContext) throws Exception {
+		
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		Date now = new Date();
+		
+		course.setTitleMap(titleMap);
+		course.setDescriptionMap(descriptionMap);
+		course.setModifiedDate(now);
+		if(smallImageSelector != null) {
+			course.setSmallImageId(addSmallImageCourse(serviceContext.getUserId(), serviceContext.getScopeGroupId(), course.getCourseId(), smallImageSelector));
+		}
+		
+		coursePersistence.update(course);
+		
+		AssetEntry assetEntry = assetEntryLocalService.getEntry(Course.class.getName(), courseId);
+		assetEntry.setSummaryMap(summaryMap);
+		assetEntry.setVisible(indexer);
+		assetEntry.setModifiedDate(now);
+		assetEntryLocalService.updateAssetEntry(assetEntry);
+		
+		// Friendly URLs
+
+		List<FriendlyURLEntry> friendlyURLEntries =
+			friendlyURLEntryLocalService.getFriendlyURLEntries(serviceContext.getScopeGroupId(),classNameLocalService.getClassNameId(Course.class),
+					course.getCourseId());
+
+		for (FriendlyURLEntry friendlyURLEntry : friendlyURLEntries) {
+			friendlyURLEntryLocalService.deleteFriendlyURLEntry(friendlyURLEntry);
+		}
+		
+		Map<String, String> urlGroupMap = getURLGroupMap(serviceContext.getScopeGroupId(), course.getCourseId(), friendlyURLMap);
+
+		String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(serviceContext.getLocale()));
+
+		friendlyURLEntryLocalService.addFriendlyURLEntry(serviceContext.getScopeGroupId(), classNameLocalService.getClassNameId(Course.class),
+			course.getCourseId(), urlGroupMap, serviceContext);
+		
+		//Para la url miramos si ya tiene group, si no lo tiene actualizo la friendlyurl, si no la del curso
+		if(course.getGroupCreatedId() > 0 ) {
+			Group group = course.getGroup();
+			urlGroup = StringPool.FORWARD_SLASH + urlGroup;
+			if(!group.getFriendlyURL().equals(urlGroup)) {
+				groupLocalService.updateFriendlyURL(course.getGroupCreatedId(), urlGroup);
+			}	
+		}
+		
+		//Comprobamos si la plantilla se ha modificado
+		if(layoutSetPrototypeId != course.getLayoutSetPrototypeId()) {
+			Group group = course.getGroup();
+			if(group != null) {
+				SitesUtil.updateLayoutSetPrototypesLinks(group, layoutSetPrototypeId, 0, true,false);
+			}
 		}
 		
 		return course;
@@ -322,28 +597,11 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @param priority prioridad del curso en las búsquedas
 	 * @param summary resumen del curso
 	 */
-	public void updateAsset(
-			long userId, Course course, long[] assetCategoryIds,
-			String[] assetTagNames, long[] assetLinkEntryIds, Double priority,
-			String summary)
-		throws PortalException {
+	public void updateAsset(long userId, Course course, long[] assetCategoryIds,String[] assetTagNames, long[] assetLinkEntryIds) throws PortalException {
 
-		Date publishDate = null;
-		if (course.isApproved()) {
-			publishDate = course.getCreateDate();
-		}
+		assetEntryLocalService.updateEntry(userId, course.getGroupId(), Course.class.getName(), course.getCourseId(), assetCategoryIds,
+			assetTagNames);
 
-		AssetEntry assetEntry = assetEntryLocalService.updateEntry(
-			userId, course.getGroupId(), course.getCreateDate(),
-			course.getModifiedDate(), Course.class.getName(),
-			course.getCourseId(), course.getUuid(), 0, assetCategoryIds,
-			assetTagNames, true, course.isApproved(), null, null, publishDate,
-			null, ContentTypes.TEXT_HTML, course.getTitle(), course.getDescription(), summary, null,
-			null, 0, 0, priority);
-
-		assetLinkLocalService.updateLinks(
-			userId, assetEntry.getEntryId(), assetLinkEntryIds,
-			AssetLinkConstants.TYPE_RELATED);
 	}
 	
 	@Override
@@ -379,6 +637,43 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 */
 	public void updateFriendlyURL(long groupCreatedId, String friendlyURL) throws PortalException {
 		groupLocalService.updateFriendlyURL(groupCreatedId, friendlyURL);
+	}
+	
+	private Map<String, String> getURLGroupMap(long groupId, long resourcePrimKey, Map<Locale, String> friendlyURLMap) {
+
+		Map<String, String> urlTitleMap = new HashMap<>();
+
+		for (Map.Entry<Locale, String> entry : friendlyURLMap.entrySet()) {
+			String title = entry.getValue();
+
+			if (Validator.isNull(title)) {
+				continue;
+			}
+
+			String urlTitle = friendlyURLEntryLocalService.getUniqueUrlTitle(groupId,classNameLocalService.getClassNameId(Course.class),resourcePrimKey, title);
+			urlTitleMap.put(LocaleUtil.toLanguageId(entry.getKey()), urlTitle);
+		}
+
+		return urlTitleMap;
+	}
+	
+	@Override
+	public long addOriginalImageFileEntry(long userId, long groupId, long entryId, ImageSelector imageSelector) throws PortalException {
+
+		byte[] imageBytes = imageSelector.getImageBytes();
+
+		if (imageBytes == null) {
+			return 0;
+		}
+
+		Folder folder = SmallImageHelper.addSmallImageFolder(userId, groupId, SMALL_IMAGE_FOLDER_NAME);
+
+		FileEntry originalFileEntry = PortletFileRepositoryUtil.addPortletFileEntry(
+				groupId, userId, null, 0, LMSConstants.SERVICE_NAME, folder.getFolderId(), imageBytes,
+				SmallImageHelper.getUniqueFileName(groupId, imageSelector.getImageTitle(), folder.getFolderId(), UNIQUE_FILE_NAME_TRIES),
+				imageSelector.getImageMimeType(), true);
+
+		return originalFileEntry.getFileEntryId();
 	}
 	
 	public void updateSmallImage(long courseId, ImageSelector smallImageSelector, ServiceContext serviceContext) throws PortalException {
@@ -668,6 +963,10 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return exportActionableDynamicQuery;
 	}
 	
+	public List<Group> getDistinctCourseGroups(long companyId){
+		return courseFinder.getDistinctCourseGroups(companyId);
+	}
+	
 	@Override
 	public Folder fetchAttachmentsFolder(long userId, long groupId) {
 		ServiceContext serviceContext = new ServiceContext();
@@ -700,6 +999,10 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return doAddFolder(userId, groupId, LMSConstants.SERVICE_NAME);
 	}
 	
+	@ServiceReference(type = FriendlyURLEntryLocalService.class)
+	protected FriendlyURLEntryLocalService friendlyURLEntryLocalService;
+	
 	private static final String SMALL_IMAGE_FOLDER_NAME = "Small Image";
+	private static final int UNIQUE_FILE_NAME_TRIES = 50;
 
 }

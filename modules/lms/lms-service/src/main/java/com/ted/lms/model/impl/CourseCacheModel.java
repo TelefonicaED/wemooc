@@ -64,7 +64,7 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(67);
+		StringBundler sb = new StringBundler(73);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -122,6 +122,12 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		sb.append(goodbyeSubject);
 		sb.append(", goodbyeMsg=");
 		sb.append(goodbyeMsg);
+		sb.append(", deniedInscription=");
+		sb.append(deniedInscription);
+		sb.append(", deniedInscriptionSubject=");
+		sb.append(deniedInscriptionSubject);
+		sb.append(", deniedInscriptionMsg=");
+		sb.append(deniedInscriptionMsg);
 		sb.append(", courseExtraData=");
 		sb.append(courseExtraData);
 		sb.append(", status=");
@@ -264,6 +270,22 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 			courseImpl.setGoodbyeMsg(goodbyeMsg);
 		}
 
+		courseImpl.setDeniedInscription(deniedInscription);
+
+		if (deniedInscriptionSubject == null) {
+			courseImpl.setDeniedInscriptionSubject("");
+		}
+		else {
+			courseImpl.setDeniedInscriptionSubject(deniedInscriptionSubject);
+		}
+
+		if (deniedInscriptionMsg == null) {
+			courseImpl.setDeniedInscriptionMsg("");
+		}
+		else {
+			courseImpl.setDeniedInscriptionMsg(deniedInscriptionMsg);
+		}
+
 		if (courseExtraData == null) {
 			courseImpl.setCourseExtraData("");
 		}
@@ -336,6 +358,10 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 		goodbye = objectInput.readBoolean();
 		goodbyeSubject = objectInput.readUTF();
 		goodbyeMsg = objectInput.readUTF();
+
+		deniedInscription = objectInput.readBoolean();
+		deniedInscriptionSubject = objectInput.readUTF();
+		deniedInscriptionMsg = objectInput.readUTF();
 		courseExtraData = objectInput.readUTF();
 
 		status = objectInput.readInt();
@@ -438,6 +464,22 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 			objectOutput.writeUTF(goodbyeMsg);
 		}
 
+		objectOutput.writeBoolean(deniedInscription);
+
+		if (deniedInscriptionSubject == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(deniedInscriptionSubject);
+		}
+
+		if (deniedInscriptionMsg == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(deniedInscriptionMsg);
+		}
+
 		if (courseExtraData == null) {
 			objectOutput.writeUTF("");
 		}
@@ -487,6 +529,9 @@ public class CourseCacheModel implements CacheModel<Course>, Externalizable {
 	public boolean goodbye;
 	public String goodbyeSubject;
 	public String goodbyeMsg;
+	public boolean deniedInscription;
+	public String deniedInscriptionSubject;
+	public String deniedInscriptionMsg;
 	public String courseExtraData;
 	public int status;
 	public long statusByUserId;

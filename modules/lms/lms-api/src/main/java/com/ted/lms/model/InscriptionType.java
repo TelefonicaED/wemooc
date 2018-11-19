@@ -2,11 +2,9 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.upload.UploadRequest;
 import com.ted.lms.exception.InscriptionException;
 
-import javax.portlet.PortletResponse;
-
+import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -21,7 +19,7 @@ public interface InscriptionType {
 	
 	public boolean unsubscribeUser(long userId, PermissionChecker permissionChecker) throws PortalException;
 	
-	public String setExtraContent(UploadRequest uploadRequest, PortletResponse portletResponse);
+	public void setExtraContent(ActionRequest actionRequest) throws PortalException;
 	
 	public InscriptionTypeFactory getInscriptionTypeFactory();
 	

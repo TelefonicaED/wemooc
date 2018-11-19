@@ -56,6 +56,8 @@ public interface Course extends CourseModel, PersistedModel {
 
 	public String getFriendlyURL();
 
+	public int getTypeSite();
+
 	public com.liferay.portal.kernel.json.JSONObject getCourseExtraDataJSON();
 
 	public void addCourseExtraDataJSON(String key, Object value);
@@ -67,6 +69,10 @@ public interface Course extends CourseModel, PersistedModel {
 	public CourseResult getResultUser(long userId);
 
 	public com.liferay.portal.kernel.model.Group getGroup();
+
+	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry();
+
+	public com.liferay.portal.kernel.model.LayoutSet getLayoutSet();
 
 	public boolean canUnsubscribe(long userId,
 		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
@@ -81,11 +87,31 @@ public interface Course extends CourseModel, PersistedModel {
 
 	public java.util.Calendar getExecutionEndDateCalendar();
 
+	public String getExecutionStartDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone);
+
+	public String getExecutionEndDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone);
+
 	public String getDescriptionMapAsXML();
+
+	public String getWelcomeMsgMapAsXML();
+
+	public String getGoodbyeMsgMapAsXML();
+
+	public String getDeniedInscriptionMsgMapAsXML();
 
 	public String getFriendlyURLsXML()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.util.Map<java.util.Locale, String> getFriendlyURLMap()
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public boolean isTypeSiteOpen();
+
+	public boolean isTypeSiteRestricted();
+
+	public boolean isTypeSitePrivate();
+
+	public long getLayoutSetPrototypeId();
 }

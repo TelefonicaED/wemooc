@@ -6,32 +6,46 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
 import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
+import com.liferay.portal.kernel.dao.orm.PortalCustomSQLUtil;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
+import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.impl.GroupImpl;
+import com.liferay.portal.service.persistence.impl.GroupFinderImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.constants.CourseParams;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.impl.CourseImpl;
 import com.ted.lms.service.persistence.CourseFinder;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.w3c.dom.ls.LSInput;
+
 public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFinder{
+	
+	public static final String GET_DISTINCT_COURSE_GROUPS = 
+			CourseFinder.class.getName() + ".getDistinctCourseGroups";
 	
 	public static final String FIND_BY_C =
 		    CourseFinder.class.getName() +
@@ -102,6 +116,41 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		return doFindByC(companyId, title, description, languageId, status, parentCourseId, groupId, params, false, start, end, obc,false);
 	}
 	
+	public List<Group> getDistinctCourseGroups(long companyId){
+		
+		Session session = null;
+		List<Group> listGroups = new ArrayList<Group>();
+		
+		try{
+			session = openSession();
+			
+			String sql = customSQL.get(getClass(), GET_DISTINCT_COURSE_GROUPS);
+			
+			if(log.isDebugEnabled()){
+				log.debug("sql: " + sql);
+			}
+			
+			SQLQuery q = session.createSQLQuery(sql);
+
+			q.addScalar("groupId", Type.LONG);
+			
+			QueryPos qPos = QueryPos.getInstance(q);			
+			qPos.add(companyId);	
+			
+			Iterator<Long> listGroupIds = q.iterate();
+			
+			while(listGroupIds.hasNext()) {
+				listGroups.add(GroupLocalServiceUtil.fetchGroup(listGroupIds.next()));
+			}
+				
+		} catch (Exception e) {
+	       e.printStackTrace();
+	    } finally {
+	        closeSession(session);
+	    }
+	
+		return listGroups;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Course> doFindByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 

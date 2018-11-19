@@ -87,6 +87,9 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		attributes.put("goodbye", isGoodbye());
 		attributes.put("goodbyeSubject", getGoodbyeSubject());
 		attributes.put("goodbyeMsg", getGoodbyeMsg());
+		attributes.put("deniedInscription", isDeniedInscription());
+		attributes.put("deniedInscriptionSubject", getDeniedInscriptionSubject());
+		attributes.put("deniedInscriptionMsg", getDeniedInscriptionMsg());
 		attributes.put("courseExtraData", getCourseExtraData());
 		attributes.put("status", getStatus());
 		attributes.put("statusByUserId", getStatusByUserId());
@@ -267,6 +270,26 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 			setGoodbyeMsg(goodbyeMsg);
 		}
 
+		Boolean deniedInscription = (Boolean)attributes.get("deniedInscription");
+
+		if (deniedInscription != null) {
+			setDeniedInscription(deniedInscription);
+		}
+
+		String deniedInscriptionSubject = (String)attributes.get(
+				"deniedInscriptionSubject");
+
+		if (deniedInscriptionSubject != null) {
+			setDeniedInscriptionSubject(deniedInscriptionSubject);
+		}
+
+		String deniedInscriptionMsg = (String)attributes.get(
+				"deniedInscriptionMsg");
+
+		if (deniedInscriptionMsg != null) {
+			setDeniedInscriptionMsg(deniedInscriptionMsg);
+		}
+
 		String courseExtraData = (String)attributes.get("courseExtraData");
 
 		if (courseExtraData != null) {
@@ -326,6 +349,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public int compareTo(Course course) {
 		return _course.compareTo(course);
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry() {
+		return _course.getAssetEntry();
 	}
 
 	@Override
@@ -406,6 +434,176 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public String getDefaultLanguageId() {
 		return _course.getDefaultLanguageId();
+	}
+
+	/**
+	* Returns the denied inscription of this course.
+	*
+	* @return the denied inscription of this course
+	*/
+	@Override
+	public boolean getDeniedInscription() {
+		return _course.getDeniedInscription();
+	}
+
+	/**
+	* Returns the denied inscription msg of this course.
+	*
+	* @return the denied inscription msg of this course
+	*/
+	@Override
+	public String getDeniedInscriptionMsg() {
+		return _course.getDeniedInscriptionMsg();
+	}
+
+	/**
+	* Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized denied inscription msg of this course
+	*/
+	@Override
+	public String getDeniedInscriptionMsg(java.util.Locale locale) {
+		return _course.getDeniedInscriptionMsg(locale);
+	}
+
+	/**
+	* Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized denied inscription msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getDeniedInscriptionMsg(java.util.Locale locale,
+		boolean useDefault) {
+		return _course.getDeniedInscriptionMsg(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized denied inscription msg of this course
+	*/
+	@Override
+	public String getDeniedInscriptionMsg(String languageId) {
+		return _course.getDeniedInscriptionMsg(languageId);
+	}
+
+	/**
+	* Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized denied inscription msg of this course
+	*/
+	@Override
+	public String getDeniedInscriptionMsg(String languageId, boolean useDefault) {
+		return _course.getDeniedInscriptionMsg(languageId, useDefault);
+	}
+
+	@Override
+	public String getDeniedInscriptionMsgCurrentLanguageId() {
+		return _course.getDeniedInscriptionMsgCurrentLanguageId();
+	}
+
+	@Override
+	public String getDeniedInscriptionMsgCurrentValue() {
+		return _course.getDeniedInscriptionMsgCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized denied inscription msgs of this course.
+	*
+	* @return the locales and localized denied inscription msgs of this course
+	*/
+	@Override
+	public Map<java.util.Locale, String> getDeniedInscriptionMsgMap() {
+		return _course.getDeniedInscriptionMsgMap();
+	}
+
+	@Override
+	public String getDeniedInscriptionMsgMapAsXML() {
+		return _course.getDeniedInscriptionMsgMapAsXML();
+	}
+
+	/**
+	* Returns the denied inscription subject of this course.
+	*
+	* @return the denied inscription subject of this course
+	*/
+	@Override
+	public String getDeniedInscriptionSubject() {
+		return _course.getDeniedInscriptionSubject();
+	}
+
+	/**
+	* Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized denied inscription subject of this course
+	*/
+	@Override
+	public String getDeniedInscriptionSubject(java.util.Locale locale) {
+		return _course.getDeniedInscriptionSubject(locale);
+	}
+
+	/**
+	* Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized denied inscription subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getDeniedInscriptionSubject(java.util.Locale locale,
+		boolean useDefault) {
+		return _course.getDeniedInscriptionSubject(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized denied inscription subject of this course
+	*/
+	@Override
+	public String getDeniedInscriptionSubject(String languageId) {
+		return _course.getDeniedInscriptionSubject(languageId);
+	}
+
+	/**
+	* Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized denied inscription subject of this course
+	*/
+	@Override
+	public String getDeniedInscriptionSubject(String languageId,
+		boolean useDefault) {
+		return _course.getDeniedInscriptionSubject(languageId, useDefault);
+	}
+
+	@Override
+	public String getDeniedInscriptionSubjectCurrentLanguageId() {
+		return _course.getDeniedInscriptionSubjectCurrentLanguageId();
+	}
+
+	@Override
+	public String getDeniedInscriptionSubjectCurrentValue() {
+		return _course.getDeniedInscriptionSubjectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized denied inscription subjects of this course.
+	*
+	* @return the locales and localized denied inscription subjects of this course
+	*/
+	@Override
+	public Map<java.util.Locale, String> getDeniedInscriptionSubjectMap() {
+		return _course.getDeniedInscriptionSubjectMap();
 	}
 
 	/**
@@ -504,6 +702,12 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getExecutionEndDateCalendar();
 	}
 
+	@Override
+	public String getExecutionEndDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone) {
+		return _course.getExecutionEndDateFormat(locale, timeZone);
+	}
+
 	/**
 	* Returns the execution start date of this course.
 	*
@@ -517,6 +721,12 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public java.util.Calendar getExecutionStartDateCalendar() {
 		return _course.getExecutionStartDateCalendar();
+	}
+
+	@Override
+	public String getExecutionStartDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone) {
+		return _course.getExecutionStartDateFormat(locale, timeZone);
 	}
 
 	@Override
@@ -562,6 +772,77 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
+	* Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized goodbye msg of this course
+	*/
+	@Override
+	public String getGoodbyeMsg(java.util.Locale locale) {
+		return _course.getGoodbyeMsg(locale);
+	}
+
+	/**
+	* Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized goodbye msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getGoodbyeMsg(java.util.Locale locale, boolean useDefault) {
+		return _course.getGoodbyeMsg(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized goodbye msg of this course
+	*/
+	@Override
+	public String getGoodbyeMsg(String languageId) {
+		return _course.getGoodbyeMsg(languageId);
+	}
+
+	/**
+	* Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized goodbye msg of this course
+	*/
+	@Override
+	public String getGoodbyeMsg(String languageId, boolean useDefault) {
+		return _course.getGoodbyeMsg(languageId, useDefault);
+	}
+
+	@Override
+	public String getGoodbyeMsgCurrentLanguageId() {
+		return _course.getGoodbyeMsgCurrentLanguageId();
+	}
+
+	@Override
+	public String getGoodbyeMsgCurrentValue() {
+		return _course.getGoodbyeMsgCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized goodbye msgs of this course.
+	*
+	* @return the locales and localized goodbye msgs of this course
+	*/
+	@Override
+	public Map<java.util.Locale, String> getGoodbyeMsgMap() {
+		return _course.getGoodbyeMsgMap();
+	}
+
+	@Override
+	public String getGoodbyeMsgMapAsXML() {
+		return _course.getGoodbyeMsgMapAsXML();
+	}
+
+	/**
 	* Returns the goodbye subject of this course.
 	*
 	* @return the goodbye subject of this course
@@ -569,6 +850,72 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public String getGoodbyeSubject() {
 		return _course.getGoodbyeSubject();
+	}
+
+	/**
+	* Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized goodbye subject of this course
+	*/
+	@Override
+	public String getGoodbyeSubject(java.util.Locale locale) {
+		return _course.getGoodbyeSubject(locale);
+	}
+
+	/**
+	* Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized goodbye subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getGoodbyeSubject(java.util.Locale locale, boolean useDefault) {
+		return _course.getGoodbyeSubject(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized goodbye subject of this course
+	*/
+	@Override
+	public String getGoodbyeSubject(String languageId) {
+		return _course.getGoodbyeSubject(languageId);
+	}
+
+	/**
+	* Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized goodbye subject of this course
+	*/
+	@Override
+	public String getGoodbyeSubject(String languageId, boolean useDefault) {
+		return _course.getGoodbyeSubject(languageId, useDefault);
+	}
+
+	@Override
+	public String getGoodbyeSubjectCurrentLanguageId() {
+		return _course.getGoodbyeSubjectCurrentLanguageId();
+	}
+
+	@Override
+	public String getGoodbyeSubjectCurrentValue() {
+		return _course.getGoodbyeSubjectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized goodbye subjects of this course.
+	*
+	* @return the locales and localized goodbye subjects of this course
+	*/
+	@Override
+	public Map<java.util.Locale, String> getGoodbyeSubjectMap() {
+		return _course.getGoodbyeSubjectMap();
 	}
 
 	@Override
@@ -614,6 +961,16 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public Date getLastPublishDate() {
 		return _course.getLastPublishDate();
+	}
+
+	@Override
+	public com.liferay.portal.kernel.model.LayoutSet getLayoutSet() {
+		return _course.getLayoutSet();
+	}
+
+	@Override
+	public long getLayoutSetPrototypeId() {
+		return _course.getLayoutSetPrototypeId();
 	}
 
 	/**
@@ -822,6 +1179,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getTitleMap();
 	}
 
+	@Override
+	public int getTypeSite() {
+		return _course.getTypeSite();
+	}
+
 	/**
 	* Returns the user ID of this course.
 	*
@@ -883,6 +1245,77 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
+	* Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized welcome msg of this course
+	*/
+	@Override
+	public String getWelcomeMsg(java.util.Locale locale) {
+		return _course.getWelcomeMsg(locale);
+	}
+
+	/**
+	* Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized welcome msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getWelcomeMsg(java.util.Locale locale, boolean useDefault) {
+		return _course.getWelcomeMsg(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized welcome msg of this course
+	*/
+	@Override
+	public String getWelcomeMsg(String languageId) {
+		return _course.getWelcomeMsg(languageId);
+	}
+
+	/**
+	* Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized welcome msg of this course
+	*/
+	@Override
+	public String getWelcomeMsg(String languageId, boolean useDefault) {
+		return _course.getWelcomeMsg(languageId, useDefault);
+	}
+
+	@Override
+	public String getWelcomeMsgCurrentLanguageId() {
+		return _course.getWelcomeMsgCurrentLanguageId();
+	}
+
+	@Override
+	public String getWelcomeMsgCurrentValue() {
+		return _course.getWelcomeMsgCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized welcome msgs of this course.
+	*
+	* @return the locales and localized welcome msgs of this course
+	*/
+	@Override
+	public Map<java.util.Locale, String> getWelcomeMsgMap() {
+		return _course.getWelcomeMsgMap();
+	}
+
+	@Override
+	public String getWelcomeMsgMapAsXML() {
+		return _course.getWelcomeMsgMapAsXML();
+	}
+
+	/**
 	* Returns the welcome subject of this course.
 	*
 	* @return the welcome subject of this course
@@ -890,6 +1323,72 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public String getWelcomeSubject() {
 		return _course.getWelcomeSubject();
+	}
+
+	/**
+	* Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized welcome subject of this course
+	*/
+	@Override
+	public String getWelcomeSubject(java.util.Locale locale) {
+		return _course.getWelcomeSubject(locale);
+	}
+
+	/**
+	* Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized welcome subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getWelcomeSubject(java.util.Locale locale, boolean useDefault) {
+		return _course.getWelcomeSubject(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized welcome subject of this course
+	*/
+	@Override
+	public String getWelcomeSubject(String languageId) {
+		return _course.getWelcomeSubject(languageId);
+	}
+
+	/**
+	* Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized welcome subject of this course
+	*/
+	@Override
+	public String getWelcomeSubject(String languageId, boolean useDefault) {
+		return _course.getWelcomeSubject(languageId, useDefault);
+	}
+
+	@Override
+	public String getWelcomeSubjectCurrentLanguageId() {
+		return _course.getWelcomeSubjectCurrentLanguageId();
+	}
+
+	@Override
+	public String getWelcomeSubjectCurrentValue() {
+		return _course.getWelcomeSubjectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized welcome subjects of this course.
+	*
+	* @return the locales and localized welcome subjects of this course
+	*/
+	@Override
+	public Map<java.util.Locale, String> getWelcomeSubjectMap() {
+		return _course.getWelcomeSubjectMap();
 	}
 
 	@Override
@@ -920,6 +1419,16 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public boolean isDenied() {
 		return _course.isDenied();
+	}
+
+	/**
+	* Returns <code>true</code> if this course is denied inscription.
+	*
+	* @return <code>true</code> if this course is denied inscription; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isDeniedInscription() {
+		return _course.isDeniedInscription();
 	}
 
 	/**
@@ -1005,6 +1514,21 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public boolean isScheduled() {
 		return _course.isScheduled();
+	}
+
+	@Override
+	public boolean isTypeSiteOpen() {
+		return _course.isTypeSiteOpen();
+	}
+
+	@Override
+	public boolean isTypeSitePrivate() {
+		return _course.isTypeSitePrivate();
+	}
+
+	@Override
+	public boolean isTypeSiteRestricted() {
+		return _course.isTypeSiteRestricted();
 	}
 
 	/**
@@ -1098,6 +1622,148 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setCreateDate(Date createDate) {
 		_course.setCreateDate(createDate);
+	}
+
+	/**
+	* Sets whether this course is denied inscription.
+	*
+	* @param deniedInscription the denied inscription of this course
+	*/
+	@Override
+	public void setDeniedInscription(boolean deniedInscription) {
+		_course.setDeniedInscription(deniedInscription);
+	}
+
+	/**
+	* Sets the denied inscription msg of this course.
+	*
+	* @param deniedInscriptionMsg the denied inscription msg of this course
+	*/
+	@Override
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg) {
+		_course.setDeniedInscriptionMsg(deniedInscriptionMsg);
+	}
+
+	/**
+	* Sets the localized denied inscription msg of this course in the language.
+	*
+	* @param deniedInscriptionMsg the localized denied inscription msg of this course
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
+		java.util.Locale locale) {
+		_course.setDeniedInscriptionMsg(deniedInscriptionMsg, locale);
+	}
+
+	/**
+	* Sets the localized denied inscription msg of this course in the language, and sets the default locale.
+	*
+	* @param deniedInscriptionMsg the localized denied inscription msg of this course
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_course.setDeniedInscriptionMsg(deniedInscriptionMsg, locale,
+			defaultLocale);
+	}
+
+	@Override
+	public void setDeniedInscriptionMsgCurrentLanguageId(String languageId) {
+		_course.setDeniedInscriptionMsgCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs.
+	*
+	* @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
+	*/
+	@Override
+	public void setDeniedInscriptionMsgMap(
+		Map<java.util.Locale, String> deniedInscriptionMsgMap) {
+		_course.setDeniedInscriptionMsgMap(deniedInscriptionMsgMap);
+	}
+
+	/**
+	* Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs, and sets the default locale.
+	*
+	* @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setDeniedInscriptionMsgMap(
+		Map<java.util.Locale, String> deniedInscriptionMsgMap,
+		java.util.Locale defaultLocale) {
+		_course.setDeniedInscriptionMsgMap(deniedInscriptionMsgMap,
+			defaultLocale);
+	}
+
+	/**
+	* Sets the denied inscription subject of this course.
+	*
+	* @param deniedInscriptionSubject the denied inscription subject of this course
+	*/
+	@Override
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject) {
+		_course.setDeniedInscriptionSubject(deniedInscriptionSubject);
+	}
+
+	/**
+	* Sets the localized denied inscription subject of this course in the language.
+	*
+	* @param deniedInscriptionSubject the localized denied inscription subject of this course
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
+		java.util.Locale locale) {
+		_course.setDeniedInscriptionSubject(deniedInscriptionSubject, locale);
+	}
+
+	/**
+	* Sets the localized denied inscription subject of this course in the language, and sets the default locale.
+	*
+	* @param deniedInscriptionSubject the localized denied inscription subject of this course
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_course.setDeniedInscriptionSubject(deniedInscriptionSubject, locale,
+			defaultLocale);
+	}
+
+	@Override
+	public void setDeniedInscriptionSubjectCurrentLanguageId(String languageId) {
+		_course.setDeniedInscriptionSubjectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects.
+	*
+	* @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
+	*/
+	@Override
+	public void setDeniedInscriptionSubjectMap(
+		Map<java.util.Locale, String> deniedInscriptionSubjectMap) {
+		_course.setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap);
+	}
+
+	/**
+	* Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects, and sets the default locale.
+	*
+	* @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setDeniedInscriptionSubjectMap(
+		Map<java.util.Locale, String> deniedInscriptionSubjectMap,
+		java.util.Locale defaultLocale) {
+		_course.setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap,
+			defaultLocale);
 	}
 
 	/**
@@ -1219,6 +1885,57 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
+	* Sets the localized goodbye msg of this course in the language.
+	*
+	* @param goodbyeMsg the localized goodbye msg of this course
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setGoodbyeMsg(String goodbyeMsg, java.util.Locale locale) {
+		_course.setGoodbyeMsg(goodbyeMsg, locale);
+	}
+
+	/**
+	* Sets the localized goodbye msg of this course in the language, and sets the default locale.
+	*
+	* @param goodbyeMsg the localized goodbye msg of this course
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setGoodbyeMsg(String goodbyeMsg, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+		_course.setGoodbyeMsg(goodbyeMsg, locale, defaultLocale);
+	}
+
+	@Override
+	public void setGoodbyeMsgCurrentLanguageId(String languageId) {
+		_course.setGoodbyeMsgCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs.
+	*
+	* @param goodbyeMsgMap the locales and localized goodbye msgs of this course
+	*/
+	@Override
+	public void setGoodbyeMsgMap(Map<java.util.Locale, String> goodbyeMsgMap) {
+		_course.setGoodbyeMsgMap(goodbyeMsgMap);
+	}
+
+	/**
+	* Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs, and sets the default locale.
+	*
+	* @param goodbyeMsgMap the locales and localized goodbye msgs of this course
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setGoodbyeMsgMap(Map<java.util.Locale, String> goodbyeMsgMap,
+		java.util.Locale defaultLocale) {
+		_course.setGoodbyeMsgMap(goodbyeMsgMap, defaultLocale);
+	}
+
+	/**
 	* Sets the goodbye subject of this course.
 	*
 	* @param goodbyeSubject the goodbye subject of this course
@@ -1226,6 +1943,59 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setGoodbyeSubject(String goodbyeSubject) {
 		_course.setGoodbyeSubject(goodbyeSubject);
+	}
+
+	/**
+	* Sets the localized goodbye subject of this course in the language.
+	*
+	* @param goodbyeSubject the localized goodbye subject of this course
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setGoodbyeSubject(String goodbyeSubject, java.util.Locale locale) {
+		_course.setGoodbyeSubject(goodbyeSubject, locale);
+	}
+
+	/**
+	* Sets the localized goodbye subject of this course in the language, and sets the default locale.
+	*
+	* @param goodbyeSubject the localized goodbye subject of this course
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setGoodbyeSubject(String goodbyeSubject,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_course.setGoodbyeSubject(goodbyeSubject, locale, defaultLocale);
+	}
+
+	@Override
+	public void setGoodbyeSubjectCurrentLanguageId(String languageId) {
+		_course.setGoodbyeSubjectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects.
+	*
+	* @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
+	*/
+	@Override
+	public void setGoodbyeSubjectMap(
+		Map<java.util.Locale, String> goodbyeSubjectMap) {
+		_course.setGoodbyeSubjectMap(goodbyeSubjectMap);
+	}
+
+	/**
+	* Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects, and sets the default locale.
+	*
+	* @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setGoodbyeSubjectMap(
+		Map<java.util.Locale, String> goodbyeSubjectMap,
+		java.util.Locale defaultLocale) {
+		_course.setGoodbyeSubjectMap(goodbyeSubjectMap, defaultLocale);
 	}
 
 	/**
@@ -1520,6 +2290,57 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	/**
+	* Sets the localized welcome msg of this course in the language.
+	*
+	* @param welcomeMsg the localized welcome msg of this course
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setWelcomeMsg(String welcomeMsg, java.util.Locale locale) {
+		_course.setWelcomeMsg(welcomeMsg, locale);
+	}
+
+	/**
+	* Sets the localized welcome msg of this course in the language, and sets the default locale.
+	*
+	* @param welcomeMsg the localized welcome msg of this course
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setWelcomeMsg(String welcomeMsg, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+		_course.setWelcomeMsg(welcomeMsg, locale, defaultLocale);
+	}
+
+	@Override
+	public void setWelcomeMsgCurrentLanguageId(String languageId) {
+		_course.setWelcomeMsgCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs.
+	*
+	* @param welcomeMsgMap the locales and localized welcome msgs of this course
+	*/
+	@Override
+	public void setWelcomeMsgMap(Map<java.util.Locale, String> welcomeMsgMap) {
+		_course.setWelcomeMsgMap(welcomeMsgMap);
+	}
+
+	/**
+	* Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs, and sets the default locale.
+	*
+	* @param welcomeMsgMap the locales and localized welcome msgs of this course
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setWelcomeMsgMap(Map<java.util.Locale, String> welcomeMsgMap,
+		java.util.Locale defaultLocale) {
+		_course.setWelcomeMsgMap(welcomeMsgMap, defaultLocale);
+	}
+
+	/**
 	* Sets the welcome subject of this course.
 	*
 	* @param welcomeSubject the welcome subject of this course
@@ -1527,6 +2348,59 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public void setWelcomeSubject(String welcomeSubject) {
 		_course.setWelcomeSubject(welcomeSubject);
+	}
+
+	/**
+	* Sets the localized welcome subject of this course in the language.
+	*
+	* @param welcomeSubject the localized welcome subject of this course
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setWelcomeSubject(String welcomeSubject, java.util.Locale locale) {
+		_course.setWelcomeSubject(welcomeSubject, locale);
+	}
+
+	/**
+	* Sets the localized welcome subject of this course in the language, and sets the default locale.
+	*
+	* @param welcomeSubject the localized welcome subject of this course
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setWelcomeSubject(String welcomeSubject,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_course.setWelcomeSubject(welcomeSubject, locale, defaultLocale);
+	}
+
+	@Override
+	public void setWelcomeSubjectCurrentLanguageId(String languageId) {
+		_course.setWelcomeSubjectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects.
+	*
+	* @param welcomeSubjectMap the locales and localized welcome subjects of this course
+	*/
+	@Override
+	public void setWelcomeSubjectMap(
+		Map<java.util.Locale, String> welcomeSubjectMap) {
+		_course.setWelcomeSubjectMap(welcomeSubjectMap);
+	}
+
+	/**
+	* Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects, and sets the default locale.
+	*
+	* @param welcomeSubjectMap the locales and localized welcome subjects of this course
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setWelcomeSubjectMap(
+		Map<java.util.Locale, String> welcomeSubjectMap,
+		java.util.Locale defaultLocale) {
+		_course.setWelcomeSubjectMap(welcomeSubjectMap, defaultLocale);
 	}
 
 	@Override

@@ -4,6 +4,8 @@ import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.service.persistence.PortletUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -13,6 +15,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.taglib.ui.JournalArticleTag;
@@ -24,10 +27,14 @@ import com.ted.lms.model.ModuleEvalFactory;
 import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.ModuleLocalService;
+import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.lms.web.internal.ModulesItemSelectorHelper;
 import com.ted.lms.web.internal.servlet.taglib.ui.FormNavigatorConstants;
 import com.ted.lms.web.internal.util.LMSWebKeys;
+import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -94,17 +101,36 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 			renderRequest.setAttribute("allowedMinutes", (timeAllowed % 3600000) / 60000);
 		}
 		
+		String smallImageSelectedItemEventName = renderResponse.getNamespace() + "smallImageSelectedItem";
+		RequestBackedPortletURLFactory requestBackedPortletURLFactory = RequestBackedPortletURLFactoryUtil.create(renderRequest);
+		String itemSelectorURL = modulesItemSelectorHelper.getItemSelectorURL(requestBackedPortletURLFactory, themeDisplay, smallImageSelectedItemEventName);
+		
+		String[] classNamePrerequisites = LMSPrefsPropsValues.getPrerequisitesOfModule(themeDisplay.getCompanyId());
+		
+		PrerequisiteFactory prerequisiteFactory = null;
+		
+		List<PrerequisiteFactory> listPrerequisiteFactory = new ArrayList<PrerequisiteFactory>();
+		
+		for(String classNamePrerequisite: classNamePrerequisites){
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
+			if(prerequisiteFactory != null) {
+				listPrerequisiteFactory.add(prerequisiteFactory);
+			}
+		}
+		
 		renderRequest.setAttribute("module", module);
 		renderRequest.setAttribute("cmd", cmd);
 		renderRequest.setAttribute("moduleId", moduleId);
 		renderRequest.setAttribute("defaultLanguageId", LocaleUtil.getDefault().getLanguage());
 		renderRequest.setAttribute("formNavigatorId", FormNavigatorConstants.FORM_NAVIGATOR_ID_MODULE);	
 		renderRequest.setAttribute("course", course);
-		renderRequest.setAttribute(LMSWebKeys.MODULES_ITEM_SELECTOR_HELPER, modulesItemSelectorHelper);
 		renderRequest.setAttribute("listModuleEvalFactories", listModuleEvalFactories);
 		renderRequest.setAttribute("redirect", redirect);
+		renderRequest.setAttribute("smallImageSelectedItemEventName", smallImageSelectedItemEventName);
+		renderRequest.setAttribute("itemSelectorURL", itemSelectorURL);
+		renderRequest.setAttribute("listPrerequisiteFactory", listPrerequisiteFactory);
 		
-		return "/module/edit_module.jsp";
+		return "/modules/edit_module.jsp";
 	}
 	
 	@Reference(unbind = "-")
