@@ -6,6 +6,7 @@
 		<model-name>com.ted.lms</model-name>
 		<portlet-ref>
 			<portlet-name>com_ted_lms_web_portlet_CourseAdminPortlet</portlet-name>
+			<portlet-name>com_ted_lms_web_portlet_ModuleAdminPortlet</portlet-name>
 		</portlet-ref>
 		<root>true</root>
 		<weight>1</weight>

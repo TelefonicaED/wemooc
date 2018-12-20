@@ -29,12 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @ProviderType
 public class CourseEvalFactoryRegistryUtil {
 
-	public static List<CourseEvalFactory> getCourseEvalFactories(
-		long companyId) {
+	public static List<CourseEvalFactory> getCourseEvalFactories(long companyId) {
 
-		return ListUtil.fromMapValues(
-			_filterCalificationFactories(
-				companyId, _courseEvalFactoriesMapByClassName));
+		return ListUtil.fromMapValues(_filterCalificationFactories(companyId, _courseEvalFactoriesMapByClassName));
 	}
 
 	public static <T> CourseEvalFactory getCourseEvalFactoryByClass(

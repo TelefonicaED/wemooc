@@ -44,6 +44,18 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 		return _answerLocalService.addAnswer(answer);
 	}
 
+	@Override
+	public com.ted.lms.learning.activity.question.model.Answer addAnswer(
+		long questionId, long actId,
+		java.util.Map<java.util.Locale, String> answerMap,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
+		boolean correct,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _answerLocalService.addAnswer(questionId, actId, answerMap,
+			feedbackCorrectMap, feedbackIncorrectMap, correct, serviceContext);
+	}
+
 	/**
 	* Creates a new answer with the primary key. Does not add the answer to the database.
 	*
@@ -246,6 +258,12 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 		return _answerLocalService.getAnswers(start, end);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.learning.activity.question.model.Answer> getAnswersByQuestionId(
+		long questionId) {
+		return _answerLocalService.getAnswersByQuestionId(questionId);
+	}
+
 	/**
 	* Returns all the answers matching the UUID and company.
 	*
@@ -325,6 +343,16 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 	public com.ted.lms.learning.activity.question.model.Answer updateAnswer(
 		com.ted.lms.learning.activity.question.model.Answer answer) {
 		return _answerLocalService.updateAnswer(answer);
+	}
+
+	@Override
+	public com.ted.lms.learning.activity.question.model.Answer updateAnswer(
+		long answerId, java.util.Map<java.util.Locale, String> answerMap,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
+		boolean correct) {
+		return _answerLocalService.updateAnswer(answerId, answerMap,
+			feedbackCorrectMap, feedbackIncorrectMap, correct);
 	}
 
 	@Override

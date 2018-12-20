@@ -1655,6 +1655,388 @@ public class LearningActivityUtil {
 	}
 
 	/**
+	* Returns all the learning activities where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @return the matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdNextLearningActivities(
+		long moduleId, long priority) {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities(moduleId, priority);
+	}
+
+	/**
+	* Returns a range of all the learning activities where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @return the range of matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdNextLearningActivities(
+		long moduleId, long priority, int start, int end) {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities(moduleId, priority,
+			start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the learning activities where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdNextLearningActivities(
+		long moduleId, long priority, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities(moduleId, priority,
+			start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the learning activities where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdNextLearningActivities(
+		long moduleId, long priority, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities(moduleId, priority,
+			start, end, orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first learning activity in the ordered set where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity
+	* @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	*/
+	public static LearningActivity findByModuleIdNextLearningActivities_First(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities_First(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the first learning activity in the ordered set where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	*/
+	public static LearningActivity fetchByModuleIdNextLearningActivities_First(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .fetchByModuleIdNextLearningActivities_First(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the last learning activity in the ordered set where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity
+	* @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	*/
+	public static LearningActivity findByModuleIdNextLearningActivities_Last(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities_Last(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the last learning activity in the ordered set where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	*/
+	public static LearningActivity fetchByModuleIdNextLearningActivities_Last(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .fetchByModuleIdNextLearningActivities_Last(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the learning activities before and after the current learning activity in the ordered set where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param actId the primary key of the current learning activity
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next learning activity
+	* @throws NoSuchLearningActivityException if a learning activity with the primary key could not be found
+	*/
+	public static LearningActivity[] findByModuleIdNextLearningActivities_PrevAndNext(
+		long actId, long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByModuleIdNextLearningActivities_PrevAndNext(actId,
+			moduleId, priority, orderByComparator);
+	}
+
+	/**
+	* Removes all the learning activities where moduleId = &#63; and priority &gt; &#63; from the database.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	*/
+	public static void removeByModuleIdNextLearningActivities(long moduleId,
+		long priority) {
+		getPersistence()
+			.removeByModuleIdNextLearningActivities(moduleId, priority);
+	}
+
+	/**
+	* Returns the number of learning activities where moduleId = &#63; and priority &gt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @return the number of matching learning activities
+	*/
+	public static int countByModuleIdNextLearningActivities(long moduleId,
+		long priority) {
+		return getPersistence()
+				   .countByModuleIdNextLearningActivities(moduleId, priority);
+	}
+
+	/**
+	* Returns all the learning activities where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @return the matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdPreviousLearningActivities(
+		long moduleId, long priority) {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities(moduleId, priority);
+	}
+
+	/**
+	* Returns a range of all the learning activities where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @return the range of matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdPreviousLearningActivities(
+		long moduleId, long priority, int start, int end) {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities(moduleId,
+			priority, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the learning activities where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdPreviousLearningActivities(
+		long moduleId, long priority, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities(moduleId,
+			priority, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the learning activities where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param start the lower bound of the range of learning activities
+	* @param end the upper bound of the range of learning activities (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching learning activities
+	*/
+	public static List<LearningActivity> findByModuleIdPreviousLearningActivities(
+		long moduleId, long priority, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities(moduleId,
+			priority, start, end, orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first learning activity in the ordered set where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity
+	* @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	*/
+	public static LearningActivity findByModuleIdPreviousLearningActivities_First(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities_First(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the first learning activity in the ordered set where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	*/
+	public static LearningActivity fetchByModuleIdPreviousLearningActivities_First(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .fetchByModuleIdPreviousLearningActivities_First(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the last learning activity in the ordered set where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity
+	* @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	*/
+	public static LearningActivity findByModuleIdPreviousLearningActivities_Last(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities_Last(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the last learning activity in the ordered set where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	*/
+	public static LearningActivity fetchByModuleIdPreviousLearningActivities_Last(
+		long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return getPersistence()
+				   .fetchByModuleIdPreviousLearningActivities_Last(moduleId,
+			priority, orderByComparator);
+	}
+
+	/**
+	* Returns the learning activities before and after the current learning activity in the ordered set where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param actId the primary key of the current learning activity
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next learning activity
+	* @throws NoSuchLearningActivityException if a learning activity with the primary key could not be found
+	*/
+	public static LearningActivity[] findByModuleIdPreviousLearningActivities_PrevAndNext(
+		long actId, long moduleId, long priority,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws com.ted.lms.exception.NoSuchLearningActivityException {
+		return getPersistence()
+				   .findByModuleIdPreviousLearningActivities_PrevAndNext(actId,
+			moduleId, priority, orderByComparator);
+	}
+
+	/**
+	* Removes all the learning activities where moduleId = &#63; and priority &lt; &#63; from the database.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	*/
+	public static void removeByModuleIdPreviousLearningActivities(
+		long moduleId, long priority) {
+		getPersistence()
+			.removeByModuleIdPreviousLearningActivities(moduleId, priority);
+	}
+
+	/**
+	* Returns the number of learning activities where moduleId = &#63; and priority &lt; &#63;.
+	*
+	* @param moduleId the module ID
+	* @param priority the priority
+	* @return the number of matching learning activities
+	*/
+	public static int countByModuleIdPreviousLearningActivities(long moduleId,
+		long priority) {
+		return getPersistence()
+				   .countByModuleIdPreviousLearningActivities(moduleId, priority);
+	}
+
+	/**
 	* Caches the learning activity in the entity cache if it is enabled.
 	*
 	* @param learningActivity the learning activity

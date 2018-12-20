@@ -81,7 +81,9 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + LMSPortletKeys.MODULE,
+		"javax.portlet.name=" + LMSPortletKeys.MODULES_ADMIN,
+		"javax.portlet.name=" + LMSPortletKeys.MODULES_ACTIVITIES,
+		"javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER,
 		"mvc.command.name=/modules/edit_module"
 	},
 	service = MVCActionCommand.class
@@ -120,6 +122,8 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 				Callable<Module> updateModuleCallable = new UpdateModuleCallable(actionRequest);
 
 				module = TransactionInvokerUtil.invoke(_transactionConfig, updateModuleCallable);
+			} else if(cmd.equals(Constants.MOVE)) {
+				moveModule(actionRequest);
 			} else if (cmd.equals(Constants.DELETE)) {
 				deleteModules(actionRequest, false);
 			} else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
@@ -139,9 +143,6 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 			if (ajax) {
 				JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 
-				jsonObject.put("attributeDataImageId", EditorConstants.ATTRIBUTE_DATA_IMAGE_ID);
-				jsonObject.put("description", module.getDescription());
-				jsonObject.put("smallImageId", module.getSmallImageId());
 				jsonObject.put("moduleId", module.getModuleId());
 				jsonObject.put("redirect", redirect);
 
@@ -207,6 +208,19 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 			actionResponse.setRenderParameter("mvcPath", "/modules/error.jsp");
 
 			hideDefaultSuccessMessage(actionRequest);
+		}
+	}
+	
+	protected void moveModule(ActionRequest actionRequest) throws Exception {
+		long moduleId = ParamUtil.getLong(actionRequest, "moduleId");
+		
+		int moved = ParamUtil.getInteger(actionRequest, Constants.ACTION);
+		
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(Module.class.getName(), actionRequest);
+		if(moved == -1) {
+			moduleService.moveUpModule(moduleId, serviceContext);
+		}else if(moved == 1) {
+			moduleService.moveDownModule(moduleId, serviceContext);
 		}
 	}
 	
@@ -357,6 +371,8 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		ModuleEvalFactory moduleEvalFactory = ModuleEvalFactoryRegistryUtil.getModuleEvalFactoryByType(moduleEvalId);
 		ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module, serviceContext);
 		moduleEval.setExtraContent(actionRequest);
+		
+		moduleService.updateModule(module);
 		
 		//Guardamos los prerequisitos
 		String[] classNamePrerequisites = LMSPrefsPropsValues.getPrerequisitesOfModule(themeDisplay.getCompanyId());

@@ -277,7 +277,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 
 		tries = objectInput.readInt();
 
-		passPuntuation = objectInput.readInt();
+		passPuntuation = objectInput.readDouble();
 
 		priority = objectInput.readLong();
 		extraContent = objectInput.readUTF();
@@ -346,7 +346,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 
 		objectOutput.writeInt(tries);
 
-		objectOutput.writeInt(passPuntuation);
+		objectOutput.writeDouble(passPuntuation);
 
 		objectOutput.writeLong(priority);
 
@@ -405,7 +405,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 	public long startDate;
 	public long endDate;
 	public int tries;
-	public int passPuntuation;
+	public double passPuntuation;
 	public long priority;
 	public String extraContent;
 	public String feedbackCorrect;

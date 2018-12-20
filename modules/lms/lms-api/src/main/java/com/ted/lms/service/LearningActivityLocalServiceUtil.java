@@ -55,19 +55,62 @@ public class LearningActivityLocalServiceUtil {
 	}
 
 	public static com.ted.lms.model.LearningActivity addLearningActivity(
-		long groupId, long userId, long moduleId,
+		long moduleId, long type,
 		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addLearningActivity(moduleId, type, titleMap,
+			descriptionMap, useStartExecutionDateCourse, startDateMonth,
+			startDateDay, startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, required, tries, passPuntuation,
+			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
+			serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity addLearningActivity(
+		long moduleId, long type,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		java.util.Date startDate, java.util.Date endDate, boolean required,
+		int tries, double passPuntuation,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addLearningActivity(moduleId, type, titleMap,
+			descriptionMap, startDate, endDate, required, tries,
+			passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
+			commentsActivated, serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity addLearningActivity(
+		long moduleId, java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
 		java.util.Date startDate, java.util.Date endDate, int tries,
-		int passPuntuation, long priority, String extraContent,
-		String feedbackCorrect, String feedbackNoCorrect, boolean required,
-		boolean commentsActivated,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		double passPuntuation, long priority, String extraContent,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean required, boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addLearningActivity(groupId, userId, moduleId, titleMap,
-			descriptionMap, typeId, startDate, endDate, tries, passPuntuation,
-			priority, extraContent, feedbackCorrect, feedbackNoCorrect,
-			required, commentsActivated, serviceContext);
+				   .addLearningActivity(moduleId, titleMap, descriptionMap,
+			typeId, startDate, endDate, tries, passPuntuation, priority,
+			extraContent, feedbackCorrectMap, feedbackNoCorrectMap, required,
+			commentsActivated, serviceContext);
 	}
 
 	/**
@@ -241,6 +284,11 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getLearningActivities(start, end);
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getLearningActivities(
+		long moduleId) {
+		return getService().getLearningActivities(moduleId);
+	}
+
 	public static java.util.List<com.ted.lms.model.LearningActivity> getLearningActivitiesByTypeId(
 		long typeId) {
 		return getService().getLearningActivitiesByTypeId(typeId);
@@ -316,6 +364,12 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getLearningActivityByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ted.lms.model.LearningActivity getNextLearningActivity(
+		com.ted.lms.model.LearningActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getNextLearningActivity(activity);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -331,6 +385,12 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static com.ted.lms.model.LearningActivity getPreviousLearningActivity(
+		com.ted.lms.model.LearningActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPreviousLearningActivity(activity);
+	}
+
 	public static java.util.List<com.ted.lms.model.LearningActivity> getRequiredLearningActivitiesOfGroup(
 		long groupId) {
 		return getService().getRequiredLearningActivitiesOfGroup(groupId);
@@ -339,6 +399,32 @@ public class LearningActivityLocalServiceUtil {
 	public static java.util.List<com.ted.lms.model.LearningActivity> getRequiredLearningActivitiesOfModule(
 		long moduleId) {
 		return getService().getRequiredLearningActivitiesOfModule(moduleId);
+	}
+
+	public static com.ted.lms.model.LearningActivity moveDownLearningActivity(
+		long actId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveDownLearningActivity(actId, serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity moveLearningActivityToTrash(
+		long userId, com.ted.lms.model.LearningActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveLearningActivityToTrash(userId, activity);
+	}
+
+	public static com.ted.lms.model.LearningActivity moveLearningActivityToTrash(
+		long userId, long actId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveLearningActivityToTrash(userId, actId);
+	}
+
+	public static com.ted.lms.model.LearningActivity moveUpLearningActivity(
+		long actId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveUpLearningActivity(actId, serviceContext);
 	}
 
 	public static void updateAsset(long userId,
@@ -366,15 +452,66 @@ public class LearningActivityLocalServiceUtil {
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
 		java.util.Date startDate, java.util.Date endDate, int tries,
-		int passPuntuation, long priority, String extraContent,
-		String feedbackCorrect, String feedbackNoCorrect, boolean required,
-		boolean commentsActivated,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		double passPuntuation, long priority, String extraContent,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean required, boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .updateLearningActivity(actId, moduleId, titleMap,
 			descriptionMap, typeId, startDate, endDate, tries, passPuntuation,
-			priority, extraContent, feedbackCorrect, feedbackNoCorrect,
+			priority, extraContent, feedbackCorrectMap, feedbackNoCorrectMap,
 			required, commentsActivated, serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity updateLearningActivity(
+		long actId, java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLearningActivity(actId, titleMap, descriptionMap,
+			useStartExecutionDateCourse, startDateMonth, startDateDay,
+			startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, required, tries, passPuntuation,
+			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
+			serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity updateLearningActivity(
+		long actId, java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		java.util.Date startDate, java.util.Date endDate, int tries,
+		double passPuntuation,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean required, boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLearningActivity(actId, titleMap, descriptionMap,
+			startDate, endDate, tries, passPuntuation, feedbackCorrectMap,
+			feedbackNoCorrectMap, required, commentsActivated, serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity updateStatus(long userId,
+		long actId, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		java.util.Map<String, java.io.Serializable> workflowContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateStatus(userId, actId, status, serviceContext,
+			workflowContext);
 	}
 
 	public static LearningActivityLocalService getService() {

@@ -20,11 +20,13 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedGroupedModel;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
@@ -49,7 +51,8 @@ import java.util.Map;
  */
 @ProviderType
 public interface LearningActivityModel extends BaseModel<LearningActivity>,
-	LocalizedModel, ShardedModel, StagedGroupedModel, WorkflowedModel {
+	LocalizedModel, ShardedModel, StagedGroupedModel, TrashedModel,
+	WorkflowedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -505,14 +508,14 @@ public interface LearningActivityModel extends BaseModel<LearningActivity>,
 	 *
 	 * @return the pass puntuation of this learning activity
 	 */
-	public int getPassPuntuation();
+	public double getPassPuntuation();
 
 	/**
 	 * Sets the pass puntuation of this learning activity.
 	 *
 	 * @param passPuntuation the pass puntuation of this learning activity
 	 */
-	public void setPassPuntuation(int passPuntuation);
+	public void setPassPuntuation(double passPuntuation);
 
 	/**
 	 * Returns the priority of this learning activity.
@@ -548,8 +551,58 @@ public interface LearningActivityModel extends BaseModel<LearningActivity>,
 	 *
 	 * @return the feedback correct of this learning activity
 	 */
-	@AutoEscape
 	public String getFeedbackCorrect();
+
+	/**
+	 * Returns the localized feedback correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized feedback correct of this learning activity
+	 */
+	@AutoEscape
+	public String getFeedbackCorrect(Locale locale);
+
+	/**
+	 * Returns the localized feedback correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized feedback correct of this learning activity. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getFeedbackCorrect(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized feedback correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized feedback correct of this learning activity
+	 */
+	@AutoEscape
+	public String getFeedbackCorrect(String languageId);
+
+	/**
+	 * Returns the localized feedback correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized feedback correct of this learning activity
+	 */
+	@AutoEscape
+	public String getFeedbackCorrect(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getFeedbackCorrectCurrentLanguageId();
+
+	@AutoEscape
+	public String getFeedbackCorrectCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized feedback corrects of this learning activity.
+	 *
+	 * @return the locales and localized feedback corrects of this learning activity
+	 */
+	public Map<Locale, String> getFeedbackCorrectMap();
 
 	/**
 	 * Sets the feedback correct of this learning activity.
@@ -559,12 +612,98 @@ public interface LearningActivityModel extends BaseModel<LearningActivity>,
 	public void setFeedbackCorrect(String feedbackCorrect);
 
 	/**
+	 * Sets the localized feedback correct of this learning activity in the language.
+	 *
+	 * @param feedbackCorrect the localized feedback correct of this learning activity
+	 * @param locale the locale of the language
+	 */
+	public void setFeedbackCorrect(String feedbackCorrect, Locale locale);
+
+	/**
+	 * Sets the localized feedback correct of this learning activity in the language, and sets the default locale.
+	 *
+	 * @param feedbackCorrect the localized feedback correct of this learning activity
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setFeedbackCorrect(String feedbackCorrect, Locale locale,
+		Locale defaultLocale);
+
+	public void setFeedbackCorrectCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized feedback corrects of this learning activity from the map of locales and localized feedback corrects.
+	 *
+	 * @param feedbackCorrectMap the locales and localized feedback corrects of this learning activity
+	 */
+	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap);
+
+	/**
+	 * Sets the localized feedback corrects of this learning activity from the map of locales and localized feedback corrects, and sets the default locale.
+	 *
+	 * @param feedbackCorrectMap the locales and localized feedback corrects of this learning activity
+	 * @param defaultLocale the default locale
+	 */
+	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap,
+		Locale defaultLocale);
+
+	/**
 	 * Returns the feedback no correct of this learning activity.
 	 *
 	 * @return the feedback no correct of this learning activity
 	 */
-	@AutoEscape
 	public String getFeedbackNoCorrect();
+
+	/**
+	 * Returns the localized feedback no correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized feedback no correct of this learning activity
+	 */
+	@AutoEscape
+	public String getFeedbackNoCorrect(Locale locale);
+
+	/**
+	 * Returns the localized feedback no correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized feedback no correct of this learning activity. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@AutoEscape
+	public String getFeedbackNoCorrect(Locale locale, boolean useDefault);
+
+	/**
+	 * Returns the localized feedback no correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized feedback no correct of this learning activity
+	 */
+	@AutoEscape
+	public String getFeedbackNoCorrect(String languageId);
+
+	/**
+	 * Returns the localized feedback no correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized feedback no correct of this learning activity
+	 */
+	@AutoEscape
+	public String getFeedbackNoCorrect(String languageId, boolean useDefault);
+
+	@AutoEscape
+	public String getFeedbackNoCorrectCurrentLanguageId();
+
+	@AutoEscape
+	public String getFeedbackNoCorrectCurrentValue();
+
+	/**
+	 * Returns a map of the locales and localized feedback no corrects of this learning activity.
+	 *
+	 * @return the locales and localized feedback no corrects of this learning activity
+	 */
+	public Map<Locale, String> getFeedbackNoCorrectMap();
 
 	/**
 	 * Sets the feedback no correct of this learning activity.
@@ -572,6 +711,43 @@ public interface LearningActivityModel extends BaseModel<LearningActivity>,
 	 * @param feedbackNoCorrect the feedback no correct of this learning activity
 	 */
 	public void setFeedbackNoCorrect(String feedbackNoCorrect);
+
+	/**
+	 * Sets the localized feedback no correct of this learning activity in the language.
+	 *
+	 * @param feedbackNoCorrect the localized feedback no correct of this learning activity
+	 * @param locale the locale of the language
+	 */
+	public void setFeedbackNoCorrect(String feedbackNoCorrect, Locale locale);
+
+	/**
+	 * Sets the localized feedback no correct of this learning activity in the language, and sets the default locale.
+	 *
+	 * @param feedbackNoCorrect the localized feedback no correct of this learning activity
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	public void setFeedbackNoCorrect(String feedbackNoCorrect, Locale locale,
+		Locale defaultLocale);
+
+	public void setFeedbackNoCorrectCurrentLanguageId(String languageId);
+
+	/**
+	 * Sets the localized feedback no corrects of this learning activity from the map of locales and localized feedback no corrects.
+	 *
+	 * @param feedbackNoCorrectMap the locales and localized feedback no corrects of this learning activity
+	 */
+	public void setFeedbackNoCorrectMap(
+		Map<Locale, String> feedbackNoCorrectMap);
+
+	/**
+	 * Sets the localized feedback no corrects of this learning activity from the map of locales and localized feedback no corrects, and sets the default locale.
+	 *
+	 * @param feedbackNoCorrectMap the locales and localized feedback no corrects of this learning activity
+	 * @param defaultLocale the default locale
+	 */
+	public void setFeedbackNoCorrectMap(
+		Map<Locale, String> feedbackNoCorrectMap, Locale defaultLocale);
 
 	/**
 	 * Returns the required of this learning activity.
@@ -695,6 +871,55 @@ public interface LearningActivityModel extends BaseModel<LearningActivity>,
 	 */
 	@Override
 	public void setStatusDate(Date statusDate);
+
+	/**
+	 * Returns the trash entry created when this learning activity was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this learning activity.
+	 *
+	 * @return the trash entry created when this learning activity was moved to the Recycle Bin
+	 */
+	@Override
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
+		throws PortalException;
+
+	/**
+	 * Returns the class primary key of the trash entry for this learning activity.
+	 *
+	 * @return the class primary key of the trash entry for this learning activity
+	 */
+	@Override
+	public long getTrashEntryClassPK();
+
+	/**
+	 * Returns the trash handler for this learning activity.
+	 *
+	 * @return the trash handler for this learning activity
+	 * @deprecated As of 7.0.0, with no direct replacement
+	 */
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler();
+
+	/**
+	 * Returns <code>true</code> if this learning activity is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if this learning activity is in the Recycle Bin; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInTrash();
+
+	/**
+	 * Returns <code>true</code> if the parent of this learning activity is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if the parent of this learning activity is in the Recycle Bin; <code>false</code> otherwise
+	 */
+	@Override
+	public boolean isInTrashContainer();
+
+	@Override
+	public boolean isInTrashExplicitly();
+
+	@Override
+	public boolean isInTrashImplicitly();
 
 	/**
 	 * Returns <code>true</code> if this learning activity is approved.

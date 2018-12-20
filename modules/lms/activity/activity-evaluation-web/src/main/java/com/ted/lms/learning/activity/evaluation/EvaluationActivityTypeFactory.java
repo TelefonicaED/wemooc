@@ -46,14 +46,17 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	
 	@Override
 	public String getName(Locale locale) {
+		System.out.println("*********************Activity: " + resourceBundleLoader.toString());
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.evaluation");
+		System.out.println("*********************Resource bundle: " + resourceBundle.getBaseBundleName());
+		System.out.println("*********************LanguageUtil: " + LanguageUtil.get(resourceBundle, "learningactivity.evaluation"));
+		return LanguageUtil.get(resourceBundle, "learning-activity.evaluation");
 	}
 	
 	@Override
 	public String getDescription(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.evaluation.helpmessage");
+		return LanguageUtil.get(resourceBundle, "learning-activity.evaluation.help-message");
 	}
 	
 	@Override

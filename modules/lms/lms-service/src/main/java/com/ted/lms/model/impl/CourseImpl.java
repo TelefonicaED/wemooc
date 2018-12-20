@@ -25,16 +25,19 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.MembershipRequestConstants;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
-import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -53,9 +56,6 @@ import com.ted.lms.service.util.DateUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
-import java.text.DateFormat;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -82,6 +82,9 @@ public class CourseImpl extends CourseBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a course model instance should use the {@link com.ted.lms.model.Course} interface instead.
 	 */
+	
+	private static Log log = LogFactoryUtil.getLog(CourseImpl.class);
+	
 	private Group _group;
 	private JSONObject extraData = null;
 	private LayoutSet layoutSet;
@@ -397,5 +400,51 @@ public class CourseImpl extends CourseBaseImpl {
 			}
 		}
 		return layoutSetPrototypeId;
+	}
+	
+	public boolean isLocked(User user, PermissionChecker permissionChecker){
+		
+		log.debug("CourseImpl::isLocked::isApproved:" + isApproved());
+		
+		//Si el curso está cerrado
+		if(!isApproved()){
+			return true;
+		}
+		
+		//Si perteneces a la comunidad
+	
+			if(!UserLocalServiceUtil.hasGroupUser(this.getGroupCreatedId(), user.getUserId())){
+				log.debug("CourseImpl::isLocked::hasGroupUser:" + false);
+				return true;
+			}
+
+		log.debug("CourseImpl::isLocked::hasGroupUser:" + true);
+		
+		//Si tienes permiso para acceder al curso
+		if(!permissionChecker.hasPermission(this.getGroupCreatedId(), Course.class.getName(), this.getCourseId() , ActionKeys.ACCESS)){
+			log.debug("CourseImpl::isLocked::hasPermissionAccess:" + false);
+			return true;
+		}
+		log.debug("CourseImpl::isLocked::hasPermissionAccess:" + true);
+
+		Date now = new Date();
+		
+		if(getExecutionStartDate().after(now) || getExecutionEndDate().before(now)){
+			return true;
+		}
+		
+		//Comprobamos si tiene fechas para realizar el curso
+		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), user.getUserId());
+		
+        if(courseResult!=null && ((courseResult.getAllowEndDate()!=null && courseResult.getAllowEndDate().before(now)) 
+        							||(courseResult.getAllowStartDate()!=null && courseResult.getAllowStartDate().after(now)))){
+        	log.debug("CourseImpl::isLocked::allowdates::startDate:" + courseResult.getAllowStartDate());
+        	log.debug("CourseImpl::isLocked::allowdates::endDate:" + courseResult.getAllowEndDate());
+			return true;
+		}
+        
+        log.debug("CourseImpl::isLocked::allowdates:" + true);
+		
+		return false;
 	}
 }

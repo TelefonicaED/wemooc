@@ -40,6 +40,10 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService);
 	}
 	
+	public TestActivityType getTestActivityType(LearningActivity activity) {
+		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService);
+	}
+	
 	@Override
 	public String getPortletId() {
 		return TestPortletKeys.TEST;
@@ -48,13 +52,13 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	@Override
 	public String getName(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.test");
+		return LanguageUtil.get(resourceBundle, "learning-activity.test");
 	}
 	
 	@Override
 	public String getDescription(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.test.helpmessage");
+		return LanguageUtil.get(resourceBundle, "learning-activity.test.help-message");
 	}
 	
 	@Override
@@ -75,6 +79,11 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	@Override
 	public boolean isScoreConfigurable() {
 		return true;
+	}
+	
+	@Override
+	public String getScoreConfigurableProperty() {
+		return "learning-activity.test.puntuation-passed";
 	}
 	
 	@Override
@@ -111,7 +120,9 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	protected QuestionLocalService questionLocalService;
 	
-	@Reference(unbind = "-")
+	@Reference(
+		unbind = "-"
+	)
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
 
 		this.resourceBundleLoader = resourceBundleLoader;

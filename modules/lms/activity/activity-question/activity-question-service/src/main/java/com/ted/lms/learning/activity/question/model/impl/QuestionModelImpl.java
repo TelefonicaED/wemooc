@@ -22,6 +22,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
@@ -31,9 +32,12 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionModel;
@@ -47,7 +51,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The base model implementation for the Question service. Represents a row in the &quot;qu_Question&quot; database table, with each column mapped to a property of this class.
@@ -82,13 +89,11 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "actId", Types.BIGINT },
-			{ "title", Types.VARCHAR },
 			{ "text_", Types.VARCHAR },
 			{ "questionType", Types.BIGINT },
 			{ "active_", Types.BOOLEAN },
 			{ "weight", Types.BIGINT },
 			{ "penalize", Types.BOOLEAN },
-			{ "orderedAnswers", Types.BOOLEAN },
 			{ "extraContent", Types.VARCHAR }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
@@ -103,17 +108,15 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("title", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("text_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("questionType", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("weight", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("penalize", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("orderedAnswers", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("extraContent", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,actId LONG,title VARCHAR(75) null,text_ VARCHAR(75) null,questionType LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,orderedAnswers BOOLEAN,extraContent VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,actId LONG,text_ STRING null,questionType LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Question";
 	public static final String ORDER_BY_JPQL = " ORDER BY question.questionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Question.questionId ASC";
@@ -157,13 +160,11 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setActId(soapModel.getActId());
-		model.setTitle(soapModel.getTitle());
 		model.setText(soapModel.getText());
 		model.setQuestionType(soapModel.getQuestionType());
 		model.setActive(soapModel.isActive());
 		model.setWeight(soapModel.getWeight());
 		model.setPenalize(soapModel.isPenalize());
-		model.setOrderedAnswers(soapModel.isOrderedAnswers());
 		model.setExtraContent(soapModel.getExtraContent());
 
 		return model;
@@ -238,13 +239,11 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("actId", getActId());
-		attributes.put("title", getTitle());
 		attributes.put("text", getText());
 		attributes.put("questionType", getQuestionType());
 		attributes.put("active", isActive());
 		attributes.put("weight", getWeight());
 		attributes.put("penalize", isPenalize());
-		attributes.put("orderedAnswers", isOrderedAnswers());
 		attributes.put("extraContent", getExtraContent());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
@@ -309,12 +308,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			setActId(actId);
 		}
 
-		String title = (String)attributes.get("title");
-
-		if (title != null) {
-			setTitle(title);
-		}
-
 		String text = (String)attributes.get("text");
 
 		if (text != null) {
@@ -343,12 +336,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 		if (penalize != null) {
 			setPenalize(penalize);
-		}
-
-		Boolean orderedAnswers = (Boolean)attributes.get("orderedAnswers");
-
-		if (orderedAnswers != null) {
-			setOrderedAnswers(orderedAnswers);
 		}
 
 		String extraContent = (String)attributes.get("extraContent");
@@ -537,22 +524,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@JSON
 	@Override
-	public String getTitle() {
-		if (_title == null) {
-			return "";
-		}
-		else {
-			return _title;
-		}
-	}
-
-	@Override
-	public void setTitle(String title) {
-		_title = title;
-	}
-
-	@JSON
-	@Override
 	public String getText() {
 		if (_text == null) {
 			return "";
@@ -563,8 +534,91 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 	}
 
 	@Override
+	public String getText(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getText(languageId);
+	}
+
+	@Override
+	public String getText(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getText(languageId, useDefault);
+	}
+
+	@Override
+	public String getText(String languageId) {
+		return LocalizationUtil.getLocalization(getText(), languageId);
+	}
+
+	@Override
+	public String getText(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getText(), languageId,
+			useDefault);
+	}
+
+	@Override
+	public String getTextCurrentLanguageId() {
+		return _textCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getTextCurrentValue() {
+		Locale locale = getLocale(_textCurrentLanguageId);
+
+		return getText(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getTextMap() {
+		return LocalizationUtil.getLocalizationMap(getText());
+	}
+
+	@Override
 	public void setText(String text) {
 		_text = text;
+	}
+
+	@Override
+	public void setText(String text, Locale locale) {
+		setText(text, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setText(String text, Locale locale, Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(text)) {
+			setText(LocalizationUtil.updateLocalization(getText(), "Text",
+					text, languageId, defaultLanguageId));
+		}
+		else {
+			setText(LocalizationUtil.removeLocalization(getText(), "Text",
+					languageId));
+		}
+	}
+
+	@Override
+	public void setTextCurrentLanguageId(String languageId) {
+		_textCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setTextMap(Map<Locale, String> textMap) {
+		setTextMap(textMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setTextMap(Map<Locale, String> textMap, Locale defaultLocale) {
+		if (textMap == null) {
+			return;
+		}
+
+		setText(LocalizationUtil.updateLocalization(textMap, getText(), "Text",
+				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -625,23 +679,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@JSON
 	@Override
-	public boolean getOrderedAnswers() {
-		return _orderedAnswers;
-	}
-
-	@JSON
-	@Override
-	public boolean isOrderedAnswers() {
-		return _orderedAnswers;
-	}
-
-	@Override
-	public void setOrderedAnswers(boolean orderedAnswers) {
-		_orderedAnswers = orderedAnswers;
-	}
-
-	@JSON
-	@Override
 	public String getExtraContent() {
 		if (_extraContent == null) {
 			return "";
@@ -680,6 +717,67 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 	}
 
 	@Override
+	public String[] getAvailableLanguageIds() {
+		Set<String> availableLanguageIds = new TreeSet<String>();
+
+		Map<Locale, String> textMap = getTextMap();
+
+		for (Map.Entry<Locale, String> entry : textMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		return availableLanguageIds.toArray(new String[availableLanguageIds.size()]);
+	}
+
+	@Override
+	public String getDefaultLanguageId() {
+		String xml = getText();
+
+		if (xml == null) {
+			return "";
+		}
+
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
+
+		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport() throws LocaleException {
+		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
+
+		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
+
+		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(Question.class.getName(),
+				getPrimaryKey(), defaultLocale, availableLocales);
+
+		prepareLocalizedFieldsForImport(defaultImportLocale);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
+		throws LocaleException {
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
+
+		String modelDefaultLanguageId = getDefaultLanguageId();
+
+		String text = getText(defaultLocale);
+
+		if (Validator.isNull(text)) {
+			setText(getText(modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setText(getText(defaultLocale), defaultLocale, defaultLocale);
+		}
+	}
+
+	@Override
 	public Question toEscapedModel() {
 		if (_escapedModel == null) {
 			_escapedModel = (Question)ProxyUtil.newProxyInstance(_classLoader,
@@ -702,13 +800,11 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		questionImpl.setCreateDate(getCreateDate());
 		questionImpl.setModifiedDate(getModifiedDate());
 		questionImpl.setActId(getActId());
-		questionImpl.setTitle(getTitle());
 		questionImpl.setText(getText());
 		questionImpl.setQuestionType(getQuestionType());
 		questionImpl.setActive(isActive());
 		questionImpl.setWeight(getWeight());
 		questionImpl.setPenalize(isPenalize());
-		questionImpl.setOrderedAnswers(isOrderedAnswers());
 		questionImpl.setExtraContent(getExtraContent());
 
 		questionImpl.resetOriginalValues();
@@ -845,14 +941,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 		questionCacheModel.actId = getActId();
 
-		questionCacheModel.title = getTitle();
-
-		String title = questionCacheModel.title;
-
-		if ((title != null) && (title.length() == 0)) {
-			questionCacheModel.title = null;
-		}
-
 		questionCacheModel.text = getText();
 
 		String text = questionCacheModel.text;
@@ -869,8 +957,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 		questionCacheModel.penalize = isPenalize();
 
-		questionCacheModel.orderedAnswers = isOrderedAnswers();
-
 		questionCacheModel.extraContent = getExtraContent();
 
 		String extraContent = questionCacheModel.extraContent;
@@ -884,7 +970,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -904,8 +990,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(getModifiedDate());
 		sb.append(", actId=");
 		sb.append(getActId());
-		sb.append(", title=");
-		sb.append(getTitle());
 		sb.append(", text=");
 		sb.append(getText());
 		sb.append(", questionType=");
@@ -916,8 +1000,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(getWeight());
 		sb.append(", penalize=");
 		sb.append(isPenalize());
-		sb.append(", orderedAnswers=");
-		sb.append(isOrderedAnswers());
 		sb.append(", extraContent=");
 		sb.append(getExtraContent());
 		sb.append("}");
@@ -927,7 +1009,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(55);
+		StringBundler sb = new StringBundler(49);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.learning.activity.question.model.Question");
@@ -970,10 +1052,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(getActId());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>title</column-name><column-value><![CDATA[");
-		sb.append(getTitle());
-		sb.append("]]></column-value></column>");
-		sb.append(
 			"<column><column-name>text</column-name><column-value><![CDATA[");
 		sb.append(getText());
 		sb.append("]]></column-value></column>");
@@ -992,10 +1070,6 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(
 			"<column><column-name>penalize</column-name><column-value><![CDATA[");
 		sb.append(isPenalize());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>orderedAnswers</column-name><column-value><![CDATA[");
-		sb.append(isOrderedAnswers());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>extraContent</column-name><column-value><![CDATA[");
@@ -1028,13 +1102,12 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 	private long _actId;
 	private long _originalActId;
 	private boolean _setOriginalActId;
-	private String _title;
 	private String _text;
+	private String _textCurrentLanguageId;
 	private long _questionType;
 	private boolean _active;
 	private long _weight;
 	private boolean _penalize;
-	private boolean _orderedAnswers;
 	private String _extraContent;
 	private long _columnBitmask;
 	private Question _escapedModel;

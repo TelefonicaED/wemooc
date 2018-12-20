@@ -52,6 +52,7 @@ public class CompleteModulesCourseEvalFactory extends BaseCourseEvalFactory{
 		return TYPE;
 	}
 	
+	
 	@Reference(
 		unbind = "-"
 	)

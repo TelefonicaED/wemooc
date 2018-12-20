@@ -30,7 +30,6 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 		//Comprobamos si se está migrando o no
 		Release release = releaseLocalService.fetchRelease("liferaylms-portlet");
 		if(release != null && release.getBuildNumber() > 0) {
-			//Actualizamos del prefspropsutil al campo CourseExtraData
 			List<LearningActivity> listLearningActivities = learningActivityLocalService.getLearningActivitiesByTypeId(TestConstants.TYPE);
 			JSONObject activityExtraContent = null;
 			Document document = null;
@@ -45,6 +44,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 			Element improveElement = null;
 			Element enableOrderElement = null;
 			Element questionPerPageElement = null;
+			Element previewElement = null;
 			Element teamElement = null;
 			
 			for(LearningActivity learningActivity: listLearningActivities) {
@@ -74,32 +74,37 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						
 						showCorrectAnswerElement = rootElement.element("showCorrectAnswer");
 						if(showCorrectAnswerElement != null) {
-							testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER, Long.parseLong(showCorrectAnswerElement.getText()));
+							testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER, Boolean.parseBoolean(showCorrectAnswerElement.getText()));
 						}
 						
 						hideFeedbackElement = rootElement.element("hideFeedback");
 						if(hideFeedbackElement != null) {
-							testContent.put(TestConstants.JSON_HIDE_FEEDBACK, Long.parseLong(hideFeedbackElement.getText()));
+							testContent.put(TestConstants.JSON_SHOW_FEEDBACK, !Boolean.parseBoolean(hideFeedbackElement.getText()));
 						}
 						
 						showCorrectAnswerOnlyOnFinalTryElement = rootElement.element("showCorrectAnswerOnlyOnFinalTry");
 						if(showCorrectAnswerOnlyOnFinalTryElement != null) {
-							testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, Long.parseLong(showCorrectAnswerOnlyOnFinalTryElement.getText()));
+							testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, Boolean.parseBoolean(showCorrectAnswerOnlyOnFinalTryElement.getText()));
 						}
 						
 						improveElement = rootElement.element("improve");
 						if(improveElement != null) {
-							testContent.put(TestConstants.JSON_IMPROVE, Long.parseLong(improveElement.getText()));
+							testContent.put(TestConstants.JSON_IMPROVE, Boolean.parseBoolean(improveElement.getText()));
 						}
 						
 						enableOrderElement = rootElement.element("enableorder");
 						if(enableOrderElement != null) {
-							testContent.put(TestConstants.JSON_ENABLE_ORDER, Long.parseLong(enableOrderElement.getText()));
+							testContent.put(TestConstants.JSON_ENABLE_ORDER, Boolean.parseBoolean(enableOrderElement.getText()));
 						}
 						
 						questionPerPageElement = rootElement.element("questionsPerPage");
 						if(questionPerPageElement != null) {
 							testContent.put(TestConstants.JSON_QUESTIONS_PER_PAGE, Long.parseLong(questionPerPageElement.getText()));
+						}
+						
+						previewElement = rootElement.element("showOnlyPreview");
+						if(previewElement != null) {
+							testContent.put(TestConstants.JSON_PREVIEW, Boolean.parseBoolean(previewElement.getText()));
 						}
 	
 						//Migramos el equipo si existe

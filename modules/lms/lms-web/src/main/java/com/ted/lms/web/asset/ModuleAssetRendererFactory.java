@@ -35,7 +35,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
     immediate = true,
-    property = {"javax.portlet.name=" + LMSPortletKeys.MODULE},
+    property = {"javax.portlet.name=" + LMSPortletKeys.MODULES_ADMIN},
     service = AssetRendererFactory.class
 )
 public class ModuleAssetRendererFactory extends BaseAssetRendererFactory<Module>{
@@ -50,7 +50,7 @@ public class ModuleAssetRendererFactory extends BaseAssetRendererFactory<Module>
 	    setClassName(Module.class.getName());
 	    setCategorizable(true);
 	    setLinkable(true);
-	    setPortletId(LMSPortletKeys.MODULE);
+	    setPortletId(LMSPortletKeys.MODULES_ADMIN);
 	    setSearchable(true);
 	    setSelectable(true);
 	}
@@ -78,7 +78,7 @@ public class ModuleAssetRendererFactory extends BaseAssetRendererFactory<Module>
 	public PortletURL getURLAdd(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse, long classTypeId) {
 		log.debug("ModuleAssetRendererFactory::getURLAdd::"+classTypeId);
 	    PortletURL portletURL = _portal.getControlPanelPortletURL(liferayPortletRequest, getGroup(liferayPortletRequest),
-	    															LMSPortletKeys.MODULE, 0, 0, PortletRequest.RENDER_PHASE);
+	    															LMSPortletKeys.MODULES_ADMIN, 0, 0, PortletRequest.RENDER_PHASE);
 	    portletURL.setParameter("mvcRenderCommandName", "/modules/edit_module");
 
 	    return portletURL;
@@ -87,7 +87,7 @@ public class ModuleAssetRendererFactory extends BaseAssetRendererFactory<Module>
 	@Override
 	public PortletURL getURLView(LiferayPortletResponse liferayPortletResponse,WindowState windowState) {
 		log.debug("ModuleAssetRendererFactory::getURLView");
-	    LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.MODULE, PortletRequest.RENDER_PHASE);
+	    LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.MODULES_ADMIN, PortletRequest.RENDER_PHASE);
 
 	    try {
 	        liferayPortletURL.setWindowState(windowState);

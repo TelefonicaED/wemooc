@@ -69,7 +69,6 @@ public class PrerequisiteRelationLocalServiceImpl
 				try {
 					listPrerequisites.add(prerequisiteFactory.getPrerequisite(prerequisiteRelation));
 				} catch (PortalException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

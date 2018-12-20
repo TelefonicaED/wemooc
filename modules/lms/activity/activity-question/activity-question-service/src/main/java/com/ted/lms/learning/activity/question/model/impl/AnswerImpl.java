@@ -14,10 +14,13 @@
 
 package com.ted.lms.learning.activity.question.model.impl;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.LocalizationUtil;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
- * The extended model implementation for the Answer service. Represents a row in the &quot;LMS_Answer&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the Answer service. Represents a row in the &quot;qu_Answer&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
  * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.question.model.Answer} interface.
@@ -33,5 +36,20 @@ public class AnswerImpl extends AnswerBaseImpl {
 	 * Never reference this class directly. All methods that expect a answer model instance should use the {@link com.ted.lms.learning.activity.question.model.Answer} interface instead.
 	 */
 	public AnswerImpl() {
+	}
+	
+	@Override
+	public String getAnswerMapAsXML() {
+		return LocalizationUtil.updateLocalization(getAnswerMap(), StringPool.BLANK, "Answer",getDefaultLanguageId());
+	}
+	
+	@Override
+	public String getFeedbackCorrectMapAsXML() {
+		return LocalizationUtil.updateLocalization(getAnswerMap(), StringPool.BLANK, "FeedbackCorrect",getDefaultLanguageId());
+	}
+	
+	@Override
+	public String getFeedbackIncorrectMapAsXML() {
+		return LocalizationUtil.updateLocalization(getAnswerMap(), StringPool.BLANK, "FeedbackIncorrect",getDefaultLanguageId());
 	}
 }

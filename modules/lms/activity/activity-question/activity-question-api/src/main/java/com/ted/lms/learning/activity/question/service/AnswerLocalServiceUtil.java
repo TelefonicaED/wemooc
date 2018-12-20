@@ -54,6 +54,18 @@ public class AnswerLocalServiceUtil {
 		return getService().addAnswer(answer);
 	}
 
+	public static com.ted.lms.learning.activity.question.model.Answer addAnswer(
+		long questionId, long actId,
+		java.util.Map<java.util.Locale, String> answerMap,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
+		boolean correct,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService()
+				   .addAnswer(questionId, actId, answerMap, feedbackCorrectMap,
+			feedbackIncorrectMap, correct, serviceContext);
+	}
+
 	/**
 	* Creates a new answer with the primary key. Does not add the answer to the database.
 	*
@@ -240,6 +252,11 @@ public class AnswerLocalServiceUtil {
 		return getService().getAnswers(start, end);
 	}
 
+	public static java.util.List<com.ted.lms.learning.activity.question.model.Answer> getAnswersByQuestionId(
+		long questionId) {
+		return getService().getAnswersByQuestionId(questionId);
+	}
+
 	/**
 	* Returns all the answers matching the UUID and company.
 	*
@@ -312,6 +329,16 @@ public class AnswerLocalServiceUtil {
 	public static com.ted.lms.learning.activity.question.model.Answer updateAnswer(
 		com.ted.lms.learning.activity.question.model.Answer answer) {
 		return getService().updateAnswer(answer);
+	}
+
+	public static com.ted.lms.learning.activity.question.model.Answer updateAnswer(
+		long answerId, java.util.Map<java.util.Locale, String> answerMap,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
+		boolean correct) {
+		return getService()
+				   .updateAnswer(answerId, answerMap, feedbackCorrectMap,
+			feedbackIncorrectMap, correct);
 	}
 
 	public static AnswerLocalService getService() {

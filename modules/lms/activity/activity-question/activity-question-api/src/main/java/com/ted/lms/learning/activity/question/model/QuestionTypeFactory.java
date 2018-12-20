@@ -1,7 +1,7 @@
 package com.ted.lms.learning.activity.question.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import java.util.Locale;
 
 public interface QuestionTypeFactory {
@@ -18,5 +18,19 @@ public interface QuestionTypeFactory {
 	
 	public String getDescription(Locale locale);
 	
-	public String getIconCssClass();
+	public String getURLEditAnswers();
+	
+	public String getURLEditAnswer();
+	
+	public String getPortletId();
+	
+	public boolean getPenalize();
+	
+	public boolean isPartialCorrectAvailable();
+	
+	public int getMinNumAnswers();
+	public int getMinNumCorrectAnswers();
+	
+	public String getURLAddQuestion(LiferayPortletResponse liferayPortletResponse);
+	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse);
 }

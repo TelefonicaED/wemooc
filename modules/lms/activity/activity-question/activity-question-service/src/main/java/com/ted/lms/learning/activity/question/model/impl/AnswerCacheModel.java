@@ -64,7 +64,7 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -84,14 +84,12 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		sb.append(modifiedDate);
 		sb.append(", questionId=");
 		sb.append(questionId);
-		sb.append(", precedence=");
-		sb.append(precedence);
+		sb.append(", actId=");
+		sb.append(actId);
 		sb.append(", answer=");
 		sb.append(answer);
 		sb.append(", correct=");
 		sb.append(correct);
-		sb.append(", points=");
-		sb.append(points);
 		sb.append(", feedbackCorrect=");
 		sb.append(feedbackCorrect);
 		sb.append(", feedbackIncorrect=");
@@ -139,7 +137,7 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		}
 
 		answerImpl.setQuestionId(questionId);
-		answerImpl.setPrecedence(precedence);
+		answerImpl.setActId(actId);
 
 		if (answer == null) {
 			answerImpl.setAnswer("");
@@ -149,7 +147,6 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		}
 
 		answerImpl.setCorrect(correct);
-		answerImpl.setPoints(points);
 
 		if (feedbackCorrect == null) {
 			answerImpl.setFeedbackCorrect("");
@@ -187,12 +184,10 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 
 		questionId = objectInput.readLong();
 
-		precedence = objectInput.readLong();
+		actId = objectInput.readLong();
 		answer = objectInput.readUTF();
 
 		correct = objectInput.readBoolean();
-
-		points = objectInput.readBoolean();
 		feedbackCorrect = objectInput.readUTF();
 		feedbackIncorrect = objectInput.readUTF();
 	}
@@ -227,7 +222,7 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 
 		objectOutput.writeLong(questionId);
 
-		objectOutput.writeLong(precedence);
+		objectOutput.writeLong(actId);
 
 		if (answer == null) {
 			objectOutput.writeUTF("");
@@ -237,8 +232,6 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 		}
 
 		objectOutput.writeBoolean(correct);
-
-		objectOutput.writeBoolean(points);
 
 		if (feedbackCorrect == null) {
 			objectOutput.writeUTF("");
@@ -264,10 +257,9 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 	public long createDate;
 	public long modifiedDate;
 	public long questionId;
-	public long precedence;
+	public long actId;
 	public String answer;
 	public boolean correct;
-	public boolean points;
 	public String feedbackCorrect;
 	public String feedbackIncorrect;
 }

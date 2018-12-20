@@ -48,7 +48,7 @@ public class ModulesItemSelectorHelper {
 
 		uploadCriterionDesiredItemSelectorReturnTypes.add(new FileEntryItemSelectorReturnType());
 
-		PortletURL uploadURL = requestBackedPortletURLFactory.createActionURL(LMSPortletKeys.MODULE);
+		PortletURL uploadURL = requestBackedPortletURLFactory.createActionURL(LMSPortletKeys.MODULES_ADMIN);
 
 		uploadURL.setParameter(ActionRequest.ACTION_NAME, "/course/upload_image");
 
@@ -56,7 +56,7 @@ public class ModulesItemSelectorHelper {
 		long maxSize = LMSPrefsPropsValues.getModuleImageMaxSize(themeDisplay.getCompanyId());
 
 		UploadItemSelectorCriterion uploadItemSelectorCriterion = new UploadItemSelectorCriterion(
-				LMSPortletKeys.MODULE, uploadURL.toString(),
+				LMSPortletKeys.MODULES_ADMIN, uploadURL.toString(),
 				LanguageUtil.get(themeDisplay.getLocale(), "course-images"),
 				maxSize, extensions);
 

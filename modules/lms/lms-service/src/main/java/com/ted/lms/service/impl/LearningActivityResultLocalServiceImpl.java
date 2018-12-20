@@ -41,15 +41,23 @@ public class LearningActivityResultLocalServiceImpl
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.LearningActivityResultLocalServiceUtil} to access the learning activity result local service.
 	 */
 	
+	@Override
 	public List<LearningActivityResult> getRequiredLearningActivityResults(long groupId, long userId){
 		return learningActivityResultFinder.findRequiredLearningActivityResults(groupId, userId);
 	}
 	
+	@Override
 	public LearningActivityResult getLearningActivityResult(long actId, long userId) {
 		return learningActivityResultPersistence.fetchByActIdUserId(actId, userId);
 	}
 	
+	@Override
 	public int getRequiredLearningActivityResultsByModuleCount(long moduleId, long userId){
 		return learningActivityResultFinder.countRequiredLearningActivityResultsByModule(moduleId, userId);
+	}
+	
+	@Override
+	public int getLearningActivityCountByActId(long actId) {
+		return learningActivityResultPersistence.countByActId(actId);
 	}
 }

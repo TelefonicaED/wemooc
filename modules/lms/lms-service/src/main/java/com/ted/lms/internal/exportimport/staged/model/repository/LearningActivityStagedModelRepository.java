@@ -42,10 +42,13 @@ public class LearningActivityStagedModelRepository
 			serviceContext.setUuid(learningActivity.getUuid());
 		}
 		
-		return learningActivityLocalService.addLearningActivity(portletDataContext.getScopeGroupId(), userId, learningActivity.getModuleId(), 
+   	 serviceContext.setUserId(userId);
+     serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+		
+		return learningActivityLocalService.addLearningActivity(learningActivity.getModuleId(), 
 				learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), learningActivity.getStartDate(), 
 				learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), learningActivity.getPriority(), 
-				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrect(), learningActivity.getFeedbackNoCorrect(), 
+				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), learningActivity.getFeedbackNoCorrectMap(), 
 				learningActivity.getRequired(), learningActivity.getCommentsActivated(), serviceContext);
 
 	}
@@ -168,7 +171,7 @@ public class LearningActivityStagedModelRepository
 		return  learningActivityLocalService.updateLearningActivity(learningActivity.getActId(), learningActivity.getModuleId(), 
 				learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), learningActivity.getStartDate(), 
 				learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), learningActivity.getPriority(), 
-				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrect(), learningActivity.getFeedbackNoCorrect(), 
+				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), learningActivity.getFeedbackNoCorrectMap(), 
 				learningActivity.getRequired(), learningActivity.getCommentsActivated(), serviceContext);
 	}
 

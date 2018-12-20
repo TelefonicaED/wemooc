@@ -47,13 +47,13 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	@Override
 	public String getName(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.online");
+		return LanguageUtil.get(resourceBundle, "learning-activity.online");
 	}
 	
 	@Override
 	public String getDescription(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.online.helpmessage");
+		return LanguageUtil.get(resourceBundle, "learning-activity.online.help-message");
 	}
 	
 	@Override

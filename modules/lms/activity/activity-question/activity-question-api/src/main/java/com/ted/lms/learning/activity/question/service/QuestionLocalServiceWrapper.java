@@ -33,6 +33,15 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 		_questionLocalService = questionLocalService;
 	}
 
+	@Override
+	public com.ted.lms.learning.activity.question.model.Question addQuestion(
+		long actId, java.util.Map<java.util.Locale, String> questionTextMap,
+		long questionType, boolean penalize,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _questionLocalService.addQuestion(actId, questionTextMap,
+			questionType, penalize, serviceContext);
+	}
+
 	/**
 	* Adds the question to the database. Also notifies the appropriate model listeners.
 	*
@@ -321,6 +330,21 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 	@Override
 	public int getQuestionsCount() {
 		return _questionLocalService.getQuestionsCount();
+	}
+
+	@Override
+	public void saveQuestions(javax.portlet.ActionRequest actionRequest,
+		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+		_questionLocalService.saveQuestions(actionRequest, actId);
+	}
+
+	@Override
+	public com.ted.lms.learning.activity.question.model.Question updateQuestion(
+		long questionId,
+		java.util.Map<java.util.Locale, String> questionTextMap,
+		boolean penalize) {
+		return _questionLocalService.updateQuestion(questionId,
+			questionTextMap, penalize);
 	}
 
 	/**

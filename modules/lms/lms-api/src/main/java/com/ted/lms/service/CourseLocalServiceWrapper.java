@@ -489,11 +489,15 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	*
 	* @param courseId identificador del curso
 	* @param welcome si se habilita el mensaje de bienvenida
-	* @param welcomeSubjectMap asunto del mensaje de bienvenida
-	* @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	* @param welcomeSubjectMap asunto del mensaje de bienvenida con las traducciones
+	* @param welcomeMsgMap cuerpo del mensaje de bienvenida con las traducciones
 	* @param goodbye si se habilita el mensaje de despedida
-	* @param goodbyeSubjectMap asunto del mensaje de despedida
-	* @param goodbyeMsgMap cuerpo del mensaje de despedida
+	* @param goodbyeSubjectMap asunto del mensaje de despedida con las traducciones
+	* @param goodbyeMsgMap cuerpo del mensaje de despedida con las traducciones
+	* @param deniedInscription si se habilita el mensaje de denegaci�n de la inscripci�n
+	* @param deniedInscriptionSubjectMap asunto del mensaje de denegaci�n de la inscripci�n con las traducciones
+	* @param deniedInscriptionMsgMap cuerpod el mensaje de denegaci�n de la inscripci�n con las traducciones
+	* @param status estado del curso
 	* @param serviceContext contexto de la modificación del curso
 	* @return curso modificado
 	* @throws NoSuchCourseException

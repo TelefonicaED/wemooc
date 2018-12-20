@@ -2827,6 +2827,2739 @@ public class ModulePersistenceImpl extends BasePersistenceImpl<Module>
 	}
 
 	private static final String _FINDER_COLUMN_GROUPID_GROUPID_2 = "module.groupId = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDSTATUS =
+		new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, ModuleImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupIdStatus",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDSTATUS =
+		new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, ModuleImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupIdStatus",
+			new String[] { Long.class.getName(), Integer.class.getName() },
+			ModuleModelImpl.GROUPID_COLUMN_BITMASK |
+			ModuleModelImpl.STATUS_COLUMN_BITMASK |
+			ModuleModelImpl.ORDER_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_GROUPIDSTATUS = new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByGroupIdStatus",
+			new String[] { Long.class.getName(), Integer.class.getName() });
+
+	/**
+	 * Returns all the modules where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdStatus(long groupId, int status) {
+		return findByGroupIdStatus(groupId, status, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the modules where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @return the range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end) {
+		return findByGroupIdStatus(groupId, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end, OrderByComparator<Module> orderByComparator) {
+		return findByGroupIdStatus(groupId, status, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end, OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDSTATUS;
+			finderArgs = new Object[] { groupId, status };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDSTATUS;
+			finderArgs = new Object[] {
+					groupId, status,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<Module> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Module>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Module module : list) {
+					if ((groupId != module.getGroupId()) ||
+							(status != module.getStatus())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_MODULE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDSTATUS_STATUS_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(status);
+
+				if (!pagination) {
+					list = (List<Module>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Module>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first module in the ordered set where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module
+	 * @throws NoSuchModuleException if a matching module could not be found
+	 */
+	@Override
+	public Module findByGroupIdStatus_First(long groupId, int status,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = fetchByGroupIdStatus_First(groupId, status,
+				orderByComparator);
+
+		if (module != null) {
+			return module;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", status=");
+		msg.append(status);
+
+		msg.append("}");
+
+		throw new NoSuchModuleException(msg.toString());
+	}
+
+	/**
+	 * Returns the first module in the ordered set where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module, or <code>null</code> if a matching module could not be found
+	 */
+	@Override
+	public Module fetchByGroupIdStatus_First(long groupId, int status,
+		OrderByComparator<Module> orderByComparator) {
+		List<Module> list = findByGroupIdStatus(groupId, status, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last module in the ordered set where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module
+	 * @throws NoSuchModuleException if a matching module could not be found
+	 */
+	@Override
+	public Module findByGroupIdStatus_Last(long groupId, int status,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = fetchByGroupIdStatus_Last(groupId, status,
+				orderByComparator);
+
+		if (module != null) {
+			return module;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", status=");
+		msg.append(status);
+
+		msg.append("}");
+
+		throw new NoSuchModuleException(msg.toString());
+	}
+
+	/**
+	 * Returns the last module in the ordered set where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module, or <code>null</code> if a matching module could not be found
+	 */
+	@Override
+	public Module fetchByGroupIdStatus_Last(long groupId, int status,
+		OrderByComparator<Module> orderByComparator) {
+		int count = countByGroupIdStatus(groupId, status);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Module> list = findByGroupIdStatus(groupId, status, count - 1,
+				count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the modules before and after the current module in the ordered set where groupId = &#63; and status = &#63;.
+	 *
+	 * @param moduleId the primary key of the current module
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module
+	 * @throws NoSuchModuleException if a module with the primary key could not be found
+	 */
+	@Override
+	public Module[] findByGroupIdStatus_PrevAndNext(long moduleId,
+		long groupId, int status, OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = findByPrimaryKey(moduleId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Module[] array = new ModuleImpl[3];
+
+			array[0] = getByGroupIdStatus_PrevAndNext(session, module, groupId,
+					status, orderByComparator, true);
+
+			array[1] = module;
+
+			array[2] = getByGroupIdStatus_PrevAndNext(session, module, groupId,
+					status, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Module getByGroupIdStatus_PrevAndNext(Session session,
+		Module module, long groupId, int status,
+		OrderByComparator<Module> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_MODULE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_STATUS_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(ModuleModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(module);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Module> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns all the modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdStatus(long groupId, int status) {
+		return filterFindByGroupIdStatus(groupId, status, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @return the range of matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdStatus(long groupId, int status,
+		int start, int end) {
+		return filterFindByGroupIdStatus(groupId, status, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and status = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdStatus(long groupId, int status,
+		int start, int end, OrderByComparator<Module> orderByComparator) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdStatus(groupId, status, start, end,
+				orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_TABLE,
+					orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(ModuleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, ModuleImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, ModuleImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(status);
+
+			return (List<Module>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param moduleId the primary key of the current module
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module
+	 * @throws NoSuchModuleException if a module with the primary key could not be found
+	 */
+	@Override
+	public Module[] filterFindByGroupIdStatus_PrevAndNext(long moduleId,
+		long groupId, int status, OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdStatus_PrevAndNext(moduleId, groupId, status,
+				orderByComparator);
+		}
+
+		Module module = findByPrimaryKey(moduleId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Module[] array = new ModuleImpl[3];
+
+			array[0] = filterGetByGroupIdStatus_PrevAndNext(session, module,
+					groupId, status, orderByComparator, true);
+
+			array[1] = module;
+
+			array[2] = filterGetByGroupIdStatus_PrevAndNext(session, module,
+					groupId, status, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Module filterGetByGroupIdStatus_PrevAndNext(Session session,
+		Module module, long groupId, int status,
+		OrderByComparator<Module> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_STATUS_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(ModuleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, ModuleImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, ModuleImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(status);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(module);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Module> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the modules where groupId = &#63; and status = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 */
+	@Override
+	public void removeByGroupIdStatus(long groupId, int status) {
+		for (Module module : findByGroupIdStatus(groupId, status,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(module);
+		}
+	}
+
+	/**
+	 * Returns the number of modules where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the number of matching modules
+	 */
+	@Override
+	public int countByGroupIdStatus(long groupId, int status) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_GROUPIDSTATUS;
+
+		Object[] finderArgs = new Object[] { groupId, status };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_MODULE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDSTATUS_STATUS_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(status);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Returns the number of modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param status the status
+	 * @return the number of matching modules that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupIdStatus(long groupId, int status) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupIdStatus(groupId, status);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_MODULE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDSTATUS_STATUS_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME,
+				com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(status);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	private static final String _FINDER_COLUMN_GROUPIDSTATUS_GROUPID_2 = "module.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_GROUPIDSTATUS_STATUS_2 = "module.status = ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDNEXTMODULES =
+		new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, ModuleImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByGroupIdNextModules",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_COUNT_BY_GROUPIDNEXTMODULES =
+		new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"countByGroupIdNextModules",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the modules where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdNextModules(long groupId, long order) {
+		return findByGroupIdNextModules(groupId, order, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the modules where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @return the range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdNextModules(long groupId, long order,
+		int start, int end) {
+		return findByGroupIdNextModules(groupId, order, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdNextModules(long groupId, long order,
+		int start, int end, OrderByComparator<Module> orderByComparator) {
+		return findByGroupIdNextModules(groupId, order, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdNextModules(long groupId, long order,
+		int start, int end, OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDNEXTMODULES;
+		finderArgs = new Object[] { groupId, order, start, end, orderByComparator };
+
+		List<Module> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Module>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Module module : list) {
+					if ((groupId != module.getGroupId()) ||
+							(order >= module.getOrder())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_MODULE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(order);
+
+				if (!pagination) {
+					list = (List<Module>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Module>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module
+	 * @throws NoSuchModuleException if a matching module could not be found
+	 */
+	@Override
+	public Module findByGroupIdNextModules_First(long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = fetchByGroupIdNextModules_First(groupId, order,
+				orderByComparator);
+
+		if (module != null) {
+			return module;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", order=");
+		msg.append(order);
+
+		msg.append("}");
+
+		throw new NoSuchModuleException(msg.toString());
+	}
+
+	/**
+	 * Returns the first module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module, or <code>null</code> if a matching module could not be found
+	 */
+	@Override
+	public Module fetchByGroupIdNextModules_First(long groupId, long order,
+		OrderByComparator<Module> orderByComparator) {
+		List<Module> list = findByGroupIdNextModules(groupId, order, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module
+	 * @throws NoSuchModuleException if a matching module could not be found
+	 */
+	@Override
+	public Module findByGroupIdNextModules_Last(long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = fetchByGroupIdNextModules_Last(groupId, order,
+				orderByComparator);
+
+		if (module != null) {
+			return module;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", order=");
+		msg.append(order);
+
+		msg.append("}");
+
+		throw new NoSuchModuleException(msg.toString());
+	}
+
+	/**
+	 * Returns the last module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module, or <code>null</code> if a matching module could not be found
+	 */
+	@Override
+	public Module fetchByGroupIdNextModules_Last(long groupId, long order,
+		OrderByComparator<Module> orderByComparator) {
+		int count = countByGroupIdNextModules(groupId, order);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Module> list = findByGroupIdNextModules(groupId, order, count - 1,
+				count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the modules before and after the current module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param moduleId the primary key of the current module
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module
+	 * @throws NoSuchModuleException if a module with the primary key could not be found
+	 */
+	@Override
+	public Module[] findByGroupIdNextModules_PrevAndNext(long moduleId,
+		long groupId, long order, OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = findByPrimaryKey(moduleId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Module[] array = new ModuleImpl[3];
+
+			array[0] = getByGroupIdNextModules_PrevAndNext(session, module,
+					groupId, order, orderByComparator, true);
+
+			array[1] = module;
+
+			array[2] = getByGroupIdNextModules_PrevAndNext(session, module,
+					groupId, order, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Module getByGroupIdNextModules_PrevAndNext(Session session,
+		Module module, long groupId, long order,
+		OrderByComparator<Module> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_MODULE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(ModuleModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(order);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(module);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Module> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns all the modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdNextModules(long groupId, long order) {
+		return filterFindByGroupIdNextModules(groupId, order,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @return the range of matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order, int start, int end) {
+		return filterFindByGroupIdNextModules(groupId, order, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdNextModules(groupId, order, start, end,
+				orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2_SQL);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_TABLE,
+					orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(ModuleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, ModuleImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, ModuleImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(order);
+
+			return (List<Module>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param moduleId the primary key of the current module
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module
+	 * @throws NoSuchModuleException if a module with the primary key could not be found
+	 */
+	@Override
+	public Module[] filterFindByGroupIdNextModules_PrevAndNext(long moduleId,
+		long groupId, long order, OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdNextModules_PrevAndNext(moduleId, groupId,
+				order, orderByComparator);
+		}
+
+		Module module = findByPrimaryKey(moduleId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Module[] array = new ModuleImpl[3];
+
+			array[0] = filterGetByGroupIdNextModules_PrevAndNext(session,
+					module, groupId, order, orderByComparator, true);
+
+			array[1] = module;
+
+			array[2] = filterGetByGroupIdNextModules_PrevAndNext(session,
+					module, groupId, order, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Module filterGetByGroupIdNextModules_PrevAndNext(
+		Session session, Module module, long groupId, long order,
+		OrderByComparator<Module> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2_SQL);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(ModuleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, ModuleImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, ModuleImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(order);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(module);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Module> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the modules where groupId = &#63; and order &gt; &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 */
+	@Override
+	public void removeByGroupIdNextModules(long groupId, long order) {
+		for (Module module : findByGroupIdNextModules(groupId, order,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(module);
+		}
+	}
+
+	/**
+	 * Returns the number of modules where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the number of matching modules
+	 */
+	@Override
+	public int countByGroupIdNextModules(long groupId, long order) {
+		FinderPath finderPath = FINDER_PATH_WITH_PAGINATION_COUNT_BY_GROUPIDNEXTMODULES;
+
+		Object[] finderArgs = new Object[] { groupId, order };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_MODULE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(order);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Returns the number of modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the number of matching modules that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupIdNextModules(long groupId, long order) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupIdNextModules(groupId, order);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_MODULE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2_SQL);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME,
+				com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(order);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	private static final String _FINDER_COLUMN_GROUPIDNEXTMODULES_GROUPID_2 = "module.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2 = "module.order > ?";
+	private static final String _FINDER_COLUMN_GROUPIDNEXTMODULES_ORDER_2_SQL = "module.order_ > ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDPREVIOUSMODULES =
+		new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, ModuleImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByGroupIdPreviousModules",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_COUNT_BY_GROUPIDPREVIOUSMODULES =
+		new FinderPath(ModuleModelImpl.ENTITY_CACHE_ENABLED,
+			ModuleModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"countByGroupIdPreviousModules",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the modules where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdPreviousModules(long groupId, long order) {
+		return findByGroupIdPreviousModules(groupId, order, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the modules where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @return the range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdPreviousModules(long groupId, long order,
+		int start, int end) {
+		return findByGroupIdPreviousModules(groupId, order, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdPreviousModules(long groupId, long order,
+		int start, int end, OrderByComparator<Module> orderByComparator) {
+		return findByGroupIdPreviousModules(groupId, order, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching modules
+	 */
+	@Override
+	public List<Module> findByGroupIdPreviousModules(long groupId, long order,
+		int start, int end, OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDPREVIOUSMODULES;
+		finderArgs = new Object[] { groupId, order, start, end, orderByComparator };
+
+		List<Module> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<Module>)finderCache.getResult(finderPath, finderArgs,
+					this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (Module module : list) {
+					if ((groupId != module.getGroupId()) ||
+							(order <= module.getOrder())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_MODULE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(order);
+
+				if (!pagination) {
+					list = (List<Module>)QueryUtil.list(q, getDialect(), start,
+							end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<Module>)QueryUtil.list(q, getDialect(), start,
+							end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module
+	 * @throws NoSuchModuleException if a matching module could not be found
+	 */
+	@Override
+	public Module findByGroupIdPreviousModules_First(long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = fetchByGroupIdPreviousModules_First(groupId, order,
+				orderByComparator);
+
+		if (module != null) {
+			return module;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", order=");
+		msg.append(order);
+
+		msg.append("}");
+
+		throw new NoSuchModuleException(msg.toString());
+	}
+
+	/**
+	 * Returns the first module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module, or <code>null</code> if a matching module could not be found
+	 */
+	@Override
+	public Module fetchByGroupIdPreviousModules_First(long groupId, long order,
+		OrderByComparator<Module> orderByComparator) {
+		List<Module> list = findByGroupIdPreviousModules(groupId, order, 0, 1,
+				orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module
+	 * @throws NoSuchModuleException if a matching module could not be found
+	 */
+	@Override
+	public Module findByGroupIdPreviousModules_Last(long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = fetchByGroupIdPreviousModules_Last(groupId, order,
+				orderByComparator);
+
+		if (module != null) {
+			return module;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", order=");
+		msg.append(order);
+
+		msg.append("}");
+
+		throw new NoSuchModuleException(msg.toString());
+	}
+
+	/**
+	 * Returns the last module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module, or <code>null</code> if a matching module could not be found
+	 */
+	@Override
+	public Module fetchByGroupIdPreviousModules_Last(long groupId, long order,
+		OrderByComparator<Module> orderByComparator) {
+		int count = countByGroupIdPreviousModules(groupId, order);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<Module> list = findByGroupIdPreviousModules(groupId, order,
+				count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the modules before and after the current module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param moduleId the primary key of the current module
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module
+	 * @throws NoSuchModuleException if a module with the primary key could not be found
+	 */
+	@Override
+	public Module[] findByGroupIdPreviousModules_PrevAndNext(long moduleId,
+		long groupId, long order, OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		Module module = findByPrimaryKey(moduleId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Module[] array = new ModuleImpl[3];
+
+			array[0] = getByGroupIdPreviousModules_PrevAndNext(session, module,
+					groupId, order, orderByComparator, true);
+
+			array[1] = module;
+
+			array[2] = getByGroupIdPreviousModules_PrevAndNext(session, module,
+					groupId, order, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Module getByGroupIdPreviousModules_PrevAndNext(Session session,
+		Module module, long groupId, long order,
+		OrderByComparator<Module> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_MODULE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(ModuleModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(order);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(module);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Module> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns all the modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdPreviousModules(long groupId,
+		long order) {
+		return filterFindByGroupIdPreviousModules(groupId, order,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @return the range of matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdPreviousModules(long groupId,
+		long order, int start, int end) {
+		return filterFindByGroupIdPreviousModules(groupId, order, start, end,
+			null);
+	}
+
+	/**
+	 * Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param start the lower bound of the range of modules
+	 * @param end the upper bound of the range of modules (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching modules that the user has permission to view
+	 */
+	@Override
+	public List<Module> filterFindByGroupIdPreviousModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdPreviousModules(groupId, order, start, end,
+				orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2_SQL);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_TABLE,
+					orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(ModuleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, ModuleImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, ModuleImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(order);
+
+			return (List<Module>)QueryUtil.list(q, getDialect(), start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param moduleId the primary key of the current module
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module
+	 * @throws NoSuchModuleException if a module with the primary key could not be found
+	 */
+	@Override
+	public Module[] filterFindByGroupIdPreviousModules_PrevAndNext(
+		long moduleId, long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdPreviousModules_PrevAndNext(moduleId, groupId,
+				order, orderByComparator);
+		}
+
+		Module module = findByPrimaryKey(moduleId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			Module[] array = new ModuleImpl[3];
+
+			array[0] = filterGetByGroupIdPreviousModules_PrevAndNext(session,
+					module, groupId, order, orderByComparator, true);
+
+			array[1] = module;
+
+			array[2] = filterGetByGroupIdPreviousModules_PrevAndNext(session,
+					module, groupId, order, orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected Module filterGetByGroupIdPreviousModules_PrevAndNext(
+		Session session, Module module, long groupId, long order,
+		OrderByComparator<Module> orderByComparator, boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2_SQL);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_MODULE_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(ModuleModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(ModuleModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, ModuleImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, ModuleImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(order);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(module);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<Module> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the modules where groupId = &#63; and order &lt; &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 */
+	@Override
+	public void removeByGroupIdPreviousModules(long groupId, long order) {
+		for (Module module : findByGroupIdPreviousModules(groupId, order,
+				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(module);
+		}
+	}
+
+	/**
+	 * Returns the number of modules where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the number of matching modules
+	 */
+	@Override
+	public int countByGroupIdPreviousModules(long groupId, long order) {
+		FinderPath finderPath = FINDER_PATH_WITH_PAGINATION_COUNT_BY_GROUPIDPREVIOUSMODULES;
+
+		Object[] finderArgs = new Object[] { groupId, order };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_MODULE_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(order);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Returns the number of modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param order the order
+	 * @return the number of matching modules that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupIdPreviousModules(long groupId, long order) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupIdPreviousModules(groupId, order);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_MODULE_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2_SQL);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				Module.class.getName(), _FILTER_ENTITY_TABLE_FILTER_PK_COLUMN,
+				groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME,
+				com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(order);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	private static final String _FINDER_COLUMN_GROUPIDPREVIOUSMODULES_GROUPID_2 = "module.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2 = "module.order < ?";
+	private static final String _FINDER_COLUMN_GROUPIDPREVIOUSMODULES_ORDER_2_SQL =
+		"module.order_ < ?";
 
 	public ModulePersistenceImpl() {
 		setModelClass(Module.class);
@@ -3172,6 +5905,14 @@ public class ModulePersistenceImpl extends BasePersistenceImpl<Module>
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
 				args);
 
+			args = new Object[] {
+					moduleModelImpl.getGroupId(), moduleModelImpl.getStatus()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPIDSTATUS, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDSTATUS,
+				args);
+
 			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
 				FINDER_ARGS_EMPTY);
@@ -3245,6 +5986,29 @@ public class ModulePersistenceImpl extends BasePersistenceImpl<Module>
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPID, args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
+					args);
+			}
+
+			if ((moduleModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDSTATUS.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						moduleModelImpl.getOriginalGroupId(),
+						moduleModelImpl.getOriginalStatus()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPIDSTATUS,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDSTATUS,
+					args);
+
+				args = new Object[] {
+						moduleModelImpl.getGroupId(),
+						moduleModelImpl.getStatus()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPIDSTATUS,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDSTATUS,
 					args);
 			}
 		}

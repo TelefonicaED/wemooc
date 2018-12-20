@@ -158,7 +158,7 @@ public class CoursesManagementToolbarDisplayContext {
 		public ViewTypeItemList getViewTypes() {
 			PortletURL portletURL = liferayPortletResponse.createRenderURL();
 
-			portletURL.setParameter("mvcRenderCommandName", "/modules/view");
+			portletURL.setParameter("mvcRenderCommandName", "/courses/view");
 
 			int delta = ParamUtil.getInteger(request, SearchContainer.DEFAULT_DELTA_PARAM);
 

@@ -2,19 +2,11 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.PortletBag;
-import com.liferay.portal.kernel.portlet.PortletBagPool;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.util.LMSPrefsPropsValues;
-
 import java.util.Locale;
-import java.util.ResourceBundle;
-
 import javax.portlet.ActionRequest;
 
 /**
@@ -56,30 +48,13 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		return "activity";
 	}
 	
-/*	@Override
-	public boolean isCategorizable() {
-		return false;
-	}*/
-
 	@Override
 	public String getName(Locale locale) {
-		String modelResourceNamePrefix =
-			ResourceActionsUtil.getModelResourceNamePrefix();
+		String modelResourceNamePrefix = ResourceActionsUtil.getModelResourceNamePrefix();
 
 		String key = modelResourceNamePrefix.concat(getClassName());
 
 		String value = LanguageUtil.get(locale, key, null);
-
-		if (value == null) {
-			PortletBag portletBag = PortletBagPool.get(getPortletId());
-
-			ResourceBundle resourceBundle = portletBag.getResourceBundle(
-				locale);
-
-			if (resourceBundle != null) {
-				value = ResourceBundleUtil.getString(resourceBundle, key);
-			}
-		}
 
 		if (value == null) {
 			value = getClassName();
@@ -92,15 +67,6 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	public String getDescription(Locale locale) {
 		return "";
 	}
-
-/*	@Override
-	public PortletURL getURLView(
-			LiferayPortletResponse liferayPortletResponse,
-			WindowState windowState)
-		throws PortalException {
-
-		return null;
-	}*/
 
 	@Override
 	public boolean hasAddPermission(
@@ -117,14 +83,8 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	
 	@Override
 	public boolean isActive(long companyId, long groupId) {
-		if (Validator.isNull(getPortletId())) {
-			return true;
-		}
+		return true;
 
-		//Comprobamos que esté activa la actividad para esa companyId
-		boolean active = LMSPrefsPropsValues.getLearningActivityType(companyId, getType());
-		
-		return active;
 	}
 	
 	@Override
@@ -135,6 +95,11 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	@Override
 	public double getDefaultScore() {
 		return DEFAULT_SCORE;
+	}
+	
+	@Override
+	public String getScoreConfigurableProperty() {
+		return "puntuation-passed";
 	}
 	
 	@Override

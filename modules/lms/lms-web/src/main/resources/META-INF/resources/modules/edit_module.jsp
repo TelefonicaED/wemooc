@@ -28,7 +28,6 @@
 <aui:form action="<%=editModuleURL%>" enctype="multipart/form-data" method="post" name="fm" >
 
 	<aui:input name="<%= Constants.CMD %>" value="${cmd }" type="hidden" />
-	<aui:input name="redirect" type="hidden" value="${redirect}" />
 	<aui:input name="moduleId" type="hidden" value="${moduleId}" />
 	<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
 
@@ -145,7 +144,5 @@
 	</div>
 	<aui:button-row>
 		<aui:button name="saveButton" type="submit" value="save" />
-
-		<aui:button href="${redirect}" name="cancelButton" type="cancel" />
 	</aui:button-row>
 </aui:form>

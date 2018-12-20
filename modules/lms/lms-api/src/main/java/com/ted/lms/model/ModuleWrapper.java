@@ -367,6 +367,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
+	public String getEndDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone) {
+		return _module.getEndDateFormat(locale, timeZone);
+	}
+
+	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _module.getExpandoBridge();
 	}
@@ -515,6 +521,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public java.util.Calendar getStartDateCalendar() {
 		return _module.getStartDateCalendar();
+	}
+
+	@Override
+	public String getStartDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone) {
+		return _module.getStartDateFormat(locale, timeZone);
 	}
 
 	/**
@@ -676,6 +688,27 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		return _module.getTrashHandler();
 	}
 
+	@Override
+	public String getURLEdit(
+		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
+		return _module.getURLEdit(liferayPortletRequest);
+	}
+
+	@Override
+	public String getURLNewActivity(
+		com.liferay.portal.kernel.portlet.PortletLayoutFinder activityPortletLayoutFinder,
+		javax.portlet.RenderRequest renderRequest,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
+		return _module.getURLNewActivity(activityPortletLayoutFinder,
+			renderRequest, themeDisplay);
+	}
+
+	@Override
+	public String getURLView(
+		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
+		return _module.getURLView(liferayPortletRequest);
+	}
+
 	/**
 	* Returns the user ID of this module.
 	*
@@ -819,6 +852,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public boolean isInTrashImplicitly() {
 		return _module.isInTrashImplicitly();
+	}
+
+	@Override
+	public boolean isLocked(long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker) {
+		return _module.isLocked(userId, permissionChecker);
 	}
 
 	@Override

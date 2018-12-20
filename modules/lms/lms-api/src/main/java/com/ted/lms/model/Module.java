@@ -81,4 +81,24 @@ public interface Module extends ModuleModel, PersistedModel {
 	public java.util.Calendar getEndDateCalendar();
 
 	public void setImagesFolderId(long imagesFolderId);
+
+	public boolean isLocked(long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker);
+
+	public String getURLView(
+		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest);
+
+	public String getURLEdit(
+		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest);
+
+	public String getURLNewActivity(
+		com.liferay.portal.kernel.portlet.PortletLayoutFinder activityPortletLayoutFinder,
+		javax.portlet.RenderRequest renderRequest,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
+
+	public String getStartDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone);
+
+	public String getEndDateFormat(java.util.Locale locale,
+		java.util.TimeZone timeZone);
 }

@@ -19,6 +19,10 @@ public class LMSPrefsPropsValues {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.MODULE_COMMENTS_ENABLED, LMSPropsValues.MODULE_COMMENTS_ENABLED);
 	}
 	
+	public static boolean getLearningActivityCommentsEnabled(long companyId) {
+		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_COMMENTS_ENABLED, LMSPropsValues.LEARNING_ACTIVITY_COMMENTS_ENABLED);
+	}
+	
 	public static boolean getCourseAddTeacherRoleToCreator(long companyId) {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.COURSE_ADD_TEACHER_ROLE_TO_CREATOR, LMSPropsValues.COURSE_ADD_TEACHER_ROLE_TO_CREATOR);
 	}
@@ -65,6 +69,14 @@ public class LMSPrefsPropsValues {
 	
 	public static String[] getPrerequisitesOfModule(long companyId){
 		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.PREREQUISITES_MODULE, StringPool.COMMA, LMSPropsValues.PREREQUISITES_MODULE);
+	}
+	
+	public static String[] getPrerequisitesOfLearningActivity(long companyId){
+		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.PREREQUISITES_LEARNING_ACTIVITY, StringPool.COMMA, LMSPropsValues.PREREQUISITES_LEARNING_ACTIVITY);
+	}
+	
+	public static boolean getLearningActivityChangeVisibility(long companyId) {
+		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_CHANGE_VISIBILITY, LMSPropsValues.LEARNING_ACTIVITY_CHANGE_VISIBILITY);
 	}
 	
 }

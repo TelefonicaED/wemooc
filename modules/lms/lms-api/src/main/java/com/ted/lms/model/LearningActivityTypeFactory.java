@@ -40,6 +40,7 @@ public interface LearningActivityTypeFactory {
 	//public boolean isCategorizable();
 	public boolean isScoreConfigurable();
 	public double getDefaultScore();
+	public String getScoreConfigurableProperty();
 	public boolean isTriesConfigurable();
 	public int getDefaultTries();
 	

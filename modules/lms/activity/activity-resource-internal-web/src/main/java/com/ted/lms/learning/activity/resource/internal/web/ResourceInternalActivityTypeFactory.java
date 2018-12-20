@@ -56,13 +56,13 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	@Override
 	public String getName(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.internal");
+		return LanguageUtil.get(resourceBundle, "learning-activity.internal");
 	}
 	
 	@Override
 	public String getDescription(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.internal.helpmessage");
+		return LanguageUtil.get(resourceBundle, "learning-activity.internal.help-message");
 	}
 	
 	@Override

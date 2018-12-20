@@ -78,6 +78,7 @@ public interface ModuleLocalService extends BaseLocalService,
 		ImageSelector smallImageImageSelector, long moduleEvalId,
 		ServiceContext serviceContext) throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public Module addModule(long userId, Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, Date startDate, Date endDate,
 		long allowedTime, ImageSelector smallImageImageSelector,
@@ -289,6 +290,9 @@ public interface ModuleLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getModulesCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Module getNextModule(Module module) throws PortalException;
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -301,12 +305,25 @@ public interface ModuleLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Module getPreviousModule(Module module) throws PortalException;
+
+	public Module moveDownModule(long moduleId, ServiceContext serviceContext)
+		throws PortalException;
+
 	public Module moveModuleToTrash(long userId, long moduleId)
 		throws PortalException;
 
 	@Indexable(type = IndexableType.REINDEX)
 	public Module moveModuleToTrash(long userId, Module module)
 		throws PortalException;
+
+	public Module moveUpModule(long moduleId, ServiceContext serviceContext)
+		throws PortalException;
+
+	public void updateAsset(long userId, Module module,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds, Double priority) throws PortalException;
 
 	public Module updateModule(long userId, long moduleId,
 		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
@@ -319,6 +336,7 @@ public interface ModuleLocalService extends BaseLocalService,
 		String moduleExtraData, ServiceContext serviceContext)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public Module updateModule(long userId, long moduleId,
 		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 		Date startDate, Date endDate, long allowedTime,

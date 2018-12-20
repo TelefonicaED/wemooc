@@ -86,13 +86,13 @@
 		<field name="startDate" type="Date" />
 		<field name="endDate" type="Date" />
 		<field name="tries" type="int" />
-		<field name="passPuntuation" type="int" />
+		<field name="passPuntuation" type="double" />
 		<field name="priority" type="long" />
 		<field name="extraContent" type="String">
 			<hint name="max-length">500000</hint>
 		</field>
-		<field name="feedbackCorrect" type="String" />
-		<field name="feedbackNoCorrect" type="String" />
+		<field localized="true" name="feedbackCorrect" type="String" />
+		<field localized="true" name="feedbackNoCorrect" type="String" />
 		<field name="required" type="boolean" />
 		<field name="commentsActivated" type="boolean" />
 		<field name="status" type="int" />

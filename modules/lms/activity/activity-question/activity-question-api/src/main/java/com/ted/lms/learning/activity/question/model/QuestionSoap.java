@@ -43,13 +43,11 @@ public class QuestionSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setActId(model.getActId());
-		soapModel.setTitle(model.getTitle());
 		soapModel.setText(model.getText());
 		soapModel.setQuestionType(model.getQuestionType());
 		soapModel.setActive(model.isActive());
 		soapModel.setWeight(model.getWeight());
 		soapModel.setPenalize(model.isPenalize());
-		soapModel.setOrderedAnswers(model.isOrderedAnswers());
 		soapModel.setExtraContent(model.getExtraContent());
 
 		return soapModel;
@@ -175,14 +173,6 @@ public class QuestionSoap implements Serializable {
 		_actId = actId;
 	}
 
-	public String getTitle() {
-		return _title;
-	}
-
-	public void setTitle(String title) {
-		_title = title;
-	}
-
 	public String getText() {
 		return _text;
 	}
@@ -231,18 +221,6 @@ public class QuestionSoap implements Serializable {
 		_penalize = penalize;
 	}
 
-	public boolean getOrderedAnswers() {
-		return _orderedAnswers;
-	}
-
-	public boolean isOrderedAnswers() {
-		return _orderedAnswers;
-	}
-
-	public void setOrderedAnswers(boolean orderedAnswers) {
-		_orderedAnswers = orderedAnswers;
-	}
-
 	public String getExtraContent() {
 		return _extraContent;
 	}
@@ -260,12 +238,10 @@ public class QuestionSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private long _actId;
-	private String _title;
 	private String _text;
 	private long _questionType;
 	private boolean _active;
 	private long _weight;
 	private boolean _penalize;
-	private boolean _orderedAnswers;
 	private String _extraContent;
 }

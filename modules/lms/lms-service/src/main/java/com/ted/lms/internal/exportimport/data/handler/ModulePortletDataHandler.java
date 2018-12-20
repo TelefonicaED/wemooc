@@ -47,7 +47,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	immediate = true,
-	property = {"javax.portlet.name=" + LMSPortletKeys.MODULE},
+	property = {"javax.portlet.name=" + LMSPortletKeys.MODULES_ADMIN},
 	service = PortletDataHandler.class
 )
 public class ModulePortletDataHandler extends BasePortletDataHandler {

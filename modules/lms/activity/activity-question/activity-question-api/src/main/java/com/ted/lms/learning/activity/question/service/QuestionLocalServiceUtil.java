@@ -42,6 +42,14 @@ public class QuestionLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.learning.activity.question.service.impl.QuestionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.ted.lms.learning.activity.question.model.Question addQuestion(
+		long actId, java.util.Map<java.util.Locale, String> questionTextMap,
+		long questionType, boolean penalize,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService()
+				   .addQuestion(actId, questionTextMap, questionType, penalize,
+			serviceContext);
+	}
 
 	/**
 	* Adds the question to the database. Also notifies the appropriate model listeners.
@@ -306,6 +314,19 @@ public class QuestionLocalServiceUtil {
 	*/
 	public static int getQuestionsCount() {
 		return getService().getQuestionsCount();
+	}
+
+	public static void saveQuestions(
+		javax.portlet.ActionRequest actionRequest, long actId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().saveQuestions(actionRequest, actId);
+	}
+
+	public static com.ted.lms.learning.activity.question.model.Question updateQuestion(
+		long questionId,
+		java.util.Map<java.util.Locale, String> questionTextMap,
+		boolean penalize) {
+		return getService().updateQuestion(questionId, questionTextMap, penalize);
 	}
 
 	/**

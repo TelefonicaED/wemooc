@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -40,6 +41,8 @@ import com.ted.lms.learning.activity.question.model.Answer;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the local service interface for Answer. Methods of this
@@ -72,6 +75,11 @@ public interface AnswerLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Answer addAnswer(Answer answer);
+
+	public Answer addAnswer(long questionId, long actId,
+		Map<Locale, String> answerMap, Map<Locale, String> feedbackCorrectMap,
+		Map<Locale, String> feedbackIncorrectMap, boolean correct,
+		ServiceContext serviceContext);
 
 	/**
 	* Creates a new answer with the primary key. Does not add the answer to the database.
@@ -219,6 +227,9 @@ public interface AnswerLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Answer> getAnswers(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Answer> getAnswersByQuestionId(long questionId);
+
 	/**
 	* Returns all the answers matching the UUID and company.
 	*
@@ -279,4 +290,8 @@ public interface AnswerLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public Answer updateAnswer(Answer answer);
+
+	public Answer updateAnswer(long answerId, Map<Locale, String> answerMap,
+		Map<Locale, String> feedbackCorrectMap,
+		Map<Locale, String> feedbackIncorrectMap, boolean correct);
 }

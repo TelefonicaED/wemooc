@@ -354,6 +354,13 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 		return _moduleLocalService.getModulesCount();
 	}
 
+	@Override
+	public com.ted.lms.model.Module getNextModule(
+		com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleLocalService.getNextModule(module);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -372,6 +379,20 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	}
 
 	@Override
+	public com.ted.lms.model.Module getPreviousModule(
+		com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleLocalService.getPreviousModule(module);
+	}
+
+	@Override
+	public com.ted.lms.model.Module moveDownModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleLocalService.moveDownModule(moduleId, serviceContext);
+	}
+
+	@Override
 	public com.ted.lms.model.Module moveModuleToTrash(long userId, long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _moduleLocalService.moveModuleToTrash(userId, moduleId);
@@ -382,6 +403,22 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 		com.ted.lms.model.Module module)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _moduleLocalService.moveModuleToTrash(userId, module);
+	}
+
+	@Override
+	public com.ted.lms.model.Module moveUpModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _moduleLocalService.moveUpModule(moduleId, serviceContext);
+	}
+
+	@Override
+	public void updateAsset(long userId, com.ted.lms.model.Module module,
+		long[] assetCategoryIds, String[] assetTagNames,
+		long[] assetLinkEntryIds, Double priority)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_moduleLocalService.updateAsset(userId, module, assetCategoryIds,
+			assetTagNames, assetLinkEntryIds, priority);
 	}
 
 	@Override

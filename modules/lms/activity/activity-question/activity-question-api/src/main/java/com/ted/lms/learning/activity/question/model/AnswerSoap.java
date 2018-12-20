@@ -43,10 +43,9 @@ public class AnswerSoap implements Serializable {
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setQuestionId(model.getQuestionId());
-		soapModel.setPrecedence(model.getPrecedence());
+		soapModel.setActId(model.getActId());
 		soapModel.setAnswer(model.getAnswer());
 		soapModel.setCorrect(model.isCorrect());
-		soapModel.setPoints(model.isPoints());
 		soapModel.setFeedbackCorrect(model.getFeedbackCorrect());
 		soapModel.setFeedbackIncorrect(model.getFeedbackIncorrect());
 
@@ -173,12 +172,12 @@ public class AnswerSoap implements Serializable {
 		_questionId = questionId;
 	}
 
-	public long getPrecedence() {
-		return _precedence;
+	public long getActId() {
+		return _actId;
 	}
 
-	public void setPrecedence(long precedence) {
-		_precedence = precedence;
+	public void setActId(long actId) {
+		_actId = actId;
 	}
 
 	public String getAnswer() {
@@ -199,18 +198,6 @@ public class AnswerSoap implements Serializable {
 
 	public void setCorrect(boolean correct) {
 		_correct = correct;
-	}
-
-	public boolean getPoints() {
-		return _points;
-	}
-
-	public boolean isPoints() {
-		return _points;
-	}
-
-	public void setPoints(boolean points) {
-		_points = points;
 	}
 
 	public String getFeedbackCorrect() {
@@ -238,10 +225,9 @@ public class AnswerSoap implements Serializable {
 	private Date _createDate;
 	private Date _modifiedDate;
 	private long _questionId;
-	private long _precedence;
+	private long _actId;
 	private String _answer;
 	private boolean _correct;
-	private boolean _points;
 	private String _feedbackCorrect;
 	private String _feedbackIncorrect;
 }

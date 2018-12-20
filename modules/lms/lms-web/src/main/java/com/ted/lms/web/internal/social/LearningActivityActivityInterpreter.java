@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
  *
  */
 @Component(
-		property = "javax.portlet.name=" + LMSPortletKeys.LEARNING_ACTIVITY,
+		property = "javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER,
 		service = SocialActivityInterpreter.class
 	)
 public class LearningActivityActivityInterpreter extends BaseSocialActivityInterpreter {

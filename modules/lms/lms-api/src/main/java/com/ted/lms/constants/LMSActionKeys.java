@@ -7,6 +7,10 @@ package com.ted.lms.constants;
  */
 public class LMSActionKeys {
 	public static final String ADD_COURSE = "ADD_COURSE";
+	public static final String ACCESSLOCK = "ACCESSLOCK";
 	public static final String ADD_MODULE = "ADD_MODULE";
+	public static final String ADD_ACT = "ADD_ACT";
 	public static final String REGISTER = "REGISTER";
+	public static final String SOFT_PERMISSIONS = "SOFT_PERMISSIONS";
+	public static final String CHANGE_VISIBILITY = "CHANGE_VISIBILITY";
 }

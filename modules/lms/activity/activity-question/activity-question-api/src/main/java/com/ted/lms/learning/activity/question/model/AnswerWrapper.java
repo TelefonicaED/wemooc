@@ -68,10 +68,9 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("questionId", getQuestionId());
-		attributes.put("precedence", getPrecedence());
+		attributes.put("actId", getActId());
 		attributes.put("answer", getAnswer());
 		attributes.put("correct", isCorrect());
-		attributes.put("points", isPoints());
 		attributes.put("feedbackCorrect", getFeedbackCorrect());
 		attributes.put("feedbackIncorrect", getFeedbackIncorrect());
 
@@ -134,10 +133,10 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 			setQuestionId(questionId);
 		}
 
-		Long precedence = (Long)attributes.get("precedence");
+		Long actId = (Long)attributes.get("actId");
 
-		if (precedence != null) {
-			setPrecedence(precedence);
+		if (actId != null) {
+			setActId(actId);
 		}
 
 		String answer = (String)attributes.get("answer");
@@ -150,12 +149,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 
 		if (correct != null) {
 			setCorrect(correct);
-		}
-
-		Boolean points = (Boolean)attributes.get("points");
-
-		if (points != null) {
-			setPoints(points);
 		}
 
 		String feedbackCorrect = (String)attributes.get("feedbackCorrect");
@@ -182,6 +175,16 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
+	* Returns the act ID of this answer.
+	*
+	* @return the act ID of this answer
+	*/
+	@Override
+	public long getActId() {
+		return _answer.getActId();
+	}
+
+	/**
 	* Returns the answer of this answer.
 	*
 	* @return the answer of this answer
@@ -192,6 +195,62 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
+	* Returns the localized answer of this answer in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized answer of this answer
+	*/
+	@Override
+	public String getAnswer(java.util.Locale locale) {
+		return _answer.getAnswer(locale);
+	}
+
+	/**
+	* Returns the localized answer of this answer in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized answer of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getAnswer(java.util.Locale locale, boolean useDefault) {
+		return _answer.getAnswer(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized answer of this answer in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized answer of this answer
+	*/
+	@Override
+	public String getAnswer(String languageId) {
+		return _answer.getAnswer(languageId);
+	}
+
+	/**
+	* Returns the localized answer of this answer in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized answer of this answer
+	*/
+	@Override
+	public String getAnswer(String languageId, boolean useDefault) {
+		return _answer.getAnswer(languageId, useDefault);
+	}
+
+	@Override
+	public String getAnswerCurrentLanguageId() {
+		return _answer.getAnswerCurrentLanguageId();
+	}
+
+	@Override
+	public String getAnswerCurrentValue() {
+		return _answer.getAnswerCurrentValue();
+	}
+
+	/**
 	* Returns the answer ID of this answer.
 	*
 	* @return the answer ID of this answer
@@ -199,6 +258,26 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public long getAnswerId() {
 		return _answer.getAnswerId();
+	}
+
+	/**
+	* Returns a map of the locales and localized answers of this answer.
+	*
+	* @return the locales and localized answers of this answer
+	*/
+	@Override
+	public Map<java.util.Locale, String> getAnswerMap() {
+		return _answer.getAnswerMap();
+	}
+
+	@Override
+	public String getAnswerMapAsXML() {
+		return _answer.getAnswerMapAsXML();
+	}
+
+	@Override
+	public String[] getAvailableLanguageIds() {
+		return _answer.getAvailableLanguageIds();
 	}
 
 	/**
@@ -232,6 +311,11 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	@Override
+	public String getDefaultLanguageId() {
+		return _answer.getDefaultLanguageId();
+	}
+
+	@Override
 	public ExpandoBridge getExpandoBridge() {
 		return _answer.getExpandoBridge();
 	}
@@ -247,6 +331,77 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
+	* Returns the localized feedback correct of this answer in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized feedback correct of this answer
+	*/
+	@Override
+	public String getFeedbackCorrect(java.util.Locale locale) {
+		return _answer.getFeedbackCorrect(locale);
+	}
+
+	/**
+	* Returns the localized feedback correct of this answer in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback correct of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getFeedbackCorrect(java.util.Locale locale, boolean useDefault) {
+		return _answer.getFeedbackCorrect(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized feedback correct of this answer in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized feedback correct of this answer
+	*/
+	@Override
+	public String getFeedbackCorrect(String languageId) {
+		return _answer.getFeedbackCorrect(languageId);
+	}
+
+	/**
+	* Returns the localized feedback correct of this answer in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback correct of this answer
+	*/
+	@Override
+	public String getFeedbackCorrect(String languageId, boolean useDefault) {
+		return _answer.getFeedbackCorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackCorrectCurrentLanguageId() {
+		return _answer.getFeedbackCorrectCurrentLanguageId();
+	}
+
+	@Override
+	public String getFeedbackCorrectCurrentValue() {
+		return _answer.getFeedbackCorrectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized feedback corrects of this answer.
+	*
+	* @return the locales and localized feedback corrects of this answer
+	*/
+	@Override
+	public Map<java.util.Locale, String> getFeedbackCorrectMap() {
+		return _answer.getFeedbackCorrectMap();
+	}
+
+	@Override
+	public String getFeedbackCorrectMapAsXML() {
+		return _answer.getFeedbackCorrectMapAsXML();
+	}
+
+	/**
 	* Returns the feedback incorrect of this answer.
 	*
 	* @return the feedback incorrect of this answer
@@ -254,6 +409,78 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public String getFeedbackIncorrect() {
 		return _answer.getFeedbackIncorrect();
+	}
+
+	/**
+	* Returns the localized feedback incorrect of this answer in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized feedback incorrect of this answer
+	*/
+	@Override
+	public String getFeedbackIncorrect(java.util.Locale locale) {
+		return _answer.getFeedbackIncorrect(locale);
+	}
+
+	/**
+	* Returns the localized feedback incorrect of this answer in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback incorrect of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getFeedbackIncorrect(java.util.Locale locale,
+		boolean useDefault) {
+		return _answer.getFeedbackIncorrect(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized feedback incorrect of this answer in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized feedback incorrect of this answer
+	*/
+	@Override
+	public String getFeedbackIncorrect(String languageId) {
+		return _answer.getFeedbackIncorrect(languageId);
+	}
+
+	/**
+	* Returns the localized feedback incorrect of this answer in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback incorrect of this answer
+	*/
+	@Override
+	public String getFeedbackIncorrect(String languageId, boolean useDefault) {
+		return _answer.getFeedbackIncorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackIncorrectCurrentLanguageId() {
+		return _answer.getFeedbackIncorrectCurrentLanguageId();
+	}
+
+	@Override
+	public String getFeedbackIncorrectCurrentValue() {
+		return _answer.getFeedbackIncorrectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized feedback incorrects of this answer.
+	*
+	* @return the locales and localized feedback incorrects of this answer
+	*/
+	@Override
+	public Map<java.util.Locale, String> getFeedbackIncorrectMap() {
+		return _answer.getFeedbackIncorrectMap();
+	}
+
+	@Override
+	public String getFeedbackIncorrectMapAsXML() {
+		return _answer.getFeedbackIncorrectMapAsXML();
 	}
 
 	/**
@@ -274,26 +501,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public Date getModifiedDate() {
 		return _answer.getModifiedDate();
-	}
-
-	/**
-	* Returns the points of this answer.
-	*
-	* @return the points of this answer
-	*/
-	@Override
-	public boolean getPoints() {
-		return _answer.getPoints();
-	}
-
-	/**
-	* Returns the precedence of this answer.
-	*
-	* @return the precedence of this answer
-	*/
-	@Override
-	public long getPrecedence() {
-		return _answer.getPrecedence();
 	}
 
 	/**
@@ -391,19 +598,32 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 		return _answer.isNew();
 	}
 
-	/**
-	* Returns <code>true</code> if this answer is points.
-	*
-	* @return <code>true</code> if this answer is points; <code>false</code> otherwise
-	*/
-	@Override
-	public boolean isPoints() {
-		return _answer.isPoints();
-	}
-
 	@Override
 	public void persist() {
 		_answer.persist();
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport()
+		throws com.liferay.portal.kernel.exception.LocaleException {
+		_answer.prepareLocalizedFieldsForImport();
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport(
+		java.util.Locale defaultImportLocale)
+		throws com.liferay.portal.kernel.exception.LocaleException {
+		_answer.prepareLocalizedFieldsForImport(defaultImportLocale);
+	}
+
+	/**
+	* Sets the act ID of this answer.
+	*
+	* @param actId the act ID of this answer
+	*/
+	@Override
+	public void setActId(long actId) {
+		_answer.setActId(actId);
 	}
 
 	/**
@@ -417,6 +637,35 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
+	* Sets the localized answer of this answer in the language.
+	*
+	* @param answer the localized answer of this answer
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setAnswer(String answer, java.util.Locale locale) {
+		_answer.setAnswer(answer, locale);
+	}
+
+	/**
+	* Sets the localized answer of this answer in the language, and sets the default locale.
+	*
+	* @param answer the localized answer of this answer
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setAnswer(String answer, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+		_answer.setAnswer(answer, locale, defaultLocale);
+	}
+
+	@Override
+	public void setAnswerCurrentLanguageId(String languageId) {
+		_answer.setAnswerCurrentLanguageId(languageId);
+	}
+
+	/**
 	* Sets the answer ID of this answer.
 	*
 	* @param answerId the answer ID of this answer
@@ -424,6 +673,28 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public void setAnswerId(long answerId) {
 		_answer.setAnswerId(answerId);
+	}
+
+	/**
+	* Sets the localized answers of this answer from the map of locales and localized answers.
+	*
+	* @param answerMap the locales and localized answers of this answer
+	*/
+	@Override
+	public void setAnswerMap(Map<java.util.Locale, String> answerMap) {
+		_answer.setAnswerMap(answerMap);
+	}
+
+	/**
+	* Sets the localized answers of this answer from the map of locales and localized answers, and sets the default locale.
+	*
+	* @param answerMap the locales and localized answers of this answer
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setAnswerMap(Map<java.util.Locale, String> answerMap,
+		java.util.Locale defaultLocale) {
+		_answer.setAnswerMap(answerMap, defaultLocale);
 	}
 
 	@Override
@@ -488,6 +759,60 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
+	* Sets the localized feedback correct of this answer in the language.
+	*
+	* @param feedbackCorrect the localized feedback correct of this answer
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect,
+		java.util.Locale locale) {
+		_answer.setFeedbackCorrect(feedbackCorrect, locale);
+	}
+
+	/**
+	* Sets the localized feedback correct of this answer in the language, and sets the default locale.
+	*
+	* @param feedbackCorrect the localized feedback correct of this answer
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_answer.setFeedbackCorrect(feedbackCorrect, locale, defaultLocale);
+	}
+
+	@Override
+	public void setFeedbackCorrectCurrentLanguageId(String languageId) {
+		_answer.setFeedbackCorrectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized feedback corrects of this answer from the map of locales and localized feedback corrects.
+	*
+	* @param feedbackCorrectMap the locales and localized feedback corrects of this answer
+	*/
+	@Override
+	public void setFeedbackCorrectMap(
+		Map<java.util.Locale, String> feedbackCorrectMap) {
+		_answer.setFeedbackCorrectMap(feedbackCorrectMap);
+	}
+
+	/**
+	* Sets the localized feedback corrects of this answer from the map of locales and localized feedback corrects, and sets the default locale.
+	*
+	* @param feedbackCorrectMap the locales and localized feedback corrects of this answer
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackCorrectMap(
+		Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Locale defaultLocale) {
+		_answer.setFeedbackCorrectMap(feedbackCorrectMap, defaultLocale);
+	}
+
+	/**
 	* Sets the feedback incorrect of this answer.
 	*
 	* @param feedbackIncorrect the feedback incorrect of this answer
@@ -495,6 +820,60 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public void setFeedbackIncorrect(String feedbackIncorrect) {
 		_answer.setFeedbackIncorrect(feedbackIncorrect);
+	}
+
+	/**
+	* Sets the localized feedback incorrect of this answer in the language.
+	*
+	* @param feedbackIncorrect the localized feedback incorrect of this answer
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setFeedbackIncorrect(String feedbackIncorrect,
+		java.util.Locale locale) {
+		_answer.setFeedbackIncorrect(feedbackIncorrect, locale);
+	}
+
+	/**
+	* Sets the localized feedback incorrect of this answer in the language, and sets the default locale.
+	*
+	* @param feedbackIncorrect the localized feedback incorrect of this answer
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackIncorrect(String feedbackIncorrect,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_answer.setFeedbackIncorrect(feedbackIncorrect, locale, defaultLocale);
+	}
+
+	@Override
+	public void setFeedbackIncorrectCurrentLanguageId(String languageId) {
+		_answer.setFeedbackIncorrectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized feedback incorrects of this answer from the map of locales and localized feedback incorrects.
+	*
+	* @param feedbackIncorrectMap the locales and localized feedback incorrects of this answer
+	*/
+	@Override
+	public void setFeedbackIncorrectMap(
+		Map<java.util.Locale, String> feedbackIncorrectMap) {
+		_answer.setFeedbackIncorrectMap(feedbackIncorrectMap);
+	}
+
+	/**
+	* Sets the localized feedback incorrects of this answer from the map of locales and localized feedback incorrects, and sets the default locale.
+	*
+	* @param feedbackIncorrectMap the locales and localized feedback incorrects of this answer
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackIncorrectMap(
+		Map<java.util.Locale, String> feedbackIncorrectMap,
+		java.util.Locale defaultLocale) {
+		_answer.setFeedbackIncorrectMap(feedbackIncorrectMap, defaultLocale);
 	}
 
 	/**
@@ -520,26 +899,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public void setNew(boolean n) {
 		_answer.setNew(n);
-	}
-
-	/**
-	* Sets whether this answer is points.
-	*
-	* @param points the points of this answer
-	*/
-	@Override
-	public void setPoints(boolean points) {
-		_answer.setPoints(points);
-	}
-
-	/**
-	* Sets the precedence of this answer.
-	*
-	* @param precedence the precedence of this answer
-	*/
-	@Override
-	public void setPrecedence(long precedence) {
-		_answer.setPrecedence(precedence);
 	}
 
 	/**

@@ -48,13 +48,13 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	@Override
 	public String getName(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.external");
+		return LanguageUtil.get(resourceBundle, "learning-activity.external");
 	}
 	
 	@Override
 	public String getDescription(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.external.helpmessage");
+		return LanguageUtil.get(resourceBundle, "learning-activity.external.help-message");
 	}
 	
 	@Override

@@ -163,6 +163,9 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 		
 		serviceContext.setAddGroupPermissions(addGroupPermissions);
 		serviceContext.setAddGuestPermissions(addGuestPermissions);	
+		
+   	 serviceContext.setUserId(userId);
+     serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
 
 	    LearningActivity importedLearningActivity = null;
 	    
@@ -179,23 +182,26 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 	        if (existingLearningActivity == null) {
 
 	            serviceContext.setUuid(activity.getUuid());
-	            importedLearningActivity = activityLocalService.addLearningActivity(portletDataContext.getScopeGroupId(), userId, moduleId, 
+	            serviceContext.setUserId(userId);
+	            serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+	            
+	            importedLearningActivity = activityLocalService.addLearningActivity(moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
-	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrect(), 
-	            		activity.getFeedbackNoCorrect(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
+	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
+	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
 	        }
 	        else {
 	            importedLearningActivity = activityLocalService.updateLearningActivity(activity.getActId(), moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
-	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrect(), 
-	            		activity.getFeedbackNoCorrect(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
+	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
+	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
 	        }
 	    }
-	    else {
-	        importedLearningActivity = activityLocalService.addLearningActivity(portletDataContext.getScopeGroupId(), userId, moduleId, 
+	    else {     
+	        importedLearningActivity = activityLocalService.addLearningActivity(moduleId, 
             		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
-            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrect(), 
-            		activity.getFeedbackNoCorrect(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
+            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
+            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
 	    }
 	    
 	    LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());

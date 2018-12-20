@@ -206,6 +206,10 @@ public class LearningActivityResultLocalServiceUtil {
 		return getService().getIndexableActionableDynamicQuery();
 	}
 
+	public static int getLearningActivityCountByActId(long actId) {
+		return getService().getLearningActivityCountByActId(actId);
+	}
+
 	/**
 	* Returns the learning activity result with the primary key.
 	*

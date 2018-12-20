@@ -22,7 +22,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LMSPortletKeys.COURSE,
-		"javax.portlet.name=" + LMSPortletKeys.MODULE,
+		"javax.portlet.name=" + LMSPortletKeys.MODULES_ADMIN,
 		"mvc.command.name=/course/upload_image"
 	},
 	service = MVCActionCommand.class

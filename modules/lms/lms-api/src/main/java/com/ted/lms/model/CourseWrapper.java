@@ -1487,6 +1487,12 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	@Override
+	public boolean isLocked(com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker) {
+		return _course.isLocked(user, permissionChecker);
+	}
+
+	@Override
 	public boolean isNew() {
 		return _course.isNew();
 	}

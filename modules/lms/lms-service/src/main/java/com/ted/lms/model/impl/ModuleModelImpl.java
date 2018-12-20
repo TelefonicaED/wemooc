@@ -152,8 +152,9 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 			true);
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
-	public static final long UUID_COLUMN_BITMASK = 4L;
-	public static final long ORDER_COLUMN_BITMASK = 8L;
+	public static final long ORDER_COLUMN_BITMASK = 4L;
+	public static final long STATUS_COLUMN_BITMASK = 8L;
+	public static final long UUID_COLUMN_BITMASK = 16L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -804,7 +805,17 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	public void setOrder(long order) {
 		_columnBitmask = -1L;
 
+		if (!_setOriginalOrder) {
+			_setOriginalOrder = true;
+
+			_originalOrder = _order;
+		}
+
 		_order = order;
+	}
+
+	public long getOriginalOrder() {
+		return _originalOrder;
 	}
 
 	@JSON
@@ -875,7 +886,19 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 	@Override
 	public void setStatus(int status) {
+		_columnBitmask |= STATUS_COLUMN_BITMASK;
+
+		if (!_setOriginalStatus) {
+			_setOriginalStatus = true;
+
+			_originalStatus = _status;
+		}
+
 		_status = status;
+	}
+
+	public int getOriginalStatus() {
+		return _originalStatus;
 	}
 
 	@JSON
@@ -1364,6 +1387,14 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 
 		moduleModelImpl._setModifiedDate = false;
 
+		moduleModelImpl._originalOrder = moduleModelImpl._order;
+
+		moduleModelImpl._setOriginalOrder = false;
+
+		moduleModelImpl._originalStatus = moduleModelImpl._status;
+
+		moduleModelImpl._setOriginalStatus = false;
+
 		moduleModelImpl._columnBitmask = 0;
 	}
 
@@ -1676,12 +1707,16 @@ public class ModuleModelImpl extends BaseModelImpl<Module>
 	private String _descriptionCurrentLanguageId;
 	private long _smallImageId;
 	private long _order;
+	private long _originalOrder;
+	private boolean _setOriginalOrder;
 	private Date _startDate;
 	private Date _endDate;
 	private long _allowedTime;
 	private long _moduleEvalId;
 	private String _moduleExtraData;
 	private int _status;
+	private int _originalStatus;
+	private boolean _setOriginalStatus;
 	private long _statusByUserId;
 	private String _statusByUserName;
 	private Date _statusDate;

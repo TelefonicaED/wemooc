@@ -50,7 +50,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + LMSPortletKeys.MODULE,
+		"javax.portlet.name=" + LMSPortletKeys.MODULES_ADMIN,
+		"javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER,
 		"mvc.command.name=/modules/edit_module"
 	},
 	service = MVCRenderCommand.class
@@ -61,8 +62,6 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		
-		String redirect = ParamUtil.getString(renderRequest, "redirect");
 
 		Module module = (Module)renderRequest.getAttribute("MODULE");
 
@@ -71,11 +70,6 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 		if(module == null && moduleId > 0) {
 			module = moduleLocalService.fetchModule(moduleId);
 		}
-		
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		portletDisplay.setShowBackIcon(true);
-		portletDisplay.setURLBack(redirect);
 		
 		PortletConfig portletConfig = (PortletConfig) renderRequest.getAttribute(JavaConstants.JAVAX_PORTLET_CONFIG);
 
@@ -125,7 +119,6 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("formNavigatorId", FormNavigatorConstants.FORM_NAVIGATOR_ID_MODULE);	
 		renderRequest.setAttribute("course", course);
 		renderRequest.setAttribute("listModuleEvalFactories", listModuleEvalFactories);
-		renderRequest.setAttribute("redirect", redirect);
 		renderRequest.setAttribute("smallImageSelectedItemEventName", smallImageSelectedItemEventName);
 		renderRequest.setAttribute("itemSelectorURL", itemSelectorURL);
 		renderRequest.setAttribute("listPrerequisiteFactory", listPrerequisiteFactory);

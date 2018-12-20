@@ -14,9 +14,20 @@
 
 package com.ted.lms.model.impl;
 
+import java.util.Calendar;
+
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -56,9 +67,13 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	
 	@Override
 	public void setExtraContent(String activityExtraContent) {
-		try {
-			extraContent = JSONFactoryUtil.createJSONObject(activityExtraContent);
-		} catch (JSONException e) {
+		if(Validator.isNotNull(activityExtraContent)) {
+			try {
+				extraContent = JSONFactoryUtil.createJSONObject(activityExtraContent);
+			} catch (JSONException e) {
+				extraContent = JSONFactoryUtil.createJSONObject();
+			}
+		}else {
 			extraContent = JSONFactoryUtil.createJSONObject();
 		}
 		
@@ -70,6 +85,73 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 		JSONObject extraContent = getExtraContentJSON();
 		extraContent.put(key, value);
 		this.extraContent = extraContent;
+	}
+	
+	public Calendar getStartDateCalendar() {
+		Calendar startDate = Calendar.getInstance();
+		startDate.setTime(getStartDate());
+		return startDate;
+	}
+	
+	public Calendar getEndDateCalendar() {
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(getEndDate());
+		return endDate;
+	}
+	
+	@Override
+	public String getURLView(LiferayPortletRequest liferayPortletRequest) {
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+		StringBundler sb = new StringBundler(11);
+
+		sb.append(themeDisplay.getPortalURL());
+		sb.append(themeDisplay.getPathMain());
+		sb.append("/activities/find_activity");
+		sb.append("?p_l_id=");
+		sb.append(themeDisplay.getPlid());
+		sb.append(StringPool.AMPERSAND);
+		sb.append("actId");
+		sb.append(StringPool.EQUAL);
+		sb.append(String.valueOf(getActId()));
+		sb.append(StringPool.AMPERSAND);
+		sb.append(Constants.CMD);
+		sb.append(StringPool.EQUAL);
+		sb.append(Constants.VIEW);
+
+		return PortalUtil.addPreservedParameters(themeDisplay, sb.toString());
+	}
+	
+	@Override
+	public String getURLEdit(LiferayPortletRequest liferayPortletRequest) {
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+		StringBundler sb = new StringBundler(11);
+
+		sb.append(themeDisplay.getPortalURL());
+		sb.append(themeDisplay.getPathMain());
+		sb.append("/activities/find_activity");
+		sb.append("?p_l_id=");
+		sb.append(themeDisplay.getPlid());
+		sb.append(StringPool.AMPERSAND);
+		sb.append("actId");
+		sb.append(StringPool.EQUAL);
+		sb.append(String.valueOf(getActId()));
+		sb.append(StringPool.AMPERSAND);
+		sb.append(Constants.CMD);
+		sb.append(StringPool.EQUAL);
+		sb.append(Constants.EDIT);
+
+		return PortalUtil.addPreservedParameters(themeDisplay, sb.toString());
+	}
+	
+	@Override
+	public String getDescriptionMapAsXML() {
+		return LocalizationUtil.updateLocalization(
+			getDescriptionMap(), StringPool.BLANK, "Description",
+			getDefaultLanguageId());
 	}
 	
 }

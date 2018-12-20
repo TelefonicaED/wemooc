@@ -189,7 +189,7 @@ public class LearningActivityWrapper implements LearningActivity,
 			setTries(tries);
 		}
 
-		Integer passPuntuation = (Integer)attributes.get("passPuntuation");
+		Double passPuntuation = (Double)attributes.get("passPuntuation");
 
 		if (passPuntuation != null) {
 			setPassPuntuation(passPuntuation);
@@ -397,6 +397,11 @@ public class LearningActivityWrapper implements LearningActivity,
 		return _learningActivity.getDescriptionMap();
 	}
 
+	@Override
+	public String getDescriptionMapAsXML() {
+		return _learningActivity.getDescriptionMapAsXML();
+	}
+
 	/**
 	* Returns the end date of this learning activity.
 	*
@@ -405,6 +410,11 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public Date getEndDate() {
 		return _learningActivity.getEndDate();
+	}
+
+	@Override
+	public java.util.Calendar getEndDateCalendar() {
+		return _learningActivity.getEndDateCalendar();
 	}
 
 	@Override
@@ -438,6 +448,72 @@ public class LearningActivityWrapper implements LearningActivity,
 	}
 
 	/**
+	* Returns the localized feedback correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized feedback correct of this learning activity
+	*/
+	@Override
+	public String getFeedbackCorrect(java.util.Locale locale) {
+		return _learningActivity.getFeedbackCorrect(locale);
+	}
+
+	/**
+	* Returns the localized feedback correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback correct of this learning activity. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getFeedbackCorrect(java.util.Locale locale, boolean useDefault) {
+		return _learningActivity.getFeedbackCorrect(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized feedback correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized feedback correct of this learning activity
+	*/
+	@Override
+	public String getFeedbackCorrect(String languageId) {
+		return _learningActivity.getFeedbackCorrect(languageId);
+	}
+
+	/**
+	* Returns the localized feedback correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback correct of this learning activity
+	*/
+	@Override
+	public String getFeedbackCorrect(String languageId, boolean useDefault) {
+		return _learningActivity.getFeedbackCorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackCorrectCurrentLanguageId() {
+		return _learningActivity.getFeedbackCorrectCurrentLanguageId();
+	}
+
+	@Override
+	public String getFeedbackCorrectCurrentValue() {
+		return _learningActivity.getFeedbackCorrectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized feedback corrects of this learning activity.
+	*
+	* @return the locales and localized feedback corrects of this learning activity
+	*/
+	@Override
+	public Map<java.util.Locale, String> getFeedbackCorrectMap() {
+		return _learningActivity.getFeedbackCorrectMap();
+	}
+
+	/**
 	* Returns the feedback no correct of this learning activity.
 	*
 	* @return the feedback no correct of this learning activity
@@ -445,6 +521,73 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public String getFeedbackNoCorrect() {
 		return _learningActivity.getFeedbackNoCorrect();
+	}
+
+	/**
+	* Returns the localized feedback no correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param locale the locale of the language
+	* @return the localized feedback no correct of this learning activity
+	*/
+	@Override
+	public String getFeedbackNoCorrect(java.util.Locale locale) {
+		return _learningActivity.getFeedbackNoCorrect(locale);
+	}
+
+	/**
+	* Returns the localized feedback no correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param locale the local of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback no correct of this learning activity. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	*/
+	@Override
+	public String getFeedbackNoCorrect(java.util.Locale locale,
+		boolean useDefault) {
+		return _learningActivity.getFeedbackNoCorrect(locale, useDefault);
+	}
+
+	/**
+	* Returns the localized feedback no correct of this learning activity in the language. Uses the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @return the localized feedback no correct of this learning activity
+	*/
+	@Override
+	public String getFeedbackNoCorrect(String languageId) {
+		return _learningActivity.getFeedbackNoCorrect(languageId);
+	}
+
+	/**
+	* Returns the localized feedback no correct of this learning activity in the language, optionally using the default language if no localization exists for the requested language.
+	*
+	* @param languageId the ID of the language
+	* @param useDefault whether to use the default language if no localization exists for the requested language
+	* @return the localized feedback no correct of this learning activity
+	*/
+	@Override
+	public String getFeedbackNoCorrect(String languageId, boolean useDefault) {
+		return _learningActivity.getFeedbackNoCorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackNoCorrectCurrentLanguageId() {
+		return _learningActivity.getFeedbackNoCorrectCurrentLanguageId();
+	}
+
+	@Override
+	public String getFeedbackNoCorrectCurrentValue() {
+		return _learningActivity.getFeedbackNoCorrectCurrentValue();
+	}
+
+	/**
+	* Returns a map of the locales and localized feedback no corrects of this learning activity.
+	*
+	* @return the locales and localized feedback no corrects of this learning activity
+	*/
+	@Override
+	public Map<java.util.Locale, String> getFeedbackNoCorrectMap() {
+		return _learningActivity.getFeedbackNoCorrectMap();
 	}
 
 	/**
@@ -493,7 +636,7 @@ public class LearningActivityWrapper implements LearningActivity,
 	* @return the pass puntuation of this learning activity
 	*/
 	@Override
-	public int getPassPuntuation() {
+	public double getPassPuntuation() {
 		return _learningActivity.getPassPuntuation();
 	}
 
@@ -540,6 +683,11 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public Date getStartDate() {
 		return _learningActivity.getStartDate();
+	}
+
+	@Override
+	public java.util.Calendar getStartDateCalendar() {
+		return _learningActivity.getStartDateCalendar();
 	}
 
 	/**
@@ -669,6 +817,39 @@ public class LearningActivityWrapper implements LearningActivity,
 	}
 
 	/**
+	* Returns the trash entry created when this learning activity was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this learning activity.
+	*
+	* @return the trash entry created when this learning activity was moved to the Recycle Bin
+	*/
+	@Override
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivity.getTrashEntry();
+	}
+
+	/**
+	* Returns the class primary key of the trash entry for this learning activity.
+	*
+	* @return the class primary key of the trash entry for this learning activity
+	*/
+	@Override
+	public long getTrashEntryClassPK() {
+		return _learningActivity.getTrashEntryClassPK();
+	}
+
+	/**
+	* Returns the trash handler for this learning activity.
+	*
+	* @return the trash handler for this learning activity
+	* @deprecated As of 7.0.0, with no direct replacement
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler() {
+		return _learningActivity.getTrashHandler();
+	}
+
+	/**
 	* Returns the tries of this learning activity.
 	*
 	* @return the tries of this learning activity
@@ -686,6 +867,18 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public long getTypeId() {
 		return _learningActivity.getTypeId();
+	}
+
+	@Override
+	public String getURLEdit(
+		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
+		return _learningActivity.getURLEdit(liferayPortletRequest);
+	}
+
+	@Override
+	public String getURLView(
+		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
+		return _learningActivity.getURLView(liferayPortletRequest);
 	}
 
 	/**
@@ -811,6 +1004,36 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public boolean isIncomplete() {
 		return _learningActivity.isIncomplete();
+	}
+
+	/**
+	* Returns <code>true</code> if this learning activity is in the Recycle Bin.
+	*
+	* @return <code>true</code> if this learning activity is in the Recycle Bin; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInTrash() {
+		return _learningActivity.isInTrash();
+	}
+
+	/**
+	* Returns <code>true</code> if the parent of this learning activity is in the Recycle Bin.
+	*
+	* @return <code>true</code> if the parent of this learning activity is in the Recycle Bin; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInTrashContainer() {
+		return _learningActivity.isInTrashContainer();
+	}
+
+	@Override
+	public boolean isInTrashExplicitly() {
+		return _learningActivity.isInTrashExplicitly();
+	}
+
+	@Override
+	public boolean isInTrashImplicitly() {
+		return _learningActivity.isInTrashImplicitly();
 	}
 
 	@Override
@@ -1020,6 +1243,62 @@ public class LearningActivityWrapper implements LearningActivity,
 	}
 
 	/**
+	* Sets the localized feedback correct of this learning activity in the language.
+	*
+	* @param feedbackCorrect the localized feedback correct of this learning activity
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect,
+		java.util.Locale locale) {
+		_learningActivity.setFeedbackCorrect(feedbackCorrect, locale);
+	}
+
+	/**
+	* Sets the localized feedback correct of this learning activity in the language, and sets the default locale.
+	*
+	* @param feedbackCorrect the localized feedback correct of this learning activity
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_learningActivity.setFeedbackCorrect(feedbackCorrect, locale,
+			defaultLocale);
+	}
+
+	@Override
+	public void setFeedbackCorrectCurrentLanguageId(String languageId) {
+		_learningActivity.setFeedbackCorrectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized feedback corrects of this learning activity from the map of locales and localized feedback corrects.
+	*
+	* @param feedbackCorrectMap the locales and localized feedback corrects of this learning activity
+	*/
+	@Override
+	public void setFeedbackCorrectMap(
+		Map<java.util.Locale, String> feedbackCorrectMap) {
+		_learningActivity.setFeedbackCorrectMap(feedbackCorrectMap);
+	}
+
+	/**
+	* Sets the localized feedback corrects of this learning activity from the map of locales and localized feedback corrects, and sets the default locale.
+	*
+	* @param feedbackCorrectMap the locales and localized feedback corrects of this learning activity
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackCorrectMap(
+		Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Locale defaultLocale) {
+		_learningActivity.setFeedbackCorrectMap(feedbackCorrectMap,
+			defaultLocale);
+	}
+
+	/**
 	* Sets the feedback no correct of this learning activity.
 	*
 	* @param feedbackNoCorrect the feedback no correct of this learning activity
@@ -1027,6 +1306,62 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public void setFeedbackNoCorrect(String feedbackNoCorrect) {
 		_learningActivity.setFeedbackNoCorrect(feedbackNoCorrect);
+	}
+
+	/**
+	* Sets the localized feedback no correct of this learning activity in the language.
+	*
+	* @param feedbackNoCorrect the localized feedback no correct of this learning activity
+	* @param locale the locale of the language
+	*/
+	@Override
+	public void setFeedbackNoCorrect(String feedbackNoCorrect,
+		java.util.Locale locale) {
+		_learningActivity.setFeedbackNoCorrect(feedbackNoCorrect, locale);
+	}
+
+	/**
+	* Sets the localized feedback no correct of this learning activity in the language, and sets the default locale.
+	*
+	* @param feedbackNoCorrect the localized feedback no correct of this learning activity
+	* @param locale the locale of the language
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackNoCorrect(String feedbackNoCorrect,
+		java.util.Locale locale, java.util.Locale defaultLocale) {
+		_learningActivity.setFeedbackNoCorrect(feedbackNoCorrect, locale,
+			defaultLocale);
+	}
+
+	@Override
+	public void setFeedbackNoCorrectCurrentLanguageId(String languageId) {
+		_learningActivity.setFeedbackNoCorrectCurrentLanguageId(languageId);
+	}
+
+	/**
+	* Sets the localized feedback no corrects of this learning activity from the map of locales and localized feedback no corrects.
+	*
+	* @param feedbackNoCorrectMap the locales and localized feedback no corrects of this learning activity
+	*/
+	@Override
+	public void setFeedbackNoCorrectMap(
+		Map<java.util.Locale, String> feedbackNoCorrectMap) {
+		_learningActivity.setFeedbackNoCorrectMap(feedbackNoCorrectMap);
+	}
+
+	/**
+	* Sets the localized feedback no corrects of this learning activity from the map of locales and localized feedback no corrects, and sets the default locale.
+	*
+	* @param feedbackNoCorrectMap the locales and localized feedback no corrects of this learning activity
+	* @param defaultLocale the default locale
+	*/
+	@Override
+	public void setFeedbackNoCorrectMap(
+		Map<java.util.Locale, String> feedbackNoCorrectMap,
+		java.util.Locale defaultLocale) {
+		_learningActivity.setFeedbackNoCorrectMap(feedbackNoCorrectMap,
+			defaultLocale);
 	}
 
 	/**
@@ -1080,7 +1415,7 @@ public class LearningActivityWrapper implements LearningActivity,
 	* @param passPuntuation the pass puntuation of this learning activity
 	*/
 	@Override
-	public void setPassPuntuation(int passPuntuation) {
+	public void setPassPuntuation(double passPuntuation) {
 		_learningActivity.setPassPuntuation(passPuntuation);
 	}
 

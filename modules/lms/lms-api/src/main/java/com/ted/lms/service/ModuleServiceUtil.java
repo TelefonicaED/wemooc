@@ -67,6 +67,11 @@ public class ModuleServiceUtil {
 		getService().deleteModule(moduleId);
 	}
 
+	public static java.util.List<com.ted.lms.model.Module> getGroupModules(
+		long groupId) {
+		return getService().getGroupModules(groupId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -76,9 +81,21 @@ public class ModuleServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static com.ted.lms.model.Module moveDownModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveDownModule(moduleId, serviceContext);
+	}
+
 	public static com.ted.lms.model.Module moveModuleToTrash(long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().moveModuleToTrash(moduleId);
+	}
+
+	public static com.ted.lms.model.Module moveUpModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveUpModule(moduleId, serviceContext);
 	}
 
 	public static com.ted.lms.model.Module updateModule(long moduleId,
@@ -99,6 +116,12 @@ public class ModuleServiceUtil {
 			startDateMinute, endDate, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, allowedHours, allowedMinutes,
 			smallImageImageSelector, moduleEvalId, serviceContext);
+	}
+
+	public static com.ted.lms.model.Module updateModule(
+		com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().updateModule(module);
 	}
 
 	public static ModuleService getService() {

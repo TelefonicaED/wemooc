@@ -880,6 +880,790 @@ public class ModuleUtil {
 	}
 
 	/**
+	* Returns all the modules where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the matching modules
+	*/
+	public static List<Module> findByGroupIdStatus(long groupId, int status) {
+		return getPersistence().findByGroupIdStatus(groupId, status);
+	}
+
+	/**
+	* Returns a range of all the modules where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules
+	*/
+	public static List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end) {
+		return getPersistence().findByGroupIdStatus(groupId, status, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules
+	*/
+	public static List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end, OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .findByGroupIdStatus(groupId, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching modules
+	*/
+	public static List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end, OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByGroupIdStatus(groupId, status, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public static Module findByGroupIdStatus_First(long groupId, int status,
+		OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdStatus_First(groupId, status, orderByComparator);
+	}
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public static Module fetchByGroupIdStatus_First(long groupId, int status,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .fetchByGroupIdStatus_First(groupId, status,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public static Module findByGroupIdStatus_Last(long groupId, int status,
+		OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdStatus_Last(groupId, status, orderByComparator);
+	}
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public static Module fetchByGroupIdStatus_Last(long groupId, int status,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .fetchByGroupIdStatus_Last(groupId, status, orderByComparator);
+	}
+
+	/**
+	* Returns the modules before and after the current module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public static Module[] findByGroupIdStatus_PrevAndNext(long moduleId,
+		long groupId, int status, OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdStatus_PrevAndNext(moduleId, groupId, status,
+			orderByComparator);
+	}
+
+	/**
+	* Returns all the modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdStatus(long groupId,
+		int status) {
+		return getPersistence().filterFindByGroupIdStatus(groupId, status);
+	}
+
+	/**
+	* Returns a range of all the modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdStatus(long groupId,
+		int status, int start, int end) {
+		return getPersistence()
+				   .filterFindByGroupIdStatus(groupId, status, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdStatus(long groupId,
+		int status, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .filterFindByGroupIdStatus(groupId, status, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public static Module[] filterFindByGroupIdStatus_PrevAndNext(
+		long moduleId, long groupId, int status,
+		OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .filterFindByGroupIdStatus_PrevAndNext(moduleId, groupId,
+			status, orderByComparator);
+	}
+
+	/**
+	* Removes all the modules where groupId = &#63; and status = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	*/
+	public static void removeByGroupIdStatus(long groupId, int status) {
+		getPersistence().removeByGroupIdStatus(groupId, status);
+	}
+
+	/**
+	* Returns the number of modules where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the number of matching modules
+	*/
+	public static int countByGroupIdStatus(long groupId, int status) {
+		return getPersistence().countByGroupIdStatus(groupId, status);
+	}
+
+	/**
+	* Returns the number of modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the number of matching modules that the user has permission to view
+	*/
+	public static int filterCountByGroupIdStatus(long groupId, int status) {
+		return getPersistence().filterCountByGroupIdStatus(groupId, status);
+	}
+
+	/**
+	* Returns all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules
+	*/
+	public static List<Module> findByGroupIdNextModules(long groupId, long order) {
+		return getPersistence().findByGroupIdNextModules(groupId, order);
+	}
+
+	/**
+	* Returns a range of all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules
+	*/
+	public static List<Module> findByGroupIdNextModules(long groupId,
+		long order, int start, int end) {
+		return getPersistence()
+				   .findByGroupIdNextModules(groupId, order, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules
+	*/
+	public static List<Module> findByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .findByGroupIdNextModules(groupId, order, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching modules
+	*/
+	public static List<Module> findByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByGroupIdNextModules(groupId, order, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public static Module findByGroupIdNextModules_First(long groupId,
+		long order, OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdNextModules_First(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public static Module fetchByGroupIdNextModules_First(long groupId,
+		long order, OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .fetchByGroupIdNextModules_First(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public static Module findByGroupIdNextModules_Last(long groupId,
+		long order, OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdNextModules_Last(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public static Module fetchByGroupIdNextModules_Last(long groupId,
+		long order, OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .fetchByGroupIdNextModules_Last(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the modules before and after the current module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public static Module[] findByGroupIdNextModules_PrevAndNext(long moduleId,
+		long groupId, long order, OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdNextModules_PrevAndNext(moduleId, groupId,
+			order, orderByComparator);
+	}
+
+	/**
+	* Returns all the modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order) {
+		return getPersistence().filterFindByGroupIdNextModules(groupId, order);
+	}
+
+	/**
+	* Returns a range of all the modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order, int start, int end) {
+		return getPersistence()
+				   .filterFindByGroupIdNextModules(groupId, order, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .filterFindByGroupIdNextModules(groupId, order, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public static Module[] filterFindByGroupIdNextModules_PrevAndNext(
+		long moduleId, long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .filterFindByGroupIdNextModules_PrevAndNext(moduleId,
+			groupId, order, orderByComparator);
+	}
+
+	/**
+	* Removes all the modules where groupId = &#63; and order &gt; &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	*/
+	public static void removeByGroupIdNextModules(long groupId, long order) {
+		getPersistence().removeByGroupIdNextModules(groupId, order);
+	}
+
+	/**
+	* Returns the number of modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules
+	*/
+	public static int countByGroupIdNextModules(long groupId, long order) {
+		return getPersistence().countByGroupIdNextModules(groupId, order);
+	}
+
+	/**
+	* Returns the number of modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules that the user has permission to view
+	*/
+	public static int filterCountByGroupIdNextModules(long groupId, long order) {
+		return getPersistence().filterCountByGroupIdNextModules(groupId, order);
+	}
+
+	/**
+	* Returns all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules
+	*/
+	public static List<Module> findByGroupIdPreviousModules(long groupId,
+		long order) {
+		return getPersistence().findByGroupIdPreviousModules(groupId, order);
+	}
+
+	/**
+	* Returns a range of all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules
+	*/
+	public static List<Module> findByGroupIdPreviousModules(long groupId,
+		long order, int start, int end) {
+		return getPersistence()
+				   .findByGroupIdPreviousModules(groupId, order, start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules
+	*/
+	public static List<Module> findByGroupIdPreviousModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .findByGroupIdPreviousModules(groupId, order, start, end,
+			orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching modules
+	*/
+	public static List<Module> findByGroupIdPreviousModules(long groupId,
+		long order, int start, int end,
+		OrderByComparator<Module> orderByComparator, boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByGroupIdPreviousModules(groupId, order, start, end,
+			orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public static Module findByGroupIdPreviousModules_First(long groupId,
+		long order, OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdPreviousModules_First(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public static Module fetchByGroupIdPreviousModules_First(long groupId,
+		long order, OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .fetchByGroupIdPreviousModules_First(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public static Module findByGroupIdPreviousModules_Last(long groupId,
+		long order, OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdPreviousModules_Last(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public static Module fetchByGroupIdPreviousModules_Last(long groupId,
+		long order, OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .fetchByGroupIdPreviousModules_Last(groupId, order,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the modules before and after the current module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public static Module[] findByGroupIdPreviousModules_PrevAndNext(
+		long moduleId, long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .findByGroupIdPreviousModules_PrevAndNext(moduleId, groupId,
+			order, orderByComparator);
+	}
+
+	/**
+	* Returns all the modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdPreviousModules(
+		long groupId, long order) {
+		return getPersistence()
+				   .filterFindByGroupIdPreviousModules(groupId, order);
+	}
+
+	/**
+	* Returns a range of all the modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdPreviousModules(
+		long groupId, long order, int start, int end) {
+		return getPersistence()
+				   .filterFindByGroupIdPreviousModules(groupId, order, start,
+			end);
+	}
+
+	/**
+	* Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules that the user has permission to view
+	*/
+	public static List<Module> filterFindByGroupIdPreviousModules(
+		long groupId, long order, int start, int end,
+		OrderByComparator<Module> orderByComparator) {
+		return getPersistence()
+				   .filterFindByGroupIdPreviousModules(groupId, order, start,
+			end, orderByComparator);
+	}
+
+	/**
+	* Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public static Module[] filterFindByGroupIdPreviousModules_PrevAndNext(
+		long moduleId, long groupId, long order,
+		OrderByComparator<Module> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleException {
+		return getPersistence()
+				   .filterFindByGroupIdPreviousModules_PrevAndNext(moduleId,
+			groupId, order, orderByComparator);
+	}
+
+	/**
+	* Removes all the modules where groupId = &#63; and order &lt; &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	*/
+	public static void removeByGroupIdPreviousModules(long groupId, long order) {
+		getPersistence().removeByGroupIdPreviousModules(groupId, order);
+	}
+
+	/**
+	* Returns the number of modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules
+	*/
+	public static int countByGroupIdPreviousModules(long groupId, long order) {
+		return getPersistence().countByGroupIdPreviousModules(groupId, order);
+	}
+
+	/**
+	* Returns the number of modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules that the user has permission to view
+	*/
+	public static int filterCountByGroupIdPreviousModules(long groupId,
+		long order) {
+		return getPersistence()
+				   .filterCountByGroupIdPreviousModules(groupId, order);
+	}
+
+	/**
 	* Caches the module in the entity cache if it is enabled.
 	*
 	* @param module the module

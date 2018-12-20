@@ -53,13 +53,13 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	@Override
 	public String getName(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.p2p");
+		return LanguageUtil.get(resourceBundle, "learning-activity.p2p");
 	}
 	
 	@Override
 	public String getDescription(Locale locale) {
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		return LanguageUtil.get(resourceBundle, "learningactivity.p2p.helpmessage");
+		return LanguageUtil.get(resourceBundle, "learning-activity.p2p.help-message");
 	}
 	
 	@Override

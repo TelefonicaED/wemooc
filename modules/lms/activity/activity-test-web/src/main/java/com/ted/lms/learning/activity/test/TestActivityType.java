@@ -1,6 +1,5 @@
 package com.ted.lms.learning.activity.test;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -37,11 +36,43 @@ public class TestActivityType extends BaseLearningActivityType {
 	
 	private QuestionLocalService questionLocalService;
 	private static final Log log = LogFactoryUtil.getLog(TestActivityType.class);
+	private long random;
+	private String password;
+	private long timeStamp;
+	private boolean showCorrectAnswer;
+	private boolean showFeedback;
+	private boolean showCorrectAnswerOnlyOnFinalTry;
+	private boolean improve;
+	private boolean enableOrder;
+	private long questionsPerPage;
+	private boolean preview;
 
 	public TestActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
 			QuestionLocalService questionLocalService) {
 		super(activity, learningActivityResultLocalService);
 		this.questionLocalService = questionLocalService;
+		
+		JSONObject extraContent = activity.getExtraContentJSON();
+		
+		if(extraContent != null) {
+			JSONObject test = extraContent.getJSONObject(TestConstants.JSON_TEST);
+			if(test != null) {
+				random = test.getLong(TestConstants.JSON_RANDOM, TestConstants.DEFAULT_RANDOM);
+				password = HtmlUtil.unescape(test.getString(TestConstants.JSON_PASSWORD, TestConstants.DEFAULT_PASSWORD));
+				timeStamp = test.getLong(TestConstants.JSON_TIME_STAMP, TestConstants.DEFAULT_TIME_STAMP);
+				showCorrectAnswer = test.getBoolean(TestConstants.JSON_SHOW_CORRECT_ANSWER, TestConstants.DEFAULT_SHOW_CORRECT_ANSWER);
+				showFeedback = test.getBoolean(TestConstants.JSON_SHOW_FEEDBACK, TestConstants.DEFAULT_SHOW_FEEDBACK);
+				showCorrectAnswerOnlyOnFinalTry = test.getBoolean(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, TestConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY);
+				improve = test.getBoolean(TestConstants.JSON_IMPROVE, TestConstants.DEFAULT_IMPROVE);
+				enableOrder = test.getBoolean(TestConstants.JSON_ENABLE_ORDER, TestConstants.DEFAULT_ENABLE_ORDER);
+				questionsPerPage = test.getLong(TestConstants.JSON_QUESTIONS_PER_PAGE, TestPrefsPropsValues.getQuestionPerPage(activity.getCompanyId()));
+				preview = test.getBoolean(TestConstants.JSON_PREVIEW, TestConstants.DEFAULT_PREVIEW);
+			}else {
+				initializateActivity();
+			}
+		}else {
+			initializateActivity();
+		}
 	}
 	
 	@Override
@@ -56,30 +87,44 @@ public class TestActivityType extends BaseLearningActivityType {
 		JSONObject extraContent = activity.getExtraContentJSON();
 		JSONObject testContent = extraContent.getJSONObject(TestConstants.JSON_TEST);
 		
-		if(Validator.isNotNull(testContent)) {
+		if(Validator.isNull(testContent)) {
 			testContent = JSONFactoryUtil.createJSONObject();
 			extraContent.put(TestConstants.JSON_TEST, testContent);
 		}
 		
-		testContent.put(TestConstants.JSON_RANDOM, ParamUtil.getLong(actionRequest, "random", 0));
-		testContent.put(TestConstants.JSON_PASSWORD, HtmlUtil.escape(ParamUtil.get(actionRequest,"password",StringPool.BLANK).trim()));
+		random = ParamUtil.getLong(actionRequest, "random", TestConstants.DEFAULT_RANDOM);
+		password = ParamUtil.get(actionRequest,"password",TestConstants.DEFAULT_PASSWORD);
+		if(Validator.isNotNull(password))
+			password = HtmlUtil.escape(password.trim());
+		timeStamp = ParamUtil.getLong(actionRequest, "testHourDuration",0) * 3600 
+                + ParamUtil.getLong(actionRequest, "testMinuteDuration",0) * 60 
+                + ParamUtil.getLong(actionRequest, "testSecondDuration",0);
+		showCorrectAnswer = ParamUtil.getBoolean(actionRequest, "showCorrectAnswer", TestConstants.DEFAULT_SHOW_CORRECT_ANSWER);
+		showFeedback = ParamUtil.getBoolean(actionRequest, "showFeedback", TestConstants.DEFAULT_SHOW_FEEDBACK);
+		showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(actionRequest, "showCorrectAnswerOnlyOnFinalTry", TestConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY);
+		improve = ParamUtil.getBoolean(actionRequest, "improve", TestConstants.DEFAULT_IMPROVE);
+		enableOrder = ParamUtil.getBoolean(actionRequest, "enableOrder", TestConstants.DEFAULT_ENABLE_ORDER);
+		questionsPerPage = ParamUtil.getLong(actionRequest, "questionsPerPage", TestPrefsPropsValues.getQuestionPerPage(themeDisplay.getCompanyId()));
+		preview = ParamUtil.getBoolean(actionRequest, "preview", TestConstants.DEFAULT_PREVIEW);
 		
-		long timeStamp = ParamUtil.getLong(actionRequest, "hourDuration",0) * 3600 
-                + ParamUtil.getLong(actionRequest, "minuteDuration",0) * 60 
-                + ParamUtil.getLong(actionRequest, "secondDuration",0);
-		
+		testContent.put(TestConstants.JSON_RANDOM, random);
+		testContent.put(TestConstants.JSON_PASSWORD, password);
 		testContent.put(TestConstants.JSON_TIME_STAMP, timeStamp);
 		
-		testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER, ParamUtil.getBoolean(actionRequest, "showCorrectAnswer", false));
-		testContent.put(TestConstants.JSON_HIDE_FEEDBACK, ParamUtil.getBoolean(actionRequest, "hideFeedback", false));
-		testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, ParamUtil.getBoolean(actionRequest, "showCorrectAnswerOnlyOnFinalTry", false));
-		testContent.put(TestConstants.JSON_IMPROVE, ParamUtil.getBoolean(actionRequest, "improve", false));
-		testContent.put(TestConstants.JSON_ENABLE_ORDER, ParamUtil.getBoolean(actionRequest, "enableorder", false));
-		testContent.put(TestConstants.JSON_QUESTIONS_PER_PAGE, ParamUtil.getLong(actionRequest, "questionsPerPage", TestPrefsPropsValues.getQuestionPerPage(themeDisplay.getCompanyId())));
+		testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER, showCorrectAnswer);
+		testContent.put(TestConstants.JSON_SHOW_FEEDBACK, showFeedback);
+		testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, showCorrectAnswerOnlyOnFinalTry);
+		testContent.put(TestConstants.JSON_IMPROVE, improve);
+		testContent.put(TestConstants.JSON_ENABLE_ORDER, enableOrder);
+		testContent.put(TestConstants.JSON_QUESTIONS_PER_PAGE, questionsPerPage);
+		testContent.put(TestConstants.JSON_PREVIEW, preview);
 		
 		activity.setExtraContent(extraContent.toJSONString());
+		
+		//Ahora guardamos las preguntas
+		questionLocalService.saveQuestions(actionRequest, activity.getActId());
 	}
-	
+
 	@Override
 	public double calculateResult(LearningActivityTry learningActivityTry) {
 		double score = 0;
@@ -153,10 +198,75 @@ public class TestActivityType extends BaseLearningActivityType {
 			}
 			
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		log.debug("score: " + score);
 		return score;
 	}
+	
+	
+	public long getRandom() {
+		return random;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+	
+	public long getHourDuration() {
+		return getTimeStamp() / 3600;
+	}
+	
+	public long getMinuteDuration() {
+		return (getTimeStamp()  % 3600) / 60;
+	}
+	
+	public long getSecondDuration() {
+		return getTimeStamp() % 60;
+	}
+	
+	public boolean getShowCorrectAnswer() {
+		return showCorrectAnswer;
+	}
+	
+	public boolean getShowFeedback() {
+		return showFeedback;
+	}
+	
+	public boolean getShowCorrectAnswerOnlyOnFinalTry() {
+		return showCorrectAnswerOnlyOnFinalTry;
+	}
+	
+	public boolean getImprove() {
+		return improve;
+	}
+
+	public boolean getEnableOrder() {
+		return enableOrder;
+	}
+	
+	public long getQuestionsPerPage() {
+		return questionsPerPage;
+	}
+	
+	public boolean getPreview() {
+		return preview;
+	}
+	
+	private void initializateActivity() {
+		random = TestConstants.DEFAULT_RANDOM;
+		password = TestConstants.DEFAULT_PASSWORD;
+		timeStamp = TestConstants.DEFAULT_TIME_STAMP;
+		showCorrectAnswer = TestConstants.DEFAULT_SHOW_CORRECT_ANSWER;
+		showFeedback = TestConstants.DEFAULT_SHOW_FEEDBACK;
+		showCorrectAnswerOnlyOnFinalTry = TestConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY;
+		improve = TestConstants.DEFAULT_IMPROVE;
+		enableOrder = TestConstants.DEFAULT_ENABLE_ORDER;
+		questionsPerPage = TestPrefsPropsValues.getQuestionPerPage(activity.getCompanyId());
+		preview = TestConstants.DEFAULT_PREVIEW;
+	}	
 }

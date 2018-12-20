@@ -686,6 +686,641 @@ public interface ModulePersistence extends BasePersistence<Module> {
 	public int filterCountByGroupId(long groupId);
 
 	/**
+	* Returns all the modules where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the matching modules
+	*/
+	public java.util.List<Module> findByGroupIdStatus(long groupId, int status);
+
+	/**
+	* Returns a range of all the modules where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end);
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdStatus(long groupId, int status,
+		int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public Module findByGroupIdStatus_First(long groupId, int status,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public Module fetchByGroupIdStatus_First(long groupId, int status,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public Module findByGroupIdStatus_Last(long groupId, int status,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public Module fetchByGroupIdStatus_Last(long groupId, int status,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the modules before and after the current module in the ordered set where groupId = &#63; and status = &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public Module[] findByGroupIdStatus_PrevAndNext(long moduleId,
+		long groupId, int status,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns all the modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdStatus(long groupId,
+		int status);
+
+	/**
+	* Returns a range of all the modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdStatus(long groupId,
+		int status, int start, int end);
+
+	/**
+	* Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and status = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdStatus(long groupId,
+		int status, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public Module[] filterFindByGroupIdStatus_PrevAndNext(long moduleId,
+		long groupId, int status,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Removes all the modules where groupId = &#63; and status = &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	*/
+	public void removeByGroupIdStatus(long groupId, int status);
+
+	/**
+	* Returns the number of modules where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the number of matching modules
+	*/
+	public int countByGroupIdStatus(long groupId, int status);
+
+	/**
+	* Returns the number of modules that the user has permission to view where groupId = &#63; and status = &#63;.
+	*
+	* @param groupId the group ID
+	* @param status the status
+	* @return the number of matching modules that the user has permission to view
+	*/
+	public int filterCountByGroupIdStatus(long groupId, int status);
+
+	/**
+	* Returns all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules
+	*/
+	public java.util.List<Module> findByGroupIdNextModules(long groupId,
+		long order);
+
+	/**
+	* Returns a range of all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdNextModules(long groupId,
+		long order, int start, int end);
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public Module findByGroupIdNextModules_First(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public Module fetchByGroupIdNextModules_First(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public Module findByGroupIdNextModules_Last(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public Module fetchByGroupIdNextModules_Last(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the modules before and after the current module in the ordered set where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public Module[] findByGroupIdNextModules_PrevAndNext(long moduleId,
+		long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns all the modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order);
+
+	/**
+	* Returns a range of all the modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order, int start, int end);
+
+	/**
+	* Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdNextModules(long groupId,
+		long order, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public Module[] filterFindByGroupIdNextModules_PrevAndNext(long moduleId,
+		long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Removes all the modules where groupId = &#63; and order &gt; &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	*/
+	public void removeByGroupIdNextModules(long groupId, long order);
+
+	/**
+	* Returns the number of modules where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules
+	*/
+	public int countByGroupIdNextModules(long groupId, long order);
+
+	/**
+	* Returns the number of modules that the user has permission to view where groupId = &#63; and order &gt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules that the user has permission to view
+	*/
+	public int filterCountByGroupIdNextModules(long groupId, long order);
+
+	/**
+	* Returns all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules
+	*/
+	public java.util.List<Module> findByGroupIdPreviousModules(long groupId,
+		long order);
+
+	/**
+	* Returns a range of all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdPreviousModules(long groupId,
+		long order, int start, int end);
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdPreviousModules(long groupId,
+		long order, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching modules
+	*/
+	public java.util.List<Module> findByGroupIdPreviousModules(long groupId,
+		long order, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public Module findByGroupIdPreviousModules_First(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns the first module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public Module fetchByGroupIdPreviousModules_First(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module
+	* @throws NoSuchModuleException if a matching module could not be found
+	*/
+	public Module findByGroupIdPreviousModules_Last(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns the last module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching module, or <code>null</code> if a matching module could not be found
+	*/
+	public Module fetchByGroupIdPreviousModules_Last(long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the modules before and after the current module in the ordered set where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public Module[] findByGroupIdPreviousModules_PrevAndNext(long moduleId,
+		long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Returns all the modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdPreviousModules(
+		long groupId, long order);
+
+	/**
+	* Returns a range of all the modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @return the range of matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdPreviousModules(
+		long groupId, long order, int start, int end);
+
+	/**
+	* Returns an ordered range of all the modules that the user has permissions to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @param start the lower bound of the range of modules
+	* @param end the upper bound of the range of modules (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching modules that the user has permission to view
+	*/
+	public java.util.List<Module> filterFindByGroupIdPreviousModules(
+		long groupId, long order, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator);
+
+	/**
+	* Returns the modules before and after the current module in the ordered set of modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param moduleId the primary key of the current module
+	* @param groupId the group ID
+	* @param order the order
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next module
+	* @throws NoSuchModuleException if a module with the primary key could not be found
+	*/
+	public Module[] filterFindByGroupIdPreviousModules_PrevAndNext(
+		long moduleId, long groupId, long order,
+		com.liferay.portal.kernel.util.OrderByComparator<Module> orderByComparator)
+		throws NoSuchModuleException;
+
+	/**
+	* Removes all the modules where groupId = &#63; and order &lt; &#63; from the database.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	*/
+	public void removeByGroupIdPreviousModules(long groupId, long order);
+
+	/**
+	* Returns the number of modules where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules
+	*/
+	public int countByGroupIdPreviousModules(long groupId, long order);
+
+	/**
+	* Returns the number of modules that the user has permission to view where groupId = &#63; and order &lt; &#63;.
+	*
+	* @param groupId the group ID
+	* @param order the order
+	* @return the number of matching modules that the user has permission to view
+	*/
+	public int filterCountByGroupIdPreviousModules(long groupId, long order);
+
+	/**
 	* Caches the module in the entity cache if it is enabled.
 	*
 	* @param module the module

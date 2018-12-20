@@ -11,12 +11,11 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="questionId" type="long" />
-		<field name="precedence" type="long" />
-		<field name="answer" type="String" />
+		<field name="actId" type="long" />
+		<field localized="true" name="answer" type="String" />
 		<field name="correct" type="boolean" />
-		<field name="points" type="boolean" />
-		<field name="feedbackCorrect" type="String" />
-		<field name="feedbackIncorrect" type="String" />
+		<field localized="true" name="feedbackCorrect" type="String" />
+		<field localized="true" name="feedbackIncorrect" type="String" />
 	</model>
 	<model name="com.ted.lms.learning.activity.question.model.Question">
 		<field name="uuid" type="String" />
@@ -28,13 +27,11 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="actId" type="long" />
-		<field name="title" type="String" />
-		<field name="text" type="String" />
+		<field localized="true" name="text" type="String" />
 		<field name="questionType" type="long" />
 		<field name="active" type="boolean" />
 		<field name="weight" type="long" />
 		<field name="penalize" type="boolean" />
-		<field name="orderedAnswers" type="boolean" />
 		<field name="extraContent" type="String" />
 	</model>
 </model-hints>

@@ -5,7 +5,6 @@ import aQute.bnd.annotation.ProviderType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -29,55 +28,32 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @ProviderType
 public class LearningActivityTypeFactoryRegistryUtil {
-	
-	public static String[] getLearningActivityFactories() {
-		return (String[]) _learningActivityFactoriesMapByClassName.entrySet().toArray();
-	}
 
-	public static List<LearningActivityTypeFactory> getLearningActivityFactories(
-		long companyId) {
+	public static List<LearningActivityTypeFactory> getLearningActivityFactories(long companyId) {
 
-		return ListUtil.fromMapValues(
-			_filterLearningActivityFactories(
-				companyId, 0, _learningActivityFactoriesMapByClassName));
+		return ListUtil.fromMapValues(_filterLearningActivityFactories(companyId, 0, _learningActivityFactoriesMapByClassName));
 	}
 	
-	public static List<LearningActivityTypeFactory> getLearningActivityFactories(
-			long companyId, long groupId) {
-
-			return ListUtil.fromMapValues(
-				_filterLearningActivityFactories(
-					companyId, groupId, _learningActivityFactoriesMapByClassName));
-		}
-
-	public static <T> LearningActivityTypeFactory getLearningActivityTypeFactoryByClass(
-		Class<T> clazz) {
-
-		return (LearningActivityTypeFactory)_learningActivityFactoriesMapByClassName.get(
-			clazz.getName());
+	public static List<LearningActivityTypeFactory> getLearningActivityFactories(long companyId, long groupId) {
+		return ListUtil.fromMapValues(_filterLearningActivityFactories(companyId, groupId, _learningActivityFactoriesMapByClassName));
 	}
 
-	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByClassName(
-		String className) {
+	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByClassName(String className) {
 
 		return _learningActivityFactoriesMapByClassName.get(className);
 	}
 
-	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByClassNameId(
-		long classNameId) {
+	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByClassNameId(long classNameId) {
 
-		return _learningActivityFactoriesMapByClassName.get(
-			PortalUtil.getClassName(classNameId));
+		return _learningActivityFactoriesMapByClassName.get(PortalUtil.getClassName(classNameId));
 	}
 
-	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByType(
-		long type) {
+	public static LearningActivityTypeFactory getLearningActivityTypeFactoryByType(long type) {
 
 		return _learningActivityFactoriesMapByClassType.get(type);
 	}
 
-	public static long[] getClassNameIds(
-		long companyId) {
+	public static long[] getClassNameIds(long companyId) {
 
 		Map<String, LearningActivityTypeFactory> learningActivityFactories =
 			_learningActivityFactoriesMapByClassName;
@@ -173,8 +149,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 	private LearningActivityTypeFactoryRegistryUtil() {
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		LearningActivityTypeFactoryRegistryUtil.class);
+	private static final Log _log = LogFactoryUtil.getLog(LearningActivityTypeFactoryRegistryUtil.class);
 
 	private static final Map<String, LearningActivityTypeFactory>
 		_learningActivityFactoriesMapByClassName = new ConcurrentHashMap<>();
@@ -191,8 +166,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 			<LearningActivityTypeFactory, LearningActivityTypeFactory> {
 
 		@Override
-		public LearningActivityTypeFactory addingService(
-			ServiceReference<LearningActivityTypeFactory> serviceReference) {
+		public LearningActivityTypeFactory addingService(ServiceReference<LearningActivityTypeFactory> serviceReference) {
 
 			Registry registry = RegistryUtil.getRegistry();
 			
@@ -200,10 +174,10 @@ public class LearningActivityTypeFactoryRegistryUtil {
 			
 			try {
 
-				learningActivityFactory = registry.getService(
-					serviceReference);
+				learningActivityFactory = registry.getService(serviceReference);
 	
 				String className = learningActivityFactory.getClassName();
+				System.out.println("learningActivityFactory: " + className);
 
 				LearningActivityTypeFactory classNameLearningActivityTypeFactory =
 					_learningActivityFactoriesMapByClassName.put(

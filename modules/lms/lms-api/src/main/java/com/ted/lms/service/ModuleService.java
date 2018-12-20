@@ -25,10 +25,12 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 
 import com.ted.lms.model.Module;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,6 +69,9 @@ public interface ModuleService extends BaseService {
 
 	public void deleteModule(long moduleId) throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Module> getGroupModules(long groupId);
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -74,7 +79,13 @@ public interface ModuleService extends BaseService {
 	*/
 	public String getOSGiServiceIdentifier();
 
+	public Module moveDownModule(long moduleId, ServiceContext serviceContext)
+		throws PortalException;
+
 	public Module moveModuleToTrash(long moduleId) throws PortalException;
+
+	public Module moveUpModule(long moduleId, ServiceContext serviceContext)
+		throws PortalException;
 
 	public Module updateModule(long moduleId, Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, boolean startDate,
@@ -84,4 +95,6 @@ public interface ModuleService extends BaseService {
 		int endDateMinute, int allowedHours, int allowedMinutes,
 		ImageSelector smallImageImageSelector, long moduleEvalId,
 		ServiceContext serviceContext) throws PortalException;
+
+	public Module updateModule(Module module) throws PortalException;
 }

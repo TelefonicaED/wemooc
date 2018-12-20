@@ -149,12 +149,109 @@ public class ModuleServiceHttp {
 		}
 	}
 
+	public static com.ted.lms.model.Module updateModule(
+		HttpPrincipal httpPrincipal, com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
+					"updateModule", _updateModuleParameterTypes2);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, module);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (com.ted.lms.model.Module)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static com.ted.lms.model.Module moveDownModule(
+		HttpPrincipal httpPrincipal, long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
+					"moveDownModule", _moveDownModuleParameterTypes3);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					moduleId, serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (com.ted.lms.model.Module)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static com.ted.lms.model.Module moveUpModule(
+		HttpPrincipal httpPrincipal, long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
+					"moveUpModule", _moveUpModuleParameterTypes4);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					moduleId, serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (com.ted.lms.model.Module)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static com.ted.lms.model.Module moveModuleToTrash(
 		HttpPrincipal httpPrincipal, long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
-					"moveModuleToTrash", _moveModuleToTrashParameterTypes2);
+					"moveModuleToTrash", _moveModuleToTrashParameterTypes5);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, moduleId);
 
@@ -184,7 +281,7 @@ public class ModuleServiceHttp {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
-					"deleteModule", _deleteModuleParameterTypes3);
+					"deleteModule", _deleteModuleParameterTypes6);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, moduleId);
 
@@ -198,6 +295,32 @@ public class ModuleServiceHttp {
 
 				throw new com.liferay.portal.kernel.exception.SystemException(e);
 			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static java.util.List<com.ted.lms.model.Module> getGroupModules(
+		HttpPrincipal httpPrincipal, long groupId) {
+		try {
+			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
+					"getGroupModules", _getGroupModulesParameterTypes7);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.util.List<com.ted.lms.model.Module>)returnObj;
 		}
 		catch (com.liferay.portal.kernel.exception.SystemException se) {
 			_log.error(se, se);
@@ -222,10 +345,22 @@ public class ModuleServiceHttp {
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector.class,
 			long.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _moveModuleToTrashParameterTypes2 = new Class[] {
+	private static final Class<?>[] _updateModuleParameterTypes2 = new Class[] {
+			com.ted.lms.model.Module.class
+		};
+	private static final Class<?>[] _moveDownModuleParameterTypes3 = new Class[] {
+			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _moveUpModuleParameterTypes4 = new Class[] {
+			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _moveModuleToTrashParameterTypes5 = new Class[] {
 			long.class
 		};
-	private static final Class<?>[] _deleteModuleParameterTypes3 = new Class[] {
+	private static final Class<?>[] _deleteModuleParameterTypes6 = new Class[] {
+			long.class
+		};
+	private static final Class<?>[] _getGroupModulesParameterTypes7 = new Class[] {
 			long.class
 		};
 }

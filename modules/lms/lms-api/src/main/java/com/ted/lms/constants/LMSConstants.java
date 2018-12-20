@@ -13,4 +13,6 @@ public class LMSConstants {
 	public static final String LEARNING_ACTIVITY_MODEL_CLASS_NAME = "com.ted.lms.model.LearningActivity";
 	
 	public static final String SERVICE_NAME = "com.ted.lms";
+	
+	public static final String CHANGE_VISIBILITY = "change_visibility";
 }

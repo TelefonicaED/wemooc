@@ -33,6 +33,42 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 		_learningActivityService = learningActivityService;
 	}
 
+	@Override
+	public com.ted.lms.model.LearningActivity addLearningActivity(
+		long moduleId, long type,
+		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.addLearningActivity(moduleId, type,
+			titleMap, descriptionMap, useStartExecutionDateCourse,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute, useEndExecutionDateCourse, endDateMonth,
+			endDateDay, endDateYear, endDateHour, endDateMinute, required,
+			tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
+			commentsActivated, serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity deleteLearningActivity(long actId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.deleteLearningActivity(actId);
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getActivities(
+		long moduleId) {
+		return _learningActivityService.getActivities(moduleId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -41,6 +77,61 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 	@Override
 	public String getOSGiServiceIdentifier() {
 		return _learningActivityService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity moveDownLearningActivity(
+		long actId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.moveDownLearningActivity(actId,
+			serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity moveLearningActivityToTrash(
+		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.moveLearningActivityToTrash(actId);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity moveUpLearningActivity(
+		long actId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.moveUpLearningActivity(actId,
+			serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity updateLearningActivity(
+		com.ted.lms.model.LearningActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.updateLearningActivity(activity);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity updateLearningActivity(
+		long actId, java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+		boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.security.auth.PrincipalException,
+			com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.updateLearningActivity(actId, titleMap,
+			descriptionMap, useStartExecutionDateCourse, startDateMonth,
+			startDateDay, startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, required, tries, passPuntuation,
+			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
+			serviceContext);
 	}
 
 	@Override

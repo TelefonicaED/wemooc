@@ -194,6 +194,9 @@ public interface LearningActivityResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getLearningActivityCountByActId(long actId);
+
 	/**
 	* Returns the learning activity result with the primary key.
 	*

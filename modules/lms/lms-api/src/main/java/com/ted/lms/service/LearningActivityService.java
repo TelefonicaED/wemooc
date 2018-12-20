@@ -20,10 +20,19 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
 import com.liferay.portal.kernel.security.access.control.AccessControlled;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.BaseService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+
+import com.ted.lms.model.LearningActivity;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Provides the remote service interface for LearningActivity. Methods of this
@@ -49,6 +58,22 @@ public interface LearningActivityService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link LearningActivityServiceUtil} to access the learning activity remote service. Add custom service methods to {@link com.ted.lms.service.impl.LearningActivityServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public LearningActivity addLearningActivity(long moduleId, long type,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		Map<Locale, String> feedbackCorrectMap,
+		Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated,
+		ServiceContext serviceContext) throws PortalException;
+
+	public LearningActivity deleteLearningActivity(long actId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivity> getActivities(long moduleId);
 
 	/**
 	* Returns the OSGi service identifier.
@@ -56,4 +81,28 @@ public interface LearningActivityService extends BaseService {
 	* @return the OSGi service identifier
 	*/
 	public String getOSGiServiceIdentifier();
+
+	public LearningActivity moveDownLearningActivity(long actId,
+		ServiceContext serviceContext) throws PortalException;
+
+	public LearningActivity moveLearningActivityToTrash(long actId)
+		throws PortalException;
+
+	public LearningActivity moveUpLearningActivity(long actId,
+		ServiceContext serviceContext) throws PortalException;
+
+	public LearningActivity updateLearningActivity(LearningActivity activity)
+		throws PortalException;
+
+	public LearningActivity updateLearningActivity(long actId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		Map<Locale, String> feedbackCorrectMap,
+		Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated,
+		ServiceContext serviceContext)
+		throws PrincipalException, PortalException;
 }

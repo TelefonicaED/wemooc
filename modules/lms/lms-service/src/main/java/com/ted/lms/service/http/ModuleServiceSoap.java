@@ -138,6 +138,53 @@ public class ModuleServiceSoap {
 		}
 	}
 
+	public static com.ted.lms.model.ModuleSoap updateModule(
+		com.ted.lms.model.ModuleSoap module) throws RemoteException {
+		try {
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.updateModule(com.ted.lms.model.impl.ModuleModelImpl.toModel(
+						module));
+
+			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.ModuleSoap moveDownModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveDownModule(moduleId,
+					serviceContext);
+
+			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.ModuleSoap moveUpModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveUpModule(moduleId,
+					serviceContext);
+
+			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static com.ted.lms.model.ModuleSoap moveModuleToTrash(long moduleId)
 		throws RemoteException {
 		try {
@@ -155,6 +202,20 @@ public class ModuleServiceSoap {
 	public static void deleteModule(long moduleId) throws RemoteException {
 		try {
 			ModuleServiceUtil.deleteModule(moduleId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.ModuleSoap[] getGroupModules(long groupId)
+		throws RemoteException {
+		try {
+			java.util.List<com.ted.lms.model.Module> returnValue = ModuleServiceUtil.getGroupModules(groupId);
+
+			return com.ted.lms.model.ModuleSoap.toSoapModels(returnValue);
 		}
 		catch (Exception e) {
 			_log.error(e, e);

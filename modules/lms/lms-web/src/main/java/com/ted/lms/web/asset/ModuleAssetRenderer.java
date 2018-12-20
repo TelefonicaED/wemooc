@@ -148,7 +148,7 @@ public class ModuleAssetRenderer extends BaseJSPAssetRenderer<Module>{
 	@Override
 	public String getJspPath(HttpServletRequest request, String template) {
 	    if (template.equals(TEMPLATE_ABSTRACT) || template.equals(TEMPLATE_FULL_CONTENT)) {
-	        return "/module/asset/" + template + ".jsp";
+	        return "/modules/asset/" + template + ".jsp";
 	    }
 	    else {
 	        return null;
@@ -168,7 +168,7 @@ public class ModuleAssetRenderer extends BaseJSPAssetRenderer<Module>{
 
 	    Group group = GroupLocalServiceUtil.fetchGroup(module.getGroupId());
 
-	    PortletURL portletURL = PortalUtil.getControlPanelPortletURL(liferayPortletRequest, group, LMSPortletKeys.MODULE, 0, 0,PortletRequest.RENDER_PHASE);
+	    PortletURL portletURL = PortalUtil.getControlPanelPortletURL(liferayPortletRequest, group, LMSPortletKeys.MODULES_ADMIN, 0, 0,PortletRequest.RENDER_PHASE);
 
 	    portletURL.setParameter("mvcRenderCommandName", "/modules/edit_module");
 	    portletURL.setParameter("moduleId", String.valueOf(module.getModuleId()));
@@ -187,11 +187,9 @@ public class ModuleAssetRenderer extends BaseJSPAssetRenderer<Module>{
 	}
 	
 	@Override
-	public String getURLViewInContext(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse, String noSuchEntryRedirect) throws Exception {
-		
-		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		Group moduleGroup= GroupLocalServiceUtil.getGroup(module.getGroupId());
-		return moduleGroup.getDisplayURL(themeDisplay);
+	public String getURLViewInContext(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse, 
+										String noSuchEntryRedirect) throws Exception {
+		return module.getURLView(liferayPortletRequest);
 	}
 	
 }

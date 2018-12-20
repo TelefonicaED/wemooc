@@ -9,7 +9,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component(
 		immediate = true,
-		property = "javax.portlet.name=" + LMSPortletKeys.MODULE,
+		property = "javax.portlet.name=" + LMSPortletKeys.MODULES_ADMIN,
 		service = CustomAttributesDisplay.class
 	)
 public class ModuleCustomAttributesDisplay extends BaseCustomAttributesDisplay {

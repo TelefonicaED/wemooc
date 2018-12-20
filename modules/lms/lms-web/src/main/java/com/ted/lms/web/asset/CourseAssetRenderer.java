@@ -153,7 +153,7 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 	    if (template.equals(TEMPLATE_ABSTRACT) ||
 	        template.equals(TEMPLATE_FULL_CONTENT)) {
 
-	        return "/course/asset/" + template + ".jsp";
+	        return "/courses/asset/" + template + ".jsp";
 	    }
 	    else {
 	        return null;

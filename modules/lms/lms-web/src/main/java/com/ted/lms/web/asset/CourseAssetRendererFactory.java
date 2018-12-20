@@ -87,7 +87,7 @@ public class CourseAssetRendererFactory extends BaseAssetRendererFactory<Course>
 	@Override
 	public PortletURL getURLView(LiferayPortletResponse liferayPortletResponse,WindowState windowState) {
 		log.debug("CourseAssetRendererFactory::getURLView");
-	    LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.COURSE, PortletRequest.RENDER_PHASE);
+		LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.COURSE, PortletRequest.RENDER_PHASE);
 
 	    try {
 	        liferayPortletURL.setWindowState(windowState);

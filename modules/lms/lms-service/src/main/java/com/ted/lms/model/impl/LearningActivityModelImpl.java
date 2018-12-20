@@ -23,10 +23,13 @@ import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
 import com.liferay.portal.kernel.exception.LocaleException;
+import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
+import com.liferay.portal.kernel.model.ContainerModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -97,7 +100,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			{ "startDate", Types.TIMESTAMP },
 			{ "endDate", Types.TIMESTAMP },
 			{ "tries", Types.INTEGER },
-			{ "passPuntuation", Types.INTEGER },
+			{ "passPuntuation", Types.DOUBLE },
 			{ "priority", Types.BIGINT },
 			{ "extraContent", Types.VARCHAR },
 			{ "feedbackCorrect", Types.VARCHAR },
@@ -128,7 +131,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		TABLE_COLUMNS_MAP.put("startDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("endDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("tries", Types.INTEGER);
-		TABLE_COLUMNS_MAP.put("passPuntuation", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("passPuntuation", Types.DOUBLE);
 		TABLE_COLUMNS_MAP.put("priority", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("extraContent", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("feedbackCorrect", Types.VARCHAR);
@@ -141,7 +144,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		TABLE_COLUMNS_MAP.put("statusDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_LearningActivity (uuid_ VARCHAR(75) null,actId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,moduleId LONG,title STRING null,description STRING null,typeId LONG,startDate DATE null,endDate DATE null,tries INTEGER,passPuntuation INTEGER,priority LONG,extraContent TEXT null,feedbackCorrect VARCHAR(75) null,feedbackNoCorrect VARCHAR(75) null,required BOOLEAN,commentsActivated BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_LearningActivity (uuid_ VARCHAR(75) null,actId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,moduleId LONG,title STRING null,description STRING null,typeId LONG,startDate DATE null,endDate DATE null,tries INTEGER,passPuntuation DOUBLE,priority LONG,extraContent TEXT null,feedbackCorrect STRING null,feedbackNoCorrect STRING null,required BOOLEAN,commentsActivated BOOLEAN,status INTEGER,statusByUserId LONG,statusByUserName VARCHAR(75) null,statusDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_LearningActivity";
 	public static final String ORDER_BY_JPQL = " ORDER BY learningActivity.moduleId ASC, learningActivity.priority ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_LearningActivity.moduleId ASC, LMS_LearningActivity.priority ASC";
@@ -160,10 +163,10 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public static final long COMPANYID_COLUMN_BITMASK = 1L;
 	public static final long GROUPID_COLUMN_BITMASK = 2L;
 	public static final long MODULEID_COLUMN_BITMASK = 4L;
-	public static final long REQUIRED_COLUMN_BITMASK = 8L;
-	public static final long TYPEID_COLUMN_BITMASK = 16L;
-	public static final long UUID_COLUMN_BITMASK = 32L;
-	public static final long PRIORITY_COLUMN_BITMASK = 64L;
+	public static final long PRIORITY_COLUMN_BITMASK = 8L;
+	public static final long REQUIRED_COLUMN_BITMASK = 16L;
+	public static final long TYPEID_COLUMN_BITMASK = 32L;
+	public static final long UUID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -402,7 +405,7 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			setTries(tries);
 		}
 
-		Integer passPuntuation = (Integer)attributes.get("passPuntuation");
+		Double passPuntuation = (Double)attributes.get("passPuntuation");
 
 		if (passPuntuation != null) {
 			setPassPuntuation(passPuntuation);
@@ -915,12 +918,12 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 
 	@JSON
 	@Override
-	public int getPassPuntuation() {
+	public double getPassPuntuation() {
 		return _passPuntuation;
 	}
 
 	@Override
-	public void setPassPuntuation(int passPuntuation) {
+	public void setPassPuntuation(double passPuntuation) {
 		_passPuntuation = passPuntuation;
 	}
 
@@ -934,7 +937,17 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public void setPriority(long priority) {
 		_columnBitmask = -1L;
 
+		if (!_setOriginalPriority) {
+			_setOriginalPriority = true;
+
+			_originalPriority = _priority;
+		}
+
 		_priority = priority;
+	}
+
+	public long getOriginalPriority() {
+		return _originalPriority;
 	}
 
 	@JSON
@@ -965,8 +978,95 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	}
 
 	@Override
+	public String getFeedbackCorrect(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackCorrect(languageId);
+	}
+
+	@Override
+	public String getFeedbackCorrect(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackCorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackCorrect(String languageId) {
+		return LocalizationUtil.getLocalization(getFeedbackCorrect(), languageId);
+	}
+
+	@Override
+	public String getFeedbackCorrect(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getFeedbackCorrect(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackCorrectCurrentLanguageId() {
+		return _feedbackCorrectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getFeedbackCorrectCurrentValue() {
+		Locale locale = getLocale(_feedbackCorrectCurrentLanguageId);
+
+		return getFeedbackCorrect(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getFeedbackCorrectMap() {
+		return LocalizationUtil.getLocalizationMap(getFeedbackCorrect());
+	}
+
+	@Override
 	public void setFeedbackCorrect(String feedbackCorrect) {
 		_feedbackCorrect = feedbackCorrect;
+	}
+
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect, Locale locale) {
+		setFeedbackCorrect(feedbackCorrect, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(feedbackCorrect)) {
+			setFeedbackCorrect(LocalizationUtil.updateLocalization(
+					getFeedbackCorrect(), "FeedbackCorrect", feedbackCorrect,
+					languageId, defaultLanguageId));
+		}
+		else {
+			setFeedbackCorrect(LocalizationUtil.removeLocalization(
+					getFeedbackCorrect(), "FeedbackCorrect", languageId));
+		}
+	}
+
+	@Override
+	public void setFeedbackCorrectCurrentLanguageId(String languageId) {
+		_feedbackCorrectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap) {
+		setFeedbackCorrectMap(feedbackCorrectMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap,
+		Locale defaultLocale) {
+		if (feedbackCorrectMap == null) {
+			return;
+		}
+
+		setFeedbackCorrect(LocalizationUtil.updateLocalization(
+				feedbackCorrectMap, getFeedbackCorrect(), "FeedbackCorrect",
+				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -981,8 +1081,99 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	}
 
 	@Override
+	public String getFeedbackNoCorrect(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackNoCorrect(languageId);
+	}
+
+	@Override
+	public String getFeedbackNoCorrect(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackNoCorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackNoCorrect(String languageId) {
+		return LocalizationUtil.getLocalization(getFeedbackNoCorrect(),
+			languageId);
+	}
+
+	@Override
+	public String getFeedbackNoCorrect(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getFeedbackNoCorrect(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackNoCorrectCurrentLanguageId() {
+		return _feedbackNoCorrectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getFeedbackNoCorrectCurrentValue() {
+		Locale locale = getLocale(_feedbackNoCorrectCurrentLanguageId);
+
+		return getFeedbackNoCorrect(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getFeedbackNoCorrectMap() {
+		return LocalizationUtil.getLocalizationMap(getFeedbackNoCorrect());
+	}
+
+	@Override
 	public void setFeedbackNoCorrect(String feedbackNoCorrect) {
 		_feedbackNoCorrect = feedbackNoCorrect;
+	}
+
+	@Override
+	public void setFeedbackNoCorrect(String feedbackNoCorrect, Locale locale) {
+		setFeedbackNoCorrect(feedbackNoCorrect, locale,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackNoCorrect(String feedbackNoCorrect, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(feedbackNoCorrect)) {
+			setFeedbackNoCorrect(LocalizationUtil.updateLocalization(
+					getFeedbackNoCorrect(), "FeedbackNoCorrect",
+					feedbackNoCorrect, languageId, defaultLanguageId));
+		}
+		else {
+			setFeedbackNoCorrect(LocalizationUtil.removeLocalization(
+					getFeedbackNoCorrect(), "FeedbackNoCorrect", languageId));
+		}
+	}
+
+	@Override
+	public void setFeedbackNoCorrectCurrentLanguageId(String languageId) {
+		_feedbackNoCorrectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setFeedbackNoCorrectMap(
+		Map<Locale, String> feedbackNoCorrectMap) {
+		setFeedbackNoCorrectMap(feedbackNoCorrectMap,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackNoCorrectMap(
+		Map<Locale, String> feedbackNoCorrectMap, Locale defaultLocale) {
+		if (feedbackNoCorrectMap == null) {
+			return;
+		}
+
+		setFeedbackNoCorrect(LocalizationUtil.updateLocalization(
+				feedbackNoCorrectMap, getFeedbackNoCorrect(),
+				"FeedbackNoCorrect", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@JSON
@@ -1100,6 +1291,137 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(PortalUtil.getClassNameId(
 				LearningActivity.class.getName()));
+	}
+
+	@Override
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
+		throws PortalException {
+		if (!isInTrash()) {
+			return null;
+		}
+
+		com.liferay.trash.kernel.model.TrashEntry trashEntry = com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(),
+				getTrashEntryClassPK());
+
+		if (trashEntry != null) {
+			return trashEntry;
+		}
+
+		com.liferay.portal.kernel.trash.TrashHandler trashHandler = getTrashHandler();
+
+		if (Validator.isNotNull(trashHandler.getContainerModelClassName(
+						getPrimaryKey()))) {
+			ContainerModel containerModel = null;
+
+			try {
+				containerModel = trashHandler.getParentContainerModel(this);
+			}
+			catch (NoSuchModelException nsme) {
+				return null;
+			}
+
+			while (containerModel != null) {
+				if (containerModel instanceof TrashedModel) {
+					TrashedModel trashedModel = (TrashedModel)containerModel;
+
+					return trashedModel.getTrashEntry();
+				}
+
+				trashHandler = com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil.getTrashHandler(trashHandler.getContainerModelClassName(
+							containerModel.getContainerModelId()));
+
+				if (trashHandler == null) {
+					return null;
+				}
+
+				containerModel = trashHandler.getContainerModel(containerModel.getParentContainerModelId());
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public long getTrashEntryClassPK() {
+		return getPrimaryKey();
+	}
+
+	/**
+	* @deprecated As of 7.0.0, with no direct replacement
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler() {
+		return com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil.getTrashHandler(getModelClassName());
+	}
+
+	@Override
+	public boolean isInTrash() {
+		if (getStatus() == WorkflowConstants.STATUS_IN_TRASH) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean isInTrashContainer() {
+		com.liferay.portal.kernel.trash.TrashHandler trashHandler = getTrashHandler();
+
+		if ((trashHandler == null) ||
+				Validator.isNull(trashHandler.getContainerModelClassName(
+						getPrimaryKey()))) {
+			return false;
+		}
+
+		try {
+			ContainerModel containerModel = trashHandler.getParentContainerModel(this);
+
+			if (containerModel == null) {
+				return false;
+			}
+
+			if (containerModel instanceof TrashedModel) {
+				return ((TrashedModel)containerModel).isInTrash();
+			}
+		}
+		catch (Exception e) {
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isInTrashExplicitly() {
+		if (!isInTrash()) {
+			return false;
+		}
+
+		com.liferay.trash.kernel.model.TrashEntry trashEntry = com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(),
+				getTrashEntryClassPK());
+
+		if (trashEntry != null) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isInTrashImplicitly() {
+		if (!isInTrash()) {
+			return false;
+		}
+
+		com.liferay.trash.kernel.model.TrashEntry trashEntry = com.liferay.trash.kernel.service.TrashEntryLocalServiceUtil.fetchEntry(getModelClassName(),
+				getTrashEntryClassPK());
+
+		if (trashEntry != null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -1225,6 +1547,28 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 			}
 		}
 
+		Map<Locale, String> feedbackCorrectMap = getFeedbackCorrectMap();
+
+		for (Map.Entry<Locale, String> entry : feedbackCorrectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> feedbackNoCorrectMap = getFeedbackNoCorrectMap();
+
+		for (Map.Entry<Locale, String> entry : feedbackNoCorrectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
 		return availableLanguageIds.toArray(new String[availableLanguageIds.size()]);
 	}
 
@@ -1278,6 +1622,28 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		else {
 			setDescription(getDescription(defaultLocale), defaultLocale,
 				defaultLocale);
+		}
+
+		String feedbackCorrect = getFeedbackCorrect(defaultLocale);
+
+		if (Validator.isNull(feedbackCorrect)) {
+			setFeedbackCorrect(getFeedbackCorrect(modelDefaultLanguageId),
+				defaultLocale);
+		}
+		else {
+			setFeedbackCorrect(getFeedbackCorrect(defaultLocale),
+				defaultLocale, defaultLocale);
+		}
+
+		String feedbackNoCorrect = getFeedbackNoCorrect(defaultLocale);
+
+		if (Validator.isNull(feedbackNoCorrect)) {
+			setFeedbackNoCorrect(getFeedbackNoCorrect(modelDefaultLanguageId),
+				defaultLocale);
+		}
+		else {
+			setFeedbackNoCorrect(getFeedbackNoCorrect(defaultLocale),
+				defaultLocale, defaultLocale);
 		}
 	}
 
@@ -1423,6 +1789,10 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 		learningActivityModelImpl._originalTypeId = learningActivityModelImpl._typeId;
 
 		learningActivityModelImpl._setOriginalTypeId = false;
+
+		learningActivityModelImpl._originalPriority = learningActivityModelImpl._priority;
+
+		learningActivityModelImpl._setOriginalPriority = false;
 
 		learningActivityModelImpl._originalRequired = learningActivityModelImpl._required;
 
@@ -1799,11 +2169,15 @@ public class LearningActivityModelImpl extends BaseModelImpl<LearningActivity>
 	private Date _startDate;
 	private Date _endDate;
 	private int _tries;
-	private int _passPuntuation;
+	private double _passPuntuation;
 	private long _priority;
+	private long _originalPriority;
+	private boolean _setOriginalPriority;
 	private String _extraContent;
 	private String _feedbackCorrect;
+	private String _feedbackCorrectCurrentLanguageId;
 	private String _feedbackNoCorrect;
+	private String _feedbackNoCorrectCurrentLanguageId;
 	private boolean _required;
 	private boolean _originalRequired;
 	private boolean _setOriginalRequired;

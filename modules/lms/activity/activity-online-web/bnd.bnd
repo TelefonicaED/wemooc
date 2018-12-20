@@ -2,3 +2,5 @@ Bundle-Name: activity-online-web
 Bundle-SymbolicName: com.ted.lms.learning.activity.online.web
 Bundle-Version: 1.0.0
 Export-Package: com.ted.lms.learning.activity.online.web.constants
+-liferay-aggregate-resource-bundles: \
+	com.ted.lms.lang

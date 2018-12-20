@@ -33,7 +33,7 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
     immediate = true,
-    property = {"javax.portlet.name=" + LMSPortletKeys.LEARNING_ACTIVITY},
+    property = {"javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER},
     service = AssetRendererFactory.class
 )
 public class LearningActivityAssetRendererFactory extends BaseAssetRendererFactory<LearningActivity>{
@@ -48,7 +48,7 @@ public class LearningActivityAssetRendererFactory extends BaseAssetRendererFacto
 	    setClassName(LearningActivity.class.getName());
 	    setCategorizable(true);
 	    setLinkable(true);
-	    setPortletId(LMSPortletKeys.LEARNING_ACTIVITY);
+	    setPortletId(LMSPortletKeys.COURSE_CONTENT_VIEWER);
 	    setSearchable(true);
 	    setSelectable(true);
 	}
@@ -70,7 +70,7 @@ public class LearningActivityAssetRendererFactory extends BaseAssetRendererFacto
 	public PortletURL getURLAdd(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse, long classTypeId) {
 		log.debug("LearningActivityAssetRendererFactory::getURLAdd::"+classTypeId);
 	    PortletURL portletURL = _portal.getControlPanelPortletURL(liferayPortletRequest, getGroup(liferayPortletRequest),
-	    															LMSPortletKeys.LEARNING_ACTIVITY, 0, 0, PortletRequest.RENDER_PHASE);
+	    															LMSPortletKeys.COURSE_CONTENT_VIEWER, 0, 0, PortletRequest.RENDER_PHASE);
 	    portletURL.setParameter("mvcRenderCommandName", "/lms/new_activity");
 
 	    return portletURL;
@@ -81,7 +81,7 @@ public class LearningActivityAssetRendererFactory extends BaseAssetRendererFacto
 		log.debug("LearningActivityAssetRendererFactory::getURLView");
 		
 		
-	    LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.LEARNING_ACTIVITY, PortletRequest.RENDER_PHASE);
+	    LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(LMSPortletKeys.COURSE_CONTENT_VIEWER, PortletRequest.RENDER_PHASE);
 
 	    try {
 	        liferayPortletURL.setWindowState(windowState);

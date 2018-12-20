@@ -86,9 +86,9 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		}
 		
 		switch (navigation) {
-			case LMSPortletConstants.EDIT_COURSE_DESCRIPTION: renderDescription(renderRequest, renderResponse, configuration);
-			case LMSPortletConstants.EDIT_COURSE_CONFIGURATION: renderConfiguration(renderRequest, renderResponse);
-			case LMSPortletConstants.EDIT_COURSE_MESSAGES: renderMessages(renderRequest, renderResponse);
+			case LMSPortletConstants.EDIT_COURSE_DESCRIPTION: renderDescription(renderRequest, renderResponse, configuration); break;
+			case LMSPortletConstants.EDIT_COURSE_CONFIGURATION: renderConfiguration(renderRequest, renderResponse); break;
+			case LMSPortletConstants.EDIT_COURSE_MESSAGES: renderMessages(renderRequest, renderResponse);break;
 		}
 				
 		renderRequest.setAttribute("navigation", navigation);

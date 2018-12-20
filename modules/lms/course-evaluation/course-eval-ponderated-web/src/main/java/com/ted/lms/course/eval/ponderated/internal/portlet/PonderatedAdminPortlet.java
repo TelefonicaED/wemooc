@@ -63,7 +63,7 @@ public class PonderatedAdminPortlet extends MVCPortlet {
 		Course course=courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		
 		try {
-			if (course==null || !CoursePermission.contains(themeDisplay.getPermissionChecker(), course, LMSActionKeys.ADD_MODULE) 
+			if (course==null || !CoursePermission.contains(themeDisplay.getPermissionChecker(), course.getGroupCreatedId(), LMSActionKeys.ADD_MODULE) 
 					||course.getCourseEvalId() != PonderatedCourseEvalFactory.TYPE) {
 				renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
 			}else {

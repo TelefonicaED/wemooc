@@ -64,7 +64,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(35);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -84,8 +84,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		sb.append(modifiedDate);
 		sb.append(", actId=");
 		sb.append(actId);
-		sb.append(", title=");
-		sb.append(title);
 		sb.append(", text=");
 		sb.append(text);
 		sb.append(", questionType=");
@@ -96,8 +94,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		sb.append(weight);
 		sb.append(", penalize=");
 		sb.append(penalize);
-		sb.append(", orderedAnswers=");
-		sb.append(orderedAnswers);
 		sb.append(", extraContent=");
 		sb.append(extraContent);
 		sb.append("}");
@@ -144,13 +140,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 		questionImpl.setActId(actId);
 
-		if (title == null) {
-			questionImpl.setTitle("");
-		}
-		else {
-			questionImpl.setTitle(title);
-		}
-
 		if (text == null) {
 			questionImpl.setText("");
 		}
@@ -162,7 +151,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		questionImpl.setActive(active);
 		questionImpl.setWeight(weight);
 		questionImpl.setPenalize(penalize);
-		questionImpl.setOrderedAnswers(orderedAnswers);
 
 		if (extraContent == null) {
 			questionImpl.setExtraContent("");
@@ -192,7 +180,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		modifiedDate = objectInput.readLong();
 
 		actId = objectInput.readLong();
-		title = objectInput.readUTF();
 		text = objectInput.readUTF();
 
 		questionType = objectInput.readLong();
@@ -202,8 +189,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		weight = objectInput.readLong();
 
 		penalize = objectInput.readBoolean();
-
-		orderedAnswers = objectInput.readBoolean();
 		extraContent = objectInput.readUTF();
 	}
 
@@ -237,13 +222,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 		objectOutput.writeLong(actId);
 
-		if (title == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(title);
-		}
-
 		if (text == null) {
 			objectOutput.writeUTF("");
 		}
@@ -258,8 +236,6 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		objectOutput.writeLong(weight);
 
 		objectOutput.writeBoolean(penalize);
-
-		objectOutput.writeBoolean(orderedAnswers);
 
 		if (extraContent == null) {
 			objectOutput.writeUTF("");
@@ -278,12 +254,10 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 	public long createDate;
 	public long modifiedDate;
 	public long actId;
-	public String title;
 	public String text;
 	public long questionType;
 	public boolean active;
 	public long weight;
 	public boolean penalize;
-	public boolean orderedAnswers;
 	public String extraContent;
 }

@@ -16,9 +16,20 @@ package com.ted.lms.service.http;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
+
+import com.ted.lms.service.LearningActivityServiceUtil;
+
+import java.rmi.RemoteException;
+
+import java.util.Locale;
+import java.util.Map;
+
 /**
  * Provides the SOAP utility for the
- * {@link com.ted.lms.service.LearningActivityServiceUtil} service utility. The
+ * {@link LearningActivityServiceUtil} service utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it is difficult for SOAP to
  * support certain types.
@@ -53,9 +64,186 @@ import aQute.bnd.annotation.ProviderType;
  * @author Brian Wing Shun Chan
  * @see LearningActivityServiceHttp
  * @see com.ted.lms.model.LearningActivitySoap
- * @see com.ted.lms.service.LearningActivityServiceUtil
+ * @see LearningActivityServiceUtil
  * @generated
  */
 @ProviderType
 public class LearningActivityServiceSoap {
+	public static com.ted.lms.model.LearningActivitySoap updateLearningActivity(
+		com.ted.lms.model.LearningActivitySoap activity)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.updateLearningActivity(com.ted.lms.model.impl.LearningActivityModelImpl.toModel(
+						activity));
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap moveDownLearningActivity(
+		long actId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveDownLearningActivity(actId,
+					serviceContext);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap moveUpLearningActivity(
+		long actId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveUpLearningActivity(actId,
+					serviceContext);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap moveLearningActivityToTrash(
+		long actId) throws RemoteException {
+		try {
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveLearningActivityToTrash(actId);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap deleteLearningActivity(
+		long actId) throws RemoteException {
+		try {
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.deleteLearningActivity(actId);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap addLearningActivity(
+		long moduleId, long type, String[] titleMapLanguageIds,
+		String[] titleMapValues, String[] descriptionMapLanguageIds,
+		String[] descriptionMapValues, boolean useStartExecutionDateCourse,
+		int startDateMonth, int startDateDay, int startDateYear,
+		int startDateHour, int startDateMinute,
+		boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
+		int endDateYear, int endDateHour, int endDateMinute, boolean required,
+		int tries, double passPuntuation,
+		String[] feedbackCorrectMapLanguageIds,
+		String[] feedbackCorrectMapValues,
+		String[] feedbackNoCorrectMapLanguageIds,
+		String[] feedbackNoCorrectMapValues, boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
+					descriptionMapValues);
+			Map<Locale, String> feedbackCorrectMap = LocalizationUtil.getLocalizationMap(feedbackCorrectMapLanguageIds,
+					feedbackCorrectMapValues);
+			Map<Locale, String> feedbackNoCorrectMap = LocalizationUtil.getLocalizationMap(feedbackNoCorrectMapLanguageIds,
+					feedbackNoCorrectMapValues);
+
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.addLearningActivity(moduleId,
+					type, titleMap, descriptionMap,
+					useStartExecutionDateCourse, startDateMonth, startDateDay,
+					startDateYear, startDateHour, startDateMinute,
+					useEndExecutionDateCourse, endDateMonth, endDateDay,
+					endDateYear, endDateHour, endDateMinute, required, tries,
+					passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
+					commentsActivated, serviceContext);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap updateLearningActivity(
+		long actId, String[] titleMapLanguageIds, String[] titleMapValues,
+		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
+		boolean useStartExecutionDateCourse, int startDateMonth,
+		int startDateDay, int startDateYear, int startDateHour,
+		int startDateMinute, boolean useEndExecutionDateCourse,
+		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+		int endDateMinute, boolean required, int tries, double passPuntuation,
+		String[] feedbackCorrectMapLanguageIds,
+		String[] feedbackCorrectMapValues,
+		String[] feedbackNoCorrectMapLanguageIds,
+		String[] feedbackNoCorrectMapValues, boolean commentsActivated,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
+					descriptionMapValues);
+			Map<Locale, String> feedbackCorrectMap = LocalizationUtil.getLocalizationMap(feedbackCorrectMapLanguageIds,
+					feedbackCorrectMapValues);
+			Map<Locale, String> feedbackNoCorrectMap = LocalizationUtil.getLocalizationMap(feedbackNoCorrectMapLanguageIds,
+					feedbackNoCorrectMapValues);
+
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.updateLearningActivity(actId,
+					titleMap, descriptionMap, useStartExecutionDateCourse,
+					startDateMonth, startDateDay, startDateYear, startDateHour,
+					startDateMinute, useEndExecutionDateCourse, endDateMonth,
+					endDateDay, endDateYear, endDateHour, endDateMinute,
+					required, tries, passPuntuation, feedbackCorrectMap,
+					feedbackNoCorrectMap, commentsActivated, serviceContext);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.LearningActivitySoap[] getActivities(
+		long moduleId) throws RemoteException {
+		try {
+			java.util.List<com.ted.lms.model.LearningActivity> returnValue = LearningActivityServiceUtil.getActivities(moduleId);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	private static Log _log = LogFactoryUtil.getLog(LearningActivityServiceSoap.class);
 }

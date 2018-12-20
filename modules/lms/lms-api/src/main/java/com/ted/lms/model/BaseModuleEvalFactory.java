@@ -63,7 +63,7 @@ public abstract class BaseModuleEvalFactory implements ModuleEvalFactory {
 
 	@Override
 	public String getPortletId(){
-		return LMSPortletKeys.MODULE;
+		return LMSPortletKeys.MODULES_ADMIN;
 	}
 	
 	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse) {

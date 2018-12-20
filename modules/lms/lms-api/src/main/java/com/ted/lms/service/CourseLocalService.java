@@ -140,7 +140,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @param course the course
 	* @return the course that was removed
 	*/
-	@Indexable(type = IndexableType.REINDEX)
+	@Indexable(type = IndexableType.DELETE)
 	public Course deleteCourse(Course course);
 
 	/**
@@ -153,6 +153,7 @@ public interface CourseLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.DELETE)
 	public Course deleteCourse(long courseId) throws PortalException;
 
+	@Indexable(type = IndexableType.DELETE)
 	public void deleteCourses(long groupId);
 
 	/**
@@ -391,15 +392,20 @@ public interface CourseLocalService extends BaseLocalService,
 	*
 	* @param courseId identificador del curso
 	* @param welcome si se habilita el mensaje de bienvenida
-	* @param welcomeSubjectMap asunto del mensaje de bienvenida
-	* @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	* @param welcomeSubjectMap asunto del mensaje de bienvenida con las traducciones
+	* @param welcomeMsgMap cuerpo del mensaje de bienvenida con las traducciones
 	* @param goodbye si se habilita el mensaje de despedida
-	* @param goodbyeSubjectMap asunto del mensaje de despedida
-	* @param goodbyeMsgMap cuerpo del mensaje de despedida
+	* @param goodbyeSubjectMap asunto del mensaje de despedida con las traducciones
+	* @param goodbyeMsgMap cuerpo del mensaje de despedida con las traducciones
+	* @param deniedInscription si se habilita el mensaje de denegaci�n de la inscripci�n
+	* @param deniedInscriptionSubjectMap asunto del mensaje de denegaci�n de la inscripci�n con las traducciones
+	* @param deniedInscriptionMsgMap cuerpod el mensaje de denegaci�n de la inscripci�n con las traducciones
+	* @param status estado del curso
 	* @param serviceContext contexto de la modificación del curso
 	* @return curso modificado
 	* @throws NoSuchCourseException
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, boolean welcome,
 		Map<Locale, String> welcomeSubjectMap,
 		Map<Locale, String> welcomeMsgMap, boolean goodbye,
@@ -428,6 +434,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @return curso modificado
 	* @throws PortalException
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, Date registrationStartDate,
 		Date registrationEndDate, Date executionStartDate,
 		Date executionEndDate, int typeSite, long inscriptionType,
@@ -491,6 +498,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @throws PrincipalException
 	* @throws PortalException
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, int status,
 		ServiceContext serviceContext)
 		throws PrincipalException, PortalException;
@@ -509,6 +517,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @return curso modificado
 	* @throws PortalException
 	*/
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
 		boolean indexer, Map<Locale, String> friendlyURLMap,

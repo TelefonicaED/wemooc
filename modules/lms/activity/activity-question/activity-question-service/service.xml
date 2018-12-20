@@ -23,13 +23,11 @@
 		<column name="modifiedDate" type="Date" />
 		
 		<column name="actId" type="long" />
-		<column name="title" type="String" />
-		<column name="text" type="String" />
+		<column name="text" type="String" localized="true"/>
 		<column name="questionType" type="long" />
 		<column name="active" type="boolean" />
 		<column name="weight" type="long" />
 		<column name="penalize" type="boolean" />
-		<column name="orderedAnswers" type="boolean" />	
 		<column name="extraContent" type="String"></column>
 			
 		<order by="asc">
@@ -62,12 +60,11 @@
 		<column name="modifiedDate" type="Date" />
 		
 		<column name="questionId" type="long" />
-		<column name="precedence" type="long" />
-		<column name="answer" type="String" />
+		<column name="actId" type="long" />
+		<column name="answer" type="String" localized="true"/>
 		<column name="correct" type="boolean" />
-		<column name="points" type="boolean" />
-		<column name="feedbackCorrect" type="String" />
-		<column name="feedbackIncorrect" type="String" />
+		<column name="feedbackCorrect" type="String" localized="true"/>
+		<column name="feedbackIncorrect" type="String" localized="true"/>
 		
 		<order by="asc">
 			<order-column name="answerId" />

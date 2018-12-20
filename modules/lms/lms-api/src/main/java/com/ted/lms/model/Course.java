@@ -114,4 +114,7 @@ public interface Course extends CourseModel, PersistedModel {
 	public boolean isTypeSitePrivate();
 
 	public long getLayoutSetPrototypeId();
+
+	public boolean isLocked(com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker);
 }

@@ -14,6 +14,8 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -31,7 +33,10 @@ import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
+import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.social.kernel.model.SocialActivityConstants;
@@ -41,6 +46,8 @@ import com.ted.lms.constants.LMSActivityKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.exception.ModuleEndDateException;
 import com.ted.lms.exception.ModuleStartDateException;
+import com.ted.lms.exception.NoSuchNextModuleException;
+import com.ted.lms.exception.NoSuchPreviousModuleException;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.base.ModuleLocalServiceBaseImpl;
 import com.ted.lms.service.util.SmallImageHelper;
@@ -111,6 +118,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
+	@Indexable(type = IndexableType.REINDEX)
 	public Module addModule(long userId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, Date startDate, 
 			Date endDate, long allowedTime, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, String moduleExtraData, ServiceContext serviceContext) throws PortalException {
@@ -163,7 +171,27 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		resourceLocalService.addResources(module.getCompanyId(), module.getGroupId(), module.getUserId(),  Module.class.getName(), 
 				module.getModuleId(), false, true, false);
 		
+		updateAsset(userId, module, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), serviceContext.getAssetLinkEntryIds(), 
+				serviceContext.getAssetPriority());
+		
 		return module;
+	}
+	
+	public void updateAsset(long userId, Module module, long[] assetCategoryIds,String[] assetTagNames, long[] assetLinkEntryIds, 
+			Double priority) throws PortalException {
+
+		boolean visible = module.isApproved();
+
+		String summary = HtmlUtil.extractText(StringUtil.shorten(module.getDescriptionCurrentValue(), 500));
+
+		AssetEntry assetEntry = assetEntryLocalService.updateEntry(userId, module.getGroupId(), module.getCreateDate(),
+			module.getModifiedDate(), Module.class.getName(), module.getModuleId(), module.getUuid(), 0, assetCategoryIds,
+			assetTagNames, true, visible, null, null, null, null,
+			ContentTypes.TEXT_HTML, module.getTitle(), module.getDescription(),
+			summary, null, null, 0, 0, priority);
+
+		assetLinkLocalService.updateLinks(userId, assetEntry.getEntryId(), assetLinkEntryIds,AssetLinkConstants.TYPE_RELATED);
+
 	}
 	
 	@Override
@@ -205,6 +233,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
+	@Indexable(type = IndexableType.REINDEX)
 	public Module updateModule(long userId, long moduleId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, Date startDate, 
 			Date endDate, long allowedTime, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, String moduleExtraData, ServiceContext serviceContext) throws PortalException {
@@ -251,6 +280,9 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		module = modulePersistence.update(module);
 		
+		updateAsset(userId, module, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), serviceContext.getAssetLinkEntryIds(), 
+				serviceContext.getAssetPriority());
+		
 		if (deletePreviousSmallImageId != 0) {
 			PortletFileRepositoryUtil.deletePortletFileEntry(deletePreviousSmallImageId);
 		}
@@ -289,6 +321,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
+	@Indexable(type = IndexableType.DELETE)
 	public Module deleteModule(Module module) {
 		//Primero eliminamos las actividades
 		learningActivityLocalService.deleteLearningActivities(module.getModuleId());
@@ -296,6 +329,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
+	@Indexable(type = IndexableType.DELETE)
 	public Module deleteModule(long moduleId) throws PortalException {
 		//Primero eliminamos las actividades
 		learningActivityLocalService.deleteLearningActivities(moduleId);
@@ -306,7 +340,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	@Override
 	public Module moveModuleToTrash(long userId, Module module) throws PortalException {
 
-		// MÃ³dulo
+		// Módulo
 
 		if (module.isInTrash()) {
 			throw new TrashEntryException();
@@ -417,6 +451,77 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		Module module = modulePersistence.findByPrimaryKey(moduleId);
 
 		return moduleLocalService.moveModuleToTrash(userId, module);
+	}
+	
+	@Override
+	public Module moveDownModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+		
+		Module module = modulePersistence.fetchByPrimaryKey(moduleId);
+		
+		Module nextModule = getNextModule(module);
+		
+		if(nextModule!=null) {
+			Date now = new Date();
+			//Se actualiza el orden
+			long order = module.getOrder();
+			module.setOrder(nextModule.getOrder());
+			nextModule.setOrder(order);
+			
+			module.setModifiedDate(serviceContext.getModifiedDate(now));
+			nextModule.setModifiedDate(serviceContext.getModifiedDate(now));
+			
+			modulePersistence.update(module);			
+			modulePersistence.update(nextModule);
+		}
+		
+		return module;
+	}
+	
+	@Override
+	public Module moveUpModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+		
+		Module module = modulePersistence.fetchByPrimaryKey(moduleId);
+		
+		Module previousModule = getPreviousModule(module);
+		
+		if(previousModule!=null) {
+			Date now = new Date();
+			long order=module.getOrder();
+			module.setOrder(previousModule.getOrder());
+			previousModule.setOrder(order);
+			
+			module.setModifiedDate(serviceContext.getModifiedDate(now));
+			previousModule.setModifiedDate(serviceContext.getModifiedDate(now));
+			
+			modulePersistence.update(module);			
+			modulePersistence.update(previousModule);
+		}
+		
+		return module;
+	}
+	
+	@Override
+	public Module getNextModule(Module module) throws PortalException {
+		List<Module> listNextModules = modulePersistence.findByGroupIdNextModules(module.getGroupId(), module.getOrder());
+		Module nextModule = null;
+		if(listNextModules != null && listNextModules.size() > 0) {
+			nextModule = listNextModules.get(0);
+		}else {
+			throw new NoSuchNextModuleException();
+		}
+		return nextModule;
+	}
+	
+	@Override
+	public Module getPreviousModule(Module module) throws PortalException {
+		List<Module> listPreviousModules = modulePersistence.findByGroupIdPreviousModules(module.getGroupId(), module.getOrder());
+		Module previousModule = null;
+		if(listPreviousModules != null && listPreviousModules.size() > 0) {
+			previousModule = listPreviousModules.get(0);
+		}else {
+			throw new NoSuchPreviousModuleException();
+		}
+		return previousModule;
 	}
 	
 	@Override

@@ -16,6 +16,7 @@ public class LMSPropsKeys implements PropsKeys{
 	public static final String LMS_PREFS_EDITOR_ROLE = "lms.prefs.role.editor";
 	
 	public static final String LEARNING_ACTIVITY_TYPE = "learning.activity.type";
+	public static final String LEARNING_ACTIVITY_CHANGE_VISIBILITY = "learning.activity.change.visibility";
 	
 	public static final String COURSE_IMAGE_EXTENSIONS = "course.image.extensions";
 	public static final String COURSE_IMAGE_MAX_SIZE = "course.image.max-size";
@@ -23,6 +24,8 @@ public class LMSPropsKeys implements PropsKeys{
 	public static final String MODULE_IMAGE_MAX_SIZE = "module.image.max-size";
 	
 	public static final String MODULE_COMMENTS_ENABLED = "module.comments.enabled";
+	public static final String LEARNING_ACTIVITY_COMMENTS_ENABLED = "learning.activity.comments.enabled";
 	
 	public static final String PREREQUISITES_MODULE = "prerequisites.module";
+	public static final String PREREQUISITES_LEARNING_ACTIVITY = "prerequisites.learning-activity";
 }

@@ -53,4 +53,10 @@ public interface Answer extends AnswerModel, PersistedModel {
 				return Answer.class;
 			}
 		};
+
+	public String getAnswerMapAsXML();
+
+	public String getFeedbackCorrectMapAsXML();
+
+	public String getFeedbackIncorrectMapAsXML();
 }

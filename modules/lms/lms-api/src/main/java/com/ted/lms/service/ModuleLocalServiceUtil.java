@@ -342,6 +342,12 @@ public class ModuleLocalServiceUtil {
 		return getService().getModulesCount();
 	}
 
+	public static com.ted.lms.model.Module getNextModule(
+		com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getNextModule(module);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*
@@ -357,6 +363,18 @@ public class ModuleLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static com.ted.lms.model.Module getPreviousModule(
+		com.ted.lms.model.Module module)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getPreviousModule(module);
+	}
+
+	public static com.ted.lms.model.Module moveDownModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveDownModule(moduleId, serviceContext);
+	}
+
 	public static com.ted.lms.model.Module moveModuleToTrash(long userId,
 		long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -367,6 +385,21 @@ public class ModuleLocalServiceUtil {
 		com.ted.lms.model.Module module)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().moveModuleToTrash(userId, module);
+	}
+
+	public static com.ted.lms.model.Module moveUpModule(long moduleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveUpModule(moduleId, serviceContext);
+	}
+
+	public static void updateAsset(long userId,
+		com.ted.lms.model.Module module, long[] assetCategoryIds,
+		String[] assetTagNames, long[] assetLinkEntryIds, Double priority)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.updateAsset(userId, module, assetCategoryIds, assetTagNames,
+			assetLinkEntryIds, priority);
 	}
 
 	public static com.ted.lms.model.Module updateModule(long userId,

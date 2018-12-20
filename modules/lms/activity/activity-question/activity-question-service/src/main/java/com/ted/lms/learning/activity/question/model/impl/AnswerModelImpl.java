@@ -22,7 +22,9 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
+import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
@@ -30,9 +32,12 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.portal.kernel.util.Validator;
 
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.AnswerModel;
@@ -46,7 +51,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * The base model implementation for the Answer service. Represents a row in the &quot;qu_Answer&quot; database table, with each column mapped to a property of this class.
@@ -80,10 +88,9 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "questionId", Types.BIGINT },
-			{ "precedence", Types.BIGINT },
+			{ "actId", Types.BIGINT },
 			{ "answer", Types.VARCHAR },
 			{ "correct", Types.BOOLEAN },
-			{ "points", Types.BOOLEAN },
 			{ "feedbackCorrect", Types.VARCHAR },
 			{ "feedbackIncorrect", Types.VARCHAR }
 		};
@@ -99,15 +106,14 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("precedence", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("answer", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("correct", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("points", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("feedbackCorrect", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,precedence LONG,answer VARCHAR(75) null,correct BOOLEAN,points BOOLEAN,feedbackCorrect VARCHAR(75) null,feedbackIncorrect VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,actId LONG,answer STRING null,correct BOOLEAN,feedbackCorrect STRING null,feedbackIncorrect STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Answer";
 	public static final String ORDER_BY_JPQL = " ORDER BY answer.answerId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Answer.answerId ASC";
@@ -151,10 +157,9 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
 		model.setQuestionId(soapModel.getQuestionId());
-		model.setPrecedence(soapModel.getPrecedence());
+		model.setActId(soapModel.getActId());
 		model.setAnswer(soapModel.getAnswer());
 		model.setCorrect(soapModel.isCorrect());
-		model.setPoints(soapModel.isPoints());
 		model.setFeedbackCorrect(soapModel.getFeedbackCorrect());
 		model.setFeedbackIncorrect(soapModel.getFeedbackIncorrect());
 
@@ -230,10 +235,9 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("questionId", getQuestionId());
-		attributes.put("precedence", getPrecedence());
+		attributes.put("actId", getActId());
 		attributes.put("answer", getAnswer());
 		attributes.put("correct", isCorrect());
-		attributes.put("points", isPoints());
 		attributes.put("feedbackCorrect", getFeedbackCorrect());
 		attributes.put("feedbackIncorrect", getFeedbackIncorrect());
 
@@ -299,10 +303,10 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			setQuestionId(questionId);
 		}
 
-		Long precedence = (Long)attributes.get("precedence");
+		Long actId = (Long)attributes.get("actId");
 
-		if (precedence != null) {
-			setPrecedence(precedence);
+		if (actId != null) {
+			setActId(actId);
 		}
 
 		String answer = (String)attributes.get("answer");
@@ -315,12 +319,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 		if (correct != null) {
 			setCorrect(correct);
-		}
-
-		Boolean points = (Boolean)attributes.get("points");
-
-		if (points != null) {
-			setPoints(points);
 		}
 
 		String feedbackCorrect = (String)attributes.get("feedbackCorrect");
@@ -505,13 +503,13 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
-	public long getPrecedence() {
-		return _precedence;
+	public long getActId() {
+		return _actId;
 	}
 
 	@Override
-	public void setPrecedence(long precedence) {
-		_precedence = precedence;
+	public void setActId(long actId) {
+		_actId = actId;
 	}
 
 	@Override
@@ -525,8 +523,91 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
+	public String getAnswer(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getAnswer(languageId);
+	}
+
+	@Override
+	public String getAnswer(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getAnswer(languageId, useDefault);
+	}
+
+	@Override
+	public String getAnswer(String languageId) {
+		return LocalizationUtil.getLocalization(getAnswer(), languageId);
+	}
+
+	@Override
+	public String getAnswer(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getAnswer(), languageId,
+			useDefault);
+	}
+
+	@Override
+	public String getAnswerCurrentLanguageId() {
+		return _answerCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getAnswerCurrentValue() {
+		Locale locale = getLocale(_answerCurrentLanguageId);
+
+		return getAnswer(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getAnswerMap() {
+		return LocalizationUtil.getLocalizationMap(getAnswer());
+	}
+
+	@Override
 	public void setAnswer(String answer) {
 		_answer = answer;
+	}
+
+	@Override
+	public void setAnswer(String answer, Locale locale) {
+		setAnswer(answer, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setAnswer(String answer, Locale locale, Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(answer)) {
+			setAnswer(LocalizationUtil.updateLocalization(getAnswer(),
+					"Answer", answer, languageId, defaultLanguageId));
+		}
+		else {
+			setAnswer(LocalizationUtil.removeLocalization(getAnswer(),
+					"Answer", languageId));
+		}
+	}
+
+	@Override
+	public void setAnswerCurrentLanguageId(String languageId) {
+		_answerCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setAnswerMap(Map<Locale, String> answerMap) {
+		setAnswerMap(answerMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setAnswerMap(Map<Locale, String> answerMap, Locale defaultLocale) {
+		if (answerMap == null) {
+			return;
+		}
+
+		setAnswer(LocalizationUtil.updateLocalization(answerMap, getAnswer(),
+				"Answer", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@Override
@@ -545,21 +626,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
-	public boolean getPoints() {
-		return _points;
-	}
-
-	@Override
-	public boolean isPoints() {
-		return _points;
-	}
-
-	@Override
-	public void setPoints(boolean points) {
-		_points = points;
-	}
-
-	@Override
 	public String getFeedbackCorrect() {
 		if (_feedbackCorrect == null) {
 			return "";
@@ -570,8 +636,95 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
+	public String getFeedbackCorrect(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackCorrect(languageId);
+	}
+
+	@Override
+	public String getFeedbackCorrect(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackCorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackCorrect(String languageId) {
+		return LocalizationUtil.getLocalization(getFeedbackCorrect(), languageId);
+	}
+
+	@Override
+	public String getFeedbackCorrect(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getFeedbackCorrect(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackCorrectCurrentLanguageId() {
+		return _feedbackCorrectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getFeedbackCorrectCurrentValue() {
+		Locale locale = getLocale(_feedbackCorrectCurrentLanguageId);
+
+		return getFeedbackCorrect(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getFeedbackCorrectMap() {
+		return LocalizationUtil.getLocalizationMap(getFeedbackCorrect());
+	}
+
+	@Override
 	public void setFeedbackCorrect(String feedbackCorrect) {
 		_feedbackCorrect = feedbackCorrect;
+	}
+
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect, Locale locale) {
+		setFeedbackCorrect(feedbackCorrect, locale, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackCorrect(String feedbackCorrect, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(feedbackCorrect)) {
+			setFeedbackCorrect(LocalizationUtil.updateLocalization(
+					getFeedbackCorrect(), "FeedbackCorrect", feedbackCorrect,
+					languageId, defaultLanguageId));
+		}
+		else {
+			setFeedbackCorrect(LocalizationUtil.removeLocalization(
+					getFeedbackCorrect(), "FeedbackCorrect", languageId));
+		}
+	}
+
+	@Override
+	public void setFeedbackCorrectCurrentLanguageId(String languageId) {
+		_feedbackCorrectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap) {
+		setFeedbackCorrectMap(feedbackCorrectMap, LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap,
+		Locale defaultLocale) {
+		if (feedbackCorrectMap == null) {
+			return;
+		}
+
+		setFeedbackCorrect(LocalizationUtil.updateLocalization(
+				feedbackCorrectMap, getFeedbackCorrect(), "FeedbackCorrect",
+				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@Override
@@ -585,8 +738,99 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
+	public String getFeedbackIncorrect(Locale locale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackIncorrect(languageId);
+	}
+
+	@Override
+	public String getFeedbackIncorrect(Locale locale, boolean useDefault) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		return getFeedbackIncorrect(languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackIncorrect(String languageId) {
+		return LocalizationUtil.getLocalization(getFeedbackIncorrect(),
+			languageId);
+	}
+
+	@Override
+	public String getFeedbackIncorrect(String languageId, boolean useDefault) {
+		return LocalizationUtil.getLocalization(getFeedbackIncorrect(),
+			languageId, useDefault);
+	}
+
+	@Override
+	public String getFeedbackIncorrectCurrentLanguageId() {
+		return _feedbackIncorrectCurrentLanguageId;
+	}
+
+	@JSON
+	@Override
+	public String getFeedbackIncorrectCurrentValue() {
+		Locale locale = getLocale(_feedbackIncorrectCurrentLanguageId);
+
+		return getFeedbackIncorrect(locale);
+	}
+
+	@Override
+	public Map<Locale, String> getFeedbackIncorrectMap() {
+		return LocalizationUtil.getLocalizationMap(getFeedbackIncorrect());
+	}
+
+	@Override
 	public void setFeedbackIncorrect(String feedbackIncorrect) {
 		_feedbackIncorrect = feedbackIncorrect;
+	}
+
+	@Override
+	public void setFeedbackIncorrect(String feedbackIncorrect, Locale locale) {
+		setFeedbackIncorrect(feedbackIncorrect, locale,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackIncorrect(String feedbackIncorrect, Locale locale,
+		Locale defaultLocale) {
+		String languageId = LocaleUtil.toLanguageId(locale);
+		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
+
+		if (Validator.isNotNull(feedbackIncorrect)) {
+			setFeedbackIncorrect(LocalizationUtil.updateLocalization(
+					getFeedbackIncorrect(), "FeedbackIncorrect",
+					feedbackIncorrect, languageId, defaultLanguageId));
+		}
+		else {
+			setFeedbackIncorrect(LocalizationUtil.removeLocalization(
+					getFeedbackIncorrect(), "FeedbackIncorrect", languageId));
+		}
+	}
+
+	@Override
+	public void setFeedbackIncorrectCurrentLanguageId(String languageId) {
+		_feedbackIncorrectCurrentLanguageId = languageId;
+	}
+
+	@Override
+	public void setFeedbackIncorrectMap(
+		Map<Locale, String> feedbackIncorrectMap) {
+		setFeedbackIncorrectMap(feedbackIncorrectMap,
+			LocaleUtil.getSiteDefault());
+	}
+
+	@Override
+	public void setFeedbackIncorrectMap(
+		Map<Locale, String> feedbackIncorrectMap, Locale defaultLocale) {
+		if (feedbackIncorrectMap == null) {
+			return;
+		}
+
+		setFeedbackIncorrect(LocalizationUtil.updateLocalization(
+				feedbackIncorrectMap, getFeedbackIncorrect(),
+				"FeedbackIncorrect", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@Override
@@ -613,6 +857,111 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
+	public String[] getAvailableLanguageIds() {
+		Set<String> availableLanguageIds = new TreeSet<String>();
+
+		Map<Locale, String> answerMap = getAnswerMap();
+
+		for (Map.Entry<Locale, String> entry : answerMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> feedbackCorrectMap = getFeedbackCorrectMap();
+
+		for (Map.Entry<Locale, String> entry : feedbackCorrectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		Map<Locale, String> feedbackIncorrectMap = getFeedbackIncorrectMap();
+
+		for (Map.Entry<Locale, String> entry : feedbackIncorrectMap.entrySet()) {
+			Locale locale = entry.getKey();
+			String value = entry.getValue();
+
+			if (Validator.isNotNull(value)) {
+				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
+			}
+		}
+
+		return availableLanguageIds.toArray(new String[availableLanguageIds.size()]);
+	}
+
+	@Override
+	public String getDefaultLanguageId() {
+		String xml = getAnswer();
+
+		if (xml == null) {
+			return "";
+		}
+
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
+
+		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport() throws LocaleException {
+		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
+
+		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
+
+		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(Answer.class.getName(),
+				getPrimaryKey(), defaultLocale, availableLocales);
+
+		prepareLocalizedFieldsForImport(defaultImportLocale);
+	}
+
+	@Override
+	@SuppressWarnings("unused")
+	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
+		throws LocaleException {
+		Locale defaultLocale = LocaleUtil.getSiteDefault();
+
+		String modelDefaultLanguageId = getDefaultLanguageId();
+
+		String answer = getAnswer(defaultLocale);
+
+		if (Validator.isNull(answer)) {
+			setAnswer(getAnswer(modelDefaultLanguageId), defaultLocale);
+		}
+		else {
+			setAnswer(getAnswer(defaultLocale), defaultLocale, defaultLocale);
+		}
+
+		String feedbackCorrect = getFeedbackCorrect(defaultLocale);
+
+		if (Validator.isNull(feedbackCorrect)) {
+			setFeedbackCorrect(getFeedbackCorrect(modelDefaultLanguageId),
+				defaultLocale);
+		}
+		else {
+			setFeedbackCorrect(getFeedbackCorrect(defaultLocale),
+				defaultLocale, defaultLocale);
+		}
+
+		String feedbackIncorrect = getFeedbackIncorrect(defaultLocale);
+
+		if (Validator.isNull(feedbackIncorrect)) {
+			setFeedbackIncorrect(getFeedbackIncorrect(modelDefaultLanguageId),
+				defaultLocale);
+		}
+		else {
+			setFeedbackIncorrect(getFeedbackIncorrect(defaultLocale),
+				defaultLocale, defaultLocale);
+		}
+	}
+
+	@Override
 	public Answer toEscapedModel() {
 		if (_escapedModel == null) {
 			_escapedModel = (Answer)ProxyUtil.newProxyInstance(_classLoader,
@@ -635,10 +984,9 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		answerImpl.setCreateDate(getCreateDate());
 		answerImpl.setModifiedDate(getModifiedDate());
 		answerImpl.setQuestionId(getQuestionId());
-		answerImpl.setPrecedence(getPrecedence());
+		answerImpl.setActId(getActId());
 		answerImpl.setAnswer(getAnswer());
 		answerImpl.setCorrect(isCorrect());
-		answerImpl.setPoints(isPoints());
 		answerImpl.setFeedbackCorrect(getFeedbackCorrect());
 		answerImpl.setFeedbackIncorrect(getFeedbackIncorrect());
 
@@ -776,7 +1124,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 		answerCacheModel.questionId = getQuestionId();
 
-		answerCacheModel.precedence = getPrecedence();
+		answerCacheModel.actId = getActId();
 
 		answerCacheModel.answer = getAnswer();
 
@@ -787,8 +1135,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		}
 
 		answerCacheModel.correct = isCorrect();
-
-		answerCacheModel.points = isPoints();
 
 		answerCacheModel.feedbackCorrect = getFeedbackCorrect();
 
@@ -811,7 +1157,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -831,14 +1177,12 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(getModifiedDate());
 		sb.append(", questionId=");
 		sb.append(getQuestionId());
-		sb.append(", precedence=");
-		sb.append(getPrecedence());
+		sb.append(", actId=");
+		sb.append(getActId());
 		sb.append(", answer=");
 		sb.append(getAnswer());
 		sb.append(", correct=");
 		sb.append(isCorrect());
-		sb.append(", points=");
-		sb.append(isPoints());
 		sb.append(", feedbackCorrect=");
 		sb.append(getFeedbackCorrect());
 		sb.append(", feedbackIncorrect=");
@@ -850,7 +1194,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(49);
+		StringBundler sb = new StringBundler(46);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.learning.activity.question.model.Answer");
@@ -893,8 +1237,8 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(getQuestionId());
 		sb.append("]]></column-value></column>");
 		sb.append(
-			"<column><column-name>precedence</column-name><column-value><![CDATA[");
-		sb.append(getPrecedence());
+			"<column><column-name>actId</column-name><column-value><![CDATA[");
+		sb.append(getActId());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>answer</column-name><column-value><![CDATA[");
@@ -903,10 +1247,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(
 			"<column><column-name>correct</column-name><column-value><![CDATA[");
 		sb.append(isCorrect());
-		sb.append("]]></column-value></column>");
-		sb.append(
-			"<column><column-name>points</column-name><column-value><![CDATA[");
-		sb.append(isPoints());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>feedbackCorrect</column-name><column-value><![CDATA[");
@@ -943,12 +1283,14 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	private long _questionId;
 	private long _originalQuestionId;
 	private boolean _setOriginalQuestionId;
-	private long _precedence;
+	private long _actId;
 	private String _answer;
+	private String _answerCurrentLanguageId;
 	private boolean _correct;
-	private boolean _points;
 	private String _feedbackCorrect;
+	private String _feedbackCorrectCurrentLanguageId;
 	private String _feedbackIncorrect;
+	private String _feedbackIncorrectCurrentLanguageId;
 	private long _columnBitmask;
 	private Answer _escapedModel;
 }

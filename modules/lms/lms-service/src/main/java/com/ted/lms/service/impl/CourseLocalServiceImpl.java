@@ -334,6 +334,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @throws PortalException 
 	 */
 	@Override
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate, 
 			int typeSite, long inscriptionType, long courseEvalId, long calificationType, int maxUsers, int status,
 			ServiceContext serviceContext) throws PortalException {
@@ -375,16 +376,21 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * Actualiza el paso de los mensajes de la modificaciÃ³n de curso
 	 * @param courseId identificador del curso
 	 * @param welcome si se habilita el mensaje de bienvenida
-	 * @param welcomeSubjectMap asunto del mensaje de bienvenida
-	 * @param welcomeMsgMap cuerpo del mensaje de bienvenida
+	 * @param welcomeSubjectMap asunto del mensaje de bienvenida con las traducciones
+	 * @param welcomeMsgMap cuerpo del mensaje de bienvenida con las traducciones
 	 * @param goodbye si se habilita el mensaje de despedida
-	 * @param goodbyeSubjectMap asunto del mensaje de despedida
-	 * @param goodbyeMsgMap cuerpo del mensaje de despedida
+	 * @param goodbyeSubjectMap asunto del mensaje de despedida con las traducciones
+	 * @param goodbyeMsgMap cuerpo del mensaje de despedida con las traducciones
+	 * @param deniedInscription si se habilita el mensaje de denegación de la inscripción
+	 * @param deniedInscriptionSubjectMap asunto del mensaje de denegación de la inscripción con las traducciones
+	 * @param deniedInscriptionMsgMap cuerpod el mensaje de denegación de la inscripción con las traducciones
+	 * @param status estado del curso
 	 * @param serviceContext contexto de la modificaciÃ³n del curso
 	 * @return curso modificado
 	 * @throws NoSuchCourseException 
 	 */
 	@Override
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, boolean welcome, Map<Locale, String> welcomeSubjectMap,
 			Map<Locale, String> welcomeMsgMap, boolean goodbye, Map<Locale, String> goodbyeSubjectMap,
 			Map<Locale, String> goodbyeMsgMap, boolean deniedInscription, Map<Locale, String> deniedInscriptionSubjectMap,
@@ -444,6 +450,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @throws PrincipalException
 	 * @throws PortalException
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, int status, ServiceContext serviceContext) throws PrincipalException, PortalException {
 
 		Course course = coursePersistence.findByPrimaryKey(courseId);
@@ -481,6 +488,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @return curso modificado
 	 * @throws PortalException
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long courseId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Map<Locale, String> summaryMap, boolean indexer, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
 			ImageSelector smallImageSelector, ServiceContext serviceContext) throws Exception {
@@ -605,7 +613,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	}
 	
 	@Override
-	@Indexable(type = IndexableType.REINDEX)
+	@Indexable(type = IndexableType.DELETE)
 	public Course deleteCourse(Course course) {
 		
 		try {
@@ -856,6 +864,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return resultUnsubscribe;
 	}
 	
+	@Indexable(type = IndexableType.DELETE)
 	public void deleteCourses(long groupId) {
 		List<Course> listCourses = coursePersistence.findByGroupId(groupId);
 		for(Course course: listCourses) {

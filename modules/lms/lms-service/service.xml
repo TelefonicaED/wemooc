@@ -84,7 +84,7 @@
 		<reference entity="AssetCategory" package-path="com.liferay.portlet.asset" />
 		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />
 		<reference entity="AssetTag" package-path="com.liferay.portlet.asset" />
-		<reference package-path="com.liferay.portlet.asset" entity="AssetLink" />
+		<reference entity="AssetLink" package-path="com.liferay.portlet.asset" />
 		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
 		<reference entity="ExpandoRow" package-path="com.liferay.portlet.expando" />
 		<reference entity="RatingsStats" package-path="com.liferay.portlet.ratings" />
@@ -203,6 +203,18 @@
 		<finder name="GroupId" return-type="Collection">
 			<finder-column name="groupId" />
 		</finder>
+		<finder name="GroupIdStatus" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="status" />
+		</finder>
+		<finder name="GroupIdNextModules" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="order" comparator="&gt;"/>
+		</finder>
+		<finder name="GroupIdPreviousModules" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="order" comparator="&lt;"/>
+		</finder>
 
 		<!-- References -->
 
@@ -217,6 +229,7 @@
 		<reference entity="ExpandoRow" package-path="com.liferay.portlet.expando" />
 		<reference entity="Resource" package-path="com.liferay.portal" />
 		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />
+		<reference entity="AssetLink" package-path="com.liferay.portlet.asset" />
 	</entity>
 	<entity local-service="true" name="ModuleResult" remote-service="false">
 
@@ -265,7 +278,7 @@
 		<reference entity="Group" package-path="com.liferay.portal" />
 		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
-	<entity local-service="true" name="LearningActivity" remote-service="true" uuid="true">
+	<entity local-service="true" name="LearningActivity" trash-enabled="true" remote-service="true" uuid="true">
 
 		<!-- PK fields -->
 
@@ -295,11 +308,11 @@
 		<column name="startDate" type="Date" />
 		<column name="endDate" type="Date" />
 		<column name="tries" type="int" />
-		<column name="passPuntuation" type="int" />
+		<column name="passPuntuation" type="double" />
 		<column name="priority" type="long" />
 		<column name="extraContent" type="String" />
-		<column name="feedbackCorrect" type="String" />
-		<column name="feedbackNoCorrect" type="String" />
+		<column name="feedbackCorrect" type="String" localized="true"/>
+		<column name="feedbackNoCorrect" type="String" localized="true"/>
 		<column name="required" type="boolean" />
 		<column name="commentsActivated" type="boolean" />
 		<column name="status" type="int" />
@@ -336,7 +349,14 @@
 		<finder name="TypeId" return-type="Collection">
 			<finder-column name="typeId" />
 		</finder>
-
+		<finder name="ModuleIdNextLearningActivities" return-type="Collection">
+			<finder-column name="moduleId" />
+			<finder-column name="priority" comparator="&gt;"/>
+		</finder>
+		<finder name="ModuleIdPreviousLearningActivities" return-type="Collection">
+			<finder-column name="moduleId" />
+			<finder-column name="priority" comparator="&lt;"/>
+		</finder>
 		<!-- References -->
 
 		<reference entity="Company" package-path="com.liferay.portal" />

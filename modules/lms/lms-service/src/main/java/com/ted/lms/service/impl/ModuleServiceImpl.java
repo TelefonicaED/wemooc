@@ -27,6 +27,8 @@ import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.base.ModuleServiceBaseImpl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -92,6 +94,28 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 	}
 	
 	@Override
+	public Module updateModule(Module module) throws PortalException {
+
+		moduleModelResourcePermission.check(getPermissionChecker(), module.getModuleId(), ActionKeys.UPDATE);
+
+		return moduleLocalService.updateModule(module);
+	}
+	
+	@Override
+	public Module moveDownModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.UPDATE);
+		
+		return moduleLocalService.moveDownModule(moduleId, serviceContext);
+	}
+	
+	@Override
+	public Module moveUpModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.UPDATE);
+		
+		return moduleLocalService.moveUpModule(moduleId, serviceContext);
+	}
+	
+	@Override
 	public Module moveModuleToTrash(long moduleId) throws PortalException {
 		moduleModelResourcePermission.check(
 			getPermissionChecker(), moduleId, ActionKeys.DELETE);
@@ -104,6 +128,24 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.DELETE);
 
 		moduleLocalService.deleteModule(moduleId);
+	}
+	
+	@Override
+	public List<Module> getGroupModules(long groupId){
+		List<Module> modules = new ArrayList<Module>();
+		
+		List<Module> listModules = moduleLocalService.findAllInGroup(groupId);
+		for(Module module: listModules) {
+			try {
+				if(moduleModelResourcePermission.contains(getPermissionChecker(), module, ActionKeys.VIEW)) {
+					modules.add(module);
+				}
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return modules;
 	}
 
 }

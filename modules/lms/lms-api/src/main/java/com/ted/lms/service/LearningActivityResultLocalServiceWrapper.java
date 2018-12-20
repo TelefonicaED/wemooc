@@ -215,6 +215,11 @@ public class LearningActivityResultLocalServiceWrapper
 		return _learningActivityResultLocalService.getIndexableActionableDynamicQuery();
 	}
 
+	@Override
+	public int getLearningActivityCountByActId(long actId) {
+		return _learningActivityResultLocalService.getLearningActivityCountByActId(actId);
+	}
+
 	/**
 	* Returns the learning activity result with the primary key.
 	*

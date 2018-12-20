@@ -243,11 +243,11 @@ public class LearningActivitySoap implements Serializable {
 		_tries = tries;
 	}
 
-	public int getPassPuntuation() {
+	public double getPassPuntuation() {
 		return _passPuntuation;
 	}
 
-	public void setPassPuntuation(int passPuntuation) {
+	public void setPassPuntuation(double passPuntuation) {
 		_passPuntuation = passPuntuation;
 	}
 
@@ -355,7 +355,7 @@ public class LearningActivitySoap implements Serializable {
 	private Date _startDate;
 	private Date _endDate;
 	private int _tries;
-	private int _passPuntuation;
+	private double _passPuntuation;
 	private long _priority;
 	private String _extraContent;
 	private String _feedbackCorrect;
