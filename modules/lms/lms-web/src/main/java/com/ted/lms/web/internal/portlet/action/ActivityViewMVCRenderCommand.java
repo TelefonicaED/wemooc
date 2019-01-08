@@ -4,7 +4,6 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityLocalService;
 
 import javax.portlet.PortletException;

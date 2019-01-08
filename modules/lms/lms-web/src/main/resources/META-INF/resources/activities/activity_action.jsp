@@ -79,7 +79,8 @@
 		boolean visible = ResourcePermissionLocalServiceUtil.hasResourcePermission(siteMemberRole.getCompanyId(), LearningActivity.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL,	String.valueOf(activity.getActId()),siteMemberRole.getRoleId(), ActionKeys.VIEW);
 	%>
 	
-	<liferay-ui:icon message="<%=(visible)?\"learning-activity.visible\":\"learning-activity.invisible\" %>"  image="<%=(visible)?\"eye\":\"eyeno\" %>" url="${changeVisibilityURL }"/>
+	<liferay-ui:icon message="<%=(visible)?\"learning-activity.visible\":\"learning-activity.invisible\" %>"  image="<%=(visible)?\"global\":\"close\" %>" 
+		url="${changeVisibilityURL }"/>
 </c:if>
 
 <c:if test="<%=LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.DELETE) %>">

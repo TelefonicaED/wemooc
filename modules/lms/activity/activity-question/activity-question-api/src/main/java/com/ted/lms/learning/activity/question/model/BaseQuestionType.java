@@ -21,6 +21,9 @@ import java.util.Map;
 import javax.portlet.ActionRequest;
 
 public abstract class BaseQuestionType implements QuestionType{
+	protected static final long CORRECT = 100;
+	protected static final long INCORRECT = 0;
+	
 	protected Question question;
 	
 	public BaseQuestionType(Question question, AnswerLocalService answerLocalService) {
@@ -120,6 +123,11 @@ public abstract class BaseQuestionType implements QuestionType{
 		questionTypeFactory = (QuestionTypeFactory) QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(getType());
 
 		return questionTypeFactory;
+	}
+	
+	@Override
+	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter) {
+		return true;
 	}
 	
 	private QuestionTypeFactory questionTypeFactory;

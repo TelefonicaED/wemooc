@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
@@ -125,38 +126,41 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(Question.class.getName(), actionRequest);
 		
-		for(String iteratorQuestion: iteratorQuestionIds) {
-			
-			questionId = ParamUtil.getLong(actionRequest, "questionId_" + iteratorQuestion, 0);
-			questionTypeId = ParamUtil.getLong(actionRequest, "questionType_" + iteratorQuestion);
-			penalize = ParamUtil.getBoolean(actionRequest, "penalize_" + iteratorQuestion, false);
-			
-			questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionTypeId);
-			
-			questionMap = LocalizationUtil.getLocalizationMap(actionRequest, "questionTitleMapAsXML" + iteratorQuestion);
-			
-			log.debug("***penalize:"+penalize);			
-			log.debug("***questionId:"+questionId);
-			log.debug("***questionType: " + questionType);
-			log.debug("***questionText: " + questionMap.toString());
-			
-			if(questionId == 0){
-				question = questionLocalService.addQuestion(actId, questionMap, questionTypeId, penalize, serviceContext);
-			}else{
-				question = questionLocalService.updateQuestion(questionId, questionMap, penalize);
+		if(Validator.isNotNull(iteratorQuestionIds)) {
+		
+			for(String iteratorQuestion: iteratorQuestionIds) {
+				
+				questionId = ParamUtil.getLong(actionRequest, "questionId_" + iteratorQuestion, 0);
+				questionTypeId = ParamUtil.getLong(actionRequest, "questionType_" + iteratorQuestion);
+				penalize = ParamUtil.getBoolean(actionRequest, "penalize_" + iteratorQuestion, false);
+				
+				questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionTypeId);
+				
+				questionMap = LocalizationUtil.getLocalizationMap(actionRequest, "questionTitleMapAsXML" + iteratorQuestion);
+				
+				log.debug("***penalize:"+penalize);			
+				log.debug("***questionId:"+questionId);
+				log.debug("***questionType: " + questionType);
+				log.debug("***questionText: " + questionMap.toString());
+				
+				if(questionId == 0){
+					question = questionLocalService.addQuestion(actId, questionMap, questionTypeId, penalize, serviceContext);
+				}else{
+					question = questionLocalService.updateQuestion(questionId, questionMap, penalize);
+				}
+				
+				questionType = questionTypeFactory.getQuestionType(question);
+				questionType.setExtraContent(actionRequest);
+	
+				questionLocalService.updateQuestion(question);
+				editingQuestionIds.add(question.getQuestionId());
+				
+				log.debug("question.getQuestionType() " + question.getQuestionType());
+				
+				//Cada tipo de pregunta guarda sus respuestas
+				questionType.saveAnswers(actionRequest, iteratorQuestion);
+				
 			}
-			
-			questionType = questionTypeFactory.getQuestionType(question);
-			questionType.setExtraContent(actionRequest);
-
-			questionLocalService.updateQuestion(question);
-			editingQuestionIds.add(question.getQuestionId());
-			
-			log.debug("question.getQuestionType() " + question.getQuestionType());
-			
-			//Cada tipo de pregunta guarda sus respuestas
-			questionType.saveAnswers(actionRequest, iteratorQuestion);
-			
 		}
 		
 		//Eliminamos las preguntas que no estén	

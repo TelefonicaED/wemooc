@@ -11,29 +11,23 @@ Answer answer = null;
 if(answerId > 0){
 	answer = AnswerLocalServiceUtil.getAnswer(answerId);
 }
-
 %>
 <aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_answerId" %>' value="<%=answerId %>" useNamespace="false" />
 <aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_iterator" %>' value="<%=iterator%>" useNamespace="false"  />
-<div class="col-md-10">
 
+<div class="col-md-12">
 	<aui:model-context bean="<%=answer %>" model="<%= Answer.class %>" />
 	
-	<aui:input type="radio" name='<%=namespace + iteratorQuestion + "_correct"%>' label="correct" value="<%=iterator%>" checked="<%=answer != null ? answer.isCorrect() : false %>" 
-				useNamespace="false" id='<%=namespace + iteratorQuestion + "_correct_" + iterator %>'/>
-	
 	<liferay-ui:input-localized
-		cssClass="form-control"
-		formName="fm"
-		name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
-		placeholder="write-here-answer"
-		type="editor"
-		xml='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
-		useNamespace="false"
-	/>		
-	
-	<aui:input name="<%=namespace + iteratorQuestion + \"feedbackCorrect_new\"+iterator %>" label="feedback" value="" size="60" useNamespace="false" localized="true"/>
-</div>
-<div class="col-md-2">
-	<span class="newitem2"><a href="#" class="newitem2" onclick="<portlet:namespace />deleteNode('testAnswer_new<%=iterator %>');"><liferay-ui:message key="delete"/></a></span>
-</div>
+			cssClass="form-control"
+			formName="fm"
+			name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
+			placeholder="write-here-answer"
+			type="editor"
+			xml='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
+			useNamespace="false"
+		/>	
+
+	<aui:input name="<%=namespace + iteratorQuestion + \"_feedbackCorrect_\"+iterator %>" label="question.feedback-correct" value="" size="60" useNamespace="false" localized="true"/>
+	<aui:input name="<%=namespace + iteratorQuestion + \"feedbackIncorrect_\"+iterator %>" label="question.feedback-incorrect" value="" size="60" useNamespace="false" localized="true"/>
+</div>	

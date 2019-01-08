@@ -98,11 +98,14 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 			String portletId = _http.getParameter(redirect, "p_p_id", false);
 
 			boolean nextStep = ParamUtil.getBoolean(actionRequest, "nextStep", false);
+			log.debug("nextStep: " + nextStep);
 
 			//Si estamos guardando y continuando, pasamos a la siguiente pesta�a
 			if (course != null && nextStep) {
-
+				log.debug("hemos guardado y continuamos");
 				redirect = getSaveAndContinueRedirect(actionRequest, course, redirect);
+				
+				log.debug("redirect: " + redirect);
 
 				sendRedirect(actionRequest, actionResponse, redirect);
 			} //Si estamos guardando, volvemos a la pantalla anterior (hay que tener en cuenta que no s�lo es el portlet de admin cursos,
@@ -134,6 +137,7 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 				}
 			}
 		} catch (AssetCategoryException | AssetTagException e) {
+			e.printStackTrace();
 			SessionErrors.add(actionRequest, e.getClass(), e);
 
 			actionResponse.setRenderParameter("mvcRenderCommandName", "/courses/edit_course");
@@ -164,6 +168,8 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		
 		String navigationItem = ParamUtil.getString(actionRequest, "navigationItem");
 		String navigation = ParamUtil.getString(actionRequest, "navigation");
+		log.debug("navigationItem: " + navigationItem);
+		log.debug("navigation: " + navigation);
 		
 		if(Validator.isNull(navigationItem)) {
 			ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);

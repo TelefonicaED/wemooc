@@ -44,9 +44,9 @@ public class OptionsQuestionType extends BaseQuestionType{
 		boolean correct = false;
 		System.out.println("iteratorQuestion: " + iteratorQuestion);
 		System.out.println("counter: " + counter);
-		System.out.println("correct: " + ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct_new_" + counter));
+		System.out.println("correct: " + ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct_" + counter));
 		
-		if(ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct_new") == counter){
+		if(ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct") == counter){
 			correct = true;
 		}	
 		return correct;

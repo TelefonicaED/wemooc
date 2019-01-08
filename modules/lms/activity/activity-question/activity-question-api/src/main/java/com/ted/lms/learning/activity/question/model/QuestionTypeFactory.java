@@ -19,7 +19,6 @@ public interface QuestionTypeFactory {
 	public String getDescription(Locale locale);
 	
 	public String getURLEditAnswers();
-	
 	public String getURLEditAnswer();
 	
 	public String getPortletId();
@@ -33,4 +32,5 @@ public interface QuestionTypeFactory {
 	
 	public String getURLAddQuestion(LiferayPortletResponse liferayPortletResponse);
 	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse);
+	
 }

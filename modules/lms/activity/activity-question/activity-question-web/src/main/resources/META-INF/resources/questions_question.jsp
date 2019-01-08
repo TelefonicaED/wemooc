@@ -64,7 +64,6 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 				
 				<liferay-ui:input-localized
 					cssClass="form-control"
-					editorName="alloyeditor"
 					formName="fm"
 					ignoreRequestValue="true"
 					name="<%="questionTitleMapAsXML" + iteratorQuestion%>"

@@ -37,7 +37,7 @@
 			<liferay-util:include page="/courses/messages.jsp" servletContext="<%= application %>" />
 		</c:when>
 	</c:choose>
-	<aui:button-row> h
+	<aui:button-row>
 		<aui:button value="cancel" onClick="${redirect}"/>
 		<c:if test="<%=courseDisplayContext.showButtonSaveAsDraft() %>">
 			<aui:button name="saveAsDraftButton" type="submit" value="save-as-draft" />

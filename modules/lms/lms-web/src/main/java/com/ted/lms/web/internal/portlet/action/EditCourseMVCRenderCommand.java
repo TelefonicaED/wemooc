@@ -111,11 +111,13 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 	
 		List<LayoutSetPrototype> listLayoutSetPrototype = new ArrayList<LayoutSetPrototype>();
 		String[] courseTemplates = configuration != null && Validator.isNotNull(configuration.courseTemplateValues()) ? configuration.courseTemplateValues().split(",") : null;
-		for(String courseTemplate: courseTemplates) {
-			try {
-				listLayoutSetPrototype.add(layoutSetPrototypeLocalService.getLayoutSetPrototype(Long.parseLong(courseTemplate)));
-			} catch (NumberFormatException | PortalException e) {
-				e.printStackTrace();
+		if(courseTemplates != null){
+			for(String courseTemplate: courseTemplates) {
+				try {
+					listLayoutSetPrototype.add(layoutSetPrototypeLocalService.getLayoutSetPrototype(Long.parseLong(courseTemplate)));
+				} catch (NumberFormatException | PortalException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		

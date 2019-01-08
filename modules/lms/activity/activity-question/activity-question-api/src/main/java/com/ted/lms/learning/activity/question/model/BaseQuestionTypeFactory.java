@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys;
 
@@ -55,30 +56,34 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	
 	@Override
 	public int getMinNumAnswers() {
-		return 2;
+		return 0;
 	}
 	
 	@Override
 	public int getMinNumCorrectAnswers() {
-		return 1;
+		return 0;
 	}
 	
 	@Override
 	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse) {
-		LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(QuestionsWebPortletKeys.EDIT_QUESTIONS, 
-				PortletRequest.RENDER_PHASE);
-		try {
-	        liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
-	    }
-	    catch (WindowStateException wse) {
-	    	wse.printStackTrace();
-	    }
-		liferayPortletURL.setParameter(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, StringPool.TRUE);
-		liferayPortletURL.setParameter("mvcPath", getURLEditAnswer());
-		liferayPortletURL.setParameter("namespace", liferayPortletResponse.getNamespace());
-	    return liferayPortletURL.toString();
+		String urlAddAnswer = null;
+		if(Validator.isNotNull(getURLEditAnswer())) {
+			LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(QuestionsWebPortletKeys.EDIT_QUESTIONS, 
+					PortletRequest.RENDER_PHASE);
+			try {
+		        liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
+		    }
+		    catch (WindowStateException wse) {
+		    	wse.printStackTrace();
+		    }
+			liferayPortletURL.setParameter(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, StringPool.TRUE);
+			liferayPortletURL.setParameter("mvcPath", getURLEditAnswer());
+			liferayPortletURL.setParameter("namespace", liferayPortletResponse.getNamespace());
+			urlAddAnswer = liferayPortletURL.toString();
+		}
+		return urlAddAnswer;
 	}
-	
+
 	@Override
 	public final String getURLAddQuestion(LiferayPortletResponse liferayPortletResponse) {
 		LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(QuestionsWebPortletKeys.EDIT_QUESTIONS, 
@@ -95,5 +100,10 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 		liferayPortletURL.setParameter("namespace", liferayPortletResponse.getNamespace());
 		
 	    return liferayPortletURL.toString();
+	}
+	
+	@Override
+	public String getURLEditAnswer() {
+		return null;
 	}
 }

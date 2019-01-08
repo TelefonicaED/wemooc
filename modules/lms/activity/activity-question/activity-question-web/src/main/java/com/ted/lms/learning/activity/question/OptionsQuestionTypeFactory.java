@@ -76,6 +76,16 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 		return QuestionsWebPortletKeys.EDIT_QUESTIONS;
 	}
 	
+	@Override
+	public int getMinNumAnswers() {
+		return 2;
+	}
+	
+	@Override
+	public int getMinNumCorrectAnswers() {
+		return 1;
+	}
+	
 	@Reference(
 		unbind = "-"
 	)
