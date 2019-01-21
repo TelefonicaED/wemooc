@@ -3,7 +3,7 @@
 
 <hibernate-mapping auto-import="false" default-lazy="false">
 	<import class="com.ted.audit.db.model.AuditEntry" />
-	<class name="com.ted.audit.db.model.impl.AuditEntryImpl" table="audit_AuditEntry">
+	<class name="com.ted.audit.db.model.impl.AuditEntryImpl" table="aud_AuditEntry">
 		<id name="auditId" type="long">
 			<generator class="assigned" />
 		</id>

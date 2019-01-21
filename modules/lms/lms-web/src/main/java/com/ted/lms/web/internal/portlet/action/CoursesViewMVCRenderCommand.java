@@ -1,13 +1,10 @@
 package com.ted.lms.web.internal.portlet.action;
 
-import com.liferay.asset.kernel.model.AssetCategory;
-import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.model.AssetVocabulary;
-import com.liferay.asset.kernel.service.AssetCategoryService;
 import com.liferay.asset.kernel.service.AssetTagService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
@@ -25,8 +22,6 @@ import com.ted.lms.service.CourseLocalServiceUtil;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 import com.ted.lms.web.internal.display.context.CourseDisplayContext;
 import com.ted.lms.web.internal.display.context.CoursesManagementToolbarDisplayContext;
-
-import java.util.List;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -47,6 +42,8 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCRenderCommand.class
 )
 public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(CoursesViewMVCRenderCommand.class);
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
@@ -54,6 +51,8 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
 		String keywords = ParamUtil.getString(renderRequest, "keywords", null);
+		
+		log.debug("keywords: " + keywords);
 		
 		boolean inputFiltersShowOptions = ParamUtil.getBoolean(renderRequest, "inputFiltersShowOptions", false);
 		
@@ -77,6 +76,8 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		
 		searchContainer.setResults(CourseLocalServiceUtil.getCourses(searchContainer.getStart(), searchContainer.getEnd()));
 		searchContainer.setTotal(CourseLocalServiceUtil.getCoursesCount());
+		
+		log.debug("total: " + searchContainer.getTotal());
 		
 		renderRequest.setAttribute("searchContainer", searchContainer);
 		renderRequest.setAttribute("inputFiltersShowOptions", inputFiltersShowOptions);

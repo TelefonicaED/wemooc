@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
 
 /**
- * The extended model interface for the P2PActivityCorrections service. Represents a row in the &quot;LMS_P2PActivityCorrections&quot; database table, with each column mapped to a property of this class.
+ * The extended model interface for the P2PActivityCorrections service. Represents a row in the &quot;PTP_P2PActivityCorrections&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see P2PActivityCorrectionsModel

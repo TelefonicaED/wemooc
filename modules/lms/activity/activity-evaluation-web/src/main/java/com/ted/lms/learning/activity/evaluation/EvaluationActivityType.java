@@ -17,7 +17,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 
 	public EvaluationActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
 		super(activity, learningActivityResultLocalService);
-	}
+	} 
 	
 	@Override
 	public double calculateResult(LearningActivityTry learningActivityTry) {

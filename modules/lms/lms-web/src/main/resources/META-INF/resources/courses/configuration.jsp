@@ -140,7 +140,7 @@
 			<aui:field-wrapper label="registration-date" >
 				<div class="row">
 					<div class="col-md-6">
-						<aui:input formName="fm" name="registrationStartDate" label="start" cssClass=""/>
+						<aui:input formName="fm" name="registrationStartDate" label="start"/>
 					</div>
 					<div class="col-md-6">
 						<aui:input formName="fm" label="end" name="registrationEndDate" />
@@ -169,10 +169,10 @@
 			<aui:field-wrapper label="execution-date">
 				<div class="row">
 					<div class="col-md-6">
-						<aui:input formName="fm" label="start" name="executionStartDate" cssClass=""/>
+						<aui:input formName="fm" label="start" name="executionStartDate" />
 					</div>
 					<div class="col-md-6">
-						<aui:input formName="fm" label="end" name="executionEndDate" />
+						<aui:input formName="fm" label="end" name="executionEndDate"/>
 					</div>
 				</div>
 			</aui:field-wrapper>

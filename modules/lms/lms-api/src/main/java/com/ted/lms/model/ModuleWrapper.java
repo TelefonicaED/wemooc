@@ -680,7 +680,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	* Returns the trash handler for this module.
 	*
 	* @return the trash handler for this module
-	* @deprecated As of 7.0.0, with no direct replacement
+	* @deprecated As of Judson (7.1.x), with no direct replacement
 	*/
 	@Deprecated
 	@Override

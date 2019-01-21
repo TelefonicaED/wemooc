@@ -3,6 +3,8 @@ package com.ted.lms.web.internal.portlet.action;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
@@ -32,6 +34,7 @@ import com.ted.lms.web.internal.CoursesItemSelectorHelper;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.portlet.PortletException;
@@ -51,14 +54,39 @@ import org.osgi.service.component.annotations.Reference;
 	)
 public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 	
+	private static final Log log = LogFactoryUtil.getLog(EditCourseMVCRenderCommand.class);
+	
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		long courseId = ParamUtil.getLong(renderRequest, "courseId", 0);
+		log.debug("courseId: " + courseId);
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
+		String navigation = ParamUtil.getString(renderRequest, "navigation", LMSPortletConstants.EDIT_COURSE_DEFAULT_NAVIGATION);
+		log.debug("navigation: " + navigation);
+		
 		if(courseId != 0) {
 			Course course = courseLocalService.fetchCourse(courseId);
+			if(course != null && navigation.equals(LMSPortletConstants.EDIT_COURSE_CONFIGURATION)) {
+				log.debug("cargamos fechas de registro y ejecución");
+				//Fecha de fin para registro y ejecución
+				Calendar now = Calendar.getInstance();
+				if(Validator.isNull(course.getRegistrationStartDate())) {
+					course.setRegistrationStartDate(now.getTime());
+				}
+				if(Validator.isNull(course.getExecutionStartDate())) {
+					course.setExecutionStartDate(now.getTime());
+				}
+				now.add(Calendar.YEAR, 1);
+				if(Validator.isNull(course.getRegistrationEndDate())) {
+					course.setRegistrationEndDate(now.getTime());
+				}
+				if(Validator.isNull(course.getExecutionEndDate())) {
+					course.setExecutionEndDate(now.getTime());
+				}
+			}
+			log.debug("mandamos el curso");
 			renderRequest.setAttribute("course", course);
 			try {
 				AssetEntry assetEntry = assetEntryLocalService.getEntry(Course.class.getName(), courseId);
@@ -73,8 +101,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		editCourseURL.setParameter("courseId", String.valueOf(courseId));
 		renderRequest.setAttribute("editCourseURL", editCourseURL);
 		
-		String navigation = ParamUtil.getString(renderRequest, "navigation", LMSPortletConstants.EDIT_COURSE_DEFAULT_NAVIGATION);
-		System.out.println("navigation render: " + navigation);
+		log.debug("editCourseURL: " + editCourseURL.toString());
 		
 		CourseAdminPortletInstanceConfiguration configuration = null;
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();

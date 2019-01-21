@@ -1,4 +1,4 @@
-create table LMS_P2PActivity (
+create table PTP_P2PActivity (
 	uuid_ VARCHAR(75) null,
 	p2pActivityId LONG not null primary key,
 	groupId LONG,
@@ -16,7 +16,7 @@ create table LMS_P2PActivity (
 	asignationsCompleted BOOLEAN
 );
 
-create table LMS_P2PActivityCorrections (
+create table PTP_P2PActivityCorrections (
 	uuid_ VARCHAR(75) null,
 	p2pActivityCorrectionsId LONG not null primary key,
 	groupId LONG,

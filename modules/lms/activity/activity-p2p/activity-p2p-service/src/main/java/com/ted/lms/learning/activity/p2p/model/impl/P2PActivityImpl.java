@@ -17,7 +17,7 @@ package com.ted.lms.learning.activity.p2p.model.impl;
 import aQute.bnd.annotation.ProviderType;
 
 /**
- * The extended model implementation for the P2PActivity service. Represents a row in the &quot;LMS_P2PActivity&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the P2PActivity service. Represents a row in the &quot;PTP_P2PActivity&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
  * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.p2p.model.P2PActivity} interface.

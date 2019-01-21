@@ -21,7 +21,7 @@ import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
 
 /**
- * The extended model interface for the AuditEntry service. Represents a row in the &quot;audit_AuditEntry&quot; database table, with each column mapped to a property of this class.
+ * The extended model interface for the AuditEntry service. Represents a row in the &quot;aud_AuditEntry&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see AuditEntryModel
