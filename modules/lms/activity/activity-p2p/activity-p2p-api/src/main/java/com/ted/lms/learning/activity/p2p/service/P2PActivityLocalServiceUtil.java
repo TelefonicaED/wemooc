@@ -42,6 +42,27 @@ public class P2PActivityLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.learning.activity.p2p.service.impl.P2PActivityLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.ted.lms.learning.activity.p2p.model.P2PActivity addP2PActivity(
+		long userId, long actId, String description,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addP2PActivity(userId, actId, description, serviceContext,
+			themeDisplay);
+	}
+
+	public static com.ted.lms.learning.activity.p2p.model.P2PActivity addP2PActivity(
+		long userId, long actId, String description, String fileName,
+		java.io.File file, String mimeType,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return getService()
+				   .addP2PActivity(userId, actId, description, fileName, file,
+			mimeType, serviceContext, themeDisplay);
+	}
 
 	/**
 	* Adds the p2p activity to the database. Also notifies the appropriate model listeners.
@@ -52,6 +73,30 @@ public class P2PActivityLocalServiceUtil {
 	public static com.ted.lms.learning.activity.p2p.model.P2PActivity addP2PActivity(
 		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity) {
 		return getService().addP2PActivity(p2pActivity);
+	}
+
+	public static com.liferay.document.library.kernel.model.DLFileEntry addP2PFileEntry(
+		String fileName, java.io.File file, String mimeType, long folderId,
+		long groupId, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return getService()
+				   .addP2PFileEntry(fileName, file, mimeType, folderId,
+			groupId, companyId);
+	}
+
+	public static com.liferay.portal.kernel.repository.model.Folder addP2PFolder(
+		long userId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().addP2PFolder(userId, groupId);
+	}
+
+	public static void asignCorrectionP2PActivity(
+		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity,
+		int numValidations, String assignationType) {
+		getService()
+			.asignCorrectionP2PActivity(p2pActivity, numValidations,
+			assignationType);
 	}
 
 	/**
@@ -231,6 +276,12 @@ public class P2PActivityLocalServiceUtil {
 		return getService().getP2PActivities(start, end);
 	}
 
+	public static java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> getP2PActivitiesByAssignationsCompleted(
+		boolean assignationsCompleted) {
+		return getService()
+				   .getP2PActivitiesByAssignationsCompleted(assignationsCompleted);
+	}
+
 	/**
 	* Returns all the p2p activities matching the UUID and company.
 	*
@@ -268,6 +319,15 @@ public class P2PActivityLocalServiceUtil {
 	*/
 	public static int getP2PActivitiesCount() {
 		return getService().getP2PActivitiesCount();
+	}
+
+	public static java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> getP2PActivitiesToCorrect(
+		long actId, long p2pActivityId, int numValidaciones,
+		String assignationType)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .getP2PActivitiesToCorrect(actId, p2pActivityId,
+			numValidaciones, assignationType);
 	}
 
 	/**
@@ -312,6 +372,10 @@ public class P2PActivityLocalServiceUtil {
 		return getService().hasP2PActivity(actId);
 	}
 
+	public static boolean hasP2PActivity(long actId, long userId) {
+		return getService().hasP2PActivity(actId, userId);
+	}
+
 	/**
 	* Updates the p2p activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -321,6 +385,31 @@ public class P2PActivityLocalServiceUtil {
 	public static com.ted.lms.learning.activity.p2p.model.P2PActivity updateP2PActivity(
 		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity) {
 		return getService().updateP2PActivity(p2pActivity);
+	}
+
+	/**
+	* Se actualizan los tries y los results de los usuarios implicados
+	*
+	* @param p2pActivityId
+	* @param userId
+	* @throws PortalException
+	* @throws UnsupportedEncodingException
+	* @throws Exception
+	*/
+	public static void updateResultP2PActivity(
+		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivityCorrected,
+		com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections p2pActivityCorrection,
+		long userId, int numValidations, boolean result, boolean anonimous,
+		boolean emailAnonimous,
+		com.liferay.portal.kernel.json.JSONArray evaluationCriteria,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.UnsupportedEncodingException {
+		getService()
+			.updateResultP2PActivity(p2pActivityCorrected,
+			p2pActivityCorrection, userId, numValidations, result, anonimous,
+			emailAnonimous, evaluationCriteria, themeDisplay, serviceContext);
 	}
 
 	public static P2PActivityLocalService getService() {

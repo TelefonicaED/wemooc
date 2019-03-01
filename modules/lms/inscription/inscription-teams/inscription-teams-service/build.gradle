@@ -2,10 +2,10 @@ dependencies {
 	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "2.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
 	compileOnly project(":modules:lms:inscription:inscription-teams:inscription-teams-api")
 	compileOnly project(":modules:lms:lms-api")
-	compileOnly group: "com.liferay", name: "com.liferay.portal.upgrade.api", version: "2.0.0"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.upgrade.api"
 }
 
 buildService {

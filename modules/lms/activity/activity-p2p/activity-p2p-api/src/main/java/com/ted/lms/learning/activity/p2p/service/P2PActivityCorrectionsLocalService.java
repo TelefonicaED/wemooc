@@ -30,13 +30,17 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.List;
@@ -63,6 +67,9 @@ public interface P2PActivityCorrectionsLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link P2PActivityCorrectionsLocalServiceUtil} to access the p2p activity corrections local service. Add custom service methods to {@link com.ted.lms.learning.activity.p2p.service.impl.P2PActivityCorrectionsLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public P2PActivityCorrections addP2PActivityCorrections(long actId,
+		long userId, long p2pActivityId, long groupId, long companyId,
+		long userCreatedId);
 
 	/**
 	* Adds the p2p activity corrections to the database. Also notifies the appropriate model listeners.
@@ -73,6 +80,13 @@ public interface P2PActivityCorrectionsLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public P2PActivityCorrections addP2PActivityCorrections(
 		P2PActivityCorrections p2pActivityCorrections);
+
+	public boolean areAllCorrectionsDoneByUserInP2PActivity(long actId,
+		long userId, int numValidations);
+
+	public void asignCorrectionsToP2PActivities(long actId, long p2pActivityId,
+		int numValidaciones, List<P2PActivity> activityList, long userId)
+		throws PortalException;
 
 	/**
 	* Creates a new p2p activity corrections with the primary key. Does not add the p2p activity corrections to the database.
@@ -195,6 +209,26 @@ public interface P2PActivityCorrectionsLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
+	/**
+	* A partir del id de una actividad, obtenemos la media de resultados que ha obtenido en ellas.
+	* En las correcciones que se han realizado y tiene fecha de realizaci�n.
+	*
+	* @param p2pActivityId
+	* @return la media de results
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public long getAVGCorrectionsResults(long p2pActivityId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<P2PActivityCorrections> getCorrections(long actId, long userId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public P2PActivityCorrections getCorrectionsByP2PActivityIdUserId(
+		long p2pActivityId, long userId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getCorrectionsCount(long actId, long userId);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<P2PActivityCorrections> getCorrectionsDoneByP2PActivityId(
 		long p2pActivityId);
@@ -227,6 +261,10 @@ public interface P2PActivityCorrectionsLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public P2PActivityCorrections getP2PActivityCorrections(
 		long p2pActivityCorrectionsId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<P2PActivityCorrections> getP2PActivityCorrectionsByP2PActivityId(
+		long p2pActivityId);
 
 	/**
 	* Returns the p2p activity corrections matching the UUID and group.
@@ -295,6 +333,13 @@ public interface P2PActivityCorrectionsLocalService extends BaseLocalService,
 		throws PortalException;
 
 	/**
+	* Para saber si al usuario le han realizado todas las correcciones que se indica en el extracontent.
+	*/
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasAllCorrectionsDoneAboutUserInP2PActivity(long actId,
+		long p2pActivityId, int numValidations);
+
+	/**
 	* Updates the p2p activity corrections in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
 	* @param p2pActivityCorrections the p2p activity corrections
@@ -303,4 +348,9 @@ public interface P2PActivityCorrectionsLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public P2PActivityCorrections updateP2PActivityCorrections(
 		P2PActivityCorrections p2pActivityCorrections);
+
+	public P2PActivityCorrections updateP2PActivityCorrections(
+		P2PActivityCorrections p2pActivityCorrections, String description,
+		String fileName, File file, String mimeType, long result,
+		ServiceContext serviceContext) throws PortalException, IOException;
 }

@@ -50,8 +50,11 @@ import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
+import com.ted.lms.model.Module;
 import com.ted.lms.security.permission.resource.CoursePermission;
+import com.ted.lms.service.CourseLocalServiceUtil;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
+import com.ted.lms.service.ModuleLocalServiceUtil;
 import com.ted.lms.service.util.DateUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
@@ -447,4 +450,64 @@ public class CourseImpl extends CourseBaseImpl {
 		
 		return false;
 	}
+	
+	public boolean hasPermissionAccessCourseFinished(long userId) throws PortalException {
+		log.debug(":::hasPermissionAccessCourseFinished:::companyId: " + this.getCompanyId() + " - courseId: "+ this.getCourseId() + " - userId: " + userId);
+		
+		if(!CourseLocalServiceUtil.getAllowAccessToCompletedCourses()){
+			return false;
+		}
+		
+		log.debug(":::hasPermissionAccessCourseFinished:::lmsPrefs allowAccessToCompletedCourses ");
+		
+		Date now = new Date();
+		
+		if(log.isDebugEnabled()){
+			log.debug(":::hasPermissionAccessCourseFinished:::executionEndDate: " + this.getExecutionEndDate());
+		}
+		
+		if(this.getExecutionEndDate() != null && now.after(this.getExecutionEndDate())){
+			return true;
+		}
+		
+		Date lastModuleDate = null;
+		
+		//Ahora comprobamos si se cumple alguna de las otras tres condiciones
+		for(Module module:ModuleLocalServiceUtil.findAllInGroup(this.getGroupCreatedId())){
+			if(lastModuleDate==null){
+				lastModuleDate=module.getEndDate();
+			} else if(module.getEndDate()!=null && lastModuleDate.before(module.getEndDate())){
+				lastModuleDate=module.getEndDate();
+			}
+		}	
+		
+		log.debug(":::hasPermissionAccessCourseFinished:::lastModuleDate: " + lastModuleDate);
+		
+		if(lastModuleDate != null && lastModuleDate.before(now)){
+			log.debug(":::hasPermissionAccessCourseFinished:::lastModuleDateBefore: " + lastModuleDate != null && lastModuleDate.before(now));
+			return true;
+		}
+		
+		//Ahora comprobamos la condición de allowFinishDate
+		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(this.getCourseId(), userId);
+		
+		if(courseResult != null){
+			log.debug(":::hasPermissionAccessCourseFinished:::courseResult allowFinishDate: " + courseResult.getAllowEndDate());
+		}
+		
+		if(courseResult != null && courseResult.getAllowEndDate() != null && courseResult.getAllowEndDate().before(now)){
+			log.debug(":::hasPermissionAccessCourseFinished:::courseResult allowFinishDate pasada ");
+			return true;
+		}
+		
+		//Ahora comprobamos que lo haya finalizado y que no tenga intentos
+		if(courseResult == null || courseResult.getPassedDate() == null){
+			return false;
+		}
+		
+		log.debug(":::hasPermissionAccessCourseFinished:::courseResult passedDate: " + courseResult.getPassedDate());
+		
+		return !CourseResultLocalServiceUtil.hasUserTries(this.getCourseId(), userId);
+	}
+
 }

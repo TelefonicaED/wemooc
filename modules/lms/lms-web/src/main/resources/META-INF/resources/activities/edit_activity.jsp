@@ -13,6 +13,7 @@
 	<aui:input name="<%= Constants.CMD %>" value="${cmd }" type="hidden" />
 	<aui:input name="moduleId" type="hidden" value="${moduleId}" />
 	<aui:input name="actId" type="hidden" value="${actId}" />
+	<aui:input name="type" type="hidden" value="${learningActivityTypeFactory.type}" />
 	<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
 
 	<div class="container">
@@ -41,60 +42,11 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<aui:input name="required" label="activity-required" type="toggle-switch" value="${activity.required }"/>
-				<c:forEach items="${listPrerequisiteFactory }" var="prerequisiteFactory">
-					<liferay-util:include page="${prerequisiteFactory.getURLSpecificContent()}" portletId="${prerequisiteFactory.getPortletId()}" >
-						<liferay-util:param name="classNameId" value="<%=String.valueOf(PortalUtil.getClassNameId(LearningActivity.class)) %>" />
-						<liferay-util:param name="classPK" value="${actId }" />
-						<liferay-util:param name="groupId" value="${themeDisplay.scopeGroupId }" />
-					</liferay-util:include>
-				</c:forEach>
-				<liferay-ui:asset-categories-selector className="<%=LearningActivity.class.getName() %>" classPK="${activity.actId }" />
-				<aui:field-wrapper label="tags">
-					<liferay-ui:asset-tags-selector className="<%=LearningActivity.class.getName() %>" classPK="${activity.actId }" />
-				</aui:field-wrapper>
 			</div>
-			<div class="col-md-6">
-				<div class="date-course" >
-					<c:choose>
-						<c:when test="${not empty module.startDate }">
-							<liferay-ui:message key="start-date-module" />: ${module.getStartDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
-							<aui:input dateTogglerCheckboxLabel="use-start-date-module" 
-								disabled="${empty activity || empty activity.startDate }" formName="fm" name="startDate" 
-								value="${empty activity || empty activity.startDate ? module.startDateCalendar : activity.startDateCalendar }"/>
-						</c:when>
-						<c:otherwise>
-							<liferay-ui:message key="start-date-course" />: ${course.getExecutionStartDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
-							<aui:input dateTogglerCheckboxLabel="use-start-execution-date-course" 
-								disabled="${empty activity || empty activity.startDate }" formName="fm" name="startDate" 
-								value="${empty activity || empty activity.startDate ? course.executionStartDateCalendar : activity.startDateCalendar }"/>
-						</c:otherwise>
-					</c:choose>
-				</div>
-
-				<div class="date-course">
-					<c:choose>
-						<c:when test="${not empty module.endDate }">
-							<liferay-ui:message key="end-date-module" />: ${module.getEndDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
-							<aui:input dateTogglerCheckboxLabel="use-end-date-module" 
-									disabled="${empty activity || empty activity.endDate }" formName="fm" name="endDate" 
-									value="${empty activity || empty activity.endDate ? module.endDateCalendar : activity.endDateCalendar }"/>
-						</c:when>
-						<c:otherwise>
-							<liferay-ui:message key="end-date-course" />: ${course.getExecutionEndDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
-							<aui:input dateTogglerCheckboxLabel="use-end-execution-date-course" 
-									disabled="${empty activity || empty activity.endDate }" formName="fm" name="endDate" 
-									value="${empty activity || empty activity.endDate ? course.executionEndDateCalendar : activity.endDateCalendar }"/>
-						</c:otherwise>
-					</c:choose>
-				</div>
-			</div>
-		</div>
-		<c:if test="${learningActivityTypeFactory.isTriesConfigurable() || learningActivityTypeFactory.isScoreConfigurable() }">
-			<div class="row">
-				<c:if test="${learningActivityTypeFactory.isTriesConfigurable() }">
-					<div class="col-md-6">
+			<c:if test="${learningActivityTypeFactory.isTriesConfigurable() }">
+					<div class="col-md-4">
 						<div class="row">
 							<div class="col-md-8">
 								<aui:input name="triesToggle" label="num-max-tries" type="toggle-switch" value="${activity.tries > 0 }"/>
@@ -127,7 +79,7 @@
 					</div>
 				</c:if>
 				<c:if test="${learningActivityTypeFactory.isScoreConfigurable() }">
-					<div class="col-md-6">
+					<div class="col-md-4">
 						<div class="row">
 							<div class="col-md-8">
 								<aui:input name="passPuntuationToggle" label="${learningActivityTypeFactory.scoreConfigurableProperty }" 
@@ -148,8 +100,14 @@
 						</script>
 					</div>
 				</c:if>
-			</div>
-		</c:if>
+				<c:if test="${not empty learningActivityTypeFactory.getURLSpecificContent() }">
+					<liferay-util:include page="${learningActivityTypeFactory.getURLSpecificContent()}" portletId="${learningActivityTypeFactory.getPortletId()}" >
+						<liferay-util:param name="actId" value="${activity.actId }" />
+						<liferay-util:param name="canBeEdited" value="${canBeEdited }" />
+						<liferay-util:param name="groupId" value="${themeDisplay.scopeGroupId }" />
+					</liferay-util:include>
+				</c:if>	
+		</div>
 		<c:if test="${learningActivityTypeFactory.isFeedbackCorrectConfigurable() || learningActivityTypeFactory.isFeedbackNoCorrectConfigurable() }">
 			<div class="row">
 				<c:if test="${learningActivityTypeFactory.isFeedbackCorrectConfigurable() }">
@@ -192,15 +150,66 @@
 				</c:if>
 			</div>
 		</c:if>
-		<c:if test="${not empty learningActivityTypeFactory.getURLSpecificContent() }">
-			<div class="activity-specific-content" >
-				<liferay-util:include page="${learningActivityTypeFactory.getURLSpecificContent()}" portletId="${learningActivityTypeFactory.getPortletId()}" >
-					<liferay-util:param name="actId" value="${activity.actId }" />
-					<liferay-util:param name="canBeEdited" value="${canBeEdited }" />
-					<liferay-util:param name="groupId" value="${themeDisplay.scopeGroupId }" />
-				</liferay-util:include>
+		<div class="sheet-section">
+			<h3 class="sheet-subtitle"><liferay-ui:message key="restrictions" /></h3>
+			<div class="row">
+				<div class="date-course col-md-6" >
+					<c:choose>
+						<c:when test="${not empty module.startDate }">
+							<liferay-ui:message key="start-date-module" />: ${module.getStartDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
+							<aui:input dateTogglerCheckboxLabel="use-start-date-module" 
+								disabled="${empty activity || empty activity.startDate }" formName="fm" name="startDate" 
+								value="${empty activity || empty activity.startDate ? module.startDateCalendar : activity.startDateCalendar }"/>
+						</c:when>
+						<c:otherwise>
+							<liferay-ui:message key="start-date-course" />: ${course.getExecutionStartDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
+							<aui:input dateTogglerCheckboxLabel="use-start-execution-date-course" 
+								disabled="${empty activity || empty activity.startDate }" formName="fm" name="startDate" 
+								value="${empty activity || empty activity.startDate ? course.executionStartDateCalendar : activity.startDateCalendar }"/>
+						</c:otherwise>
+					</c:choose>
+				</div>
+	
+				<div class="date-course col-md-6">
+					<c:choose>
+						<c:when test="${not empty module.endDate }">
+							<liferay-ui:message key="end-date-module" />: ${module.getEndDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
+							<aui:input dateTogglerCheckboxLabel="use-end-date-module" 
+									disabled="${empty activity || empty activity.endDate }" formName="fm" name="endDate" 
+									value="${empty activity || empty activity.endDate ? module.endDateCalendar : activity.endDateCalendar }"/>
+						</c:when>
+						<c:otherwise>
+							<liferay-ui:message key="end-date-course" />: ${course.getExecutionEndDateFormat(themeDisplay.locale, themeDisplay.timeZone) }
+							<aui:input dateTogglerCheckboxLabel="use-end-execution-date-course" 
+									disabled="${empty activity || empty activity.endDate }" formName="fm" name="endDate" 
+									value="${empty activity || empty activity.endDate ? course.executionEndDateCalendar : activity.endDateCalendar }"/>
+						</c:otherwise>
+					</c:choose>
+				</div>
+				<c:forEach items="${listPrerequisiteFactory }" var="prerequisiteFactory">
+					<div class="col-md-6">
+						<liferay-util:include page="${prerequisiteFactory.getURLSpecificContent()}" portletId="${prerequisiteFactory.getPortletId()}" >
+							<liferay-util:param name="classNameId" value="<%=String.valueOf(PortalUtil.getClassNameId(LearningActivity.class)) %>" />
+							<liferay-util:param name="classPK" value="${actId }" />
+							<liferay-util:param name="groupId" value="${themeDisplay.scopeGroupId }" />
+						</liferay-util:include>
+					</div>
+				</c:forEach>
 			</div>
-		</c:if>	
+		</div>
+		<div class="sheet-section">
+			<h3 class="sheet-subtitle"><liferay-ui:message key="categorization" /></h3>
+			<div class="row">
+				<div class="col-md-6">
+					<aui:field-wrapper label="tags">
+						<liferay-ui:asset-tags-selector className="<%=LearningActivity.class.getName() %>" classPK="${activity.actId }" />
+					</aui:field-wrapper>
+				</div>
+				<div class="col-md-6">
+					<liferay-ui:asset-categories-selector className="<%=LearningActivity.class.getName() %>" classPK="${activity.actId }" />
+				</div>
+			</div>
+		</div>
 	</div>
 	<aui:button-row>
 		<aui:button name="saveButton" type="submit" value="save" />

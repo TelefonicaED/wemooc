@@ -94,7 +94,7 @@ public interface CourseService extends BaseService {
 	public String getOSGiServiceIdentifier();
 
 	/**
-	* Método para buscar cursos
+	* M�todo para buscar cursos
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Course> searchCourses(long companyId, String title,

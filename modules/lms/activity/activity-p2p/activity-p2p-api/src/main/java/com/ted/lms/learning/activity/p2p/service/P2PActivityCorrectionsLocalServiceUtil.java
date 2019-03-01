@@ -42,6 +42,13 @@ public class P2PActivityCorrectionsLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.learning.activity.p2p.service.impl.P2PActivityCorrectionsLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections addP2PActivityCorrections(
+		long actId, long userId, long p2pActivityId, long groupId,
+		long companyId, long userCreatedId) {
+		return getService()
+				   .addP2PActivityCorrections(actId, userId, p2pActivityId,
+			groupId, companyId, userCreatedId);
+	}
 
 	/**
 	* Adds the p2p activity corrections to the database. Also notifies the appropriate model listeners.
@@ -52,6 +59,22 @@ public class P2PActivityCorrectionsLocalServiceUtil {
 	public static com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections addP2PActivityCorrections(
 		com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections p2pActivityCorrections) {
 		return getService().addP2PActivityCorrections(p2pActivityCorrections);
+	}
+
+	public static boolean areAllCorrectionsDoneByUserInP2PActivity(long actId,
+		long userId, int numValidations) {
+		return getService()
+				   .areAllCorrectionsDoneByUserInP2PActivity(actId, userId,
+			numValidations);
+	}
+
+	public static void asignCorrectionsToP2PActivities(long actId,
+		long p2pActivityId, int numValidaciones,
+		java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> activityList,
+		long userId) throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.asignCorrectionsToP2PActivities(actId, p2pActivityId,
+			numValidaciones, activityList, userId);
 	}
 
 	/**
@@ -200,6 +223,32 @@ public class P2PActivityCorrectionsLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	/**
+	* A partir del id de una actividad, obtenemos la media de resultados que ha obtenido en ellas.
+	* En las correcciones que se han realizado y tiene fecha de realizaci�n.
+	*
+	* @param p2pActivityId
+	* @return la media de results
+	*/
+	public static long getAVGCorrectionsResults(long p2pActivityId) {
+		return getService().getAVGCorrectionsResults(p2pActivityId);
+	}
+
+	public static java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections> getCorrections(
+		long actId, long userId) {
+		return getService().getCorrections(actId, userId);
+	}
+
+	public static com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections getCorrectionsByP2PActivityIdUserId(
+		long p2pActivityId, long userId) {
+		return getService()
+				   .getCorrectionsByP2PActivityIdUserId(p2pActivityId, userId);
+	}
+
+	public static int getCorrectionsCount(long actId, long userId) {
+		return getService().getCorrectionsCount(actId, userId);
+	}
+
 	public static java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections> getCorrectionsDoneByP2PActivityId(
 		long p2pActivityId) {
 		return getService().getCorrectionsDoneByP2PActivityId(p2pActivityId);
@@ -239,6 +288,12 @@ public class P2PActivityCorrectionsLocalServiceUtil {
 		long p2pActivityCorrectionsId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getP2PActivityCorrections(p2pActivityCorrectionsId);
+	}
+
+	public static java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections> getP2PActivityCorrectionsByP2PActivityId(
+		long p2pActivityId) {
+		return getService()
+				   .getP2PActivityCorrectionsByP2PActivityId(p2pActivityId);
 	}
 
 	/**
@@ -320,6 +375,16 @@ public class P2PActivityCorrectionsLocalServiceUtil {
 	}
 
 	/**
+	* Para saber si al usuario le han realizado todas las correcciones que se indica en el extracontent.
+	*/
+	public static boolean hasAllCorrectionsDoneAboutUserInP2PActivity(
+		long actId, long p2pActivityId, int numValidations) {
+		return getService()
+				   .hasAllCorrectionsDoneAboutUserInP2PActivity(actId,
+			p2pActivityId, numValidations);
+	}
+
+	/**
 	* Updates the p2p activity corrections in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
 	* @param p2pActivityCorrections the p2p activity corrections
@@ -328,6 +393,18 @@ public class P2PActivityCorrectionsLocalServiceUtil {
 	public static com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections updateP2PActivityCorrections(
 		com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections p2pActivityCorrections) {
 		return getService().updateP2PActivityCorrections(p2pActivityCorrections);
+	}
+
+	public static com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections updateP2PActivityCorrections(
+		com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections p2pActivityCorrections,
+		String description, String fileName, java.io.File file,
+		String mimeType, long result,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return getService()
+				   .updateP2PActivityCorrections(p2pActivityCorrections,
+			description, fileName, file, mimeType, result, serviceContext);
 	}
 
 	public static P2PActivityCorrectionsLocalService getService() {

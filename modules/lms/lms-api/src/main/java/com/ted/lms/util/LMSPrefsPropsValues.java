@@ -60,7 +60,7 @@ public class LMSPrefsPropsValues {
 		if(Validator.isNull(defaultValues) || defaultValues.length == 0) {
 			defaultValues = StringUtil.split(".gif,.jpeg,.jpg,.png", StringPool.COMMA);
 		}
-		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.COURSE_IMAGE_EXTENSIONS, StringPool.COMMA, defaultValues);
+		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.MODULE_IMAGE_EXTENSIONS, StringPool.COMMA, defaultValues);
 	}
 	
 	public static boolean getLearningActivityType(long companyId, long type) {

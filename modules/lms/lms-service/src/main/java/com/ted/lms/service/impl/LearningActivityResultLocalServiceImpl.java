@@ -14,9 +14,20 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.Validator;
+import com.ted.audit.api.AuditFactory;
+import com.ted.lms.constants.LMSAuditConstants;
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
+import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.base.LearningActivityResultLocalServiceBaseImpl;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,4 +71,87 @@ public class LearningActivityResultLocalServiceImpl
 	public int getLearningActivityCountByActId(long actId) {
 		return learningActivityResultPersistence.countByActId(actId);
 	}
+	
+	public LearningActivityResult updateLearningActivityResult(LearningActivityTry learningActivityTry, ServiceContext serviceContext) throws PortalException {
+
+		LearningActivityResult learningActivityResult = learningActivityResultPersistence.fetchByActIdUserId(learningActivityTry.getActId(), learningActivityTry.getUserId());
+		
+		boolean recalculateActivity = false;
+		
+		Date now = new Date();
+		
+		log.debug("****LAR "+learningActivityResult);
+		if(learningActivityResult == null){	
+			learningActivityResult = learningActivityResultPersistence.create(counterLocalService.increment(LearningActivityResult.class.getName()));
+			
+			learningActivityResult.setGroupId(learningActivityTry.getGroupId());
+			
+			learningActivityResult.setCompanyId(learningActivityTry.getCompanyId());
+			learningActivityResult.setCreateDate(now);
+			
+			learningActivityResult.setActId(learningActivityTry.getActId());
+			learningActivityResult.setUserId(learningActivityTry.getUserId());
+			learningActivityResult.setPassed(false);
+			learningActivityResult.setStartDate(learningActivityTry.getStartDate());
+			
+			recalculateActivity = true;
+		}
+		
+		log.debug("****END DATE "+learningActivityTry.getEndDate());
+		
+		LearningActivity learningActivity = learningActivityLocalService.getLearningActivity(learningActivityTry.getActId());
+		
+		if(learningActivityTry.getEndDate()!=null){
+			
+			long numTries = learningActivityTryLocalService.getLearningActivityTriesCount(learningActivityTry.getActId(), learningActivityTry.getUserId());
+			
+			log.debug("****Cuantos try llevo "+numTries);
+			
+			if(learningActivity.getTries()>0 && numTries >= learningActivity.getTries()){
+				learningActivityResult.setEndDate(learningActivityTry.getEndDate());
+				recalculateActivity= true;
+				log.debug("****Recalculamos 1");
+			}
+
+			if(learningActivityTry.getResult() > learningActivityResult.getResult()){			
+				learningActivityResult.setResult(learningActivityTry.getResult());
+				recalculateActivity= true;
+				log.debug("****Recalculamos 2");
+			}
+
+			if(!learningActivityResult.getPassed() && learningActivityTry.getResult() >= learningActivity.getPassPuntuation()){
+				learningActivityResult.setEndDate(learningActivityTry.getEndDate());
+				learningActivityResult.setPassed(true);	
+				recalculateActivity= true;	
+				log.debug("****Recalculamos 3");
+			}	
+			if(Validator.isNotNull(learningActivityTry.getComments())&&!learningActivityTry.getComments().equals(learningActivityResult.getComments())){
+				learningActivityResult.setComments(learningActivityTry.getComments());
+				recalculateActivity= true;
+				log.debug("****Recalculamos 4");
+			}
+		}
+		
+		log.debug("****Recalculate "+recalculateActivity);
+		if(recalculateActivity){
+			User userModified = userLocalService.getUser(serviceContext.getUserId());
+			learningActivityResult.setUserModifiedId(userModified.getUserId());
+			learningActivityResult.setUserModifiedName(userModified.getFullName());
+			learningActivityResult.setModifiedDate(now);
+			
+			learningActivityResultPersistence.update(learningActivityResult);
+			
+			moduleResultLocalService.updateModuleResult(learningActivityResult, serviceContext);
+			
+			//auditing
+			AuditFactory.audit(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_RESULT_UPDATE, 
+					LearningActivityResult.class.getName(), learningActivityResult.getPrimaryKey(), userModified.getUserId(), 
+					userModified.getFullName(), null);
+				
+		}
+		return learningActivityResult;
+
+	}
+	
+	private static Log log = LogFactoryUtil.getLog(LearningActivityResultLocalServiceImpl.class);
 }

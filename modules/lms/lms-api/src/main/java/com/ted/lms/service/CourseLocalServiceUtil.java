@@ -278,6 +278,10 @@ public class CourseLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static boolean getAllowAccessToCompletedCourses() {
+		return getService().getAllowAccessToCompletedCourses();
+	}
+
 	public static java.util.List<com.ted.lms.model.Course> getChildsRegistredUser(
 		long parentCourseId, long userId) {
 		return getService().getChildsRegistredUser(parentCourseId, userId);

@@ -62,15 +62,15 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 			<div class="question-title col-md-11">
 				<label for="<portlet:namespace />questionTitleMapAsXML<%=iteratorQuestion %>"><liferay-ui:message key="question" /></label>
 				
-				<liferay-ui:input-localized
-					cssClass="form-control"
-					formName="fm"
-					ignoreRequestValue="true"
+				<liferay-ui:input-editor
+					contents="<%= (question != null) ? question.getTextMapAsXML() : StringPool.BLANK %>"
+					
 					name="<%="questionTitleMapAsXML" + iteratorQuestion%>"
 					placeholder="description"
-					type="editor"
-					xml="<%= (question != null) ? question.getTextMapAsXML() : StringPool.BLANK %>"
-				/>
+					required="<%= true %>"
+				>
+					<aui:validator name="required" />
+				</liferay-ui:input-editor>
 			</div>
 			<div class="col-md-1">
 				<liferay-ui:icon-menu
@@ -107,7 +107,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 
 <script>
 function <portlet:namespace />addAnswer(iteratorQuestion, urlAnswer){
-	AUI().use('aui-node', 'aui-io',
+	AUI().use('aui-node', 'aui-base', 'aui-io-deprecated',
 		function(A) {
 			var parent = A.one('#<portlet:namespace />div_answers_' + iteratorQuestion);
 			var list = A.all('#<portlet:namespace />div_answers_' + iteratorQuestion + ' > div'),lastNode=null;
@@ -121,12 +121,23 @@ function <portlet:namespace />addAnswer(iteratorQuestion, urlAnswer){
 			
 			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iterator=' + iter;
 			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iteratorQuestion=' + iteratorQuestion;
+			
+			var newQuestion = A.Node.create('<div class="row" id="<portlet:namespace />' + iteratorQuestion + '_answer_'+iter+'" ></div>');
+			
+			parent.append(newQuestion);
+			
+			if (!newQuestion.io) {
+				newQuestion.plug(
+					A.Plugin.IO,
+					{
+						autoLoad: false,
+						method: 'GET'
+					}
+				);
+			}
 
-			if(parent!=null) parent.append(A.Node.create('<div class="row" id="<portlet:namespace />' + iteratorQuestion + '_answer_'+iter+'" ></div>').plug(A.Plugin.IO,{
-				uri:urlAnswer,
-				parseContent:true,
-				data:{iterator:iter}
-			}));
+			newQuestion.io.set('uri', urlAnswer);
+			newQuestion.io.start();
 		}
 	);
 }

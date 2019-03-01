@@ -1,4 +1,4 @@
-package com.ted.lms.learning.activity.p2p;
+package com.ted.lms.learning.activity.p2p.web.activity;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -42,6 +42,10 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
+		return new P2PActivityType(activity, learningActivityResultLocalService, p2pActivityLocalService, p2pActivityCorrectionsLocalService);
+	}
+	
+	public P2PActivityType getP2PActivityType(LearningActivity activity) {
 		return new P2PActivityType(activity, learningActivityResultLocalService, p2pActivityLocalService, p2pActivityCorrectionsLocalService);
 	}
 	
@@ -96,8 +100,13 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	public void specificValidations(ActionRequest actionRequest) throws PortalException {
 		String numValidations = ParamUtil.getString(actionRequest, "numValidations", null);
 		if(Validator.isNotNull(numValidations) && !Validator.isNumber(numValidations)) {
-			throw new PortalException("p2ptaskactivity.editActivity.numValidaciones.number");
+			throw new PortalException("learning-activity.p2p.num-validations.error.number");
 		}
+	}
+	
+	@Override
+	public String getMVCRenderCommandNameView() {
+		return "/activities/p2p/view_activity";
 	}
 	
 	@Reference(unbind = "-")

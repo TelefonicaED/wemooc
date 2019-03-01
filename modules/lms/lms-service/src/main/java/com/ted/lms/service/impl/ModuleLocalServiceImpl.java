@@ -16,6 +16,8 @@ package com.ted.lms.service.impl;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -37,11 +39,13 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.trash.exception.TrashEntryException;
 import com.liferay.trash.service.TrashEntryLocalService;
+import com.ted.lms.constants.DLAppConstants;
 import com.ted.lms.constants.LMSActivityKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.exception.ModuleEndDateException;
@@ -525,8 +529,56 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
+	public Folder addModuleFolder(long userId, long repositoryId) {
+		
+		Folder moduleFolder = null; 
+        Folder dlFolderMain = null;
+        
+        ServiceContext serviceContext = new ServiceContext();
+
+        //Damos permisos a los usuarios de la comunidad
+		serviceContext.setAddGroupPermissions(true);
+		serviceContext.setAddGuestPermissions(false);
+
+        try {
+        	//Si exite, obtenemos la carpeta principal
+        	dlFolderMain = DLAppLocalServiceUtil.getFolder(repositoryId,DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,DLAppConstants.DOCUMENTLIBRARY_MAINFOLDER);
+        } catch (PortalException e){
+        	//Si no existe la carpeta principal la creo
+        	try {
+				dlFolderMain = DLAppLocalServiceUtil.addFolder(userId, repositoryId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, 
+						DLAppConstants.DOCUMENTLIBRARY_MAINFOLDER, DLAppConstants.DOCUMENTLIBRARY_MAINFOLDER_DESCRIPTION, serviceContext);
+			} catch (PortalException e1) {
+				e1.printStackTrace();
+			}
+        }
+        
+        //Ahora creamos la carpeta para los módulos
+        if(Validator.isNotNull(dlFolderMain)){
+        	try {
+				moduleFolder = DLAppLocalServiceUtil.getFolder(repositoryId,dlFolderMain.getFolderId(),DLAppConstants.DOCUMENTLIBRARY_PORTLETFOLDER);
+			} catch (PortalException e) {
+				//Si no existe la creamos
+				try {
+					moduleFolder = DLAppLocalServiceUtil.addFolder(userId, repositoryId, dlFolderMain.getFolderId(), DLAppConstants.DOCUMENTLIBRARY_PORTLETFOLDER, 
+							DLAppConstants.DOCUMENTLIBRARY_PORTLETFOLDER_DESCRIPTION, serviceContext);
+				} catch (PortalException e1) {
+					e1.printStackTrace();
+				}
+			}
+        }
+        
+        return moduleFolder;
+	}
+	
+	@Override
 	public List<Module> getModules(long groupId, int start, int end){
 		return modulePersistence.findByGroupId(groupId, start, end);
+	}
+	
+	@Override
+	public int getModulesCount(long groupId) {
+		return modulePersistence.countByGroupId(groupId);
 	}
 	
 	private static final String SMALL_IMAGE_FOLDER_NAME = "Small Image";

@@ -13,4 +13,5 @@ public class LMSActionKeys {
 	public static final String REGISTER = "REGISTER";
 	public static final String SOFT_PERMISSIONS = "SOFT_PERMISSIONS";
 	public static final String CHANGE_VISIBILITY = "CHANGE_VISIBILITY";
+	public static final String CORRECT = "CORRECT";
 }

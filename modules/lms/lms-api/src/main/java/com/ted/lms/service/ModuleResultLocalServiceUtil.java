@@ -259,7 +259,8 @@ public class ModuleResultLocalServiceUtil {
 
 	public static com.ted.lms.model.ModuleResult updateModuleResult(
 		com.ted.lms.model.LearningActivityResult learningActivityResult,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .updateModuleResult(learningActivityResult, serviceContext);
 	}

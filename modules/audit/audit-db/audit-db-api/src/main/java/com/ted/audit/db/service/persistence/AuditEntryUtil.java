@@ -186,11 +186,11 @@ public class AuditEntryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByGroupId_First(long groupId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence().findByGroupId_First(groupId, orderByComparator);
 	}
 
@@ -212,11 +212,11 @@ public class AuditEntryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByGroupId_Last(long groupId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence().findByGroupId_Last(groupId, orderByComparator);
 	}
 
@@ -239,11 +239,11 @@ public class AuditEntryUtil {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry[] findByGroupId_PrevAndNext(long auditId,
 		long groupId, OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByGroupId_PrevAndNext(auditId, groupId,
 			orderByComparator);
@@ -342,11 +342,11 @@ public class AuditEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByCompanyId_First(long companyId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByCompanyId_First(companyId, orderByComparator);
 	}
@@ -370,11 +370,11 @@ public class AuditEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByCompanyId_Last(long companyId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByCompanyId_Last(companyId, orderByComparator);
 	}
@@ -399,11 +399,11 @@ public class AuditEntryUtil {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry[] findByCompanyId_PrevAndNext(long auditId,
 		long companyId, OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByCompanyId_PrevAndNext(auditId, companyId,
 			orderByComparator);
@@ -512,11 +512,11 @@ public class AuditEntryUtil {
 	* @param actionId the action ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByCompanyIdActionId_First(long companyId,
 		int actionId, OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByCompanyIdActionId_First(companyId, actionId,
 			orderByComparator);
@@ -544,11 +544,11 @@ public class AuditEntryUtil {
 	* @param actionId the action ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByCompanyIdActionId_Last(long companyId,
 		int actionId, OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByCompanyIdActionId_Last(companyId, actionId,
 			orderByComparator);
@@ -577,12 +577,12 @@ public class AuditEntryUtil {
 	* @param actionId the action ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry[] findByCompanyIdActionId_PrevAndNext(
 		long auditId, long companyId, int actionId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByCompanyIdActionId_PrevAndNext(auditId, companyId,
 			actionId, orderByComparator);
@@ -682,11 +682,11 @@ public class AuditEntryUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByUserId_First(long userId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence().findByUserId_First(userId, orderByComparator);
 	}
 
@@ -708,11 +708,11 @@ public class AuditEntryUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByUserId_Last(long userId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence().findByUserId_Last(userId, orderByComparator);
 	}
 
@@ -735,11 +735,11 @@ public class AuditEntryUtil {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry[] findByUserId_PrevAndNext(long auditId,
 		long userId, OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByUserId_PrevAndNext(auditId, userId, orderByComparator);
 	}
@@ -837,11 +837,11 @@ public class AuditEntryUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByClassNameId_First(long classNameId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByClassNameId_First(classNameId, orderByComparator);
 	}
@@ -865,11 +865,11 @@ public class AuditEntryUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public static AuditEntry findByClassNameId_Last(long classNameId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByClassNameId_Last(classNameId, orderByComparator);
 	}
@@ -894,11 +894,11 @@ public class AuditEntryUtil {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry[] findByClassNameId_PrevAndNext(long auditId,
 		long classNameId, OrderByComparator<AuditEntry> orderByComparator)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence()
 				   .findByClassNameId_PrevAndNext(auditId, classNameId,
 			orderByComparator);
@@ -956,10 +956,10 @@ public class AuditEntryUtil {
 	*
 	* @param auditId the primary key of the audit entry
 	* @return the audit entry that was removed
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry remove(long auditId)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence().remove(auditId);
 	}
 
@@ -968,14 +968,14 @@ public class AuditEntryUtil {
 	}
 
 	/**
-	* Returns the audit entry with the primary key or throws a {@link NoSuchAuditEntryException} if it could not be found.
+	* Returns the audit entry with the primary key or throws a {@link NoSuchitEntryException} if it could not be found.
 	*
 	* @param auditId the primary key of the audit entry
 	* @return the audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public static AuditEntry findByPrimaryKey(long auditId)
-		throws com.ted.audit.db.exception.NoSuchAuditEntryException {
+		throws com.ted.audit.db.exception.NoSuchitEntryException {
 		return getPersistence().findByPrimaryKey(auditId);
 	}
 

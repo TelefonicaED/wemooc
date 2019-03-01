@@ -336,6 +336,15 @@ public class LearningActivityResultLocalServiceUtil {
 		return getService().updateLearningActivityResult(learningActivityResult);
 	}
 
+	public static com.ted.lms.model.LearningActivityResult updateLearningActivityResult(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLearningActivityResult(learningActivityTry,
+			serviceContext);
+	}
+
 	public static LearningActivityResultLocalService getService() {
 		return _serviceTracker.getService();
 	}

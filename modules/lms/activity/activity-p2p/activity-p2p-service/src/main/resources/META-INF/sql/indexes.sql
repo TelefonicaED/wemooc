@@ -5,7 +5,8 @@ create index IX_91FB8624 on PTP_P2PActivity (uuid_[$COLUMN_LENGTH:75$], companyI
 create unique index IX_FC3745A6 on PTP_P2PActivity (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_9DEE2746 on PTP_P2PActivityCorrections (actId, userId);
-create index IX_B788CD51 on PTP_P2PActivityCorrections (p2pActivityId, userId);
+create index IX_13B528C6 on PTP_P2PActivityCorrections (p2pActivityId, actId);
+create unique index IX_B788CD51 on PTP_P2PActivityCorrections (p2pActivityId, userId);
 create index IX_15A5A3CB on PTP_P2PActivityCorrections (userId);
 create index IX_804A4C45 on PTP_P2PActivityCorrections (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_F2132007 on PTP_P2PActivityCorrections (uuid_[$COLUMN_LENGTH:75$], groupId);

@@ -16,6 +16,8 @@ package com.ted.lms.learning.activity.p2p.service;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -25,19 +27,27 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
+import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 
 import java.util.List;
 
@@ -63,6 +73,14 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link P2PActivityLocalServiceUtil} to access the p2p activity local service. Add custom service methods to {@link com.ted.lms.learning.activity.p2p.service.impl.P2PActivityLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public P2PActivity addP2PActivity(long userId, long actId,
+		String description, ServiceContext serviceContext,
+		ThemeDisplay themeDisplay) throws PortalException;
+
+	public P2PActivity addP2PActivity(long userId, long actId,
+		String description, String fileName, File file, String mimeType,
+		ServiceContext serviceContext, ThemeDisplay themeDisplay)
+		throws PortalException, IOException;
 
 	/**
 	* Adds the p2p activity to the database. Also notifies the appropriate model listeners.
@@ -72,6 +90,16 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public P2PActivity addP2PActivity(P2PActivity p2pActivity);
+
+	public DLFileEntry addP2PFileEntry(String fileName, File file,
+		String mimeType, long folderId, long groupId, long companyId)
+		throws PortalException, IOException;
+
+	public Folder addP2PFolder(long userId, long groupId)
+		throws PortalException;
+
+	public void asignCorrectionP2PActivity(P2PActivity p2pActivity,
+		int numValidations, String assignationType);
 
 	/**
 	* Creates a new p2p activity with the primary key. Does not add the p2p activity to the database.
@@ -219,6 +247,10 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<P2PActivity> getP2PActivities(int start, int end);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<P2PActivity> getP2PActivitiesByAssignationsCompleted(
+		boolean assignationsCompleted);
+
 	/**
 	* Returns all the p2p activities matching the UUID and company.
 	*
@@ -252,6 +284,11 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getP2PActivitiesCount();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<P2PActivity> getP2PActivitiesToCorrect(long actId,
+		long p2pActivityId, int numValidaciones, String assignationType)
+		throws PortalException;
 
 	/**
 	* Returns the p2p activity with the primary key.
@@ -287,6 +324,9 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasP2PActivity(long actId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasP2PActivity(long actId, long userId);
+
 	/**
 	* Updates the p2p activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -295,4 +335,20 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	*/
 	@Indexable(type = IndexableType.REINDEX)
 	public P2PActivity updateP2PActivity(P2PActivity p2pActivity);
+
+	/**
+	* Se actualizan los tries y los results de los usuarios implicados
+	*
+	* @param p2pActivityId
+	* @param userId
+	* @throws PortalException
+	* @throws UnsupportedEncodingException
+	* @throws Exception
+	*/
+	public void updateResultP2PActivity(P2PActivity p2pActivityCorrected,
+		P2PActivityCorrections p2pActivityCorrection, long userId,
+		int numValidations, boolean result, boolean anonimous,
+		boolean emailAnonimous, JSONArray evaluationCriteria,
+		ThemeDisplay themeDisplay, ServiceContext serviceContext)
+		throws PortalException, UnsupportedEncodingException;
 }

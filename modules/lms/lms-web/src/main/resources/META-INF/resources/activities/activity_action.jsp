@@ -16,7 +16,7 @@
 	<liferay-ui:icon
 		image="edit"
 		message="edit"
-		url="<%=activity.getURLEdit(liferayPortletRequest)%>"
+		url="<%=activity.getURLEdit(themeDisplay)%>"
 	/>	
 	
 	<portlet:actionURL var="moveUpLearningActivityURL">

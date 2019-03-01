@@ -1,9 +1,10 @@
 Bundle-Name: activity-p2p-api
 Bundle-SymbolicName: com.ted.lms.learning.activity.p2p.api
 Bundle-Version: 1.0.0
-Export-Package:\
+Export-Package: \
 	com.ted.lms.learning.activity.p2p.exception,\
 	com.ted.lms.learning.activity.p2p.model,\
 	com.ted.lms.learning.activity.p2p.service,\
-	com.ted.lms.learning.activity.p2p.service.persistence
+	com.ted.lms.learning.activity.p2p.service.persistence,\
+	com.ted.lms.learning.activity.p2p.util
 -includeresource: META-INF/service.xml=../activity-p2p-service/service.xml

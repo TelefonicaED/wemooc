@@ -79,7 +79,7 @@ public class CourseServiceWrapper implements CourseService,
 	}
 
 	/**
-	* Método para buscar cursos
+	* M�todo para buscar cursos
 	*/
 	@Override
 	public java.util.List<com.ted.lms.model.Course> searchCourses(

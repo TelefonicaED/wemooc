@@ -32,19 +32,15 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourse(long userId) throws SystemException {
-		CourseResult courseResult=courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
-		if(courseResult==null) {
-			courseResult=courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
-		}
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
 
 		if(courseResult.getStartDate() == null){
 			courseResult.setStartDate(new Date());
 		}
 		
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 		
-		return updateCourseResult(courseResult, userId, lresult);		
+		return updateCourseResult(courseResult, lresult);		
 	}
 
 	@Override
@@ -58,24 +54,19 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourse(long userId) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
-
-		CourseResult courseResult = courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
 
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
 
-		if(courseResult==null) {
-			courseResult = courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
-		}
-
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
-			courseResult = updateCourseResult(courseResult, userId, lresult);
+			courseResult = updateCourseResult(courseResult, lresult);
+			courseResult  = courseResultLocalService.updateCourseResult(courseResult);
 		}
 		return courseResult;	
 	}
 	
-	public CourseResult updateCourseResult(CourseResult courseResult, long userId, List<LearningActivityResult> lresult) {
+	private CourseResult updateCourseResult(CourseResult courseResult, List<LearningActivityResult> lresult) {
 		
 		boolean passed=true;
 		long result=0;	
@@ -130,7 +121,7 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
         if((passed || isFailed) && courseResult.getPassedDate() == null) {
                courseResult.setPassedDate(new Date());
         }
-       return courseResultLocalService.updateCourseResult(courseResult);
+       return courseResult;
 	}
 	
 	@Override

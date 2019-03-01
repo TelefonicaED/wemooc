@@ -189,7 +189,9 @@ public class ModuleAssetRenderer extends BaseJSPAssetRenderer<Module>{
 	@Override
 	public String getURLViewInContext(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse, 
 										String noSuchEntryRedirect) throws Exception {
-		return module.getURLView(liferayPortletRequest);
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		return module.getURLView(themeDisplay);
 	}
 	
 }

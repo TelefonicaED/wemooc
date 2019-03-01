@@ -88,6 +88,11 @@ public class ModuleLocalServiceUtil {
 		return getService().addModule(module);
 	}
 
+	public static com.liferay.portal.kernel.repository.model.Folder addModuleFolder(
+		long userId, long repositoryId) {
+		return getService().addModuleFolder(userId, repositoryId);
+	}
+
 	public static long addOriginalImageFileEntry(long userId, long groupId,
 		long entryId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector imageSelector)
@@ -340,6 +345,10 @@ public class ModuleLocalServiceUtil {
 	*/
 	public static int getModulesCount() {
 		return getService().getModulesCount();
+	}
+
+	public static int getModulesCount(long groupId) {
+		return getService().getModulesCount(groupId);
 	}
 
 	public static com.ted.lms.model.Module getNextModule(

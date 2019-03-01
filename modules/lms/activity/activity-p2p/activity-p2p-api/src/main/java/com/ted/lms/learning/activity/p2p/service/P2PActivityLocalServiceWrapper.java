@@ -33,6 +33,28 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 		_p2pActivityLocalService = p2pActivityLocalService;
 	}
 
+	@Override
+	public com.ted.lms.learning.activity.p2p.model.P2PActivity addP2PActivity(
+		long userId, long actId, String description,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _p2pActivityLocalService.addP2PActivity(userId, actId,
+			description, serviceContext, themeDisplay);
+	}
+
+	@Override
+	public com.ted.lms.learning.activity.p2p.model.P2PActivity addP2PActivity(
+		long userId, long actId, String description, String fileName,
+		java.io.File file, String mimeType,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return _p2pActivityLocalService.addP2PActivity(userId, actId,
+			description, fileName, file, mimeType, serviceContext, themeDisplay);
+	}
+
 	/**
 	* Adds the p2p activity to the database. Also notifies the appropriate model listeners.
 	*
@@ -43,6 +65,31 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 	public com.ted.lms.learning.activity.p2p.model.P2PActivity addP2PActivity(
 		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity) {
 		return _p2pActivityLocalService.addP2PActivity(p2pActivity);
+	}
+
+	@Override
+	public com.liferay.document.library.kernel.model.DLFileEntry addP2PFileEntry(
+		String fileName, java.io.File file, String mimeType, long folderId,
+		long groupId, long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return _p2pActivityLocalService.addP2PFileEntry(fileName, file,
+			mimeType, folderId, groupId, companyId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.repository.model.Folder addP2PFolder(
+		long userId, long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _p2pActivityLocalService.addP2PFolder(userId, groupId);
+	}
+
+	@Override
+	public void asignCorrectionP2PActivity(
+		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity,
+		int numValidations, String assignationType) {
+		_p2pActivityLocalService.asignCorrectionP2PActivity(p2pActivity,
+			numValidations, assignationType);
 	}
 
 	/**
@@ -241,6 +288,12 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 		return _p2pActivityLocalService.getP2PActivities(start, end);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> getP2PActivitiesByAssignationsCompleted(
+		boolean assignationsCompleted) {
+		return _p2pActivityLocalService.getP2PActivitiesByAssignationsCompleted(assignationsCompleted);
+	}
+
 	/**
 	* Returns all the p2p activities matching the UUID and company.
 	*
@@ -281,6 +334,15 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 	@Override
 	public int getP2PActivitiesCount() {
 		return _p2pActivityLocalService.getP2PActivitiesCount();
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> getP2PActivitiesToCorrect(
+		long actId, long p2pActivityId, int numValidaciones,
+		String assignationType)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _p2pActivityLocalService.getP2PActivitiesToCorrect(actId,
+			p2pActivityId, numValidaciones, assignationType);
 	}
 
 	/**
@@ -331,6 +393,11 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 		return _p2pActivityLocalService.hasP2PActivity(actId);
 	}
 
+	@Override
+	public boolean hasP2PActivity(long actId, long userId) {
+		return _p2pActivityLocalService.hasP2PActivity(actId, userId);
+	}
+
 	/**
 	* Updates the p2p activity in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*
@@ -341,6 +408,31 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 	public com.ted.lms.learning.activity.p2p.model.P2PActivity updateP2PActivity(
 		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity) {
 		return _p2pActivityLocalService.updateP2PActivity(p2pActivity);
+	}
+
+	/**
+	* Se actualizan los tries y los results de los usuarios implicados
+	*
+	* @param p2pActivityId
+	* @param userId
+	* @throws PortalException
+	* @throws UnsupportedEncodingException
+	* @throws Exception
+	*/
+	@Override
+	public void updateResultP2PActivity(
+		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivityCorrected,
+		com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections p2pActivityCorrection,
+		long userId, int numValidations, boolean result, boolean anonimous,
+		boolean emailAnonimous,
+		com.liferay.portal.kernel.json.JSONArray evaluationCriteria,
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.UnsupportedEncodingException {
+		_p2pActivityLocalService.updateResultP2PActivity(p2pActivityCorrected,
+			p2pActivityCorrection, userId, numValidations, result, anonimous,
+			emailAnonimous, evaluationCriteria, themeDisplay, serviceContext);
 	}
 
 	@Override

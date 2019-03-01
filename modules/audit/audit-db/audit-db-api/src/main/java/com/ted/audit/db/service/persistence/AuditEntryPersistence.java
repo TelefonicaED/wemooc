@@ -18,7 +18,7 @@ import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.service.persistence.BasePersistence;
 
-import com.ted.audit.db.exception.NoSuchAuditEntryException;
+import com.ted.audit.db.exception.NoSuchitEntryException;
 import com.ted.audit.db.model.AuditEntry;
 
 /**
@@ -106,11 +106,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByGroupId_First(long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the first audit entry in the ordered set where groupId = &#63;.
@@ -128,11 +128,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByGroupId_Last(long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the last audit entry in the ordered set where groupId = &#63;.
@@ -151,11 +151,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param groupId the group ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public AuditEntry[] findByGroupId_PrevAndNext(long auditId, long groupId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Removes all the audit entries where groupId = &#63; from the database.
@@ -237,11 +237,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByCompanyId_First(long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the first audit entry in the ordered set where companyId = &#63;.
@@ -259,11 +259,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByCompanyId_Last(long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the last audit entry in the ordered set where companyId = &#63;.
@@ -282,12 +282,12 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param companyId the company ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public AuditEntry[] findByCompanyId_PrevAndNext(long auditId,
 		long companyId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Removes all the audit entries where companyId = &#63; from the database.
@@ -375,12 +375,12 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param actionId the action ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByCompanyIdActionId_First(long companyId,
 		int actionId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the first audit entry in the ordered set where companyId = &#63; and actionId = &#63;.
@@ -401,12 +401,12 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param actionId the action ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByCompanyIdActionId_Last(long companyId,
 		int actionId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the last audit entry in the ordered set where companyId = &#63; and actionId = &#63;.
@@ -428,12 +428,12 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param actionId the action ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public AuditEntry[] findByCompanyIdActionId_PrevAndNext(long auditId,
 		long companyId, int actionId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Removes all the audit entries where companyId = &#63; and actionId = &#63; from the database.
@@ -517,11 +517,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByUserId_First(long userId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the first audit entry in the ordered set where userId = &#63;.
@@ -539,11 +539,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByUserId_Last(long userId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the last audit entry in the ordered set where userId = &#63;.
@@ -562,11 +562,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param userId the user ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public AuditEntry[] findByUserId_PrevAndNext(long auditId, long userId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Removes all the audit entries where userId = &#63; from the database.
@@ -648,11 +648,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByClassNameId_First(long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the first audit entry in the ordered set where classNameId = &#63;.
@@ -670,11 +670,11 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching audit entry
-	* @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	* @throws NoSuchitEntryException if a matching audit entry could not be found
 	*/
 	public AuditEntry findByClassNameId_Last(long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the last audit entry in the ordered set where classNameId = &#63;.
@@ -693,12 +693,12 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	* @param classNameId the class name ID
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public AuditEntry[] findByClassNameId_PrevAndNext(long auditId,
 		long classNameId,
 		com.liferay.portal.kernel.util.OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Removes all the audit entries where classNameId = &#63; from the database.
@@ -742,21 +742,21 @@ public interface AuditEntryPersistence extends BasePersistence<AuditEntry> {
 	*
 	* @param auditId the primary key of the audit entry
 	* @return the audit entry that was removed
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
-	public AuditEntry remove(long auditId) throws NoSuchAuditEntryException;
+	public AuditEntry remove(long auditId) throws NoSuchitEntryException;
 
 	public AuditEntry updateImpl(AuditEntry auditEntry);
 
 	/**
-	* Returns the audit entry with the primary key or throws a {@link NoSuchAuditEntryException} if it could not be found.
+	* Returns the audit entry with the primary key or throws a {@link NoSuchitEntryException} if it could not be found.
 	*
 	* @param auditId the primary key of the audit entry
 	* @return the audit entry
-	* @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	* @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	*/
 	public AuditEntry findByPrimaryKey(long auditId)
-		throws NoSuchAuditEntryException;
+		throws NoSuchitEntryException;
 
 	/**
 	* Returns the audit entry with the primary key or returns <code>null</code> if it could not be found.

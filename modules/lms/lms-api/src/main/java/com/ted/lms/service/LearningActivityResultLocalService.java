@@ -30,12 +30,14 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.LearningActivityResult;
+import com.ted.lms.model.LearningActivityTry;
 
 import java.io.Serializable;
 
@@ -308,4 +310,8 @@ public interface LearningActivityResultLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public LearningActivityResult updateLearningActivityResult(
 		LearningActivityResult learningActivityResult);
+
+	public LearningActivityResult updateLearningActivityResult(
+		LearningActivityTry learningActivityTry, ServiceContext serviceContext)
+		throws PortalException;
 }

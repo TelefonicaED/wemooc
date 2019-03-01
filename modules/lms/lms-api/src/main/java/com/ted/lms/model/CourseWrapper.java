@@ -1396,6 +1396,12 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.hashCode();
 	}
 
+	@Override
+	public boolean hasPermissionAccessCourseFinished(long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _course.hasPermissionAccessCourseFinished(userId);
+	}
+
 	/**
 	* Returns <code>true</code> if this course is approved.
 	*

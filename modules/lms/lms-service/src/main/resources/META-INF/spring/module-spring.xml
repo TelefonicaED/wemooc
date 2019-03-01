@@ -13,6 +13,7 @@
 	<bean class="com.ted.lms.service.persistence.impl.CourseFinderImpl" id="com.ted.lms.service.persistence.CourseFinder" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.CourseResultLocalServiceImpl" id="com.ted.lms.service.CourseResultLocalService" />
 	<bean class="com.ted.lms.service.persistence.impl.CourseResultPersistenceImpl" id="com.ted.lms.service.persistence.CourseResultPersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.persistence.impl.CourseResultFinderImpl" id="com.ted.lms.service.persistence.CourseResultFinder" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.LearningActivityLocalServiceImpl" id="com.ted.lms.service.LearningActivityLocalService" />
 	<bean class="com.ted.lms.service.impl.LearningActivityServiceImpl" id="com.ted.lms.service.LearningActivityService" />
 	<bean class="com.ted.lms.service.persistence.impl.LearningActivityPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityPersistence" parent="basePersistence" />

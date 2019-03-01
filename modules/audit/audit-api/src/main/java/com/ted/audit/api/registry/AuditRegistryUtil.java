@@ -1,5 +1,6 @@
 package com.ted.audit.api.registry;
 
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -33,6 +34,12 @@ public class AuditRegistryUtil {
 
 			return ListUtil.fromMapValues(_audits);
 		}
+		
+		public static List<Audit> getAudits(long companyId, boolean filterActive) {
+
+			return ListUtil.fromMapValues(_filterAudits(companyId, _audits));
+		}
+
 
 		public static void register(Audit audit) {
 			Registry registry = RegistryUtil.getRegistry();
@@ -79,6 +86,23 @@ public class AuditRegistryUtil {
 
 		private AuditRegistryUtil() {
 		}
+		
+		private static Map<Long, Audit> _filterAudits(long companyId, Map<Long, Audit> audits) {
+
+		Map<Long, Audit> filteredAudits = new ConcurrentHashMap<>();
+
+		for (Map.Entry<Long, Audit> entry :audits.entrySet()) {
+
+			Audit audit = entry.getValue();
+
+			if (audit.isActive(companyId)) {
+
+				filteredAudits.put(entry.getKey(), audit);
+			}
+		}
+
+		return filteredAudits;
+	}
 
 
 		private static class AuditServiceTrackerCustomizer

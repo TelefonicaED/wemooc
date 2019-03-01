@@ -261,6 +261,25 @@ public class LearningActivityWrapper implements LearningActivity,
 		_learningActivity.addExtraContentJSON(key, value);
 	}
 
+	/**
+	* Comprueba si se puede accceder a una actividad
+	*
+	* @param viewActivityFinish Si la actividad deja acceder coon el modo observador
+	* @param user Usuario que accede a la actividad
+	* @param permissionChecker permisos del usuario
+	* @return true si puede acceder
+	* @throws PortalException
+	*/
+	@Override
+	public boolean canAccess(boolean viewActivityFinish,
+		com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker,
+		Course course)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivity.canAccess(viewActivityFinish, user,
+			permissionChecker, course);
+	}
+
 	@Override
 	public Object clone() {
 		return new LearningActivityWrapper((LearningActivity)_learningActivity.clone());
@@ -871,14 +890,14 @@ public class LearningActivityWrapper implements LearningActivity,
 
 	@Override
 	public String getURLEdit(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
-		return _learningActivity.getURLEdit(liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
+		return _learningActivity.getURLEdit(themeDisplay);
 	}
 
 	@Override
 	public String getURLView(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
-		return _learningActivity.getURLView(liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
+		return _learningActivity.getURLView(themeDisplay);
 	}
 
 	/**
@@ -1034,6 +1053,13 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public boolean isInTrashImplicitly() {
 		return _learningActivity.isInTrashImplicitly();
+	}
+
+	@Override
+	public boolean isLocked(com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivity.isLocked(user, permissionChecker);
 	}
 
 	@Override

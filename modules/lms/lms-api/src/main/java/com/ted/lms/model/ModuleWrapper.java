@@ -690,8 +690,8 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 
 	@Override
 	public String getURLEdit(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
-		return _module.getURLEdit(liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
+		return _module.getURLEdit(themeDisplay);
 	}
 
 	@Override
@@ -705,8 +705,8 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 
 	@Override
 	public String getURLView(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest) {
-		return _module.getURLView(liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
+		return _module.getURLView(themeDisplay);
 	}
 
 	/**

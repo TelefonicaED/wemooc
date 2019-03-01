@@ -360,6 +360,15 @@ public class LearningActivityResultLocalServiceWrapper
 	}
 
 	@Override
+	public com.ted.lms.model.LearningActivityResult updateLearningActivityResult(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityResultLocalService.updateLearningActivityResult(learningActivityTry,
+			serviceContext);
+	}
+
+	@Override
 	public LearningActivityResultLocalService getWrappedService() {
 		return _learningActivityResultLocalService;
 	}

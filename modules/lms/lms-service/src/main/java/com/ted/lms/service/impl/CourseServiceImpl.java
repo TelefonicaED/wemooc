@@ -228,7 +228,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	}
 	
 	/**
-	 * MÃ©todo para buscar cursos
+	 * Método para buscar cursos
 	 */
 	public List<Course> searchCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end,

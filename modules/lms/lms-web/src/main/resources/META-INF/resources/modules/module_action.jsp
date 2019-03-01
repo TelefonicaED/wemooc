@@ -22,7 +22,7 @@
 	<c:if test="<%= ModulePermission.contains(permissionChecker, module, ActionKeys.UPDATE) %>">
 		<liferay-ui:icon
 			message="edit"
-			url="<%=module.getURLEdit(liferayPortletRequest)%>"
+			url="<%=module.getURLEdit(themeDisplay)%>"
 		/>
 		
 		<portlet:actionURL var="moveUpModuleURL">

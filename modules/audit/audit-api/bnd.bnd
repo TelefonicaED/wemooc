@@ -3,4 +3,5 @@ Bundle-SymbolicName: com.ted.audit.api
 Bundle-Version: 1.0.0
 Export-Package: \
 	com.ted.audit.api,\
-	com.ted.audit.api.registry
+	com.ted.audit.api.registry,\
+	com.ted.audit.api.contants

@@ -2569,24 +2569,10 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 
 	private static final String _FINDER_COLUMN_ACTIDANDUSERID_ACTID_2 = "p2pActivityCorrections.actId = ? AND ";
 	private static final String _FINDER_COLUMN_ACTIDANDUSERID_USERID_2 = "p2pActivityCorrections.userId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID =
-		new FinderPath(P2PActivityCorrectionsModelImpl.ENTITY_CACHE_ENABLED,
+	public static final FinderPath FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID = new FinderPath(P2PActivityCorrectionsModelImpl.ENTITY_CACHE_ENABLED,
 			P2PActivityCorrectionsModelImpl.FINDER_CACHE_ENABLED,
-			P2PActivityCorrectionsImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByP2PActivityIdAndUserId",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID =
-		new FinderPath(P2PActivityCorrectionsModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityCorrectionsModelImpl.FINDER_CACHE_ENABLED,
-			P2PActivityCorrectionsImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByP2PActivityIdAndUserId",
+			P2PActivityCorrectionsImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByP2PActivityIdAndUserId",
 			new String[] { Long.class.getName(), Long.class.getName() },
 			P2PActivityCorrectionsModelImpl.P2PACTIVITYID_COLUMN_BITMASK |
 			P2PActivityCorrectionsModelImpl.USERID_COLUMN_BITMASK);
@@ -2597,143 +2583,93 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			new String[] { Long.class.getName(), Long.class.getName() });
 
 	/**
-	 * Returns all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
+	 * Returns the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; or throws a {@link NoSuchP2PActivityCorrectionsException} if it could not be found.
 	 *
 	 * @param p2pActivityId the p2p activity ID
 	 * @param userId the user ID
-	 * @return the matching p2p activity correctionses
+	 * @return the matching p2p activity corrections
+	 * @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
 	 */
 	@Override
-	public List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
+	public P2PActivityCorrections findByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId)
+		throws NoSuchP2PActivityCorrectionsException {
+		P2PActivityCorrections p2pActivityCorrections = fetchByP2PActivityIdAndUserId(p2pActivityId,
+				userId);
+
+		if (p2pActivityCorrections == null) {
+			StringBundler msg = new StringBundler(6);
+
+			msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+			msg.append("p2pActivityId=");
+			msg.append(p2pActivityId);
+
+			msg.append(", userId=");
+			msg.append(userId);
+
+			msg.append("}");
+
+			if (_log.isDebugEnabled()) {
+				_log.debug(msg.toString());
+			}
+
+			throw new NoSuchP2PActivityCorrectionsException(msg.toString());
+		}
+
+		return p2pActivityCorrections;
+	}
+
+	/**
+	 * Returns the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param userId the user ID
+	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
+	 */
+	@Override
+	public P2PActivityCorrections fetchByP2PActivityIdAndUserId(
 		long p2pActivityId, long userId) {
-		return findByP2PActivityIdAndUserId(p2pActivityId, userId,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+		return fetchByP2PActivityIdAndUserId(p2pActivityId, userId, true);
 	}
 
 	/**
-	 * Returns a range of all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
+	 * Returns the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param p2pActivityId the p2p activity ID
 	 * @param userId the user ID
-	 * @param start the lower bound of the range of p2p activity correctionses
-	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
-	 * @return the range of matching p2p activity correctionses
-	 */
-	@Override
-	public List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, int start, int end) {
-		return findByP2PActivityIdAndUserId(p2pActivityId, userId, start, end,
-			null);
-	}
-
-	/**
-	 * Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of p2p activity correctionses
-	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @return the ordered range of matching p2p activity correctionses
-	 */
-	@Override
-	public List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, int start, int end,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		return findByP2PActivityIdAndUserId(p2pActivityId, userId, start, end,
-			orderByComparator, true);
-	}
-
-	/**
-	 * Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	 * </p>
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 * @param start the lower bound of the range of p2p activity correctionses
-	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
-	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @param retrieveFromCache whether to retrieve from the finder cache
-	 * @return the ordered range of matching p2p activity correctionses
+	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	@Override
-	public List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, int start, int end,
-		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
-		boolean pagination = true;
-		FinderPath finderPath = null;
-		Object[] finderArgs = null;
+	public P2PActivityCorrections fetchByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId, boolean retrieveFromCache) {
+		Object[] finderArgs = new Object[] { p2pActivityId, userId };
 
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID;
-			finderArgs = new Object[] { p2pActivityId, userId };
-		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID;
-			finderArgs = new Object[] {
-					p2pActivityId, userId,
-					
-					start, end, orderByComparator
-				};
-		}
-
-		List<P2PActivityCorrections> list = null;
+		Object result = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivityCorrections>)finderCache.getResult(finderPath,
+			result = finderCache.getResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
 					finderArgs, this);
+		}
 
-			if ((list != null) && !list.isEmpty()) {
-				for (P2PActivityCorrections p2pActivityCorrections : list) {
-					if ((p2pActivityId != p2pActivityCorrections.getP2pActivityId()) ||
-							(userId != p2pActivityCorrections.getUserId())) {
-						list = null;
+		if (result instanceof P2PActivityCorrections) {
+			P2PActivityCorrections p2pActivityCorrections = (P2PActivityCorrections)result;
 
-						break;
-					}
-				}
+			if ((p2pActivityId != p2pActivityCorrections.getP2pActivityId()) ||
+					(userId != p2pActivityCorrections.getUserId())) {
+				result = null;
 			}
 		}
 
-		if (list == null) {
-			StringBundler query = null;
-
-			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
-			}
-			else {
-				query = new StringBundler(4);
-			}
+		if (result == null) {
+			StringBundler query = new StringBundler(4);
 
 			query.append(_SQL_SELECT_P2PACTIVITYCORRECTIONS_WHERE);
 
 			query.append(_FINDER_COLUMN_P2PACTIVITYIDANDUSERID_P2PACTIVITYID_2);
 
 			query.append(_FINDER_COLUMN_P2PACTIVITYIDANDUSERID_USERID_2);
-
-			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
-			}
-			else
-			 if (pagination) {
-				query.append(P2PActivityCorrectionsModelImpl.ORDER_BY_JPQL);
-			}
 
 			String sql = query.toString();
 
@@ -2750,25 +2686,23 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 
 				qPos.add(userId);
 
-				if (!pagination) {
-					list = (List<P2PActivityCorrections>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+				List<P2PActivityCorrections> list = q.list();
 
-					Collections.sort(list);
-
-					list = Collections.unmodifiableList(list);
+				if (list.isEmpty()) {
+					finderCache.putResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
+						finderArgs, list);
 				}
 				else {
-					list = (List<P2PActivityCorrections>)QueryUtil.list(q,
-							getDialect(), start, end);
+					P2PActivityCorrections p2pActivityCorrections = list.get(0);
+
+					result = p2pActivityCorrections;
+
+					cacheResult(p2pActivityCorrections);
 				}
-
-				cacheResult(list);
-
-				finderCache.putResult(finderPath, finderArgs, list);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				finderCache.removeResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
+					finderArgs);
 
 				throw processException(e);
 			}
@@ -2777,300 +2711,29 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			}
 		}
 
-		return list;
-	}
-
-	/**
-	 * Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching p2p activity corrections
-	 * @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
-	 */
-	@Override
-	public P2PActivityCorrections findByP2PActivityIdAndUserId_First(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator)
-		throws NoSuchP2PActivityCorrectionsException {
-		P2PActivityCorrections p2pActivityCorrections = fetchByP2PActivityIdAndUserId_First(p2pActivityId,
-				userId, orderByComparator);
-
-		if (p2pActivityCorrections != null) {
-			return p2pActivityCorrections;
-		}
-
-		StringBundler msg = new StringBundler(6);
-
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		msg.append("p2pActivityId=");
-		msg.append(p2pActivityId);
-
-		msg.append(", userId=");
-		msg.append(userId);
-
-		msg.append("}");
-
-		throw new NoSuchP2PActivityCorrectionsException(msg.toString());
-	}
-
-	/**
-	 * Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the first matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
-	 */
-	@Override
-	public P2PActivityCorrections fetchByP2PActivityIdAndUserId_First(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		List<P2PActivityCorrections> list = findByP2PActivityIdAndUserId(p2pActivityId,
-				userId, 0, 1, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
-		}
-
-		return null;
-	}
-
-	/**
-	 * Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching p2p activity corrections
-	 * @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
-	 */
-	@Override
-	public P2PActivityCorrections findByP2PActivityIdAndUserId_Last(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator)
-		throws NoSuchP2PActivityCorrectionsException {
-		P2PActivityCorrections p2pActivityCorrections = fetchByP2PActivityIdAndUserId_Last(p2pActivityId,
-				userId, orderByComparator);
-
-		if (p2pActivityCorrections != null) {
-			return p2pActivityCorrections;
-		}
-
-		StringBundler msg = new StringBundler(6);
-
-		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		msg.append("p2pActivityId=");
-		msg.append(p2pActivityId);
-
-		msg.append(", userId=");
-		msg.append(userId);
-
-		msg.append("}");
-
-		throw new NoSuchP2PActivityCorrectionsException(msg.toString());
-	}
-
-	/**
-	 * Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the last matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
-	 */
-	@Override
-	public P2PActivityCorrections fetchByP2PActivityIdAndUserId_Last(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		int count = countByP2PActivityIdAndUserId(p2pActivityId, userId);
-
-		if (count == 0) {
+		if (result instanceof List<?>) {
 			return null;
 		}
-
-		List<P2PActivityCorrections> list = findByP2PActivityIdAndUserId(p2pActivityId,
-				userId, count - 1, count, orderByComparator);
-
-		if (!list.isEmpty()) {
-			return list.get(0);
+		else {
+			return (P2PActivityCorrections)result;
 		}
-
-		return null;
 	}
 
 	/**
-	 * Returns the p2p activity correctionses before and after the current p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
+	 * Removes the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; from the database.
 	 *
-	 * @param p2pActivityCorrectionsId the primary key of the current p2p activity corrections
 	 * @param p2pActivityId the p2p activity ID
 	 * @param userId the user ID
-	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	 * @return the previous, current, and next p2p activity corrections
-	 * @throws NoSuchP2PActivityCorrectionsException if a p2p activity corrections with the primary key could not be found
+	 * @return the p2p activity corrections that was removed
 	 */
 	@Override
-	public P2PActivityCorrections[] findByP2PActivityIdAndUserId_PrevAndNext(
-		long p2pActivityCorrectionsId, long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator)
+	public P2PActivityCorrections removeByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId)
 		throws NoSuchP2PActivityCorrectionsException {
-		P2PActivityCorrections p2pActivityCorrections = findByPrimaryKey(p2pActivityCorrectionsId);
+		P2PActivityCorrections p2pActivityCorrections = findByP2PActivityIdAndUserId(p2pActivityId,
+				userId);
 
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			P2PActivityCorrections[] array = new P2PActivityCorrectionsImpl[3];
-
-			array[0] = getByP2PActivityIdAndUserId_PrevAndNext(session,
-					p2pActivityCorrections, p2pActivityId, userId,
-					orderByComparator, true);
-
-			array[1] = p2pActivityCorrections;
-
-			array[2] = getByP2PActivityIdAndUserId_PrevAndNext(session,
-					p2pActivityCorrections, p2pActivityId, userId,
-					orderByComparator, false);
-
-			return array;
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-	}
-
-	protected P2PActivityCorrections getByP2PActivityIdAndUserId_PrevAndNext(
-		Session session, P2PActivityCorrections p2pActivityCorrections,
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean previous) {
-		StringBundler query = null;
-
-		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
-					(orderByComparator.getOrderByFields().length * 3));
-		}
-		else {
-			query = new StringBundler(4);
-		}
-
-		query.append(_SQL_SELECT_P2PACTIVITYCORRECTIONS_WHERE);
-
-		query.append(_FINDER_COLUMN_P2PACTIVITYIDANDUSERID_P2PACTIVITYID_2);
-
-		query.append(_FINDER_COLUMN_P2PACTIVITYIDANDUSERID_USERID_2);
-
-		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
-
-			if (orderByConditionFields.length > 0) {
-				query.append(WHERE_AND);
-			}
-
-			for (int i = 0; i < orderByConditionFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByConditionFields[i]);
-
-				if ((i + 1) < orderByConditionFields.length) {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN_HAS_NEXT);
-					}
-					else {
-						query.append(WHERE_LESSER_THAN_HAS_NEXT);
-					}
-				}
-				else {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(WHERE_GREATER_THAN);
-					}
-					else {
-						query.append(WHERE_LESSER_THAN);
-					}
-				}
-			}
-
-			query.append(ORDER_BY_CLAUSE);
-
-			String[] orderByFields = orderByComparator.getOrderByFields();
-
-			for (int i = 0; i < orderByFields.length; i++) {
-				query.append(_ORDER_BY_ENTITY_ALIAS);
-				query.append(orderByFields[i]);
-
-				if ((i + 1) < orderByFields.length) {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC_HAS_NEXT);
-					}
-					else {
-						query.append(ORDER_BY_DESC_HAS_NEXT);
-					}
-				}
-				else {
-					if (orderByComparator.isAscending() ^ previous) {
-						query.append(ORDER_BY_ASC);
-					}
-					else {
-						query.append(ORDER_BY_DESC);
-					}
-				}
-			}
-		}
-		else {
-			query.append(P2PActivityCorrectionsModelImpl.ORDER_BY_JPQL);
-		}
-
-		String sql = query.toString();
-
-		Query q = session.createQuery(sql);
-
-		q.setFirstResult(0);
-		q.setMaxResults(2);
-
-		QueryPos qPos = QueryPos.getInstance(q);
-
-		qPos.add(p2pActivityId);
-
-		qPos.add(userId);
-
-		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivityCorrections);
-
-			for (Object value : values) {
-				qPos.add(value);
-			}
-		}
-
-		List<P2PActivityCorrections> list = q.list();
-
-		if (list.size() == 2) {
-			return list.get(1);
-		}
-		else {
-			return null;
-		}
-	}
-
-	/**
-	 * Removes all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63; from the database.
-	 *
-	 * @param p2pActivityId the p2p activity ID
-	 * @param userId the user ID
-	 */
-	@Override
-	public void removeByP2PActivityIdAndUserId(long p2pActivityId, long userId) {
-		for (P2PActivityCorrections p2pActivityCorrections : findByP2PActivityIdAndUserId(
-				p2pActivityId, userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				null)) {
-			remove(p2pActivityCorrections);
-		}
+		return remove(p2pActivityCorrections);
 	}
 
 	/**
@@ -4730,6 +4393,572 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 
 	private static final String _FINDER_COLUMN_ACTIDUSERIDDATENOTNULL_ACTID_2 = "p2pActivityCorrections.actId = ? AND ";
 	private static final String _FINDER_COLUMN_ACTIDUSERIDDATENOTNULL_USERID_2 = "p2pActivityCorrections.userId = ? AND p2pActivityCorrections.date IS NOT null";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL =
+		new FinderPath(P2PActivityCorrectionsModelImpl.ENTITY_CACHE_ENABLED,
+			P2PActivityCorrectionsModelImpl.FINDER_CACHE_ENABLED,
+			P2PActivityCorrectionsImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByP2pActivityIdActIdDateNotNull",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL =
+		new FinderPath(P2PActivityCorrectionsModelImpl.ENTITY_CACHE_ENABLED,
+			P2PActivityCorrectionsModelImpl.FINDER_CACHE_ENABLED,
+			P2PActivityCorrectionsImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByP2pActivityIdActIdDateNotNull",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			P2PActivityCorrectionsModelImpl.P2PACTIVITYID_COLUMN_BITMASK |
+			P2PActivityCorrectionsModelImpl.ACTID_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_P2PACTIVITYIDACTIDDATENOTNULL =
+		new FinderPath(P2PActivityCorrectionsModelImpl.ENTITY_CACHE_ENABLED,
+			P2PActivityCorrectionsModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByP2pActivityIdActIdDateNotNull",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @return the matching p2p activity correctionses
+	 */
+	@Override
+	public List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId) {
+		return findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param start the lower bound of the range of p2p activity correctionses
+	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
+	 * @return the range of matching p2p activity correctionses
+	 */
+	@Override
+	public List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId, int start, int end) {
+		return findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId, start,
+			end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param start the lower bound of the range of p2p activity correctionses
+	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching p2p activity correctionses
+	 */
+	@Override
+	public List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId, int start, int end,
+		OrderByComparator<P2PActivityCorrections> orderByComparator) {
+		return findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId, start,
+			end, orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param start the lower bound of the range of p2p activity correctionses
+	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching p2p activity correctionses
+	 */
+	@Override
+	public List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId, int start, int end,
+		OrderByComparator<P2PActivityCorrections> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL;
+			finderArgs = new Object[] { p2pActivityId, actId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL;
+			finderArgs = new Object[] {
+					p2pActivityId, actId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<P2PActivityCorrections> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<P2PActivityCorrections>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (P2PActivityCorrections p2pActivityCorrections : list) {
+					if ((p2pActivityId != p2pActivityCorrections.getP2pActivityId()) ||
+							(actId != p2pActivityCorrections.getActId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_P2PACTIVITYCORRECTIONS_WHERE);
+
+			query.append(_FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_P2PACTIVITYID_2);
+
+			query.append(_FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_ACTID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(P2PActivityCorrectionsModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(p2pActivityId);
+
+				qPos.add(actId);
+
+				if (!pagination) {
+					list = (List<P2PActivityCorrections>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<P2PActivityCorrections>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching p2p activity corrections
+	 * @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
+	 */
+	@Override
+	public P2PActivityCorrections findByP2pActivityIdActIdDateNotNull_First(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator)
+		throws NoSuchP2PActivityCorrectionsException {
+		P2PActivityCorrections p2pActivityCorrections = fetchByP2pActivityIdActIdDateNotNull_First(p2pActivityId,
+				actId, orderByComparator);
+
+		if (p2pActivityCorrections != null) {
+			return p2pActivityCorrections;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("p2pActivityId=");
+		msg.append(p2pActivityId);
+
+		msg.append(", actId=");
+		msg.append(actId);
+
+		msg.append("}");
+
+		throw new NoSuchP2PActivityCorrectionsException(msg.toString());
+	}
+
+	/**
+	 * Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
+	 */
+	@Override
+	public P2PActivityCorrections fetchByP2pActivityIdActIdDateNotNull_First(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator) {
+		List<P2PActivityCorrections> list = findByP2pActivityIdActIdDateNotNull(p2pActivityId,
+				actId, 0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching p2p activity corrections
+	 * @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
+	 */
+	@Override
+	public P2PActivityCorrections findByP2pActivityIdActIdDateNotNull_Last(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator)
+		throws NoSuchP2PActivityCorrectionsException {
+		P2PActivityCorrections p2pActivityCorrections = fetchByP2pActivityIdActIdDateNotNull_Last(p2pActivityId,
+				actId, orderByComparator);
+
+		if (p2pActivityCorrections != null) {
+			return p2pActivityCorrections;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("p2pActivityId=");
+		msg.append(p2pActivityId);
+
+		msg.append(", actId=");
+		msg.append(actId);
+
+		msg.append("}");
+
+		throw new NoSuchP2PActivityCorrectionsException(msg.toString());
+	}
+
+	/**
+	 * Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
+	 */
+	@Override
+	public P2PActivityCorrections fetchByP2pActivityIdActIdDateNotNull_Last(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator) {
+		int count = countByP2pActivityIdActIdDateNotNull(p2pActivityId, actId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<P2PActivityCorrections> list = findByP2pActivityIdActIdDateNotNull(p2pActivityId,
+				actId, count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the p2p activity correctionses before and after the current p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityCorrectionsId the primary key of the current p2p activity corrections
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next p2p activity corrections
+	 * @throws NoSuchP2PActivityCorrectionsException if a p2p activity corrections with the primary key could not be found
+	 */
+	@Override
+	public P2PActivityCorrections[] findByP2pActivityIdActIdDateNotNull_PrevAndNext(
+		long p2pActivityCorrectionsId, long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator)
+		throws NoSuchP2PActivityCorrectionsException {
+		P2PActivityCorrections p2pActivityCorrections = findByPrimaryKey(p2pActivityCorrectionsId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			P2PActivityCorrections[] array = new P2PActivityCorrectionsImpl[3];
+
+			array[0] = getByP2pActivityIdActIdDateNotNull_PrevAndNext(session,
+					p2pActivityCorrections, p2pActivityId, actId,
+					orderByComparator, true);
+
+			array[1] = p2pActivityCorrections;
+
+			array[2] = getByP2pActivityIdActIdDateNotNull_PrevAndNext(session,
+					p2pActivityCorrections, p2pActivityId, actId,
+					orderByComparator, false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected P2PActivityCorrections getByP2pActivityIdActIdDateNotNull_PrevAndNext(
+		Session session, P2PActivityCorrections p2pActivityCorrections,
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator,
+		boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_P2PACTIVITYCORRECTIONS_WHERE);
+
+		query.append(_FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_P2PACTIVITYID_2);
+
+		query.append(_FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_ACTID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(P2PActivityCorrectionsModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(p2pActivityId);
+
+		qPos.add(actId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivityCorrections);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<P2PActivityCorrections> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63; from the database.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 */
+	@Override
+	public void removeByP2pActivityIdActIdDateNotNull(long p2pActivityId,
+		long actId) {
+		for (P2PActivityCorrections p2pActivityCorrections : findByP2pActivityIdActIdDateNotNull(
+				p2pActivityId, actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(p2pActivityCorrections);
+		}
+	}
+
+	/**
+	 * Returns the number of p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	 *
+	 * @param p2pActivityId the p2p activity ID
+	 * @param actId the act ID
+	 * @return the number of matching p2p activity correctionses
+	 */
+	@Override
+	public int countByP2pActivityIdActIdDateNotNull(long p2pActivityId,
+		long actId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_P2PACTIVITYIDACTIDDATENOTNULL;
+
+		Object[] finderArgs = new Object[] { p2pActivityId, actId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_P2PACTIVITYCORRECTIONS_WHERE);
+
+			query.append(_FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_P2PACTIVITYID_2);
+
+			query.append(_FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_ACTID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(p2pActivityId);
+
+				qPos.add(actId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	private static final String _FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_P2PACTIVITYID_2 =
+		"p2pActivityCorrections.p2pActivityId = ? AND ";
+	private static final String _FINDER_COLUMN_P2PACTIVITYIDACTIDDATENOTNULL_ACTID_2 =
+		"p2pActivityCorrections.actId = ? AND p2pActivityCorrections.date IS NOT null";
 
 	public P2PActivityCorrectionsPersistenceImpl() {
 		setModelClass(P2PActivityCorrections.class);
@@ -4769,6 +4998,12 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			new Object[] {
 				p2pActivityCorrections.getUuid(),
 				p2pActivityCorrections.getGroupId()
+			}, p2pActivityCorrections);
+
+		finderCache.putResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
+			new Object[] {
+				p2pActivityCorrections.getP2pActivityId(),
+				p2pActivityCorrections.getUserId()
 			}, p2pActivityCorrections);
 
 		p2pActivityCorrections.resetOriginalValues();
@@ -4858,6 +5093,16 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			Long.valueOf(1), false);
 		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
 			p2pActivityCorrectionsModelImpl, false);
+
+		args = new Object[] {
+				p2pActivityCorrectionsModelImpl.getP2pActivityId(),
+				p2pActivityCorrectionsModelImpl.getUserId()
+			};
+
+		finderCache.putResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDANDUSERID,
+			args, Long.valueOf(1), false);
+		finderCache.putResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
+			args, p2pActivityCorrectionsModelImpl, false);
 	}
 
 	protected void clearUniqueFindersCache(
@@ -4882,6 +5127,31 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
 			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+					p2pActivityCorrectionsModelImpl.getP2pActivityId(),
+					p2pActivityCorrectionsModelImpl.getUserId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDANDUSERID,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
+				args);
+		}
+
+		if ((p2pActivityCorrectionsModelImpl.getColumnBitmask() &
+				FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID.getColumnBitmask()) != 0) {
+			Object[] args = new Object[] {
+					p2pActivityCorrectionsModelImpl.getOriginalP2pActivityId(),
+					p2pActivityCorrectionsModelImpl.getOriginalUserId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDANDUSERID,
+				args);
+			finderCache.removeResult(FINDER_PATH_FETCH_BY_P2PACTIVITYIDANDUSERID,
+				args);
 		}
 	}
 
@@ -5106,16 +5376,6 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIDANDUSERID,
 				args);
 
-			args = new Object[] {
-					p2pActivityCorrectionsModelImpl.getP2pActivityId(),
-					p2pActivityCorrectionsModelImpl.getUserId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDANDUSERID,
-				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID,
-				args);
-
 			args = new Object[] { p2pActivityCorrectionsModelImpl.getUserId() };
 
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
@@ -5139,6 +5399,16 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIDUSERIDDATENOTNULL,
 				args);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIDUSERIDDATENOTNULL,
+				args);
+
+			args = new Object[] {
+					p2pActivityCorrectionsModelImpl.getP2pActivityId(),
+					p2pActivityCorrectionsModelImpl.getActId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDACTIDDATENOTNULL,
+				args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL,
 				args);
 
 			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
@@ -5230,29 +5500,6 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 			}
 
 			if ((p2pActivityCorrectionsModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						p2pActivityCorrectionsModelImpl.getOriginalP2pActivityId(),
-						p2pActivityCorrectionsModelImpl.getOriginalUserId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDANDUSERID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID,
-					args);
-
-				args = new Object[] {
-						p2pActivityCorrectionsModelImpl.getP2pActivityId(),
-						p2pActivityCorrectionsModelImpl.getUserId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDANDUSERID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDANDUSERID,
-					args);
-			}
-
-			if ((p2pActivityCorrectionsModelImpl.getColumnBitmask() &
 					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID.getColumnBitmask()) != 0) {
 				Object[] args = new Object[] {
 						p2pActivityCorrectionsModelImpl.getOriginalUserId()
@@ -5310,6 +5557,29 @@ public class P2PActivityCorrectionsPersistenceImpl extends BasePersistenceImpl<P
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIDUSERIDDATENOTNULL,
 					args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTIDUSERIDDATENOTNULL,
+					args);
+			}
+
+			if ((p2pActivityCorrectionsModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						p2pActivityCorrectionsModelImpl.getOriginalP2pActivityId(),
+						p2pActivityCorrectionsModelImpl.getOriginalActId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDACTIDDATENOTNULL,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL,
+					args);
+
+				args = new Object[] {
+						p2pActivityCorrectionsModelImpl.getP2pActivityId(),
+						p2pActivityCorrectionsModelImpl.getActId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_P2PACTIVITYIDACTIDDATENOTNULL,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_P2PACTIVITYIDACTIDDATENOTNULL,
 					args);
 			}
 		}

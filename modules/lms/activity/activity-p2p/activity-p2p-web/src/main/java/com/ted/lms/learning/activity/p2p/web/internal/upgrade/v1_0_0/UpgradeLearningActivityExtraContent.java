@@ -3,10 +3,12 @@ package com.ted.lms.learning.activity.p2p.web.internal.upgrade.v1_0_0;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
@@ -101,7 +103,8 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						
 						dateUploadElement = rootElement.element("dateupload");
 						if(dateUploadElement != null) {
-							p2pContent.put(P2PConstants.JSON_DATE_UPLOAD, (Date)dateFormat.parseObject(dateUploadElement.getTextTrim()));
+							Date dateUpload = (Date)dateFormat.parseObject(dateUploadElement.getTextTrim());
+							p2pContent.put(P2PConstants.JSON_DATE_UPLOAD, dateUpload.getTime());
 						}
 						
 						evaluationCriterias = JSONFactoryUtil.createJSONArray();
@@ -110,7 +113,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						do {
 							evaluationCriteriaElement = rootElement.element("text" + i);
 							if(evaluationCriteriaElement != null) {
-								evaluationCriterias.put(Long.parseLong(evaluationCriteriaElement.getText()));
+								evaluationCriterias.put(evaluationCriteriaElement.getText());
 							}
 						} while(evaluationCriteriaElement != null); 
 						

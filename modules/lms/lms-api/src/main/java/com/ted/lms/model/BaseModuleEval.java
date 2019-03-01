@@ -51,7 +51,7 @@ public abstract class BaseModuleEval implements ModuleEval {
 	public boolean updateModule() throws SystemException {
 		List<ModuleResult> moduleResults = ModuleResultLocalServiceUtil.getModuleResults(module.getModuleId());
 		for(ModuleResult moduleResult: moduleResults) {
-			updateModule(moduleResult.getUserId());
+			updateModuleResult(moduleResult);
 		}
 		
 		return true;
@@ -61,7 +61,7 @@ public abstract class BaseModuleEval implements ModuleEval {
 	public boolean recalculateModule() throws SystemException {
 		List<ModuleResult> moduleResults = ModuleResultLocalServiceUtil.getModuleResults(module.getModuleId());
 		for(ModuleResult moduleResult: moduleResults) {
-			recalculateModule(moduleResult.getUserId());
+			recalculateModule(moduleResult);
 		}
 		
 		return true;

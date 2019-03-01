@@ -40,18 +40,13 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourse(long userId) throws SystemException {
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
 		long courseId = course.getCourseId();
-		CourseResult courseResult = courseResultLocalService.getByCourseIdUserId(courseId, userId);
-
-		if(courseResult==null) {
-			courseResult = courseResultLocalService.addCourseResult(courseId, userId, serviceContext);
-		}
 		
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 		
-		return updateCourseResult(courseResult, userId, lresult);
+		return updateCourseResult(courseResult, lresult);
 	}
 
 	@Override
@@ -65,24 +60,19 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourse(long userId) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
-
-		CourseResult courseResult = courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
-
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
 
-		if(courseResult==null) {
-			courseResult = courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
-		}
-
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
-			courseResult = updateCourseResult(courseResult, userId, lresult);
+			courseResult = updateCourseResult(courseResult, lresult);
+			courseResult = courseResultLocalService.updateCourseResult(courseResult);
 		}
+		
 		return courseResult;	
 	}
 	
-	public CourseResult updateCourseResult(CourseResult courseResult, long userId, List<LearningActivityResult> lresult) {
+	public CourseResult updateCourseResult(CourseResult courseResult, List<LearningActivityResult> lresult) {
 		
 		long groupCreatedId = course.getGroupCreatedId();
 		
@@ -169,7 +159,8 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 			courseResult.setPassedDate(new Date());
 		}
 		log.debug("---Course Passed Date "+courseResult.getPassedDate());
-		return courseResultLocalService.updateCourseResult(courseResult);
+		
+		return courseResult;
 	}
 	
 	@Override

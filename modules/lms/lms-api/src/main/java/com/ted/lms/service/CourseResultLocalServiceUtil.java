@@ -264,6 +264,10 @@ public class CourseResultLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static boolean hasUserTries(long courseId, long userId) {
+		return getService().hasUserTries(courseId, userId);
+	}
+
 	/**
 	* Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

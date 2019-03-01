@@ -90,7 +90,7 @@ public class CourseServiceUtil {
 	}
 
 	/**
-	* Método para buscar cursos
+	* M�todo para buscar cursos
 	*/
 	public static java.util.List<com.ted.lms.model.Course> searchCourses(
 		long companyId, String title, String description, String language,

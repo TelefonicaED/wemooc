@@ -45,4 +45,9 @@ public class AuditDB implements Audit{
 	
 	protected AuditEntryLocalService auditEntryLocalService;
 
+	@Override
+	public boolean isActive(long companyId) {
+		return true;
+	}
+
 }

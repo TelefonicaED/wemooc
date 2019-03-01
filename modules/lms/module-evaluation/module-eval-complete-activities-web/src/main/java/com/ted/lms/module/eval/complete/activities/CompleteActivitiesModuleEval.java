@@ -37,14 +37,8 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 	}
 	
 	@Override
-	public ModuleResult updateModule(long userId) throws SystemException {
+	public ModuleResult updateModuleResult(ModuleResult moduleResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
-		long moduleId = module.getModuleId();
-		ModuleResult moduleResult = moduleResultLocalService.getModuleResult(moduleId, userId);
-
-		if(moduleResult==null) {
-			moduleResult = moduleResultLocalService.addModuleResult(moduleId, userId, serviceContext);
-		}
 		
 		List<LearningActivity> learningActivities = learningActivityLocalService.getRequiredLearningActivitiesOfModule(moduleResult.getModuleId());
 		
@@ -52,14 +46,7 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 	}
 	
 	@Override
-	public ModuleResult recalculateModule(long userId) throws SystemException {
-		// Se obtiene el courseresult del usuario en dicho course.
-
-		ModuleResult moduleResult = moduleResultLocalService.getModuleResult(module.getModuleId(), userId);
-
-		if(moduleResult == null && learningActivityResultLocalService.getRequiredLearningActivityResultsByModuleCount(module.getModuleId(), userId) > 0) {
-			moduleResult = moduleResultLocalService.addModuleResult(module.getModuleId(), userId, serviceContext);
-		}
+	public ModuleResult recalculateModule(ModuleResult moduleResult) throws SystemException {
 		
 		List<LearningActivity> learningActivities = learningActivityLocalService.getRequiredLearningActivitiesOfModule(module.getModuleId());
 		
@@ -111,11 +98,6 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 					moduleResult.setPassedDate(passedDate);
 				}
 			}
-			
-			//Update en la bd.
-			moduleResult = moduleResultLocalService.updateModuleResult(moduleResult);
-			//Actualizar el resultado del curso.
-			courseResultLocalService.updateCourseResult(moduleResult, serviceContext);
 		}
 		
 		return moduleResult;

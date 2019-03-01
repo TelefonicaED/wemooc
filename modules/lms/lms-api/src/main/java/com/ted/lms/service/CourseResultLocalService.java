@@ -240,6 +240,9 @@ public interface CourseResultLocalService extends BaseLocalService,
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasUserTries(long courseId, long userId);
+
 	/**
 	* Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

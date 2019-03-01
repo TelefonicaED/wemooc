@@ -86,10 +86,10 @@ public interface Module extends ModuleModel, PersistedModel {
 		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker);
 
 	public String getURLView(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
 
 	public String getURLEdit(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
 
 	public String getURLNewActivity(
 		com.liferay.portal.kernel.portlet.PortletLayoutFinder activityPortletLayoutFinder,

@@ -33,7 +33,7 @@ import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
-import com.ted.audit.db.exception.NoSuchAuditEntryException;
+import com.ted.audit.db.exception.NoSuchitEntryException;
 import com.ted.audit.db.model.AuditEntry;
 import com.ted.audit.db.model.impl.AuditEntryImpl;
 import com.ted.audit.db.model.impl.AuditEntryModelImpl;
@@ -276,12 +276,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByGroupId_First(long groupId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByGroupId_First(groupId, orderByComparator);
 
 		if (auditEntry != null) {
@@ -297,7 +297,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -325,12 +325,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByGroupId_Last(long groupId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByGroupId_Last(groupId, orderByComparator);
 
 		if (auditEntry != null) {
@@ -346,7 +346,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -382,12 +382,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param groupId the group ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry[] findByGroupId_PrevAndNext(long auditId, long groupId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = findByPrimaryKey(auditId);
 
 		Session session = null;
@@ -779,12 +779,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByCompanyId_First(long companyId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByCompanyId_First(companyId,
 				orderByComparator);
 
@@ -801,7 +801,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -830,12 +830,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByCompanyId_Last(long companyId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByCompanyId_Last(companyId,
 				orderByComparator);
 
@@ -852,7 +852,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -888,12 +888,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param companyId the company ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry[] findByCompanyId_PrevAndNext(long auditId,
 		long companyId, OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = findByPrimaryKey(auditId);
 
 		Session session = null;
@@ -1306,12 +1306,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param actionId the action ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByCompanyIdActionId_First(long companyId,
 		int actionId, OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByCompanyIdActionId_First(companyId,
 				actionId, orderByComparator);
 
@@ -1331,7 +1331,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -1362,12 +1362,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param actionId the action ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByCompanyIdActionId_Last(long companyId,
 		int actionId, OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByCompanyIdActionId_Last(companyId,
 				actionId, orderByComparator);
 
@@ -1387,7 +1387,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -1425,13 +1425,13 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param actionId the action ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry[] findByCompanyIdActionId_PrevAndNext(long auditId,
 		long companyId, int actionId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = findByPrimaryKey(auditId);
 
 		Session session = null;
@@ -1832,12 +1832,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByUserId_First(long userId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByUserId_First(userId, orderByComparator);
 
 		if (auditEntry != null) {
@@ -1853,7 +1853,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -1881,12 +1881,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByUserId_Last(long userId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByUserId_Last(userId, orderByComparator);
 
 		if (auditEntry != null) {
@@ -1902,7 +1902,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -1938,12 +1938,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param userId the user ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry[] findByUserId_PrevAndNext(long auditId, long userId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = findByPrimaryKey(auditId);
 
 		Session session = null;
@@ -2337,12 +2337,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param classNameId the class name ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByClassNameId_First(long classNameId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByClassNameId_First(classNameId,
 				orderByComparator);
 
@@ -2359,7 +2359,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -2388,12 +2388,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param classNameId the class name ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching audit entry
-	 * @throws NoSuchAuditEntryException if a matching audit entry could not be found
+	 * @throws NoSuchitEntryException if a matching audit entry could not be found
 	 */
 	@Override
 	public AuditEntry findByClassNameId_Last(long classNameId,
 		OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByClassNameId_Last(classNameId,
 				orderByComparator);
 
@@ -2410,7 +2410,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 
 		msg.append("}");
 
-		throw new NoSuchAuditEntryException(msg.toString());
+		throw new NoSuchitEntryException(msg.toString());
 	}
 
 	/**
@@ -2446,12 +2446,12 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 * @param classNameId the class name ID
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry[] findByClassNameId_PrevAndNext(long auditId,
 		long classNameId, OrderByComparator<AuditEntry> orderByComparator)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = findByPrimaryKey(auditId);
 
 		Session session = null;
@@ -2753,10 +2753,10 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 *
 	 * @param auditId the primary key of the audit entry
 	 * @return the audit entry that was removed
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
-	public AuditEntry remove(long auditId) throws NoSuchAuditEntryException {
+	public AuditEntry remove(long auditId) throws NoSuchitEntryException {
 		return remove((Serializable)auditId);
 	}
 
@@ -2765,11 +2765,11 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 *
 	 * @param primaryKey the primary key of the audit entry
 	 * @return the audit entry that was removed
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry remove(Serializable primaryKey)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		Session session = null;
 
 		try {
@@ -2783,13 +2783,13 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
-				throw new NoSuchAuditEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
+				throw new NoSuchitEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
 					primaryKey);
 			}
 
 			return remove(auditEntry);
 		}
-		catch (NoSuchAuditEntryException nsee) {
+		catch (NoSuchitEntryException nsee) {
 			throw nsee;
 		}
 		catch (Exception e) {
@@ -3025,11 +3025,11 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	 *
 	 * @param primaryKey the primary key of the audit entry
 	 * @return the audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry findByPrimaryKey(Serializable primaryKey)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		AuditEntry auditEntry = fetchByPrimaryKey(primaryKey);
 
 		if (auditEntry == null) {
@@ -3037,7 +3037,7 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
-			throw new NoSuchAuditEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
+			throw new NoSuchitEntryException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
 				primaryKey);
 		}
 
@@ -3045,15 +3045,15 @@ public class AuditEntryPersistenceImpl extends BasePersistenceImpl<AuditEntry>
 	}
 
 	/**
-	 * Returns the audit entry with the primary key or throws a {@link NoSuchAuditEntryException} if it could not be found.
+	 * Returns the audit entry with the primary key or throws a {@link NoSuchitEntryException} if it could not be found.
 	 *
 	 * @param auditId the primary key of the audit entry
 	 * @return the audit entry
-	 * @throws NoSuchAuditEntryException if a audit entry with the primary key could not be found
+	 * @throws NoSuchitEntryException if a audit entry with the primary key could not be found
 	 */
 	@Override
 	public AuditEntry findByPrimaryKey(long auditId)
-		throws NoSuchAuditEntryException {
+		throws NoSuchitEntryException {
 		return findByPrimaryKey((Serializable)auditId);
 	}
 

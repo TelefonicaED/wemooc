@@ -284,6 +284,11 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
+	public boolean getAllowAccessToCompletedCourses() {
+		return _courseLocalService.getAllowAccessToCompletedCourses();
+	}
+
+	@Override
 	public java.util.List<com.ted.lms.model.Course> getChildsRegistredUser(
 		long parentCourseId, long userId) {
 		return _courseLocalService.getChildsRegistredUser(parentCourseId, userId);

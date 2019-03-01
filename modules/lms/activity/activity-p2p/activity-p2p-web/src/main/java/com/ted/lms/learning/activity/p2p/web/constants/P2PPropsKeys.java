@@ -9,4 +9,5 @@ import com.liferay.portal.kernel.util.PropsKeys;
  */
 public class P2PPropsKeys implements PropsKeys{
 	public static final String NUM_EVALUATION_CRITERIA = "lms.p2p.numcustomquestion";
+	public static final String P2P_TEAM_ASSIGNATIONS = "com.liferay.lms.p2p.teams";
 }

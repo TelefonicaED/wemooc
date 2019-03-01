@@ -52,6 +52,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsPersistence;
+import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityPersistence;
 
 import java.io.Serializable;
@@ -482,6 +483,24 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the p2p activity finder.
+	 *
+	 * @return the p2p activity finder
+	 */
+	public P2PActivityFinder getP2PActivityFinder() {
+		return p2pActivityFinder;
+	}
+
+	/**
+	 * Sets the p2p activity finder.
+	 *
+	 * @param p2pActivityFinder the p2p activity finder
+	 */
+	public void setP2PActivityFinder(P2PActivityFinder p2pActivityFinder) {
+		this.p2pActivityFinder = p2pActivityFinder;
+	}
+
+	/**
 	 * Returns the p2p activity corrections local service.
 	 *
 	 * @return the p2p activity corrections local service
@@ -688,6 +707,8 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	protected com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService p2pActivityLocalService;
 	@BeanReference(type = P2PActivityPersistence.class)
 	protected P2PActivityPersistence p2pActivityPersistence;
+	@BeanReference(type = P2PActivityFinder.class)
+	protected P2PActivityFinder p2pActivityFinder;
 	@BeanReference(type = P2PActivityCorrectionsLocalService.class)
 	protected P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
 	@BeanReference(type = P2PActivityCorrectionsPersistence.class)

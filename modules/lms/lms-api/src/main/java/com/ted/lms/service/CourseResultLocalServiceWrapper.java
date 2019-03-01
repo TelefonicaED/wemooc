@@ -280,6 +280,11 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 		return _courseResultLocalService.getPersistedModel(primaryKeyObj);
 	}
 
+	@Override
+	public boolean hasUserTries(long courseId, long userId) {
+		return _courseResultLocalService.hasUserTries(courseId, userId);
+	}
+
 	/**
 	* Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

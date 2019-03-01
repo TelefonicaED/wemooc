@@ -40,17 +40,13 @@ public class PonderatedCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourse(long userId) throws SystemException {
-		CourseResult courseResult=courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
-		if(courseResult==null) {
-			courseResult=courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
-		}
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
 
 		if(courseResult.getStartDate() == null){
 			courseResult.setStartDate(new Date());
 		}
 		
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 		
 		return updateCourseResult(courseResult, userId, lresult);
 	}
@@ -74,19 +70,14 @@ public class PonderatedCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourse(long userId) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
-
-		CourseResult courseResult = courseResultLocalService.getByCourseIdUserId(course.getCourseId(), userId);
 
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
 
-		if(courseResult==null) {
-			courseResult = courseResultLocalService.addCourseResult(course.getCourseId(), userId, serviceContext);
-		}
-
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
 			courseResult = updateCourseResult(courseResult, userId, lresult);
+			courseResult = courseResultLocalService.updateCourseResult(courseResult);
 		}
 		return courseResult;	
 	}

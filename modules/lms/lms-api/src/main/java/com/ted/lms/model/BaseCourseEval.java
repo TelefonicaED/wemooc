@@ -3,14 +3,12 @@ package com.ted.lms.model;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.upload.UploadRequest;
 import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
 
 import java.util.List;
 
 import javax.portlet.ActionRequest;
-import javax.portlet.PortletResponse;
 
 /**
  * Base para los métodos de evaluación del curso
@@ -50,7 +48,7 @@ public abstract class BaseCourseEval implements CourseEval {
 	public boolean updateCourse() throws SystemException {
 		List<CourseResult> courseResults = CourseResultLocalServiceUtil.getCourseResults(course.getCourseId());
 		for(CourseResult courseResult: courseResults) {
-			updateCourse(courseResult.getUserId());
+			updateCourseResult(courseResult);
 		}
 		
 		return true;
@@ -59,7 +57,7 @@ public abstract class BaseCourseEval implements CourseEval {
 	public boolean recalculateCourse() throws SystemException {
 		List<CourseResult> courseResults = CourseResultLocalServiceUtil.getCourseResults(course.getCourseId());
 		for(CourseResult courseResult: courseResults) {
-			recalculateCourse(courseResult.getUserId());
+			recalculateCourseResult(courseResult);
 		}
 		
 		return true;

@@ -46,6 +46,15 @@ public class LearningActivityTryLocalServiceWrapper
 		return _learningActivityTryLocalService.addLearningActivityTry(learningActivityTry);
 	}
 
+	@Override
+	public com.ted.lms.model.LearningActivityTry addLearningActivityTry(
+		long actId, long userId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityTryLocalService.addLearningActivityTry(actId,
+			userId, serviceContext);
+	}
+
 	/**
 	* Creates a new learning activity try with the primary key. Does not add the learning activity try to the database.
 	*
@@ -215,6 +224,13 @@ public class LearningActivityTryLocalServiceWrapper
 		return _learningActivityTryLocalService.getIndexableActionableDynamicQuery();
 	}
 
+	@Override
+	public com.ted.lms.model.LearningActivityTry getLastLearningActivityTry(
+		long actId, long userId) {
+		return _learningActivityTryLocalService.getLastLearningActivityTry(actId,
+			userId);
+	}
+
 	/**
 	* Returns a range of all the learning activity tries.
 	*
@@ -231,6 +247,13 @@ public class LearningActivityTryLocalServiceWrapper
 		int start, int end) {
 		return _learningActivityTryLocalService.getLearningActivityTries(start,
 			end);
+	}
+
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivityTry> getLearningActivityTries(
+		long actId, long userId) {
+		return _learningActivityTryLocalService.getLearningActivityTries(actId,
+			userId);
 	}
 
 	/**

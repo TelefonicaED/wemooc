@@ -1,4 +1,4 @@
-create table aud_AuditEntry (
+create table Aud_AuditEntry (
 	auditId LONG not null primary key,
 	companyId LONG,
 	groupId LONG,

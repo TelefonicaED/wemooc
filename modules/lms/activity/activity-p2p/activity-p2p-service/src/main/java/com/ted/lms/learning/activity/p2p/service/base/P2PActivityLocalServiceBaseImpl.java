@@ -16,6 +16,8 @@ package com.ted.lms.learning.activity.p2p.service.base;
 
 import aQute.bnd.annotation.ProviderType;
 
+import com.liferay.document.library.kernel.service.persistence.DLFileEntryPersistence;
+
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -52,6 +54,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsPersistence;
+import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityPersistence;
 
 import java.io.Serializable;
@@ -472,6 +475,24 @@ public abstract class P2PActivityLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the p2p activity finder.
+	 *
+	 * @return the p2p activity finder
+	 */
+	public P2PActivityFinder getP2PActivityFinder() {
+		return p2pActivityFinder;
+	}
+
+	/**
+	 * Sets the p2p activity finder.
+	 *
+	 * @param p2pActivityFinder the p2p activity finder
+	 */
+	public void setP2PActivityFinder(P2PActivityFinder p2pActivityFinder) {
+		this.p2pActivityFinder = p2pActivityFinder;
+	}
+
+	/**
 	 * Returns the p2p activity corrections local service.
 	 *
 	 * @return the p2p activity corrections local service
@@ -641,6 +662,44 @@ public abstract class P2PActivityLocalServiceBaseImpl
 		this.dlAppLocalService = dlAppLocalService;
 	}
 
+	/**
+	 * Returns the document library file entry local service.
+	 *
+	 * @return the document library file entry local service
+	 */
+	public com.liferay.document.library.kernel.service.DLFileEntryLocalService getDLFileEntryLocalService() {
+		return dlFileEntryLocalService;
+	}
+
+	/**
+	 * Sets the document library file entry local service.
+	 *
+	 * @param dlFileEntryLocalService the document library file entry local service
+	 */
+	public void setDLFileEntryLocalService(
+		com.liferay.document.library.kernel.service.DLFileEntryLocalService dlFileEntryLocalService) {
+		this.dlFileEntryLocalService = dlFileEntryLocalService;
+	}
+
+	/**
+	 * Returns the document library file entry persistence.
+	 *
+	 * @return the document library file entry persistence
+	 */
+	public DLFileEntryPersistence getDLFileEntryPersistence() {
+		return dlFileEntryPersistence;
+	}
+
+	/**
+	 * Sets the document library file entry persistence.
+	 *
+	 * @param dlFileEntryPersistence the document library file entry persistence
+	 */
+	public void setDLFileEntryPersistence(
+		DLFileEntryPersistence dlFileEntryPersistence) {
+		this.dlFileEntryPersistence = dlFileEntryPersistence;
+	}
+
 	public void afterPropertiesSet() {
 		persistedModelLocalServiceRegistry.register("com.ted.lms.learning.activity.p2p.model.P2PActivity",
 			p2pActivityLocalService);
@@ -697,6 +756,8 @@ public abstract class P2PActivityLocalServiceBaseImpl
 	protected P2PActivityLocalService p2pActivityLocalService;
 	@BeanReference(type = P2PActivityPersistence.class)
 	protected P2PActivityPersistence p2pActivityPersistence;
+	@BeanReference(type = P2PActivityFinder.class)
+	protected P2PActivityFinder p2pActivityFinder;
 	@BeanReference(type = com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService.class)
 	protected com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
 	@BeanReference(type = P2PActivityCorrectionsPersistence.class)
@@ -715,6 +776,10 @@ public abstract class P2PActivityLocalServiceBaseImpl
 	protected UserPersistence userPersistence;
 	@ServiceReference(type = com.liferay.document.library.kernel.service.DLAppLocalService.class)
 	protected com.liferay.document.library.kernel.service.DLAppLocalService dlAppLocalService;
+	@ServiceReference(type = com.liferay.document.library.kernel.service.DLFileEntryLocalService.class)
+	protected com.liferay.document.library.kernel.service.DLFileEntryLocalService dlFileEntryLocalService;
+	@ServiceReference(type = DLFileEntryPersistence.class)
+	protected DLFileEntryPersistence dlFileEntryPersistence;
 	@ServiceReference(type = PersistedModelLocalServiceRegistry.class)
 	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
 }

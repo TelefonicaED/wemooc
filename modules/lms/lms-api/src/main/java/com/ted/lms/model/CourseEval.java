@@ -20,11 +20,11 @@ public interface CourseEval {
 	 * @return
 	 * @throws SystemException
 	 */
-	public CourseResult updateCourse(long userId) throws SystemException;
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException;
 	
 	public boolean updateCourse() throws SystemException;
 	
-	public CourseResult recalculateCourse(long userId) throws SystemException;
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException;
 	
 	public boolean recalculateCourse() throws SystemException;
 

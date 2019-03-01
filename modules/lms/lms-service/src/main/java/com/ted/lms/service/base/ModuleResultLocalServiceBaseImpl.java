@@ -48,6 +48,7 @@ import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.lms.service.persistence.CourseFinder;
 import com.ted.lms.service.persistence.CoursePersistence;
+import com.ted.lms.service.persistence.CourseResultFinder;
 import com.ted.lms.service.persistence.CourseResultPersistence;
 import com.ted.lms.service.persistence.LearningActivityPersistence;
 import com.ted.lms.service.persistence.LearningActivityResultFinder;
@@ -415,6 +416,24 @@ public abstract class ModuleResultLocalServiceBaseImpl
 	public void setCourseResultPersistence(
 		CourseResultPersistence courseResultPersistence) {
 		this.courseResultPersistence = courseResultPersistence;
+	}
+
+	/**
+	 * Returns the course result finder.
+	 *
+	 * @return the course result finder
+	 */
+	public CourseResultFinder getCourseResultFinder() {
+		return courseResultFinder;
+	}
+
+	/**
+	 * Sets the course result finder.
+	 *
+	 * @param courseResultFinder the course result finder
+	 */
+	public void setCourseResultFinder(CourseResultFinder courseResultFinder) {
+		this.courseResultFinder = courseResultFinder;
 	}
 
 	/**
@@ -892,6 +911,8 @@ public abstract class ModuleResultLocalServiceBaseImpl
 	protected com.ted.lms.service.CourseResultLocalService courseResultLocalService;
 	@BeanReference(type = CourseResultPersistence.class)
 	protected CourseResultPersistence courseResultPersistence;
+	@BeanReference(type = CourseResultFinder.class)
+	protected CourseResultFinder courseResultFinder;
 	@BeanReference(type = com.ted.lms.service.LearningActivityLocalService.class)
 	protected com.ted.lms.service.LearningActivityLocalService learningActivityLocalService;
 	@BeanReference(type = LearningActivityPersistence.class)

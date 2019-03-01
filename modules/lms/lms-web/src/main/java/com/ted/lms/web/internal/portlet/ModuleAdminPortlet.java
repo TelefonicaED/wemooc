@@ -30,7 +30,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=wemooc",
+		"com.liferay.portlet.display-category=category.wemooc",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.view-template=/modules_admin/view.jsp",

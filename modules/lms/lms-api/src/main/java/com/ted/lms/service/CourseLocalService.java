@@ -252,6 +252,9 @@ public interface CourseLocalService extends BaseLocalService,
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean getAllowAccessToCompletedCourses();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Course> getChildsRegistredUser(long parentCourseId, long userId);
 
 	/**

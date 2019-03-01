@@ -47,6 +47,7 @@
 		</finder>			
 		
 		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
+		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
 	
 	<entity name="P2PActivityCorrections" uuid="true" local-service="true" remote-service="false" >
@@ -79,7 +80,7 @@
 			<finder-column name="actId" />
 			<finder-column name="userId" />
 		</finder>
-		<finder name="P2PActivityIdAndUserId" return-type="Collection">
+		<finder name="P2PActivityIdAndUserId" return-type="P2PActivityCorrections" unique="true">
 			<finder-column name="p2pActivityId" />
 			<finder-column name="userId" />
 		</finder>
@@ -93,5 +94,9 @@
 			<finder-column name="actId" />
 			<finder-column name="userId" />
 		</finder>	
+		<finder name="P2pActivityIdActIdDateNotNull" return-type="Collection" where="date IS NOT null">
+			<finder-column name="p2pActivityId" />
+			<finder-column name="actId" />
+		</finder>
 	</entity>
 </service-builder>

@@ -15,11 +15,11 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface ModuleEval {
 	
-	public ModuleResult updateModule(long userId) throws SystemException;
+	public ModuleResult updateModuleResult(ModuleResult moduleResult) throws SystemException;
 	
 	public boolean updateModule() throws SystemException;
 	
-	public ModuleResult recalculateModule(long userId) throws SystemException;
+	public ModuleResult recalculateModule(ModuleResult moduleResult) throws SystemException;
 	
 	public boolean recalculateModule() throws SystemException;
 

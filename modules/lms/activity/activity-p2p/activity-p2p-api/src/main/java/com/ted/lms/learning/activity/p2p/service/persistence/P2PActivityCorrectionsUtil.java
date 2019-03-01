@@ -861,180 +861,60 @@ public class P2PActivityCorrectionsUtil {
 	}
 
 	/**
-	* Returns all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
+	* Returns the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; or throws a {@link NoSuchP2PActivityCorrectionsException} if it could not be found.
 	*
 	* @param p2pActivityId the p2p activity ID
 	* @param userId the user ID
-	* @return the matching p2p activity correctionses
+	* @return the matching p2p activity corrections
+	* @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
 	*/
-	public static List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId) {
+	public static P2PActivityCorrections findByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId)
+		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
 		return getPersistence()
 				   .findByP2PActivityIdAndUserId(p2pActivityId, userId);
 	}
 
 	/**
-	* Returns a range of all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
+	* Returns the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
 	*
 	* @param p2pActivityId the p2p activity ID
 	* @param userId the user ID
-	* @param start the lower bound of the range of p2p activity correctionses
-	* @param end the upper bound of the range of p2p activity correctionses (not inclusive)
-	* @return the range of matching p2p activity correctionses
+	* @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	*/
-	public static List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, int start, int end) {
+	public static P2PActivityCorrections fetchByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId) {
 		return getPersistence()
-				   .findByP2PActivityIdAndUserId(p2pActivityId, userId, start,
-			end);
+				   .fetchByP2PActivityIdAndUserId(p2pActivityId, userId);
 	}
 
 	/**
-	* Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
+	* Returns the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	*
 	* @param p2pActivityId the p2p activity ID
 	* @param userId the user ID
-	* @param start the lower bound of the range of p2p activity correctionses
-	* @param end the upper bound of the range of p2p activity correctionses (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching p2p activity correctionses
-	*/
-	public static List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, int start, int end,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		return getPersistence()
-				   .findByP2PActivityIdAndUserId(p2pActivityId, userId, start,
-			end, orderByComparator);
-	}
-
-	/**
-	* Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param p2pActivityId the p2p activity ID
-	* @param userId the user ID
-	* @param start the lower bound of the range of p2p activity correctionses
-	* @param end the upper bound of the range of p2p activity correctionses (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the ordered range of matching p2p activity correctionses
+	* @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	*/
-	public static List<P2PActivityCorrections> findByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, int start, int end,
-		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+	public static P2PActivityCorrections fetchByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId, boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByP2PActivityIdAndUserId(p2pActivityId, userId, start,
-			end, orderByComparator, retrieveFromCache);
+				   .fetchByP2PActivityIdAndUserId(p2pActivityId, userId,
+			retrieveFromCache);
 	}
 
 	/**
-	* Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
+	* Removes the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; from the database.
 	*
 	* @param p2pActivityId the p2p activity ID
 	* @param userId the user ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching p2p activity corrections
-	* @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
+	* @return the p2p activity corrections that was removed
 	*/
-	public static P2PActivityCorrections findByP2PActivityIdAndUserId_First(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator)
+	public static P2PActivityCorrections removeByP2PActivityIdAndUserId(
+		long p2pActivityId, long userId)
 		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
 		return getPersistence()
-				   .findByP2PActivityIdAndUserId_First(p2pActivityId, userId,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* @param p2pActivityId the p2p activity ID
-	* @param userId the user ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
-	*/
-	public static P2PActivityCorrections fetchByP2PActivityIdAndUserId_First(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		return getPersistence()
-				   .fetchByP2PActivityIdAndUserId_First(p2pActivityId, userId,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* @param p2pActivityId the p2p activity ID
-	* @param userId the user ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching p2p activity corrections
-	* @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
-	*/
-	public static P2PActivityCorrections findByP2PActivityIdAndUserId_Last(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator)
-		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
-		return getPersistence()
-				   .findByP2PActivityIdAndUserId_Last(p2pActivityId, userId,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* @param p2pActivityId the p2p activity ID
-	* @param userId the user ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
-	*/
-	public static P2PActivityCorrections fetchByP2PActivityIdAndUserId_Last(
-		long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		return getPersistence()
-				   .fetchByP2PActivityIdAndUserId_Last(p2pActivityId, userId,
-			orderByComparator);
-	}
-
-	/**
-	* Returns the p2p activity correctionses before and after the current p2p activity corrections in the ordered set where p2pActivityId = &#63; and userId = &#63;.
-	*
-	* @param p2pActivityCorrectionsId the primary key of the current p2p activity corrections
-	* @param p2pActivityId the p2p activity ID
-	* @param userId the user ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next p2p activity corrections
-	* @throws NoSuchP2PActivityCorrectionsException if a p2p activity corrections with the primary key could not be found
-	*/
-	public static P2PActivityCorrections[] findByP2PActivityIdAndUserId_PrevAndNext(
-		long p2pActivityCorrectionsId, long p2pActivityId, long userId,
-		OrderByComparator<P2PActivityCorrections> orderByComparator)
-		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
-		return getPersistence()
-				   .findByP2PActivityIdAndUserId_PrevAndNext(p2pActivityCorrectionsId,
-			p2pActivityId, userId, orderByComparator);
-	}
-
-	/**
-	* Removes all the p2p activity correctionses where p2pActivityId = &#63; and userId = &#63; from the database.
-	*
-	* @param p2pActivityId the p2p activity ID
-	* @param userId the user ID
-	*/
-	public static void removeByP2PActivityIdAndUserId(long p2pActivityId,
-		long userId) {
-		getPersistence().removeByP2PActivityIdAndUserId(p2pActivityId, userId);
+				   .removeByP2PActivityIdAndUserId(p2pActivityId, userId);
 	}
 
 	/**
@@ -1566,6 +1446,197 @@ public class P2PActivityCorrectionsUtil {
 	*/
 	public static int countByActIdUserIdDateNotNull(long actId, long userId) {
 		return getPersistence().countByActIdUserIdDateNotNull(actId, userId);
+	}
+
+	/**
+	* Returns all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @return the matching p2p activity correctionses
+	*/
+	public static List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId) {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId);
+	}
+
+	/**
+	* Returns a range of all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param start the lower bound of the range of p2p activity correctionses
+	* @param end the upper bound of the range of p2p activity correctionses (not inclusive)
+	* @return the range of matching p2p activity correctionses
+	*/
+	public static List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId, int start, int end) {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId,
+			start, end);
+	}
+
+	/**
+	* Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param start the lower bound of the range of p2p activity correctionses
+	* @param end the upper bound of the range of p2p activity correctionses (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching p2p activity correctionses
+	*/
+	public static List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId, int start, int end,
+		OrderByComparator<P2PActivityCorrections> orderByComparator) {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId,
+			start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param start the lower bound of the range of p2p activity correctionses
+	* @param end the upper bound of the range of p2p activity correctionses (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching p2p activity correctionses
+	*/
+	public static List<P2PActivityCorrections> findByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId, int start, int end,
+		OrderByComparator<P2PActivityCorrections> orderByComparator,
+		boolean retrieveFromCache) {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull(p2pActivityId, actId,
+			start, end, orderByComparator, retrieveFromCache);
+	}
+
+	/**
+	* Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching p2p activity corrections
+	* @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
+	*/
+	public static P2PActivityCorrections findByP2pActivityIdActIdDateNotNull_First(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator)
+		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull_First(p2pActivityId,
+			actId, orderByComparator);
+	}
+
+	/**
+	* Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
+	*/
+	public static P2PActivityCorrections fetchByP2pActivityIdActIdDateNotNull_First(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator) {
+		return getPersistence()
+				   .fetchByP2pActivityIdActIdDateNotNull_First(p2pActivityId,
+			actId, orderByComparator);
+	}
+
+	/**
+	* Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching p2p activity corrections
+	* @throws NoSuchP2PActivityCorrectionsException if a matching p2p activity corrections could not be found
+	*/
+	public static P2PActivityCorrections findByP2pActivityIdActIdDateNotNull_Last(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator)
+		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull_Last(p2pActivityId,
+			actId, orderByComparator);
+	}
+
+	/**
+	* Returns the last p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
+	*/
+	public static P2PActivityCorrections fetchByP2pActivityIdActIdDateNotNull_Last(
+		long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator) {
+		return getPersistence()
+				   .fetchByP2pActivityIdActIdDateNotNull_Last(p2pActivityId,
+			actId, orderByComparator);
+	}
+
+	/**
+	* Returns the p2p activity correctionses before and after the current p2p activity corrections in the ordered set where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityCorrectionsId the primary key of the current p2p activity corrections
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next p2p activity corrections
+	* @throws NoSuchP2PActivityCorrectionsException if a p2p activity corrections with the primary key could not be found
+	*/
+	public static P2PActivityCorrections[] findByP2pActivityIdActIdDateNotNull_PrevAndNext(
+		long p2pActivityCorrectionsId, long p2pActivityId, long actId,
+		OrderByComparator<P2PActivityCorrections> orderByComparator)
+		throws com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityCorrectionsException {
+		return getPersistence()
+				   .findByP2pActivityIdActIdDateNotNull_PrevAndNext(p2pActivityCorrectionsId,
+			p2pActivityId, actId, orderByComparator);
+	}
+
+	/**
+	* Removes all the p2p activity correctionses where p2pActivityId = &#63; and actId = &#63; from the database.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	*/
+	public static void removeByP2pActivityIdActIdDateNotNull(
+		long p2pActivityId, long actId) {
+		getPersistence()
+			.removeByP2pActivityIdActIdDateNotNull(p2pActivityId, actId);
+	}
+
+	/**
+	* Returns the number of p2p activity correctionses where p2pActivityId = &#63; and actId = &#63;.
+	*
+	* @param p2pActivityId the p2p activity ID
+	* @param actId the act ID
+	* @return the number of matching p2p activity correctionses
+	*/
+	public static int countByP2pActivityIdActIdDateNotNull(long p2pActivityId,
+		long actId) {
+		return getPersistence()
+				   .countByP2pActivityIdActIdDateNotNull(p2pActivityId, actId);
 	}
 
 	/**

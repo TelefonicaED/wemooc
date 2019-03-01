@@ -79,6 +79,12 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	}
 
 	@Override
+	public com.liferay.portal.kernel.repository.model.Folder addModuleFolder(
+		long userId, long repositoryId) {
+		return _moduleLocalService.addModuleFolder(userId, repositoryId);
+	}
+
+	@Override
 	public long addOriginalImageFileEntry(long userId, long groupId,
 		long entryId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector imageSelector)
@@ -352,6 +358,11 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	@Override
 	public int getModulesCount() {
 		return _moduleLocalService.getModulesCount();
+	}
+
+	@Override
+	public int getModulesCount(long groupId) {
+		return _moduleLocalService.getModulesCount(groupId);
 	}
 
 	@Override

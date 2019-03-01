@@ -10,7 +10,7 @@ import com.ted.lms.constants.LMSPortletKeys;
 @Component(
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=wemooc",
+		"com.liferay.portlet.display-category=category.wemooc",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER,

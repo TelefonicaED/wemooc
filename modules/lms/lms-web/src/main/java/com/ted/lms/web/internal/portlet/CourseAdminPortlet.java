@@ -22,7 +22,7 @@ import org.osgi.service.component.annotations.Modified;
 	configurationPid = "com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration",
 	immediate = true,
 	property = {
-		"com.liferay.portlet.display-category=wemooc",
+		"com.liferay.portlet.display-category=category.wemooc",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
 		"javax.portlet.init-param.mvc-command-names-default-views=/courses/view",

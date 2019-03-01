@@ -63,10 +63,29 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 	public java.util.Calendar getEndDateCalendar();
 
 	public String getURLView(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
 
 	public String getURLEdit(
-		com.liferay.portal.kernel.portlet.LiferayPortletRequest liferayPortletRequest);
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
 
 	public String getDescriptionMapAsXML();
+
+	/**
+	* Comprueba si se puede accceder a una actividad
+	*
+	* @param viewActivityFinish Si la actividad deja acceder coon el modo observador
+	* @param user Usuario que accede a la actividad
+	* @param permissionChecker permisos del usuario
+	* @return true si puede acceder
+	* @throws PortalException
+	*/
+	public boolean canAccess(boolean viewActivityFinish,
+		com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker,
+		Course course)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public boolean isLocked(com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

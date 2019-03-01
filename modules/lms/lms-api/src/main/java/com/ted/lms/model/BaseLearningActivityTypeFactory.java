@@ -162,7 +162,18 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		
 	}
 	
+	@Override
 	public String getURLSpecificContent() {
+		return null;
+	}
+	
+	@Override
+	public boolean canAccessFinished() {
+		return false;
+	}
+	
+	@Override
+	public String getMVCRenderCommandNameView() {
 		return null;
 	}
 }

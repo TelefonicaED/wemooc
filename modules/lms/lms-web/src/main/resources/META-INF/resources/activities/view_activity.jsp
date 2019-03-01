@@ -1,7 +1,5 @@
 <%@ include file="../init.jsp" %>
 
-<h1>${activity.getTitle(themeDisplay.locale) }</h1>
+<h2>${activity.getTitle(themeDisplay.locale) }</h2>
  
-<p>
-	${activity.getDescription(themeDisplay.locale)}
-</p>
+<liferay-portlet:runtime portletName="${activityPortletName }" defaultPreferences="${defaultPreferences }" queryString="${queryString }"/>

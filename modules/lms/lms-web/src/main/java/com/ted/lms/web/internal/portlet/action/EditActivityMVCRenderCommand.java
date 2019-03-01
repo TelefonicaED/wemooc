@@ -108,6 +108,7 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("course", course);
 		renderRequest.setAttribute("learningActivityTypeFactory", learningActivityTypeFactory);
 		renderRequest.setAttribute("activity", activity);
+		renderRequest.setAttribute("type", type);
 		
 		return "/activities/edit_activity.jsp";
 	}

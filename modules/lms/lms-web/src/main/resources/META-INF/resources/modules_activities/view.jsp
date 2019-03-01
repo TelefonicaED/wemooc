@@ -32,7 +32,7 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 						<span class="module-title">
 							<c:choose>
 								<c:when test="<%=accessLock || (!courseIsLocked && !module.isLocked(user.getUserId(), permissionChecker)) %>">
-									<a href="<%=module.getURLView(liferayPortletRequest) %>"><%=module.getTitle(themeDisplay.getLocale()) %></a>
+									<a href="<%=module.getURLView(themeDisplay) %>"><%=module.getTitle(themeDisplay.getLocale()) %></a>
 								</c:when>
 								<c:otherwise>
 									<%=module.getTitle(themeDisplay.getLocale()) %>
@@ -47,7 +47,7 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 				<%List<LearningActivity> activities = learningActivityService.getActivities(module.getModuleId());
 				for(LearningActivity activity: activities){ %>
 					<div class="row activity-row">
-						<%=activity.getTitle(themeDisplay.getLocale()) %>
+						<a href="<%=activity.getURLView(themeDisplay) %>"><%=activity.getTitle(themeDisplay.getLocale()) %></a>
 						<%@ include file="/activities/activity_action.jsp" %>
 					</div>
 			<%	}

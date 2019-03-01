@@ -50,6 +50,8 @@ import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
@@ -81,6 +83,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.social.kernel.service.SocialActivityLocalServiceUtil;
+import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.exception.ExecutionEndDateException;
@@ -1000,6 +1003,24 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		}
 
 		return null;
+	}
+	
+	@ServiceReference(type = ConfigurationProvider.class)
+	protected ConfigurationProvider configurationProvider;
+
+	public boolean getAllowAccessToCompletedCourses() {
+		boolean allowAccessToCompletedCourses = false;
+
+		try {
+			CourseServiceConfiguration courseServiceConfiguration = configurationProvider.getSystemConfiguration(CourseServiceConfiguration.class);
+
+			allowAccessToCompletedCourses = courseServiceConfiguration.allowAccessToCompletedCourses();
+		}
+		catch (ConfigurationException ce) {
+			log.error("Unable to get course service configuration", ce);
+		}
+
+		return allowAccessToCompletedCourses;
 	}
 	
 	@Override

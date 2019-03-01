@@ -62,7 +62,7 @@ List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUti
 <script>
 function <portlet:namespace />addQuestion(questionUrl){
 	$('#<portlet:namespace />new_question_factory').toggle("hide");
-	AUI().use('aui-node', 'aui-io',
+	AUI().use('aui-node', 'aui-io', 'aui-io-deprecated',
 		function(A) {
 			var parent = A.one('#<portlet:namespace />questions');
 			var list = A.all('#<portlet:namespace />questions > div').filter('[id^=<portlet:namespace />div_question_]'),lastNode=null;

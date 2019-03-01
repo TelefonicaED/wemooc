@@ -1,0 +1,26 @@
+<custom-sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.hasUserTries">
+		<![CDATA[   			
+			SELECT 
+				IF(COUNT(1) > 0,true,false) AS hasActWithTries
+			FROM (
+				SELECT 
+					IF(lar.latId IS NOT NULL, COUNT(1), 0) AS numTriesUser, la.actId, la.tries
+				FROM 
+					Lms_course c
+				INNER JOIN 
+					Lms_learningactivity la 
+						ON c.groupCreatedId = la.groupId
+				LEFT JOIN 
+					Lms_learningactivitytry lar 
+						ON la.actId = lar.actId AND lar.userId = ?
+				WHERE 
+					c.courseId =  ?
+				GROUP BY 
+					la.actId
+			) AS TABLA
+			WHERE 
+				tries = 0 OR numTriesUser < tries
+		]]>
+	</sql>
+</custom-sql>

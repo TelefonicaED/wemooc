@@ -15,8 +15,6 @@
 package com.ted.lms.service.impl;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
@@ -125,17 +123,29 @@ public class CourseResultLocalServiceImpl
 		Course course=coursePersistence.fetchByGroupCreatedId(module.getGroupId());
 		
 		if(course!=null){
+			
+			courseResult=courseResultLocalService.getByCourseIdUserId(course.getCourseId(), moduleResult.getUserId());
+			if(courseResult==null) {
+				courseResult=courseResultLocalService.addCourseResult(course.getCourseId(), moduleResult.getUserId(), serviceContext);
+			}
+			
 			CourseEvalFactory courseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactoryByType(course.getCourseEvalId());
 			try {
 				CourseEval courseEval = courseEvalFactory.getCourseEval(course, serviceContext);
-				courseResult = courseEval.updateCourse(moduleResult.getUserId());
+				courseResult = courseEval.updateCourseResult(courseResult);
 			} catch (PortalException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			courseResult = courseResultLocalService.updateCourseResult(courseResult);
 		}
 		
 		return courseResult;
+	}
+	
+	public boolean hasUserTries(long courseId, long userId) {
+		return courseResultFinder.hasUserTries(courseId, userId);
 	}
 
 }

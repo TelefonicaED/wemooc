@@ -26,7 +26,6 @@ import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
-import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder.Result;
@@ -37,20 +36,16 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ImageLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
-import com.liferay.portal.kernel.servlet.URLEncoder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.URLStringEncoder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.ted.lms.constants.LMSConstants;
-import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
@@ -70,8 +65,6 @@ import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.WindowState;
-
-import org.osgi.service.component.annotations.Reference;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -226,9 +219,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 	}
 	
 	@Override
-	public String getURLView(LiferayPortletRequest liferayPortletRequest) {
-		
-		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+	public String getURLView(ThemeDisplay themeDisplay) {
 
 		StringBundler sb = new StringBundler(11);
 
@@ -250,9 +241,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 	}
 	
 	@Override
-	public String getURLEdit(LiferayPortletRequest liferayPortletRequest) {
-		
-		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+	public String getURLEdit(ThemeDisplay themeDisplay) {
 
 		StringBundler sb = new StringBundler(11);
 

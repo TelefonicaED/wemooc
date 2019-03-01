@@ -10,7 +10,7 @@ long answerId = ParamUtil.getLong(request, "answerId", 0);
 Answer answer = null;
 if(answerId > 0){
 	answer = AnswerLocalServiceUtil.getAnswer(answerId);
-}
+} 
 
 %>
 <aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_answerId" %>' value="<%=answerId %>" useNamespace="false" />
@@ -22,15 +22,15 @@ if(answerId > 0){
 	<aui:input type="radio" name='<%=namespace + iteratorQuestion + "_correct"%>' label="correct" value="<%=iterator%>" checked="<%=answer != null ? answer.isCorrect() : false %>" 
 				useNamespace="false" id='<%=namespace + iteratorQuestion + "_correct_" + iterator %>'/>
 	
-	<liferay-ui:input-localized
-		cssClass="form-control"
-		formName="fm"
+	 <liferay-editor:editor
+		contents='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
+		editorName='alloyeditor'
 		name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
 		placeholder="write-here-answer"
-		type="editor"
-		xml='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
-		useNamespace="false"
-	/>		
+		required="<%= true %>"
+	>
+		<aui:validator name="required" />
+	</liferay-editor:editor>
 	
 	<aui:input name="<%=namespace + iteratorQuestion + \"feedbackCorrect_new\"+iterator %>" label="feedback" value="" size="60" useNamespace="false" localized="true"/>
 </div>

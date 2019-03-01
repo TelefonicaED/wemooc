@@ -18,7 +18,6 @@ import com.liferay.trash.TrashHelper;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalService;
-import com.ted.lms.service.CourseLocalServiceUtil;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 import com.ted.lms.web.internal.display.context.CourseDisplayContext;
 import com.ted.lms.web.internal.display.context.CoursesManagementToolbarDisplayContext;
@@ -74,8 +73,8 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 				iteratorURL, null, "no-courses");
 
 		
-		searchContainer.setResults(CourseLocalServiceUtil.getCourses(searchContainer.getStart(), searchContainer.getEnd()));
-		searchContainer.setTotal(CourseLocalServiceUtil.getCoursesCount());
+		searchContainer.setResults(courseLocalService.getCourses(searchContainer.getStart(), searchContainer.getEnd()));
+		searchContainer.setTotal(courseLocalService.getCoursesCount());
 		
 		log.debug("total: " + searchContainer.getTotal());
 		

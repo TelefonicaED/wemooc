@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -73,6 +74,9 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public LearningActivityTry addLearningActivityTry(
 		LearningActivityTry learningActivityTry);
+
+	public LearningActivityTry addLearningActivityTry(long actId, long userId,
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Creates a new learning activity try with the primary key. Does not add the learning activity try to the database.
@@ -200,6 +204,10 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LearningActivityTry getLastLearningActivityTry(long actId,
+		long userId);
+
 	/**
 	* Returns a range of all the learning activity tries.
 	*
@@ -213,6 +221,10 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LearningActivityTry> getLearningActivityTries(int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivityTry> getLearningActivityTries(long actId,
+		long userId);
 
 	/**
 	* Returns all the learning activity tries matching the UUID and company.
