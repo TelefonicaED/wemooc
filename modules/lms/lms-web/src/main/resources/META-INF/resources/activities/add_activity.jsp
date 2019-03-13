@@ -10,6 +10,7 @@
 					<portlet:param name="mvcRenderCommandName" value="/activities/edit_activity" />
 					<portlet:param name="<%= Constants.CMD %>" value="<%=Constants.ADD %>" />
 					<portlet:param name="moduleId" value="${moduleId }" />
+					<portlet:param name="actId" value="0" />
 					<portlet:param name="type" value="${learningActivityTypeFactory.type }" />
 				</portlet:renderURL>
 				<a href="${addActivityURL}">

@@ -110,13 +110,8 @@ public class ModuleResultLocalServiceImpl
 			moduleResult.setModifiedDate(now);
 			
 			ModuleEvalFactory moduleEvalFactory = ModuleEvalFactoryRegistryUtil.getModuleEvalFactoryByType(module.getModuleEvalId());
-			try {
-				ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module, serviceContext);
-				moduleResult = moduleEval.updateModuleResult(moduleResult);
-			} catch (PortalException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module, serviceContext);
+			moduleResult = moduleEval.updateModuleResult(moduleResult);
 			
 			//Update en la bd
 			moduleResult = moduleResultPersistence.update(moduleResult);

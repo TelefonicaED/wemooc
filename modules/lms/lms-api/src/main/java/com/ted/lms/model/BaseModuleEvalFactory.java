@@ -69,46 +69,4 @@ public abstract class BaseModuleEvalFactory implements ModuleEvalFactory {
 	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse) {
 		return true;
 	}
-	
-	@Reference(unbind = "-")
-	protected void setModuleResultLocalService(ModuleResultLocalService moduleResultLocalService) {
-		this.moduleResultLocalService = moduleResultLocalService;
-	}
-	
-	protected ModuleResultLocalService moduleResultLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setCourseResultLocalService(CourseResultLocalService courseResultLocalService) {
-		this.courseResultLocalService = courseResultLocalService;
-	}
-	
-	protected CourseResultLocalService courseResultLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityTryLocalService(LearningActivityTryLocalService learningActivityTryLocalService) {
-		this.learningActivityTryLocalService = learningActivityTryLocalService;
-	}
-	
-	protected LearningActivityTryLocalService learningActivityTryLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
-		this.learningActivityLocalService = learningActivityLocalService;
-	}
-	
-	protected LearningActivityLocalService learningActivityLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setModuleLocalService(ModuleLocalService moduleLocalService) {
-		this.moduleLocalService = moduleLocalService;
-	}
-	
-	protected ModuleLocalService moduleLocalService;
 }

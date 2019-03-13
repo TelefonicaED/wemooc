@@ -76,12 +76,12 @@ public class P2PActivityCorrectionsLocalServiceImpl
 	
 	@Override
 	public List<P2PActivityCorrections> getCorrectionsDoneByUser(long actId, long userId) {
-		return p2pActivityCorrectionsPersistence.findByActIdUserIdDateNotNull(actId, userId);
+		return p2pActivityCorrectionsFinder.findCorrectionsFinished(actId, userId);
 	}
 	
 	@Override
 	public List<P2PActivityCorrections> getCorrectionsDoneByP2PActivityId(long p2pActivityId){
-		return p2pActivityCorrectionsPersistence.findByP2PActivityIdDateNotNull(p2pActivityId);
+		return p2pActivityCorrectionsFinder.findCorrectionsDoneByP2PActivityId(p2pActivityId);
 	}
 	
 	@Override
@@ -107,6 +107,10 @@ public class P2PActivityCorrectionsLocalServiceImpl
 	public boolean areAllCorrectionsDoneByUserInP2PActivity(long actId, long userId, int numValidations) {
 	
 		List<P2PActivityCorrections> corrections = p2pActivityCorrectionsLocalService.getCorrectionsDoneByUser(actId, userId);
+		log.debug("actId: " + actId);
+		log.debug("userId: " + userId);
+		log.debug("numValidations: " + numValidations);
+		log.debug("corrections: " + corrections.size());
 		
 		return corrections.size() >= numValidations;
 	}
@@ -118,7 +122,7 @@ public class P2PActivityCorrectionsLocalServiceImpl
 		
 		boolean res = false;
 		
-		long num = p2pActivityCorrectionsPersistence.countByP2pActivityIdActIdDateNotNull(p2pActivityId, actId);
+		long num = p2pActivityCorrectionsFinder.findCorrectionsDoneByP2PActivityId(p2pActivityId).size();
 		res = num >= numValidations;
 
 		return res;
@@ -143,10 +147,10 @@ public class P2PActivityCorrectionsLocalServiceImpl
 			try {
 				Folder folder = p2pActivityLocalService.addP2PFolder(serviceContext.getUserId(), serviceContext.getScopeGroupId());
 				DLFileEntry p2pFileEntry = p2pActivityLocalService.addP2PFileEntry(fileName, file, mimeType, folder.getFolderId(), serviceContext.getScopeGroupId(),
-						serviceContext.getCompanyId());
+						serviceContext.getCompanyId(), serviceContext.getUserId());
 				//Asociamos con el fichero subido.
 				p2pActivityCorrections.setFileEntryId(p2pFileEntry.getFileEntryId());
-			} catch (FileNotFoundException e) {
+			} catch (FileNotFoundException e) { 
 				e.printStackTrace();
 			}
 		}
@@ -225,7 +229,7 @@ public class P2PActivityCorrectionsLocalServiceImpl
 		
 		for(P2PActivity p2pActivity : activityList){	
 			
-			addP2PActivityCorrections(actId, userId, p2pActivityId, p2pActivity.getGroupId(), p2pActivity.getCompanyId(), serviceContext.getUserId());
+			addP2PActivityCorrections(actId, userId, p2pActivity.getP2pActivityId(), p2pActivity.getGroupId(), p2pActivity.getCompanyId(), serviceContext.getUserId());
 			
 			log.debug("Incrementamos el contador de correcciones que se ha asignado para corregir.");
 			p2pActivity.setCountCorrections(p2pActivity.getCountCorrections()+1);

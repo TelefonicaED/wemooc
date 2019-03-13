@@ -171,9 +171,4 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	public boolean canAccessFinished() {
 		return false;
 	}
-	
-	@Override
-	public String getMVCRenderCommandNameView() {
-		return null;
-	}
 }

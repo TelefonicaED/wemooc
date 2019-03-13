@@ -7,7 +7,7 @@
 			INNER JOIN users_teams ut ON ut.userId = pa.userId AND ut.teamId IN [$TEAMS$]
 			WHERE pa.actId = ? AND
 			pa.p2pActivityId <> ? 
-			ORDER BY pa.countCorrections ASC;
+			ORDER BY pa.countCorrections ASC
 		]]>
 	</sql>
 	<sql id="com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder.findByGroup">
@@ -16,7 +16,7 @@
 			FROM ptp_p2pactivity pa
 			WHERE pa.actId = ? AND
 			pa.p2pActivityId <> ? 
-			ORDER BY pa.countCorrections ASC;
+			ORDER BY pa.countCorrections ASC
 		]]>
 	</sql>
 	<sql id="com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder.findByUserWithoutTeamActivities">
@@ -28,7 +28,7 @@
 			INNER JOIN team t ON t.teamId = ut.teamId AND t.groupId = ?)
 			WHERE pa.actId = ? AND
 			pa.p2pActivityId <> ? 
-			ORDER BY pa.countCorrections ASC;
+			ORDER BY pa.countCorrections ASC
 		]]>
 	</sql>
 </custom-sql>

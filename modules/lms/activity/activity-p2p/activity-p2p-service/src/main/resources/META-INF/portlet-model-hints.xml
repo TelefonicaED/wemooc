@@ -14,7 +14,9 @@
 		<field name="userId" type="long" />
 		<field name="fileEntryId" type="long" />
 		<field name="countCorrections" type="long" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint-collection name="EDITOR" />
+		</field>
 		<field name="date" type="Date" />
 		<field name="asignationsCompleted" type="boolean" />
 	</model>
@@ -30,7 +32,9 @@
 		<field name="p2pActivityId" type="long" />
 		<field name="userId" type="long" />
 		<field name="actId" type="long" />
-		<field name="description" type="String" />
+		<field name="description" type="String">
+			<hint-collection name="EDITOR" />
+		</field>
 		<field name="date" type="Date" />
 		<field name="fileEntryId" type="long" />
 		<field name="result" type="long" />

@@ -10,7 +10,6 @@ import com.ted.lms.learning.activity.p2p.web.activity.P2PActivityType;
 import com.ted.lms.learning.activity.p2p.web.activity.P2PActivityTypeFactory;
 import com.ted.lms.learning.activity.p2p.web.constants.P2PWebPortletKeys;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
 
@@ -18,10 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
-import com.liferay.document.library.kernel.model.DLFolderConstants;
-import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.exception.NestableException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -29,7 +26,6 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
@@ -59,31 +55,37 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.display-category=hidden",
 		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
+		"javax.portlet.init-param.mvc-command-names-default-views=/activities/p2p/view_activity",
 		"javax.portlet.name=" + P2PWebPortletKeys.P2P,
 		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=user"
+		"javax.portlet.security-role-ref=user",
+		"javax.portlet.supported-public-render-parameter=actId"
 	},
 	service = Portlet.class
 )
 public class P2PWebPortlet extends MVCPortlet {
 	
 	@ProcessAction(name = "addP2PActivity")
-	public void addP2PActivity(ActionRequest request, ActionResponse response) throws Exception{
+	public void addP2PActivity(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception{
+		log.debug("addActivity");
 		try{
-			UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(request);
-			ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+			UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(actionRequest);
+
+			ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 			
 			ServiceContext serviceContext = null;
 			try {
-				serviceContext = ServiceContextFactory.getInstance(request);
+				serviceContext = ServiceContextFactory.getInstance(actionRequest);
 			} catch (PortalException e1) {
 				e1.printStackTrace();
-			} 
-						
+			} 	
 			
-			String description = uploadRequest.getParameter("description");
-			long actId = Long.parseLong(uploadRequest.getParameter("actId"));
-			long p2pActivityId = Long.parseLong(uploadRequest.getParameter("p2pActivityId"));
+			Map<String, String[]> parameters = uploadRequest.getParameterMap();
+			parameters.forEach((k,v)->System.out.println("name : " + k + " value : " + v));
+			
+			String description = ParamUtil.getString(uploadRequest, "description");
+			long actId = ParamUtil.getLong(actionRequest, "actId");
+			long p2pActivityId = ParamUtil.getLong(actionRequest, "p2pActivityId");
 			
 			String fileName = uploadRequest.getFileName("fileName");
 			
@@ -100,9 +102,9 @@ public class P2PWebPortlet extends MVCPortlet {
 						
 			//Controlamos que no se duplica la P2pActivity subida por el usuario.
 			//Solo puede subir una P2pActivity por Activity.
-			P2PActivity p2pActivity = p2pActivityLocalService.getP2PActivity(actId, themeDisplay.getUserId());
+			P2PActivity p2pActivity = P2PActivityLocalServiceUtil.getP2PActivity(actId, themeDisplay.getUserId());
 			
-			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
+			LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 
 			P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
 			P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
@@ -114,19 +116,21 @@ public class P2PWebPortlet extends MVCPortlet {
 
 				//Cuando el fichero es obligatorio y no esta seleccionado.
 				if(!fileoptional && Validator.isNull(fileName)){
-					SessionErrors.add(request, "campos-necesarios-vacios");
+					SessionErrors.add(actionRequest, "campos-necesarios-vacios");
 				} else if(Validator.isNotNull(description)){
 					
-					p2pActivity = p2pActivityLocalService.addP2PActivity(themeDisplay.getUserId(), actId, 
+					p2pActivity = P2PActivityLocalServiceUtil.addP2PActivity(themeDisplay.getUserId(), actId, 
 							description, fileName, file, mimeType, serviceContext, themeDisplay);
 					
+					actionResponse.setRenderParameter("uploadCorrect", "true");
+					
+				}else {
+					SessionErrors.add(actionRequest, "learning-activity.p2p.steps.upload-activity.empty-fields");
 				}
 			}
 			
-			request.setAttribute("actId", actId);
-			response.setRenderParameter("uploadCorrect", "true");
-			response.setRenderParameter("mvcPath","/p2p/activity/view.jsp");
-			
+			actionResponse.setRenderParameter("mvcRenderCommandName","/activities/p2p/view_activity");
+			actionResponse.setRenderParameter("actId", String.valueOf(actId));
 		}
 		catch(Exception e){
 			if (log.isErrorEnabled()) {
@@ -134,7 +138,7 @@ public class P2PWebPortlet extends MVCPortlet {
 				log.error(e.getMessage());
 			}
 			e.printStackTrace();
-			SessionErrors.add(request, "error-subir-p2p");
+			SessionErrors.add(actionRequest, "error-subir-p2p");
 		}
 	}
 		
@@ -150,44 +154,46 @@ public class P2PWebPortlet extends MVCPortlet {
 	 * @throws Exception
 	 */
 	@ProcessAction(name = "saveCorrection")
-	public void saveCorrection(ActionRequest request, ActionResponse response) {
+	public void saveCorrection(ActionRequest actionRequest, ActionResponse actionResponse) throws PortalException {
 		
-		UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(request);		
-		ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);		
+		UploadPortletRequest uploadRequest = PortalUtil.getUploadPortletRequest(actionRequest);		
+		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);		
 		User user = themeDisplay.getUser();
 				
-		long p2pActivityId = Long.parseLong(uploadRequest.getParameter("p2pActivityId"));
+		long p2pActivityId = ParamUtil.getLong(actionRequest, "p2pActivityId");
 		
 		//Ya debe existir una correcion en la bd para este usuario y para esta P2pActivity.
-		P2PActivityCorrections p2pActivityCorrections = p2pActivityCorrectionsLocalService.getCorrectionsByP2PActivityIdUserId(p2pActivityId, user.getUserId());
+		P2PActivityCorrections p2pActivityCorrections = P2PActivityCorrectionsLocalServiceUtil.getCorrectionsByP2PActivityIdUserId(p2pActivityId, user.getUserId());
 		
 		long actId = ParamUtil.getLong(uploadRequest, "actId");
 		
 		if(p2pActivityCorrections!=null){
-						
-			String description = uploadRequest.getParameter("description");
 			
-			if(Validator.isNull(description)){
-				Enumeration<String> parameterNames = uploadRequest.getParameterNames();
-				boolean fill = false;
-				JSONArray jArray = JSONFactoryUtil.createJSONArray();
-				int cont = 0;
-				while(parameterNames.hasMoreElements()){
-					String param = parameterNames.nextElement();
-					if(param.matches("description\\_\\d*_\\d*i")){
-						log.debug(param+":"+uploadRequest.getParameter(param));
-						fill=true;
-						JSONObject jo = JSONFactoryUtil.createJSONObject();
-						jo.put("text"+cont, uploadRequest.getParameter(param));
-						jArray.put(jo);
-						cont++;
-					}
-				}
+			int numCorrection = ParamUtil.getInteger(actionRequest, "cont");
+			
+			LearningActivity activity=LearningActivityLocalServiceUtil.getLearningActivity(actId);	
 
-				if(fill){
-					log.debug(jArray.toString());
-					description = jArray.toString();
+			P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
+			P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
+						
+			String description = null;
+			
+			boolean fill = false;
+			JSONArray jArray = JSONFactoryUtil.createJSONArray();
+			for(int i = 0; i < p2pActivityType.getEvaluationCriteria().length(); i++) {
+				String desc = ParamUtil.getString(actionRequest, "description_" + numCorrection + "_" + i);
+				System.out.println("desc: " + desc);
+				if(Validator.isNotNull(desc)){
+					fill=true;
+					JSONObject jo = JSONFactoryUtil.createJSONObject();
+					jo.put("text"+i, desc);
+					jArray.put(jo);
 				}
+			}
+
+			if(fill){
+				log.debug(jArray.toString());
+				description = jArray.toString();
 			}
 			 		
 			if(Validator.isNotNull(description)){ 		
@@ -196,54 +202,55 @@ public class P2PWebPortlet extends MVCPortlet {
 				String mimeType = uploadRequest.getContentType("fileName");
 				long resultuser = ParamUtil.getLong(uploadRequest, "resultUser", 0);
 				
-				try{
+				ServiceContext serviceContext = null;
+				try {
+					serviceContext = ServiceContextFactory.getInstance(actionRequest);
+				} catch (PortalException e1) {
+					e1.printStackTrace();
+				}
+				try {
 					
-					ServiceContext serviceContext = null;
-					try {
-						serviceContext = ServiceContextFactory.getInstance(request);
-					} catch (PortalException e1) {
-						e1.printStackTrace();
-					}
+					p2pActivityCorrections = P2PActivityCorrectionsLocalServiceUtil.updateP2PActivityCorrections(p2pActivityCorrections, description, fileName, file, mimeType, resultuser, serviceContext);
 					
-					LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-
-					P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
-					P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
+				
+					log.debug("p2pActivityCorrections: " + p2pActivityCorrections.getDate());
 					
-					p2pActivityCorrectionsLocalService.updateP2PActivityCorrections(p2pActivityCorrections, description, fileName, file, mimeType, resultuser, serviceContext);
+					log.debug("count" + P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByUser(actId, user.getUserId()));
+					log.debug("are: " + P2PActivityCorrectionsLocalServiceUtil.areAllCorrectionsDoneByUserInP2PActivity(actId, p2pActivityCorrections.getUserId(), p2pActivityType.getNumValidations()));
+					P2PActivityCorrections p2pAux = P2PActivityCorrectionsLocalServiceUtil.getP2PActivityCorrections(p2pActivityCorrections.getP2pActivityCorrectionsId());
+					log.debug("date: " + p2pAux.getDate());
 					
-					P2PActivity p2pActivity = p2pActivityLocalService.getP2PActivity(p2pActivityId);
-					
+					P2PActivity p2pActivity = P2PActivityLocalServiceUtil.getP2PActivity(p2pActivityId);
+					log.debug("count" + P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByUser(actId, user.getUserId()));
 					//Actualizar los resultados de las correcciones de las P2P. 
-					p2pActivityLocalService.updateResultP2PActivity(p2pActivity, p2pActivityCorrections, user.getUserId(), p2pActivityType.getNumValidations(), p2pActivityType.getResult(),
+					P2PActivityLocalServiceUtil.updateResultP2PActivity(p2pActivity, p2pActivityCorrections, user.getUserId(), p2pActivityType.getNumValidations(), p2pActivityType.getResult(),
 							p2pActivityType.getAnonimous(), p2pActivityType.getEmailAnonimous(), p2pActivityType.getEvaluationCriteria(), themeDisplay, 
 							serviceContext);
-					
-					request.setAttribute("actId", actId);
-					request.setAttribute("latId", Long.parseLong(uploadRequest.getParameter("latId")));
+					log.debug("count" + P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByUser(actId, user.getUserId()).size());
+					actionRequest.setAttribute("actId", actId);
 		
 					//Para mostrar el mensaje de que ya ha corregido todas las actividades
 					List<P2PActivityCorrections> corrections = P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByUser(actId, user.getUserId());
+					log.debug("corrections: " + corrections.size());
+					log.debug("validations: " + p2pActivityType.getNumValidations());
 					
 					if(corrections.size() >= p2pActivityType.getNumValidations()){
-						response.setRenderParameter("correctionsCompleted", "true");
-					}else{
-						response.setRenderParameter("correctionsCompleted", "false");
+						actionResponse.setRenderParameter("correctionsCompleted", "true");
 					}
 					
-					response.setRenderParameter("correctionSaved", "true");
-					response.setRenderParameter("jspPage","/p2p/activity/view.jsp");
-					
+					actionResponse.setRenderParameter("correctionSaved", "true");
+					actionResponse.setRenderParameter("mvcPath","/p2p/activity/view.jsp");
 				} catch(Exception e){
 					if (log.isErrorEnabled()) {
 						log.error("Error getting P2pActivityPortlet.saveCorrection");
 						log.error(e);
 					}
-					SessionErrors.add(request, "error-p2ptask-correction");
-					request.setAttribute("actId", actId);
-				}
+					SessionErrors.add(actionRequest, "error-p2ptask-correction");
+					actionRequest.setAttribute("actId", actId);
+				}	
+				
 			}else{
-				SessionErrors.add(request, "p2ptask-no-empty-answer");
+				SessionErrors.add(actionRequest, "p2ptask-no-empty-answer");
 			}
 			
 		}
@@ -261,7 +268,11 @@ public class P2PWebPortlet extends MVCPortlet {
 		P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
 		P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
 		
-		p2pActivityLocalService.asignCorrectionP2PActivity(p2pActivity, p2pActivityType.getNumValidations(), p2pActivityType.getAssignationType());
+		System.out.println("p2pActivity: " + p2pActivity.getP2pActivityId());
+		System.out.println("numValidations: " + p2pActivityType.getNumValidations());
+		System.out.println("assignationType: " + p2pActivityType.getAssignationType());
+		
+		P2PActivityLocalServiceUtil.asignCorrectionP2PActivity(p2pActivity, p2pActivityType.getNumValidations(), p2pActivityType.getAssignationType());
 		if(p2pActivity.getAsignationsCompleted()){
 			SessionMessages.add(request, "p2p-activity-assign-correct");
 		}else{
@@ -276,28 +287,6 @@ public class P2PWebPortlet extends MVCPortlet {
 		request.setAttribute("actId", actId);
 		response.setRenderParameter("jspPage","/p2p/activity/view.jsp");
 	}
-	
-	
-	@Reference(unbind = "-")
-	protected void setP2PActivityLocalService(P2PActivityLocalService p2pActivityLocalService) {
-		this.p2pActivityLocalService = p2pActivityLocalService;
-	}
-	
-	private P2PActivityLocalService p2pActivityLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setP2PActivityCorrectionsLocalService(P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService) {
-		this.p2pActivityCorrectionsLocalService = p2pActivityCorrectionsLocalService;
-	}
-	
-	private P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
-		this.learningActivityLocalService = learningActivityLocalService;
-	}
-	
-	private LearningActivityLocalService learningActivityLocalService;
 	
 	private static Log log = LogFactoryUtil.getLog(P2PWebPortlet.class);
 }

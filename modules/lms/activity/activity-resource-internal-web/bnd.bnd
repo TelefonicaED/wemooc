@@ -4,3 +4,4 @@ Bundle-Version: 1.0.0
 Export-Package: com.ted.lms.activity.resource.internal.web.constants
 -liferay-aggregate-resource-bundles: \
 	com.ted.lms.lang
+Web-ContextPath: /activity-resource-internal-web

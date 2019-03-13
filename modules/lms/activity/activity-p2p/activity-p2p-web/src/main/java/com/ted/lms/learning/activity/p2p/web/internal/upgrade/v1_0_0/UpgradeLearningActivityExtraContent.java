@@ -15,7 +15,7 @@ import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.constants.LearningActivityConstants;
-import com.ted.lms.learning.activity.p2p.web.constants.P2PConstants;
+import com.ted.lms.learning.activity.p2p.constants.P2PConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityLocalService;
 

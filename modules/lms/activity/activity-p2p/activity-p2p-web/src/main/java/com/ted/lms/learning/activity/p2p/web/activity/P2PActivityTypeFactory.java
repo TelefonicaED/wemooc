@@ -5,9 +5,9 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.Validator;
+import com.ted.lms.learning.activity.p2p.constants.P2PConstants;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService;
-import com.ted.lms.learning.activity.p2p.web.constants.P2PConstants;
 import com.ted.lms.learning.activity.p2p.web.constants.P2PWebPortletKeys;
 import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
@@ -102,11 +102,6 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 		if(Validator.isNotNull(numValidations) && !Validator.isNumber(numValidations)) {
 			throw new PortalException("learning-activity.p2p.num-validations.error.number");
 		}
-	}
-	
-	@Override
-	public String getMVCRenderCommandNameView() {
-		return "/activities/p2p/view_activity";
 	}
 	
 	@Reference(unbind = "-")

@@ -57,7 +57,7 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
 
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
 			courseResult = updateCourseResult(courseResult, lresult);
@@ -95,7 +95,7 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 					if(!learningActivityResult.isPassed()){
 						passed = false;
 						if(activity.getTries() > 0){
-							long  userTries = learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(), userId);
+							long  userTries = learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(), courseResult.getUserId());
 							if(userTries >= activity.getTries()){
 								isFailed=true;
 							}

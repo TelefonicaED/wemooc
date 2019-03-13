@@ -74,11 +74,4 @@ public abstract class BaseInscriptionTypeFactory implements InscriptionTypeFacto
 		return true;
 	}
 	
-	@Reference(unbind = "-")
-	protected void setCourseLocalService(CourseLocalService courseLocalService) {
-		this.courseLocalService = courseLocalService;
-	}
-	
-	protected CourseLocalService courseLocalService;
-	
 }

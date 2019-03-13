@@ -17,4 +17,6 @@ public class LMSAuditConstants implements AuditConstants{
 	public static final int LEARNING_ACTIVITY_RESULT_UPDATE = 13000;
 	
 	public static final int LEARNING_ACTIVITY_TRY_ADD = 14000;
+	public static final int LEARNING_ACTIVITY_TRY_UPDATE = 14001;
+	public static final int LEARNING_ACTIVITY_TRY_FINISH = 14002;
 }

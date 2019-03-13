@@ -6,7 +6,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.audit.api.AuditFactory;
 import com.ted.lms.constants.LMSAuditConstants;
@@ -36,8 +36,8 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
+		ParamUtil.print(renderRequest);
 		long actId = ParamUtil.getLong(renderRequest, "actId", 0);
-		System.out.println("render view learningActivityId: " + actId);
 		
 		LearningActivity activity = null;
 		
@@ -51,6 +51,8 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 			
 			LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
 			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(activity.getGroupId());
+			
+			PortalUtil.clearRequestParameters(renderRequest);
 			
 			try {
 				if(activity.canAccess(learningActivityTypeFactory.canAccessFinished(), themeDisplay.getUser(), themeDisplay.getPermissionChecker(), course)){
@@ -72,14 +74,14 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					queryStringStringBundler.append("actId");
 					queryStringStringBundler.append(StringPool.EQUAL);
 					queryStringStringBundler.append(String.valueOf(actId));
-					if(Validator.isNotNull(learningActivityTypeFactory.getMVCRenderCommandNameView())) {
+				/*	if(Validator.isNotNull(learningActivityTypeFactory.getMVCRenderCommandNameView())) {
 						queryStringStringBundler.append(StringPool.AMPERSAND);
 						queryStringStringBundler.append("mvcRenderCommandName");
 						queryStringStringBundler.append(StringPool.EQUAL);
 						queryStringStringBundler.append(learningActivityTypeFactory.getMVCRenderCommandNameView());
-					}
+					}*/
 					
-					
+					System.out.println("queryStringBundler: " + queryStringStringBundler);
 					renderRequest.setAttribute("activity", activity);
 					renderRequest.setAttribute("activityPortletName", learningActivityTypeFactory.getPortletId());
 					renderRequest.setAttribute("defaultPreferences", sb);
@@ -87,6 +89,7 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					
 					return "/activities/view_activity.jsp";
 				}else {
+					System.out.println("no puedes acceder al curso");
 					renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
 					return null;
 				}

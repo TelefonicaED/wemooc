@@ -209,6 +209,16 @@ public class LearningActivityTryLocalServiceWrapper
 	}
 
 	@Override
+	public com.ted.lms.model.LearningActivityTry finishLearningActivityTry(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		double result,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityTryLocalService.finishLearningActivityTry(learningActivityTry,
+			result, serviceContext);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return _learningActivityTryLocalService.getActionableDynamicQuery();
 	}
@@ -360,6 +370,16 @@ public class LearningActivityTryLocalServiceWrapper
 	public com.ted.lms.model.LearningActivityTry updateLearningActivityTry(
 		com.ted.lms.model.LearningActivityTry learningActivityTry) {
 		return _learningActivityTryLocalService.updateLearningActivityTry(learningActivityTry);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivityTry updateLearningActivityTry(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		double result,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityTryLocalService.updateLearningActivityTry(learningActivityTry,
+			result, serviceContext);
 	}
 
 	@Override

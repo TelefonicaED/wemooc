@@ -1,11 +1,12 @@
 package com.ted.lms.learning.activity.resource.internal.web;
 
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
-import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletProvider;
+import com.liferay.portal.kernel.portlet.PortletProviderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalConstants;
 import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalPortletKeys;
@@ -17,6 +18,12 @@ import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import javax.portlet.PortletMode;
+import javax.portlet.PortletModeException;
+import javax.portlet.PortletURL;
+import javax.portlet.WindowStateException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -45,7 +52,11 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService, dlAppLocalService, roleLocalService, resourcePermissionLocalService);
+		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService);
+	}
+	
+	public ResourceInternalActivityType getResourceInternalType(LearningActivity activity) {
+		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService);
 	}
 	
 	@Override
@@ -67,7 +78,7 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	
 	@Override
 	public String getURLSpecificContent() {
-		return "/resource_internal/activity/edit.jsp";
+		return "/edit.jsp";
 	}
 	
 	@Override
@@ -78,6 +89,20 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	@Override
 	public boolean isManualCalificationAllowed() {
 		return false;
+	}
+	
+	public PortletURL getURLSearchAssetEntry(HttpServletRequest request, long groupId) throws PortalException, PortletModeException, WindowStateException {
+		PortletURL selectAssetEntryURL = 
+				PortletProviderUtil.getPortletURL(
+						request, DLFileEntry.class.getName(),
+						PortletProvider.Action.BROWSE);
+		
+		selectAssetEntryURL.setParameter("typeSelection", DLFileEntry.class.getName());
+		selectAssetEntryURL.setParameter("eventName", "selectAsset");
+		selectAssetEntryURL.setPortletMode(PortletMode.VIEW);
+		selectAssetEntryURL.setWindowState(LiferayWindowState.POP_UP);
+		
+		return selectAssetEntryURL;
 	}
 	
 
@@ -96,36 +121,11 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
 	@Reference(unbind = "-")
-	protected void setResourcePermissionLocalService(
-		ResourcePermissionLocalService resourcePermissionLocalService) {
-
-		this.resourcePermissionLocalService = resourcePermissionLocalService;
-	}
-	
-	private ResourcePermissionLocalService resourcePermissionLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
-
-		this.dlAppLocalService = dlAppLocalService;
-	}
-	
-	private DLAppLocalService dlAppLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setRoleLocalService(RoleLocalService roleLocalService) {
-
-		this.roleLocalService = roleLocalService;
-	}
-	
-	private RoleLocalService roleLocalService;
-	
-	@Reference(unbind = "-")
 	protected void setAssetEntryLocalService(AssetEntryLocalService assetEntryLocalService) {
 
 		this.assetEntryLocalService = assetEntryLocalService;
 	}
 	
-	private AssetEntryLocalService assetEntryLocalService;
+	protected AssetEntryLocalService assetEntryLocalService;
 	
 }

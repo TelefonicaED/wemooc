@@ -194,6 +194,10 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	public LearningActivityTry fetchLearningActivityTryByUuidAndGroupId(
 		String uuid, long groupId);
 
+	public LearningActivityTry finishLearningActivityTry(
+		LearningActivityTry learningActivityTry, double result,
+		ServiceContext serviceContext) throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
@@ -307,4 +311,8 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public LearningActivityTry updateLearningActivityTry(
 		LearningActivityTry learningActivityTry);
+
+	public LearningActivityTry updateLearningActivityTry(
+		LearningActivityTry learningActivityTry, double result,
+		ServiceContext serviceContext) throws PortalException;
 }

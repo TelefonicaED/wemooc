@@ -53,6 +53,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService;
+import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsFinder;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsPersistence;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityPersistence;
@@ -531,6 +532,25 @@ public abstract class P2PActivityLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the p2p activity corrections finder.
+	 *
+	 * @return the p2p activity corrections finder
+	 */
+	public P2PActivityCorrectionsFinder getP2PActivityCorrectionsFinder() {
+		return p2pActivityCorrectionsFinder;
+	}
+
+	/**
+	 * Sets the p2p activity corrections finder.
+	 *
+	 * @param p2pActivityCorrectionsFinder the p2p activity corrections finder
+	 */
+	public void setP2PActivityCorrectionsFinder(
+		P2PActivityCorrectionsFinder p2pActivityCorrectionsFinder) {
+		this.p2pActivityCorrectionsFinder = p2pActivityCorrectionsFinder;
+	}
+
+	/**
 	 * Returns the counter local service.
 	 *
 	 * @return the counter local service
@@ -762,6 +782,8 @@ public abstract class P2PActivityLocalServiceBaseImpl
 	protected com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
 	@BeanReference(type = P2PActivityCorrectionsPersistence.class)
 	protected P2PActivityCorrectionsPersistence p2pActivityCorrectionsPersistence;
+	@BeanReference(type = P2PActivityCorrectionsFinder.class)
+	protected P2PActivityCorrectionsFinder p2pActivityCorrectionsFinder;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
 	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)

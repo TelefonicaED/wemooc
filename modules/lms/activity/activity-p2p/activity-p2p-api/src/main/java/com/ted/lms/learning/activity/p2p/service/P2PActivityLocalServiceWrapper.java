@@ -70,11 +70,11 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 	@Override
 	public com.liferay.document.library.kernel.model.DLFileEntry addP2PFileEntry(
 		String fileName, java.io.File file, String mimeType, long folderId,
-		long groupId, long companyId)
+		long groupId, long companyId, long userCreatedId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			java.io.IOException {
 		return _p2pActivityLocalService.addP2PFileEntry(fileName, file,
-			mimeType, folderId, groupId, companyId);
+			mimeType, folderId, groupId, companyId, userCreatedId);
 	}
 
 	@Override
@@ -338,11 +338,12 @@ public class P2PActivityLocalServiceWrapper implements P2PActivityLocalService,
 
 	@Override
 	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> getP2PActivitiesToCorrect(
-		long actId, long p2pActivityId, int numValidaciones,
-		String assignationType)
+		long actId,
+		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity,
+		int numValidaciones, String assignationType)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _p2pActivityLocalService.getP2PActivitiesToCorrect(actId,
-			p2pActivityId, numValidaciones, assignationType);
+			p2pActivity, numValidaciones, assignationType);
 	}
 
 	/**

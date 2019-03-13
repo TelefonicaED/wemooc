@@ -32,4 +32,8 @@ public class P2PPrefsPropsValues {
 	public static String getP2PEmailFromAddress(long companyId) {
 		return PrefsPropsUtil.getString(companyId, P2PPropsKeys.ADMIN_EMAIL_FROM_ADDRESS, P2PPropsValues.ADMIN_EMAIL_FROM_ADDRESS);
 	}
+	
+	public static int getNumEvaluationCriteria(long companyId) {
+		return PrefsPropsUtil.getInteger(companyId, P2PPropsKeys.NUM_EVALUATION_CRITERIA, P2PPropsValues.NUM_EVALUATION_CRITERIA);
+	}
 }

@@ -325,6 +325,10 @@ public class LearningActivityResultLocalServiceUtil {
 			userId);
 	}
 
+	public static boolean hasUserPassed(long actId, long userId) {
+		return getService().hasUserPassed(actId, userId);
+	}
+
 	/**
 	* Updates the learning activity result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

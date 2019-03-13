@@ -347,6 +347,11 @@ public class LearningActivityResultLocalServiceWrapper
 			userId);
 	}
 
+	@Override
+	public boolean hasUserPassed(long actId, long userId) {
+		return _learningActivityResultLocalService.hasUserPassed(actId, userId);
+	}
+
 	/**
 	* Updates the learning activity result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

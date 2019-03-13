@@ -19,7 +19,7 @@
 <%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
 <%@page import="com.ted.lms.model.LearningActivityType"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
-<%@ include file="../../init.jsp" %>
+<%@ include file="init.jsp" %>
 
 <%long actId = ParamUtil.getLong(request, "actId", 0);
 boolean canBeEdited = ParamUtil.getBoolean(request, "canBeEdited", true);
@@ -35,8 +35,12 @@ if(actId > 0){
 
 Calendar cal = CalendarFactoryUtil.getCalendar(timeZone, locale); 
 
-Date date = p2pActivityType != null && p2pActivityType.getUploadDate() != null ? p2pActivityType.getUploadDate(): new Date();
-cal.setTime(date);
+if(p2pActivityType != null && p2pActivityType.getUploadDate() != null){
+	Date date = p2pActivityType.getUploadDate();
+	cal.setTime(date);
+}else{
+	cal.add(Calendar.YEAR, 1);
+}
 
 int month = ParamUtil.getInteger(request, "uploadDateMonth", cal.get(Calendar.MONTH));
 int day = ParamUtil.getInteger(request, "uploadDateDay", cal.get(Calendar.DATE));

@@ -3,6 +3,7 @@ package com.ted.lms.web.internal.portlet.action;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.LearningActivityTypeFactory;
@@ -36,6 +37,8 @@ public class AddActivityMVCRenderCommand implements MVCRenderCommand {
 			System.out.println("lat: " + lat.getName(themeDisplay.getLocale()));
 		}
 		
+		PortalUtil.clearRequestParameters(renderRequest);
+		renderResponse.setProperty("clear-request-parameters",Boolean.TRUE.toString());
 		renderRequest.setAttribute("moduleId", moduleId);
 		renderRequest.setAttribute("listLearningActivityTypeFactory", listLearningActivityTypeFactory);
 		

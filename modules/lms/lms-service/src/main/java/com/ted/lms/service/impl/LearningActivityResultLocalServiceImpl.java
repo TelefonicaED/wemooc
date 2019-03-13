@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.audit.api.AuditFactory;
 import com.ted.lms.constants.LMSAuditConstants;
@@ -72,8 +73,18 @@ public class LearningActivityResultLocalServiceImpl
 		return learningActivityResultPersistence.countByActId(actId);
 	}
 	
+	@Override
+	public boolean hasUserPassed(long actId, long userId) {
+		LearningActivityResult learningActivityResult = learningActivityResultPersistence.fetchByActIdUserId(actId, userId);
+		return learningActivityResult != null && learningActivityResult.isPassed();
+	}
+	
 	public LearningActivityResult updateLearningActivityResult(LearningActivityTry learningActivityTry, ServiceContext serviceContext) throws PortalException {
 
+		if(serviceContext == null) {
+			serviceContext = ServiceContextThreadLocal.getServiceContext();
+		}
+		
 		LearningActivityResult learningActivityResult = learningActivityResultPersistence.fetchByActIdUserId(learningActivityTry.getActId(), learningActivityTry.getUserId());
 		
 		boolean recalculateActivity = false;

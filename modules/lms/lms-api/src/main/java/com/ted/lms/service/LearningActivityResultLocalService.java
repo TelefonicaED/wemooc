@@ -301,6 +301,9 @@ public interface LearningActivityResultLocalService extends BaseLocalService,
 	public int getRequiredLearningActivityResultsByModuleCount(long moduleId,
 		long userId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasUserPassed(long actId, long userId);
+
 	/**
 	* Updates the learning activity result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	*

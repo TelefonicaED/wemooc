@@ -49,6 +49,15 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
+		PortletURL searchURL = renderResponse.createRenderURL();
+		searchURL.setParameter("mvcRenderCommandName", "/courses/view");
+		searchURL.setParameter("actId", String.valueOf(201));
+		renderRequest.setAttribute("searchURL", searchURL.toString());
+		
+		String criteria = ParamUtil.getString(renderRequest, "criteria");
+		System.out.println("render criteria:_ " + criteria);
+		System.out.println("render vir: " + ParamUtil.getBoolean(renderRequest, "vir", false));
+		
 		String keywords = ParamUtil.getString(renderRequest, "keywords", null);
 		
 		log.debug("keywords: " + keywords);

@@ -62,7 +62,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	@Override
 	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
 			courseResult = updateCourseResult(courseResult, lresult);
@@ -88,7 +88,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 		boolean passed = true;
 		long result = 0;
 		// Se obtienen los módulos aprobados por el usuario.
-		long modulesPassedByUser = moduleResultLocalService.countModulesUserPassed(groupCreatedId, userId);
+		long modulesPassedByUser = moduleResultLocalService.countModulesUserPassed(groupCreatedId, courseResult.getUserId());
 		log.debug("--- Numero de modulos pasados "+modulesPassedByUser);
 		
 		// Se calcula el resultado del usuario.
@@ -129,7 +129,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 					numTriesCurrentAct = activity.getTries();
 					// Si la actividad no tiene un número ilimitado de intentos (numTriesCurrentAct = 0) y el usuario ya ha hecho todos los intentos disponibles se marca el curso como "Suspenso" (isFailed). 
 					if(numTriesCurrentAct != 0) {						
-						numTriesDone = learningActivityTryLocalService.getLearningActivityTriesCount(lar.getActId(), userId);
+						numTriesDone = learningActivityTryLocalService.getLearningActivityTriesCount(lar.getActId(), courseResult.getUserId());
 						log.debug("-- NUM TRIES CURRENT ACT "+numTriesCurrentAct);
 						log.debug("-- NUM TRIES DONE "+numTriesDone);
 						if (numTriesCurrentAct <= numTriesDone) {

@@ -87,16 +87,5 @@
 		<finder name="UserId" return-type="Collection">
 			<finder-column name="userId" />
 		</finder>			
-		<finder name="P2PActivityIdDateNotNull" return-type="Collection" where="date IS NOT null">
-			<finder-column name="p2pActivityId" />
-		</finder>	
-		<finder name="ActIdUserIdDateNotNull" return-type="Collection" where="date IS NOT null">
-			<finder-column name="actId" />
-			<finder-column name="userId" />
-		</finder>	
-		<finder name="P2pActivityIdActIdDateNotNull" return-type="Collection" where="date IS NOT null">
-			<finder-column name="p2pActivityId" />
-			<finder-column name="actId" />
-		</finder>
 	</entity>
 </service-builder>

@@ -203,7 +203,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 		
 		Date now = new Date();
 		
-		if(!(getEndDate()!=null && getEndDate().after(now) && getStartDate()!=null && getStartDate().before(now))){
+		if((getEndDate()!=null && getEndDate().before(now)) || (getStartDate()!=null && getStartDate().after(now))){
 			return true;
 		}
 		

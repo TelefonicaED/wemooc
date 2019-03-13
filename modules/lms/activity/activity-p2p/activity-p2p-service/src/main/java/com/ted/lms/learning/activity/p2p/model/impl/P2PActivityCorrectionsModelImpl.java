@@ -80,7 +80,7 @@ public class P2PActivityCorrectionsModelImpl extends BaseModelImpl<P2PActivityCo
 			{ "p2pActivityId", Types.BIGINT },
 			{ "userId", Types.BIGINT },
 			{ "actId", Types.BIGINT },
-			{ "description", Types.VARCHAR },
+			{ "description", Types.CLOB },
 			{ "date_", Types.TIMESTAMP },
 			{ "fileEntryId", Types.BIGINT },
 			{ "result", Types.BIGINT }
@@ -99,13 +99,13 @@ public class P2PActivityCorrectionsModelImpl extends BaseModelImpl<P2PActivityCo
 		TABLE_COLUMNS_MAP.put("p2pActivityId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("description", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("date_", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("fileEntryId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("result", Types.BIGINT);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table PTP_P2PActivityCorrections (uuid_ VARCHAR(75) null,p2pActivityCorrectionsId LONG not null primary key,groupId LONG,companyId LONG,userCreateId LONG,userCreateName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,p2pActivityId LONG,userId LONG,actId LONG,description VARCHAR(75) null,date_ DATE null,fileEntryId LONG,result LONG)";
+	public static final String TABLE_SQL_CREATE = "create table PTP_P2PActivityCorrections (uuid_ VARCHAR(75) null,p2pActivityCorrectionsId LONG not null primary key,groupId LONG,companyId LONG,userCreateId LONG,userCreateName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,p2pActivityId LONG,userId LONG,actId LONG,description TEXT null,date_ DATE null,fileEntryId LONG,result LONG)";
 	public static final String TABLE_SQL_DROP = "drop table PTP_P2PActivityCorrections";
 	public static final String ORDER_BY_JPQL = " ORDER BY p2pActivityCorrections.p2pActivityCorrectionsId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY PTP_P2PActivityCorrections.p2pActivityCorrectionsId ASC";

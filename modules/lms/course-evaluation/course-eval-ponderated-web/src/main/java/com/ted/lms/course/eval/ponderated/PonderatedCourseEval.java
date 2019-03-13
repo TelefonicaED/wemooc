@@ -48,7 +48,7 @@ public class PonderatedCourseEval extends BaseCourseEval{
 		
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 		
-		return updateCourseResult(courseResult, userId, lresult);
+		return updateCourseResult(courseResult, courseResult.getUserId(), lresult);
 	}
 
 	@Override
@@ -73,10 +73,10 @@ public class PonderatedCourseEval extends BaseCourseEval{
 	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
 		// Se obtiene el courseresult del usuario en dicho course.
 
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
-			courseResult = updateCourseResult(courseResult, userId, lresult);
+			courseResult = updateCourseResult(courseResult, courseResult.getUserId(), lresult);
 			courseResult = courseResultLocalService.updateCourseResult(courseResult);
 		}
 		return courseResult;	

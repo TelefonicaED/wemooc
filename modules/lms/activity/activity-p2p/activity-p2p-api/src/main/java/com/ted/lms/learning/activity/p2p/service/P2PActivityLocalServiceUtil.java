@@ -77,12 +77,12 @@ public class P2PActivityLocalServiceUtil {
 
 	public static com.liferay.document.library.kernel.model.DLFileEntry addP2PFileEntry(
 		String fileName, java.io.File file, String mimeType, long folderId,
-		long groupId, long companyId)
+		long groupId, long companyId, long userCreatedId)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			java.io.IOException {
 		return getService()
 				   .addP2PFileEntry(fileName, file, mimeType, folderId,
-			groupId, companyId);
+			groupId, companyId, userCreatedId);
 	}
 
 	public static com.liferay.portal.kernel.repository.model.Folder addP2PFolder(
@@ -322,11 +322,12 @@ public class P2PActivityLocalServiceUtil {
 	}
 
 	public static java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> getP2PActivitiesToCorrect(
-		long actId, long p2pActivityId, int numValidaciones,
-		String assignationType)
+		long actId,
+		com.ted.lms.learning.activity.p2p.model.P2PActivity p2pActivity,
+		int numValidaciones, String assignationType)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .getP2PActivitiesToCorrect(actId, p2pActivityId,
+				   .getP2PActivitiesToCorrect(actId, p2pActivity,
 			numValidaciones, assignationType);
 	}
 

@@ -8,5 +8,5 @@ import com.liferay.portal.kernel.util.PropsKeys;
  *
  */
 public class ResourceInternalPropsKeys implements PropsKeys{
-	public static final String DOCUMENT_LINKED = "lms.resource.internal.linked";
+	public static final String ASSET_TYPES = "lms.resource.internal.asset.types";
 }

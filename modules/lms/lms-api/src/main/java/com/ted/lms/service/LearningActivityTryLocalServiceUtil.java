@@ -200,6 +200,16 @@ public class LearningActivityTryLocalServiceUtil {
 				   .fetchLearningActivityTryByUuidAndGroupId(uuid, groupId);
 	}
 
+	public static com.ted.lms.model.LearningActivityTry finishLearningActivityTry(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		double result,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .finishLearningActivityTry(learningActivityTry, result,
+			serviceContext);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
 		return getService().getActionableDynamicQuery();
 	}
@@ -333,6 +343,16 @@ public class LearningActivityTryLocalServiceUtil {
 	public static com.ted.lms.model.LearningActivityTry updateLearningActivityTry(
 		com.ted.lms.model.LearningActivityTry learningActivityTry) {
 		return getService().updateLearningActivityTry(learningActivityTry);
+	}
+
+	public static com.ted.lms.model.LearningActivityTry updateLearningActivityTry(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		double result,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateLearningActivityTry(learningActivityTry, result,
+			serviceContext);
 	}
 
 	public static LearningActivityTryLocalService getService() {

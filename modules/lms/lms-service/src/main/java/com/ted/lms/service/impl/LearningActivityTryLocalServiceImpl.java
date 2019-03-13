@@ -105,4 +105,51 @@ public class LearningActivityTryLocalServiceImpl
 		
 		return learningActivityTry;
 	}
+	
+	public LearningActivityTry updateLearningActivityTry(LearningActivityTry learningActivityTry, double result, ServiceContext serviceContext) throws PortalException {
+		
+		learningActivityTry.setResult(result);
+		
+		//Actualizamos los campos de auditoria
+		User user = userLocalService.getUser(serviceContext.getUserId());
+		Date now = new Date();
+		learningActivityTry.setUserModifiedId(serviceContext.getUserId());
+		learningActivityTry.setUserModifiedName(user.getFullName());
+		learningActivityTry.setModifiedDate(now);
+		
+		learningActivityTry = learningActivityTryPersistence.update(learningActivityTry);
+		
+		learningActivityResultLocalService.updateLearningActivityResult(learningActivityTry, serviceContext);
+		
+		//auditing
+		AuditFactory.audit(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_TRY_UPDATE, 
+				LearningActivityTry.class.getName(), learningActivityTry.getPrimaryKey(), user.getUserId(), 
+				user.getFullName(), null);
+		
+		return learningActivityTry;
+	}
+	
+	public LearningActivityTry finishLearningActivityTry(LearningActivityTry learningActivityTry, double result, ServiceContext serviceContext) throws PortalException {
+		
+		Date now = new Date();
+		learningActivityTry.setResult(result);
+		learningActivityTry.setEndDate(now);
+		
+		//Actualizamos los campos de auditoria
+		User user = userLocalService.getUser(serviceContext.getUserId());
+		learningActivityTry.setUserModifiedId(serviceContext.getUserId());
+		learningActivityTry.setUserModifiedName(user.getFullName());
+		learningActivityTry.setModifiedDate(now);
+		
+		learningActivityTry = learningActivityTryPersistence.update(learningActivityTry);
+		
+		learningActivityResultLocalService.updateLearningActivityResult(learningActivityTry, serviceContext);
+		
+		//auditing
+		AuditFactory.audit(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_TRY_FINISH, 
+				LearningActivityTry.class.getName(), learningActivityTry.getPrimaryKey(), user.getUserId(), 
+				user.getFullName(), null);
+		
+		return learningActivityTry;
+	}
 }

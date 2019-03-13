@@ -59,14 +59,17 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 	private ModuleResult updateModuleResult(ModuleResult moduleResult, List<LearningActivity> learningActivities) {
 		
 		//Si el módulo no tiene actividades no lo podemos aprobar, da igual que sean obligatorias o no
-		boolean passedModule = learningActivityLocalService.getLearningActivitiesOfModuleCount(moduleResult.getModuleId()) > 0;
+		boolean passedModule = learningActivities.size() > 0;
 		long activitiesPassed = 0;
         Date passedDate = new Date(0);
         LearningActivityResult learningActivityResult = null;
         int i = 0;
+        log.debug("passedModule: " + passedModule);
+        log.debug("learningActivities size: " + learningActivities.size());
         
-        while(passedModule && i < learningActivities.size()) {	
+        while(i < learningActivities.size()) {	
         	learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(learningActivities.get(i).getActId(), moduleResult.getUserId());
+        	log.debug("learningActivityResult: " + (learningActivityResult != null ? learningActivityResult.isPassed(): "null"));
 
 			if(learningActivityResult != null && learningActivityResult.isPassed()) {
 				activitiesPassed++;
@@ -77,6 +80,7 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 				passedModule = false;
 			}
 			i++;
+			log.debug("activitiesPassed: " + activitiesPassed);
 		}
 
 		//Indicamos la media y el resultado del m�dulo.

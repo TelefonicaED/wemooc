@@ -10,6 +10,8 @@ import com.ted.lms.inscription.teams.constants.InscriptionTeamsPortletKeys;
 import com.ted.lms.model.BaseInscriptionTypeFactory;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.InscriptionTypeFactory;
+import com.ted.lms.service.CourseLocalService;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -73,5 +75,12 @@ public class TeamsInscriptionFactory extends BaseInscriptionTypeFactory{
 	}
 	
 	protected TeamLocalService teamLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setCourseLocalService(CourseLocalService courseLocalService) {
+		this.courseLocalService = courseLocalService;
+	}
+	
+	protected CourseLocalService courseLocalService;
 
 }

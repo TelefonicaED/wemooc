@@ -92,8 +92,8 @@ public interface P2PActivityLocalService extends BaseLocalService,
 	public P2PActivity addP2PActivity(P2PActivity p2pActivity);
 
 	public DLFileEntry addP2PFileEntry(String fileName, File file,
-		String mimeType, long folderId, long groupId, long companyId)
-		throws PortalException, IOException;
+		String mimeType, long folderId, long groupId, long companyId,
+		long userCreatedId) throws PortalException, IOException;
 
 	public Folder addP2PFolder(long userId, long groupId)
 		throws PortalException;
@@ -287,7 +287,7 @@ public interface P2PActivityLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<P2PActivity> getP2PActivitiesToCorrect(long actId,
-		long p2pActivityId, int numValidaciones, String assignationType)
+		P2PActivity p2pActivity, int numValidaciones, String assignationType)
 		throws PortalException;
 
 	/**

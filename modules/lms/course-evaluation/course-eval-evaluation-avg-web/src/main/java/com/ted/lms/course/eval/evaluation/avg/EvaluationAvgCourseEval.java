@@ -212,10 +212,10 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 			return null;
 		}
 		
-		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), userId);
+		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 
 		if(courseResult.getStartDate() != null || (courseResult.getStartDate() != null &&  lresult.size() > 0)){
-			courseResult = updateCourseResult(courseResult, passPuntuation, evaluations, userId);	
+			courseResult = updateCourseResult(courseResult, passPuntuation, evaluations);	
 			courseResult = courseResultLocalService.updateCourseResult(courseResult);
 		}
 		

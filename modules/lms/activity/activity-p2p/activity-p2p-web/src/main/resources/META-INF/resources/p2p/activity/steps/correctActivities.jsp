@@ -1,131 +1,91 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="com.ted.lms.model.Module"%>
-<%@page import="com.liferay.portal.kernel.service.LayoutLocalServiceUtil"%>
-<%@page import="com.liferay.portal.kernel.model.Layout"%>
-<%@page import="com.liferay.portal.kernel.model.Group"%>
 <%@page import="com.liferay.portal.kernel.json.JSONObject"%>
 <%@page import="com.liferay.portal.kernel.json.JSONFactoryUtil"%>
-<%@page import="com.liferay.portal.kernel.util.UnicodeFormatter"%>
 <%@page import="com.liferay.petra.string.StringPool"%>
-<%@page import="com.liferay.document.library.kernel.service.DLFileEntryLocalServiceUtil"%>
-<%@page import="com.liferay.document.library.kernel.model.DLFileEntry"%>
 <%@page import="com.liferay.portal.kernel.service.UserLocalServiceUtil"%>
-<%@page import="com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil"%>
-<%@page import="com.ted.lms.learning.activity.p2p.model.P2PActivity"%>
 <%@page import="com.liferay.portal.kernel.model.User"%>
 <%@page import="com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections"%>
-<%@page import="com.ted.lms.model.LearningActivityTry"%>
-<%@page import="java.util.List"%>
-<%@page import="com.ted.lms.service.LearningActivityTryLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.liferay.portal.kernel.json.JSONArray"%>
-<%@page import="com.ted.lms.service.CourseLocalServiceUtil"%>
-<%@page import="com.ted.lms.service.ModuleLocalServiceUtil"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Date"%>
-<%@page import="com.ted.lms.learning.activity.p2p.web.activity.P2PActivityType"%>
-<%@page import="com.ted.lms.learning.activity.p2p.web.activity.P2PActivityTypeFactory"%>
-<%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
-<%@page import="com.ted.lms.model.LearningActivity"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
-<%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
-<%@include file="../../../init.jsp" %>
+
+<liferay-ui:error key="p2ptask-no-empty-answer" message="learning-activity.p2p.steps.correct-activities.error.empty-answer" />
+<liferay-ui:error key="error-p2ptask-correction" message="learning-activity.p2p.steps.correct-activities.error" />
+<liferay-ui:error key="p2ptaskactivity-error-file-type" message="learning-activity.p2p.error.file.type" />
+<liferay-ui:error key="p2ptaskactivity-error-file-name" message="learning-activity.p2p.error.file.name" />
+<liferay-ui:error key="p2ptaskactivity-error-file" message="learning-activity.p2p.error.file" />
+<liferay-ui:success key="p2p-activity-assign-correct" message="learning-activity.p2p.success.p2p-activity-assign-correct" />
+<liferay-ui:error key="no-p2p-activity-assign" message="learning-activity.p2p.error.no-p2p-activity-assign" />
 
 <%
-Boolean isLinkTabletP2PCorrect = ParamUtil.getBoolean(request, "isTablet", false);
-String cssLinkTabletClassP2PCorrect="";
-if(isLinkTabletP2PCorrect){
-	cssLinkTabletClassP2PCorrect="tablet-link";
-}
-%>
+String textoCorrecion = "";
+boolean correctionsCompleted = ParamUtil.getBoolean(request, "correctionsCompleted", false);
+boolean correctionsSaved = ParamUtil.getBoolean(request, "correctionSaved", false);
 
-
-<script type="text/javascript">
-function actionDiv(element){
-	var ua = navigator.userAgent;
-	var re  = new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})");
-	var rv;
-	    if (re.exec(ua) != null){
-	      rv = parseFloat( RegExp.$1 );
-	  }
-	 var childs;
-	if ( rv == 8.0 ) {
-		childs = element.parentNode.querySelectorAll('.collapsable2');
-	}else{
-		childs = element.parentNode.getElementsByClassName("collapsable2");
-	}
-	
-	if(childs.length>0){
-		for (var i = 0; i < childs.length; i++) {
-			if (childs[i].style.display == 'none') {
-				childs[i].style.display = 'block';
-			}else{
-				childs[i].style.display = 'none';
-			}
-		}
-		
-		if(element.parentNode.className == 'option-more2'){
-			element.parentNode.className="option-less2";
-		}else{
-			element.parentNode.className="option-more2";
-		}
-	}
-}
-</script>
-
-<liferay-ui:error key="p2ptask-no-empty-answer" message="p2ptask-no-empty-answer" />
-<liferay-ui:error key="error-p2ptask-correction" message="error-p2ptask-correction" />
-<liferay-ui:error key="p2ptaskactivity-error-file-type" message="p2ptaskactivity.error.file.type" />
-<liferay-ui:error key="p2ptaskactivity-error-file-name" message="p2ptaskactivity-error-file-name" />
-<liferay-ui:error key="p2ptaskactivity-error-file" message="p2ptaskactivity-error-file" />
-
-<%
-String textoCorrecion = LanguageUtil.get(pageContext,"p2ptask-text-corrections");
-String correctionsCompleted = ParamUtil.getString(request, "correctionsCompleted", "false");
-String correctionsSaved = ParamUtil.getString(request, "correctionSaved", "false");
-
-
-long actId=ParamUtil.getLong(request,"actId",0);
-long latId=ParamUtil.getLong(request,"latId",0);
 long resultuser=ParamUtil.getLong(request,"resultuser",0);
-
-
-LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-
-P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
-P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
 
 int numCorrecciones = p2pActivityType.getNumValidations();
 boolean configAnonimous = p2pActivityType.getAnonimous();
 boolean result = p2pActivityType.getResult();
 
-Date date = new Date();
-SimpleDateFormat dFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-dFormat.setTimeZone(themeDisplay.getTimeZone());
-
-if(activity.getEndDate() == null){
-	date = ModuleLocalServiceUtil.fetchModule(activity.getModuleId()).getEndDate();
-	if(date == null){
-		date = CourseLocalServiceUtil.getCourseByGroupCreatedId(activity.getGroupId()).getExecutionEndDate();
-	}
-}else{
-	date = activity.getEndDate();
-}
 JSONArray evaluationCriteria = p2pActivityType.getEvaluationCriteria();
+
+System.out.println("are: " + P2PActivityCorrectionsLocalServiceUtil.areAllCorrectionsDoneByUserInP2PActivity(201, 20139, 1));
+
 %>
 
-<c:if test="<%=date.after(new Date()) %>">
-	<div class="description">
-		<span class="date-destacado"><liferay-ui:message key="p2ptaskactivity.dateexpire" arguments="<%=dFormat.format(date)%>" /></span>
+<!-- Start PopUp confirmation -->
+
+<div id="<portlet:namespace />p2pconfrmCorrec" class="hide">
+	<div class="contDesc description">
+		<%
+			for(int i=0;i<evaluationCriteria.length();i++){ 
+				String des = evaluationCriteria.getString(i);
+				if(i==0 || (des != null && des.length() > 0)){
+					if(Validator.isNull(des)){
+						des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
+					}
+		%>
+				
+				<p><label for="${renderResponse.getNamespace() }contentDescriptionCorrec_<%=i%>"><%=des %>: </label></p>
+				<p><span id="${renderResponse.getNamespace() }contentDescriptionCorrec_<%=i%>"></span></p>
+		<%		}else{
+					break;			
+				}
+			}
+		%>
 	</div>
-</c:if>
-<c:if test="<%=date.before(new Date()) %>">
-	<div class="description">
-		<p class="color_tercero"><liferay-ui:message key="p2ptaskactivity.dateexpired.message" arguments="<%=dFormat.format(date)%>" /></p>
+	<div class="contDesc">
+		<p><label for="${renderResponse.getNamespace() }contentFileCorrec"><liferay-ui:message key="learning-activity.p2p.steps.upload-activity.file-name" />: </label> </p>
+		<p><span id="${renderResponse.getNamespace() }contentFileCorrec"></span></p>
 	</div>
-</c:if>
+	
+	<c:if test="<%=result %>">
+		<div class="contDesc">
+			<p><label for="${renderResponse.getNamespace() }contentResult"><liferay-ui:message key="learning-activity.p2p.result" />: </span></p> 
+			<p><span id="${renderResponse.getNamespace() }contentResult"></span></p>
+		</div>
+	</c:if>
+	<p class="message"><liferay-ui:message key="learning-activity.p2p.steps.correct-activities.confirmation.message" /></p>
+	
+	<aui:button-row>
+		<aui:button type="button" onclick="${renderResponse.getNamespace()}closeConfirmationCorrection()" value="cancel" />
+		<aui:button type="button" cssClass="btn-primary" name="submitCorrec" value="learning-activity.p2p.steps.correct-activities.send-correction" />
+	</aui:button-row>
+</div>
+<!-- End PopUp confrimation -->
+
+<div id="<portlet:namespace />p2pSaved" class="hide">
+	<liferay-ui:message key="learning-activity.p2p.steps.correct-activities.save-correction.message" />
+</div>
+
+<div id="<portlet:namespace />p2pCorrectionCompleted" class="hide">
+	<liferay-ui:message key="learning-activity.p2p.steps.correct-activities.finish-corrections.message" />
+</div>
+
+
 
 <aui:script>
 	Liferay.provide(
@@ -140,8 +100,10 @@ JSONArray evaluationCriteria = p2pActivityType.getEvaluationCriteria();
 							if(Validator.isNull(des)){
 								des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
 							}%>
-							var descriptionVal = CKEDITOR.instances[thisEditor+'_<%=i%>'].getData();
 							
+							var editor = thisEditor+"_<%=i%>";
+							console.log("editor: " + editor);
+							var descriptionVal = $('#' + editor).val();
 							
 							if (descriptionVal == "" || descriptionVal == "<%= StringEscapeUtils.unescapeHtml(textoCorrecion) %>") {
 								alert(Liferay.Language.get("p2ptask-no-empty-answer"));
@@ -159,58 +121,31 @@ JSONArray evaluationCriteria = p2pActivityType.getEvaluationCriteria();
 	
 	Liferay.provide(
 	        window,
-	        '<portlet:namespace />clearTextCorrection',
-	        function (id) {
-				var desc = CKEDITOR.instances[id].document.getBody().getText();
-	
-				var textReplace = "<%= StringEscapeUtils.unescapeHtml(textoCorrecion)  %>";
-				if (desc == textReplace) {
-
-					CKEDITOR.instances[id].setData("");
-					CKEDITOR.instances[id].focus();
-				}
-	        },
-	        ['node']
-	);
-	
-	Liferay.provide(
-	        window,
 	        '<portlet:namespace />openPopUpCorrection',
 	        function (formName, thisEditor) {
+	        	console.log("formName: " + formName);
+	        	console.log("thisEditor: " + thisEditor);
 				var A = AUI();
 				var selector = 'form[name="'+formName+'"]';
 				var fileName = A.one(selector).one('input[name="<portlet:namespace />fileName"]').val();
 
 				var textResult = ''; 
-
-				//Se copia el atributo para no modificar el servicio
 				
-				<%
-					for(int i=0;i<evaluationCriteria.length();i++){
-						String des = evaluationCriteria.getString(i);
-						if(i==0 || (des != null && des.length() > 0)){
-							if(Validator.isNull(des)){
-								des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
-							}
-				%>
+				<%for(int i=0;i<evaluationCriteria.length();i++){
+					String des = evaluationCriteria.getString(i);
+					if(i==0 || (des != null && des.length() > 0)){
+						if(Validator.isNull(des)){
+							des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
+						}%>
 
-							var textDesc = CKEDITOR.instances[thisEditor+'_<%=i%>'].getData();
-	
-							AUI().one(selector).get(thisEditor+'_<%=i%>i').set('value',textDesc);
-	
-							AUI().one(selector).get(thisEditor+'_<%=i%>').set('value',textDesc);
-							textDesc = CKEDITOR.instances[thisEditor+'_<%=i%>'].document.getBody().getText();
-	
-	
-							
-	
-							A.one("#contentDescriptionCorrec_<%=i%>").html(textDesc);
-				<%
-						}else{
-							break;
-						}
+						var editor = thisEditor+"_<%=i%>";
+						var textDesc = $("#" + editor).val();
+
+						A.one("#<portlet:namespace />contentDescriptionCorrec_<%=i%>").html(textDesc);
+					<%}else{
+						break;
 					}
-				%>
+				}%>
 				
 				if(	A.one(selector).one('select[name="<portlet:namespace />resultuser"]') != null){
 					textResult = A.one(selector).one('select[name="<portlet:namespace />resultuser"]').val();
@@ -223,32 +158,37 @@ JSONArray evaluationCriteria = p2pActivityType.getEvaluationCriteria();
 					}
 				} else {
 					
-					fileName = Liferay.Language.get("p2ptaskactivity.inc.nofileselected");
+					fileName = Liferay.Language.get("learning-activity.p2p.error.file.empty");
 				}
 				
-				//Start opening popUp
-				if(A.one('#<portlet:namespace />p2pconfrmCorrec')) {
-					window.<portlet:namespace />p2pconfrmCorrecTitle = A.one('#<portlet:namespace />p2pconfrmCorrec h1').html();
-					window.<portlet:namespace />p2pconfrmCorrecBody = A.one('#<portlet:namespace />p2pconfrmCorrec').html();
-					A.one('#<portlet:namespace />p2pconfrmCorrec').remove();
-				}
+				var <portlet:namespace />p2pconfrmCorrecBody = $('#<portlet:namespace />p2pconfrmCorrec').html();
 				
-				window.<portlet:namespace />p2pconfrmCorrec = new A.Dialog({
-					id:'<portlet:namespace />showp2pconfrmCorrec',
-					title: window.<portlet:namespace />p2pconfrmCorrecTitle,
-		            bodyContent: window.<portlet:namespace />p2pconfrmCorrecBody,
-		            centered: true,
-		            modal: true,
-		            width: "auto",
-		            height: "auto"
-		        }).render();
+				if(window.<portlet:namespace />p2pconfrmCorrecpopup){
+					window.<portlet:namespace />p2pconfrmCorrecpopup.show();
+				}else{
+					window.<portlet:namespace />p2pconfrmCorrecpopup = Liferay.Util.Window.getWindow(
+							{
+								dialog: {
+									modal: true,
+									resizable: false,
+									width: "auto",
+									heigth: "auto",
+									centered: true,
+									bodyContent: <portlet:namespace />p2pconfrmCorrecBody
+								},
+								id: '<portlet:namespace />showp2pconfrmCorrec',
+								title: Liferay.Language.get('learning-activity.p2p.steps.correct-activities.confirmation.title'),
+								
+							}
+						).render();
+				}
 		        
-				A.one("#contentFileCorrec").html(fileName);
+				A.one("#<portlet:namespace />contentFileCorrec").html(fileName);
 
 				if(textResult != ''){
-					A.one("#contentResult").html(textResult);
+					A.one("#<portlet:namespace />contentResult").html(textResult);
 				}
-				A.one("#submitCorrec").on('click', function(){<portlet:namespace />commitFormCorrection(formName);});
+				A.one("#<portlet:namespace />submitCorrec").on('click', function(){<portlet:namespace />commitFormCorrection(formName);});
 				
 				window.<portlet:namespace />p2pconfrmCorrec.show();
 	        },
@@ -259,186 +199,86 @@ JSONArray evaluationCriteria = p2pActivityType.getEvaluationCriteria();
 	        window,
 	        '<portlet:namespace />commitFormCorrection',
 	        function (formName) {
-	        	var A = AUI();
 				var selector = 'form[name="'+formName+'"]';
-				A.one("#submitCorrec").attr("disabled", "disabled");
-				A.one(selector).submit();
+				$("#<portlet:namespace />submitCorrec").attr("disabled", "disabled");
+				$(selector).submit();
 	        },
 	        ['node']
 	);
 	
 	Liferay.provide(
 	        window,
-	        '<portlet:namespace />closeModal',
-	        function () {
-	        	var A = AUI();
-	        	A.DialogManager.closeByChild('#<portlet:namespace />showp2pSaved');
-	        	//window.setTimeout(function() {<portlet:namespace />openCompleted();}, 300);
-	        },
-	        ['aui-dialog']
-	);
-	
-	Liferay.provide(
-	        window,
 	        '<portlet:namespace />openSaved',
 	        function () {
-	        	var A = AUI();
 	        	
-				if(A.one('#<portlet:namespace />p2pSaved')){
-					window.<portlet:namespace />p2pSavedTitle = A.one('#<portlet:namespace />p2pSaved h1').html();
-					window.<portlet:namespace />p2pSavedBody = A.one('#<portlet:namespace />p2pSaved').html();
-					A.one('#<portlet:namespace />p2pSaved').remove();
+	        	var <portlet:namespace />p2pSavedBody = $('#<portlet:namespace />p2pSaved').html();
+
+				if(window.<portlet:namespace />p2pSavedpopup){
+					window.<portlet:namespace />p2pSavedpopup.show();
+				}else{
+					window.<portlet:namespace />p2pSavedpopup = Liferay.Util.Window.getWindow(
+							{
+								dialog: {
+									modal: true,
+									resizable: false,
+									width: "auto",
+									heigth: "auto",
+									centered: true,
+									bodyContent: <portlet:namespace />p2pSavedBody
+								},
+								id: '<portlet:namespace />p2pSaved',
+								title: Liferay.Language.get('learning-activity.p2p.steps.correct-activities.save-correction.title'),
+								
+							}
+						).render();
 				}
-				
-				window.<portlet:namespace />p2pSaved = new A.Dialog({
-					id:'<portlet:namespace />showp2pSaved',
-		            title: window.<portlet:namespace />p2pSavedTitle,
-		            bodyContent: window.<portlet:namespace />p2pSavedBody,
-		            centered: true,
-		            modal: true,
-		            width: "auto",
-		            height: "auto"
-		        }).render().show();
+
 	        },
-	        ['aui-dialog']
+	        ['node','aui-dialog']
 	);
 	
 	Liferay.provide(
 	        window,
 	        '<portlet:namespace />openCompleted',
 	        function () {
-	        	var A = AUI();
 	        	
-	        	if(A.one('#<portlet:namespace />p2pCorrectionCompleted')){
-					window.<portlet:namespace />p2pCorrectionCompletedTitle = A.one('#<portlet:namespace />p2pCorrectionCompleted h1').html();
-					window.<portlet:namespace />p2pCorrectionCompletedBody = A.one('#<portlet:namespace />p2pCorrectionCompleted').html();
-					A.one('#<portlet:namespace />p2pCorrectionCompleted').remove();
+	        	var <portlet:namespace />p2pCorrectionCompletedBody = $('#<portlet:namespace />p2pCorrectionCompleted').html();
+
+				if(window.<portlet:namespace />p2pCorrectionCompletedBody){
+					window.<portlet:namespace />p2pCorrectionCompletedBody.show();
+				}else{
+					window.<portlet:namespace />p2pCorrectionCompletedBody = Liferay.Util.Window.getWindow(
+							{
+								dialog: {
+									modal: true,
+									resizable: false,
+									width: "auto",
+									heigth: "auto",
+									centered: true,
+									bodyContent: <portlet:namespace />p2pCorrectionCompletedBody
+								},
+								id: '<portlet:namespace />p2pCorrectionCompleted',
+								title: Liferay.Language.get('learning-activity.p2p.steps.correct-activities.finish-corrections.title'),
+								
+							}
+						).render();
 				}
-				
-				window.<portlet:namespace />p2pCorrectionCompleted = new A.Dialog({
-					id:'<portlet:namespace />showp2pCorrectionCompleted',
-		            title: window.<portlet:namespace />p2pCorrectionCompletedTitle,
-		            bodyContent: window.<portlet:namespace />p2pCorrectionCompletedBody,
-		            centered: true,
-		            modal: true,
-		            width: "auto",
-		            height: "auto"
-		        }).render().show();				
+
 	        },
-	        ['aui-dialog']
+	        ['node','aui-dialog']
 	);
 	
 	Liferay.provide(
 	        window,
 	        '<portlet:namespace />closeConfirmationCorrection',
 	        function() {
-				var A = AUI();
-				
-				A.DialogManager.closeByChild('#<portlet:namespace />showp2pconfrmCorrec');
-	        },
-	        ['aui-dialog']
-	    );
-	
-	Liferay.provide(
-	        window,
-	        '<portlet:namespace />closeFormP2pSaved',
-	        function() {
-				var A = AUI();
-				A.DialogManager.closeByChild('#<portlet:namespace />showp2pSaved');
-	        },
-	        ['aui-dialog']
-	    );
-	
-	Liferay.provide(
-	        window,
-	        '<portlet:namespace />closeFormsP2pCorrectionCompleted',
-	        function() {
-				var A = AUI();
-				A.DialogManager.closeByChild('#<portlet:namespace />showp2pCorrectionCompleted');
-	        },
-	        ['aui-dialog']
+				window.<portlet:namespace />p2pconfrmCorrecpopup.hide();
+	        }
 	    );
 	
 	</aui:script>
 
-<!-- Start PopUp confirmation -->
-
-<div id="<portlet:namespace />p2pconfrmCorrec" style="display:none">
-	<h1><liferay-ui:message key="p2ptask-uploadcorrect-confirmation" /></h1>
-	<div class="desc color_tercero"><liferay-ui:message key="p2ptask-uploadcorrect-description" /></div>
-	<br />
-	<div class="contDesc description">
-		<%
-			for(int i=0;i<evaluationCriteria.length();i++){ 
-				String des = evaluationCriteria.getString(i);
-				if(i==0 || (des != null && des.length() > 0)){
-					if(Validator.isNull(des)){
-						des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
-					}
-		%>
-				
-				<p><span class="label"><%=des %>: </span><span id="contentDescriptionCorrec_<%=i%>"></span></p>
-		<%		}else{
-					break;			
-				}
-			}
-		%>
-		<p><span class="label"><liferay-ui:message key="p2ptask-file-name" />: </span> <span id="contentFileCorrec"></span></p>
-		<c:if test="<%=result %>">
-			<p><span class="label"><liferay-ui:message key="p2ptask-file-result" />: </span> <span id="contentResult"></span></p>
-		</c:if>
-		<p class="message"><liferay-ui:message key="p2ptask-uploadcorrect-task-message" /></p>
-	</div>
-	<div class="buttons">
-		<input type="button" class="button simplemodal-close" onclick="<portlet:namespace />closeConfirmationCorrection()" value="<liferay-ui:message key="cancel" />" />
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<input type="button" class="button" id="submitCorrec" value="<liferay-ui:message key="p2ptask-correction" />" />
-	</div>
-</div>
-<!-- End PopUp confrimation -->
-
-
-<div id="<portlet:namespace />p2pCorrectionCompleted" style="display:none">
-	<h1><liferay-ui:message key="p2ptaskactivity.inc.p2pcorrectioncompleted.title" /></h1>
-	<div class="desc color_tercero"><liferay-ui:message key="p2ptaskactivity.inc.p2pcorrectioncompleted.subtitle" /></div>
-	<br />
-	<div class="contDesc bg-icon-check">
-		<p><liferay-ui:message key="p2ptaskactivity.inc.p2pcorrectioncompleted.message" /></p>
-	</div>
-	<div class="buttons">
-		<input type="button" class="button simplemodal-close" id="buttonClose" value="<liferay-ui:message key="close" />" onclick="<portlet:namespace />closeFormsP2pCorrectionCompleted()" />
-	</div>
-</div>
-
-<div id="<portlet:namespace />p2pSaved" style="display:none">
-	<h1><liferay-ui:message key="p2ptaskactivity.inc.p2puploadedcompleted.title" /></h1>
-	<div class="desc color_tercero"><liferay-ui:message key="p2ptaskactivity.inc.p2puploadedcompleted.subtitle" /></div>
-	<br />
-	<div class="contDesc bg-icon-ok">
-		<p><liferay-ui:message key="p2ptaskactivity.inc.p2puploadedcompleted.message" /></p>
-	</div>
-	<div class="buttons">
-	<%if(correctionsCompleted.equals("true")){ %>
-		<input type="button" class="button " id="<portlet:namespace />completed" value="<liferay-ui:message key="close" />" onclick=" <portlet:namespace />closeModal();" />
-	<%}else{ %>
-		<input type="button" class="button simplemodal-close" id="buttonClose" value="<liferay-ui:message key="close" />" onclick="<portlet:namespace />closeFormP2pSaved()" />
-	<%} %>
-	</div>
-</div>
-
-
 <%
-
-if(latId==0){
-	if(LearningActivityTryLocalServiceUtil.getLearningActivityTriesCount(actId, themeDisplay.getUserId())>0){
-		List<LearningActivityTry> latList = LearningActivityTryLocalServiceUtil.getLearningActivityTries(actId, themeDisplay.getUserId());
-		if(!latList.isEmpty()){
-			for(LearningActivityTry lat :latList){
-				latId = lat.getLatId();
-			}
-		}
-	}
-}
 
 long userId = themeDisplay.getUserId();
 int cont = 0;
@@ -448,371 +288,256 @@ boolean allCorrected = true;
 
 //Obtenemos todas las correcciones que tiene asignado el usuario.
 List<P2PActivityCorrections> p2pActList = P2PActivityCorrectionsLocalServiceUtil.getCorrections(actId, userId);
+System.out.println("correcciones asignadas: " + p2pActList.size());
 
 int contaValidations = 0;
 
-LearningActivityTry larEntry=LearningActivityTryLocalServiceUtil.getLearningActivityTry(latId);
-
-SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-dateFormat.setTimeZone(timeZone);
-
 List<P2PActivityCorrections> listDone = P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByUser(actId, userId);
 
-String []arg = {String.valueOf(p2pActivityType.getNumValidations()-listDone.size()) , String.valueOf(p2pActivityType.getNumValidations())};
-
 %>
-	<div class="numbervalidations color_tercero font_13">
-		<p>
-			<c:if test="<%=p2pActivityType.getNumValidations()-listDone.size() > 0 %>">
-				<liferay-ui:message key="p2ptaskactivity.inc.numbervalidations" arguments="<%=arg %>" /> 
-			</c:if>
-			<c:if test="<%=p2pActivityType.getNumValidations()-listDone.size() == 0 %>">
-				<liferay-ui:message key="p2ptaskactivity.inc.validationscompleted" /> 
-			</c:if>
-		</p>
-	</div>
+<div class="numbervalidations">
+	<c:if test="<%=p2pActivityType.getNumValidations()-listDone.size() > 0 %>">
+		<%String []arg = {String.valueOf(p2pActivityType.getNumValidations()-listDone.size()) , String.valueOf(p2pActivityType.getNumValidations())}; %>
+		<liferay-ui:message key="learning-activity.p2p.steps.correct-activities.number-validations" arguments="<%=arg %>" /> 
+	</c:if>
+	<c:if test="<%=p2pActivityType.getNumValidations()-listDone.size() == 0 %>">
+		<liferay-ui:message key="learning-activity.p2p.steps.correct-activities.validations-completed" /> 
+	</c:if>
+</div>
 
 <%
 if(!p2pActList.isEmpty()){
 	String fullName ="";
 	User propietary;
 	boolean anonimous;
-	for (P2PActivityCorrections myP2PActiCor : p2pActList){
-		
+	P2PActivity p2pActivity = null;%>
+	
+	<liferay-ui:panel-container extended="false"  persistState="false">
+	
+	<%for (P2PActivityCorrections myP2PActiCor : p2pActList){
 		if(contaValidations >= p2pActivityType.getNumValidations()){
 			break;
 		}
 		
-		P2PActivity myP2PActivity = P2PActivityLocalServiceUtil.getP2PActivity(myP2PActiCor.getP2pActivityId());
-		propietary = UserLocalServiceUtil.fetchUser(myP2PActivity.getUserId());
+		p2pActivity = P2PActivityLocalServiceUtil.getP2PActivity(myP2PActiCor.getP2pActivityId());
+		propietary = UserLocalServiceUtil.fetchUser(p2pActivity.getUserId());
 		anonimous  = configAnonimous;
 		if(propietary!=null){
 			fullName = propietary.getFullName();
 		}else{
 			anonimous = true;
 		}
+		cont++;
 		//Si no estamos en el usuario actual.
-		if(myP2PActivity.getUserId()!=userId){
+		if(p2pActivity.getUserId()!=themeDisplay.getUserId()){
+			System.out.println("fecha de corrección: " + myP2PActiCor.getDate());
+			String urlFile = "";
+			int sizeKb = 0;
+			int size = 0;
+			String title = "";
+			String descriptionFile = "";
 			
-			//Si la fecha de corrección es null, es que no se ha corregido la tarea.
-			if(myP2PActiCor.getDate() == null)
-			{
+			if(p2pActivity.getFileEntryId() != 0){
 				
-				DLFileEntry dlfile = null;
-				String urlFile = "";
-				int size = 0;
-				int sizeKb = 0;
-				String title = "";
-				String descriptionFile = "";
-				
-				if(myP2PActivity.getFileEntryId() != 0)
-				{
-				
-					try{
-						dlfile = DLFileEntryLocalServiceUtil.getDLFileEntry(myP2PActivity.getFileEntryId());
-						urlFile = themeDisplay.getPortalURL()+"/documents/"+dlfile.getGroupId()+"/"+dlfile.getUuid();
-						size = Integer.parseInt(String.valueOf(dlfile.getSize()));
-						sizeKb = size/1024; //Lo paso a Kilobytes
-						title = dlfile.getTitle();
-						descriptionFile = dlfile.getDescription();
-						
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-					
+				try{
+					FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(p2pActivity.getFileEntryId());
+					FileVersion fileVersion = fileEntry.getFileVersion();
+					urlFile = DLUtil.getDownloadURL(fileEntry, fileVersion, themeDisplay, "");
+					size = Integer.parseInt(String.valueOf(fileEntry.getSize()));
+					sizeKb = size/1024; //Lo paso a Kilobytes
+					title = fileEntry.getTitle();
+					descriptionFile = fileEntry.getDescription();
+				}catch(Exception e){
+					e.printStackTrace();
 				}
-				
-				if(descriptionFile.equals("") && myP2PActivity.getDescription()!=null && !myP2PActivity.getDescription().equals("")){
-					descriptionFile = myP2PActivity.getDescription();
-				}
-				
-				cont++;
+			}
+			
 
-				allCorrected = false;
-				%>
-				<div class="option-more2">
+			if(Validator.isNull(descriptionFile) && Validator.isNotNull(p2pActivity.getDescription())){
+				descriptionFile = p2pActivity.getDescription();
+			}
+			String titlePanel = "";
+			if(anonimous){
+				titlePanel = LanguageUtil.format(themeDisplay.getLocale(), "learning-activity.p2p.steps.correct-activities.correction.anonimous", cont);
+			}else{
+				titlePanel = LanguageUtil.format(themeDisplay.getLocale(), "learning-activity.p2p.steps.correct-activities.correction.full-name", fullName);
+			}
+			
+			%>
+			<liferay-ui:panel title="<%=titlePanel%>" collapsible="true" defaultState="closed" >
+				<div class="p2p_correction">
 					
-					<span class="label-col2" onclick="actionDiv(this);" ><liferay-ui:message key="p2ptask-exercise" /> 
-						<c:if test="<%=!anonimous %>">
-							<span class="name">
-								<liferay-ui:message key="of" /> 
-								<%=fullName %>
-							</span>
-						</c:if>
-						<c:if test="<%=anonimous %>">
-						<span class="number">
-							<liferay-ui:message key="number" /> 
-							<%=cont%>
-						</span>
-						</c:if>
-					</span>
-					<div class="collapsable2" style="display:none">
-						<form enctype="multipart/form-data" method="post" action="<portlet:actionURL name="saveCorrection"></portlet:actionURL>" name="<portlet:namespace />f1_<%=cont%>" id="<portlet:namespace />f1_<%=cont%>">
-							<input type="hidden" name="actId" value="<%=actId%>"  />
-							<input type="hidden" name="latId" value="<%=latId%>"  />
-							<input type="hidden" name="p2pActivityCorrectionId" value="0"  />
-							<input type="hidden" name="p2pActivityId" value="<%=myP2PActivity.getP2pActivityId()%>"  />
-							<input type="hidden" name="userId" value="<%=userId%>"  />
-	
-							<c:if test="<%=myP2PActivity.getFileEntryId() != 0 %>">
-								<div class="doc_descarga">
-									<span><%=title%>&nbsp;(<%= sizeKb%> Kb)&nbsp;</span>
-									<a href="<%=urlFile%>" class="verMas <%=cssLinkTabletClassP2PCorrect %>" target="_blank"><liferay-ui:message key="p2ptask-donwload" /></a>
-								</div>
-							</c:if>
-							
-							<div class="correctAnswer"><%=descriptionFile  %></div>
-							
-							<% 
-
-							for(int i=0;i<evaluationCriteria.length();i++){ 
-								String des = evaluationCriteria.getString(i);
-								
-								if(i==0 || (des != null && des.length() > 0)){
-									if(Validator.isNull(des)){
-										des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
-									}
-										%>
-									
-									<div class="description">
-										<div class="correctQuestion"><%=des.replaceAll(StringPool.DOUBLE_QUOTE, StringPool.BLANK)+StringPool.COLON%></div>
-									</div>
+					<div class="correctAnswer"><%=descriptionFile  %></div>
 		
-									<aui:field-wrapper label='p2ptask-correction' name='<%="description_"+cont+"_"+i%>'>
-										<liferay-ui:input-editor name='<%="description_"+cont+"_"+i%>' width="100%" />
-										<aui:input name='<%="description_"+cont+"_"+i%>' type="hidden"/>
-										<script type="text/javascript">
-							    		    function <portlet:namespace />initEditor() {
-								    		    return "<%= UnicodeFormatter.toString(textoCorrecion) %>"; 
-								    		};
-								    		AUI().on('domready', function(){CKEDITOR.instances.<portlet:namespace />description_<%=cont%>_<%=i%>.on('focus',function(){<portlet:namespace />clearTextCorrection('<portlet:namespace />description_<%=cont %>_<%=i%>');});});
-							    		</script>
-									</aui:field-wrapper>
-									<aui:input name='<%="description_"+cont+StringPool.UNDERLINE+i+"i" %>' type="hidden"/>
+					<c:if test="<%=p2pActivity.getFileEntryId() != 0 %>">
+						<div class="doc_descarga">
+							<span><%=title%>&nbsp;(<%= sizeKb%> Kb)&nbsp;</span>
+							<a href="<%=urlFile%>" class="<%=cssLinkTabletClassP2PCorrect %>" target="_blank"><liferay-ui:message key="learning-activity.p2p.steps.correct-activities.download-file" /></a>
+						</div>
+					</c:if>
+				
+					<%//Si la fecha de corrección es null, es que no se ha corregido la tarea.
+					if(myP2PActiCor.getDate() == null){
+						allCorrected = false;
+						%>
+							<portlet:actionURL name="saveCorrection" var="saveCorrectionURL"/>
+							<aui:form enctype="multipart/form-data" method="post" action="${saveCorrectionURL }" name='<%="f1_" + cont%>'>
+								<aui:input type="hidden" name="actId" value="<%=actId%>"  />
+								<aui:input type="hidden" name="p2pActivityCorrectionId" value="0"  />
+								<aui:input type="hidden" name="p2pActivityId" value="<%=p2pActivity.getP2pActivityId()%>"  />
+								<aui:input type="hidden" name="userId" value="<%=userId%>"  />
+								<aui:input type="hidden" name="cont" value="<%=cont%>" />
 
-								<% } 	
-							}
+									<%for(int i=0;i<evaluationCriteria.length();i++){ 
+										String des = evaluationCriteria.getString(i);
+										
+										if(i==0 || (des != null && des.length() > 0)){
+											if(Validator.isNull(des)){
+												des = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
+											}%>
+												<label for="<%=renderResponse.getNamespace() +"descriptionContent_"+cont+"_"+i%>"><%=des %></label>
+												<liferay-editor:editor
+													contents='' 
+													editorName='alloyeditor'
+													name='<%="descriptionContent_"+cont+"_"+i%>'
+													required="<%= true %>" 
+													onChangeMethod='<%="OnChangeEditor" + cont+"_"+i %>'
+												/>
+												<aui:input name='<%="description_"+cont+"_"+i%>' type="hidden" value="" />
+												<aui:script>
+													function <portlet:namespace />OnChangeEditor<%=cont + "_" + i%>(html) {
+														$('#<portlet:namespace />description_<%=cont + "_" + i%>').val(html);
+													}
+												</aui:script>
+			
+										<%} 	
+									}%>
+
 									
-								%>
-							
-							
-								
-							<liferay-ui:error key="p2ptaskactivity-error-file-size" message="p2ptaskactivity.error.file.size" />
-							<div class="container-file">
-								<aui:input inlineLabel="left" inlineField="true"
-										  	name="fileName" id="fileName" type="file" value="" />
-							</div>
-							<c:if test="<%=result %>">
-								<div class="container-result color_tercero font_14">
-									<liferay-ui:message key="p2ptask.correction.selected.result" />
-									<aui:select name="resultuser"  id="resultuser" label="">
+								<liferay-ui:error key="p2ptaskactivity-error-file-size" message="learning-activity.p2p.error.file.size" />
+								<div class="container-file">
+									<aui:input name="fileName" type="file" value="" />
+								</div>
+								<c:if test="<%=result %>">
+									<aui:select name="resultUser"  label="learning-activity.p2p.steps.correct-activities.add-result">
 								    	<%for(int i=100; i>=0; i=i-10){%>
 								        	<option value="<%=i%>"><%=i %></option>
 								        <%}%>
 								    </aui:select>
+								</c:if>
+								<div>
+									<aui:button type="button" value="learning-activity.p2p.steps.correct-activities.send-correction" 
+										onclick="<%=renderResponse.getNamespace() + \"checkDataformC('\" + renderResponse.getNamespace() + \"f1_\" + cont + \"','\" + renderResponse.getNamespace() + \"description_\" + cont + \"')\" %>" />
 								</div>
-							</c:if>
-							<div>
-								<input type="button" class="button floatr" value="<liferay-ui:message key="p2ptask-correction" />" onclick="<portlet:namespace />checkDataformC('<portlet:namespace />f1_<%=cont%>','<portlet:namespace />description_<%=cont%>')" />
-							</div>
-						</form>
-					</div>
-				</div>
-			<%
-			} 
-			//Si ya ha corregido la tarea, solo debemos mostrar lo que se ha introducido.
-			else
-			{
-				listIdActivY.add(myP2PActivity.getPrimaryKey());
-							
-				cont++;
-				
-				String description = myP2PActiCor.getDescription();
-				String textButton = "p2ptask-correction";
-	
-				DLFileEntry dlfile = null;
-				String urlFile = "";
-				int size = 0;
-				int sizeKb = 0;
-				String title = "";
-				String descriptionFile = "";
-				
-				if(myP2PActivity.getFileEntryId() != 0)
-				{
-				
-					try{
-						dlfile = DLFileEntryLocalServiceUtil.getDLFileEntry(myP2PActivity.getFileEntryId());
-						urlFile = themeDisplay.getPortalURL()+"/documents/"+dlfile.getGroupId()+"/"+dlfile.getUuid(); 
-						size = Integer.parseInt(String.valueOf(dlfile.getSize()));
-						sizeKb = size/1024; //Lo paso a Kilobytes
-						title = dlfile.getTitle();
-					}catch(Exception e){
-						e.printStackTrace();
-					}					
-					
-				}
-	
-				if(myP2PActivity.getDescription() != null){
-					descriptionFile = myP2PActivity.getDescription();
-				}
-				%>
-	
-				<div class="option-more2">
-					<span class="label-col2" onclick="actionDiv(this);">
-						<liferay-ui:message key="p2ptask-exercise" />
-						<c:if test="<%=!anonimous %>">
-							<span class="name">
-								<liferay-ui:message key="of" /> 
-								<%=fullName %>
-							</span>
-						</c:if>
-						<c:if test="<%=anonimous %>">
-						<span class="number">
-							<liferay-ui:message key="number" /> 
-							<%=cont%>
-						</span>
-						</c:if>
-					</span>
-					<div class="collapsable2" style="display:none;">
-
-						<div class="description">
-							
-							<%=descriptionFile %>
-							
-						</div>
-
-						<c:if test="<%=myP2PActivity.getFileEntryId() != 0 %>">
-							<div class="doc_descarga">
-								<span><%=title%>&nbsp;(<%= sizeKb%> Kb)&nbsp;</span>
-								<a href="<%=urlFile%>" class="verMas <%=cssLinkTabletClassP2PCorrect %>" target="_blank"><liferay-ui:message key="p2ptask-donwload" /></a>
-							</div>
-						</c:if>
+							</aui:form>
+					<%
+					} //Si ya ha corregido la tarea, solo debemos mostrar lo que se ha introducido.
+					else {
+						listIdActivY.add(p2pActivity.getPrimaryKey());
+						
+						String description = myP2PActiCor.getDescription();
+						String textButton = "p2ptask-correction";
+						%>
 						<div class="degradade">
-							<div class="subtitle"><liferay-ui:message key="p2ptask-your-valoration" /> :</div>
-
+							<div class="subtitle"><liferay-ui:message key="learning-activity.p2p.steps.correct-activities.your-valoration" /> :</div>
+	
 							<div class="container-textarea">
-								<label for="<portlet:namespace/>readonlydesc" />
+								<label for="${renderResponse.getNamespace() }readonlydesc" />
 								
-								<%
-										JSONArray jArrayDes = null;
-										try{
-											jArrayDes = JSONFactoryUtil.createJSONArray(description);
-										}catch(Exception e){}
-										
-									
-										if(jArrayDes!=null&&jArrayDes.length()>0){
-											%><div class="p2pResponse"><ul><%
-											for(int i=0;i<jArrayDes.length();i++){
+								<%JSONArray jArrayDes = null;
+								try{
+									jArrayDes = JSONFactoryUtil.createJSONArray(description);
+								}catch(Exception e){}
+							
+								if(jArrayDes!=null&&jArrayDes.length()>0){%>
+									<div class="p2pResponse">
+										<ul>
+											<%for(int i=0;i<jArrayDes.length();i++){
 												JSONObject jsonObjectDes = null;
 												try{
 												jsonObjectDes = jArrayDes.getJSONObject(i);
 												}catch(Exception e){}
-
+			
 												String valoration = null;
 												if(jsonObjectDes!=null)
-													valoration = jsonObjectDes.getString("text"+i);
-												
-												%>
+													valoration = jsonObjectDes.getString("text"+i);%>
 													<li>
-														<% 
-															String value = evaluationCriteria.getString(i);
-															if(i==0 || (value!=null&&!value.equals(StringPool.BLANK))){
-																if(Validator.isNull(value)){
-																	value = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
-																}
-														%>
+														<% String value = evaluationCriteria.getString(i);
+														if(i==0 || (value!=null&&!value.equals(StringPool.BLANK))){
+															if(Validator.isNull(value)){
+																value = LanguageUtil.get(themeDisplay.getLocale(), "feedback");
+															}%>
 															<div class="p2pQuestion"><%=value %></div>
 															<div class="p2pCorrect"><%=valoration!=null?valoration:StringPool.BLANK %></div>
-														<%
-															}
-														%>
+														<%}%>
 													</li>
 												<%
-											}%></ul></div><%
-											
-										}else{
-											%><%=description %><%
-										}
-									%>
+											}%>
+										</ul>
+									</div><%
+									
+								}else{
+									%><%=description %><%
+								}%>
 							</div>
-							<%
-
-							if(myP2PActiCor.getFileEntryId()!=0){
+							<%if(myP2PActiCor.getFileEntryId()!=0){
 								
-								DLFileEntry dlfileCor = null;
-								try{
-									dlfileCor = DLFileEntryLocalServiceUtil.getDLFileEntry(myP2PActiCor.getFileEntryId());
-								}catch(Exception e){
-									//e.printStackTrace();
-								}
+								FileEntry fileEntryCorrection = DLAppLocalServiceUtil.getFileEntry(myP2PActiCor.getFileEntryId());
 								
-								if(dlfileCor != null){
-									String urlFileCor = themeDisplay.getPortalURL()+"/documents/"+dlfileCor.getGroupId()+"/"+dlfileCor.getUuid();
-									size = Integer.parseInt(String.valueOf(dlfileCor.getSize()));
+								if(fileEntryCorrection != null){
+									FileVersion fileVersionCorrection = fileEntryCorrection.getFileVersion();
+									String urlFileCorrection = DLUtil.getDownloadURL(fileEntryCorrection, fileVersionCorrection, themeDisplay, "");
+									size = Integer.parseInt(String.valueOf(fileEntryCorrection.getSize()));
 									sizeKb = size/1024; //Lo paso a Kilobytes
 								%>
 								<div class="doc_descarga">
-									<span><%=dlfileCor.getTitle()%>&nbsp;(<%= sizeKb%> Kb)&nbsp;</span>
-									<a href="<%=urlFileCor%>" class="verMas <%=cssLinkTabletClassP2PCorrect %>" target="_blank"><liferay-ui:message key="p2ptask-donwload" /></a>
+									<span><%=fileEntryCorrection.getTitle()%>&nbsp;(<%= sizeKb%> Kb)&nbsp;</span>
+									<a href="<%=urlFileCorrection%>" class="verMas <%=cssLinkTabletClassP2PCorrect %>" target="_blank"><liferay-ui:message key="learning-activity.p2p.steps.correct-activities.download-file" /></a>
 								</div>
 							<%	}
 							}%>
 						</div>
-					<c:if test="<%=result %>">
-							<div class="color_tercero font_13"><liferay-ui:message key="p2ptask.correction.activity" />: <%=myP2PActiCor.getResult() %></div>
-							</c:if>
-					</div>
+						<c:if test="<%=result %>">
+							<div class="color_tercero font_13"><liferay-ui:message key="learning-activity.p2p.result" />: <%=myP2PActiCor.getResult() %></div>
+						</c:if>
+						<%
+					}%>
 				</div>
-				<%
-			}
-		}
+			</liferay-ui:panel>
+		<%}
 		//Mostrar sólo el numero de correcciones que debe corregir.
 		contaValidations++;
-	}
-}
-
-
-
-if(p2pActList.isEmpty()){
-	Group grupo=themeDisplay.getScopeGroup();
-	long retoplid=themeDisplay.getPlid();
-	for(Layout theLayout:LayoutLocalServiceUtil.getLayouts(grupo.getGroupId(),false))
-	{
-
-		if(theLayout.getFriendlyURL().equals("/reto"))
-		{
-			retoplid=theLayout.getPlid();
-		}
-	}
-	LearningActivity  act = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-	Module myModule = ModuleLocalServiceUtil.getModule(act.getModuleId());
+	}%>
+	</liferay-ui:panel-container>
+<%} else {%>
 	
-	%>
-	<liferay-portlet:renderURL plid="<%=retoplid %>" portletName="lmsactivitieslist_WAR_liferaylmsportlet" var="gotoModuleURL">
-	<liferay-portlet:param name="moduleId" value="<%=Long.toString(myModule.getModuleId()) %>"></liferay-portlet:param>
-	</liferay-portlet:renderURL>
-	
-	<liferay-portlet:actionURL name="askForP2PActivities" var="askForP2PActivitiesURL">
-		<liferay-portlet:param name="actId" value="<%=String.valueOf(actId) %>" />
-	</liferay-portlet:actionURL>
-	
-	<div class="no-p2pActivites-uploaded">
-		<liferay-ui:message key="no-p2pActivites-uploaded" />
-		<c:if test='<%=p2pActivityType.getAskForP2PActivities()%>'>
-			<div>
-				<aui:button onClick="${askForP2PActivitiesURL }" value="ask-for-p2p-corrections"/>
-			</div>
-		</c:if>
+	<div class="alert alert-info">
+		<liferay-ui:message key="learning-activity.p2p.steps.correct-activities.no-assign-activities" />
 	</div>
-	<%
-}%>
+	<c:if test='<%=p2pActivityType.getAskForP2PActivities()%>'>
+		<liferay-portlet:actionURL name="askForP2PActivities" var="askForP2PActivitiesURL">
+			<liferay-portlet:param name="actId" value="<%=String.valueOf(actId) %>" />
+		</liferay-portlet:actionURL>
+		<aui:button onClick="${askForP2PActivitiesURL }" value="learning-activity.p2p.steps.correct-activities.ask-for-p2p-corrections"/>
+	</c:if>
+<%}%>
 
 <%
-if(correctionsSaved.equals("true")){
-	correctionsSaved="false";
-	request.setAttribute("correctionSaved", correctionsSaved);
-	renderResponse.setProperty("clear-request-parameters", Boolean.TRUE.toString());
-	%><script><portlet:namespace />openSaved();</script><%
-}
-
-%>
+if(correctionsCompleted){
+	request.setAttribute("correctionSaved", false);
+	request.setAttribute("correctionsCompleted", false);
+	renderResponse.setProperty("clear-request-parameters", Boolean.TRUE.toString());%>
+	<script>
+		$( document ).ready(function() {
+			<portlet:namespace />openCompleted();
+		});
+	</script>
+<%}else if(correctionsSaved){
+	request.setAttribute("correctionSaved", false);
+	renderResponse.setProperty("clear-request-parameters", Boolean.TRUE.toString());%>
+	<script>
+		$( document ).ready(function() {
+			<portlet:namespace />openSaved();
+		});
+	</script>
+<%}%>

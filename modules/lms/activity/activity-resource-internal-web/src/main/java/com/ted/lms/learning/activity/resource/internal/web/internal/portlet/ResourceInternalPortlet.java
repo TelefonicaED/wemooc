@@ -14,16 +14,14 @@ import org.osgi.service.component.annotations.Component;
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=category.hidden",
-		"com.liferay.portlet.instanceable=true",
+		"com.liferay.portlet.instanceable=false",
 		"javax.portlet.init-param.template-path=/",
-		"javax.portlet.init-param.view-template=/view.jsp",
-		"javax.portlet.init-param.add-process-action-success-action=false",
+		"javax.portlet.init-param.mvc-command-names-default-views=/activities/resource_internal/view_activity",
 		"javax.portlet.name=" + ResourceInternalPortletKeys.RESOURCE_INTERNAL,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=user",
 		"javax.portlet.supported-public-render-parameter=actId",
-		"javax.portlet.supported-public-render-parameter=moduleId",
-		"javax.portlet.supported-public-render-parameter=actionEditing"
+		"com.liferay.portlet.add-default-resource=true"
 	},
 	service = Portlet.class
 )

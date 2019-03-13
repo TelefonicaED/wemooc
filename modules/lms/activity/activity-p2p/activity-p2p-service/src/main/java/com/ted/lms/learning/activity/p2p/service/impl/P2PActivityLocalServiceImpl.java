@@ -154,7 +154,7 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 			try {
 				Folder folder = addP2PFolder(userId, serviceContext.getScopeGroupId());
 				DLFileEntry p2pFileEntry = addP2PFileEntry(fileName, file, mimeType, folder.getFolderId(), serviceContext.getScopeGroupId(),
-						serviceContext.getCompanyId());
+						serviceContext.getCompanyId(), serviceContext.getUserId());
 				//Asociamos con el fichero subido.
 				p2pActivity.setFileEntryId(p2pFileEntry.getFileEntryId());
 			} catch (FileNotFoundException e) {
@@ -258,6 +258,9 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 			log.debug(" correctionCompleted: "+p2pActivityCorrectionsLocalService.areAllCorrectionsDoneByUserInP2PActivity(actId, p2pActivityFromCorrectorUser.getUserId(), numValidations)+", avg: "+p2pActivityCorrectionsLocalService.getAVGCorrectionsResults(p2pActivityFromCorrectorUser.getP2pActivityId()));
 			log.debug(" PARA EL USUARIO QUE ES CORREGIDO");
 			log.debug(" p2pActivityId: "+p2pActivityCorrected.getP2pActivityId()+", actId: "+p2pActivityCorrected.getActId()+", userId: "+p2pActivityCorrected.getUserId());
+			log.debug(" actId: " + actId);
+			log.debug(" userId: " + p2pActivityCorrected.getUserId());
+			log.debug(" numValidations: " + numValidations);
 			log.debug(" correctionCompleted: "+p2pActivityCorrectionsLocalService.areAllCorrectionsDoneByUserInP2PActivity(actId, p2pActivityCorrected.getUserId(), numValidations)+", avg: "+p2pActivityCorrectionsLocalService.getAVGCorrectionsResults(p2pActivityCorrected.getP2pActivityId()));
 			log.debug("----------------------");
 		}
@@ -269,15 +272,20 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 			correctionCompleted = p2pActivityCorrectionsLocalService.areAllCorrectionsDoneByUserInP2PActivity(actId, p2pActivityFromCorrectorUser.getUserId(), numValidations);
 			correctionCompletedAboutMe = p2pActivityCorrectionsLocalService.hasAllCorrectionsDoneAboutUserInP2PActivity(actId, p2pActivityFromCorrectorUser.getP2pActivityId(), numValidations);
 			
+			log.debug("correctionCompleted: " + correctionCompleted);
+			log.debug("correctionCompletedAboutMe: " + correctionCompletedAboutMe);
+			
 			//Si ya ha corregido todas la tareas que debe correguir, le ponemos el 50% mas la media que ha recibido de sus correctores.
 			if(correctionCompleted){
 				long avg = p2pActivityCorrectionsLocalService.getAVGCorrectionsResults(p2pActivityFromCorrectorUser.getP2pActivityId());
+				log.debug("avg: " + avg);
 				newValueResult = 50 + (avg / 2);
 			}
 			//Si no ha corregido todas, su nota sera 0.
 			else{
 				newValueResult = 0;
 			}
+			log.debug("newValueResult: " + newValueResult);
 			//Guardamos el resultado
 			saveLearningActivityResult(actId, p2pActivityFromCorrectorUser.getUserId(), newValueResult, correctionCompleted, result, activity, 
 					correctionCompletedAboutMe, serviceContext);
@@ -439,12 +447,13 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 		//Obtenemos las asignaciones que ya están realidas.
 		try {
 			activityAsignations = p2pActivityCorrectionsLocalService.getCorrectionsCount(p2pActivity.getActId(),p2pActivity.getUserId());
+			System.out.println("asignaciones ya asginadas: " + activityAsignations);
 		
 			//Si la actividad no tiene asignadas todas las tareas que tiene que corregir.
 			if( activityAsignations < numValidations && !p2pActivity.isAsignationsCompleted()){
-
+				
 				List<P2PActivity> activitiesToAsign = getP2PActivitiesToCorrect(actId, 
-						p2pActivity.getP2pActivityId(), numValidations - activityAsignations, assignationType);
+						p2pActivity, numValidations - activityAsignations, assignationType);
 
 				if(log.isDebugEnabled()){
 					log.debug("P2P assign corrections to activity::"+p2pActivity.getActId()+"::"+p2pActivity.getUserId());
@@ -462,16 +471,14 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 				p2pActivityLocalService.updateP2PActivity(p2pActivity);
 			}
 		} catch (PortalException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public List<P2PActivity> getP2PActivitiesToCorrect(long actId, long p2pActivityId, int numValidaciones, String assignationType) throws PortalException{
+	public List<P2PActivity> getP2PActivitiesToCorrect(long actId, P2PActivity p2pActivity, int numValidaciones, String assignationType) throws PortalException{
 		List<P2PActivity> res = new ArrayList<P2PActivity>();
 		
 		LearningActivity la = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-		P2PActivity p2pActivity = p2pActivityPersistence.fetchByPrimaryKey(p2pActivityId);
 		
 		List<P2PActivity> activities = null;
 		if(p2pActivity!=null && la!=null){
@@ -484,20 +491,20 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 					if(userTeams!=null && userTeams.size()>0){
 						//Caso de asignacion por equipos.
 						log.debug("******* USER ID "+p2pActivity.getUserId()  + " -->  ASIGNACIÓN POR EQUIPOS ");
-						activities =p2pActivityFinder.findByTeam(actId, p2pActivityId, userTeams, 0, numValidaciones);
+						activities =p2pActivityFinder.findByTeam(actId, p2pActivity.getP2pActivityId(), userTeams, 0, numValidaciones);
 						
 					}else{
 						//Caso de asignación suelta entre miembros sueltos del curso (sin equipos)
 						log.debug("******* USER ID "+p2pActivity.getUserId()  + " -->  ASIGNACIÓN POR USUARIOS SUELTOS ");
-						activities = p2pActivityFinder.findByUserWithoutTeamActivities(actId, p2pActivityId, la.getGroupId(), 0, numValidaciones);
+						activities = p2pActivityFinder.findByUserWithoutTeamActivities(actId, p2pActivity.getP2pActivityId(), la.getGroupId(), 0, numValidaciones);
 					}
 				}else{
 					log.debug("******* USER ID "+p2pActivity.getUserId()  + " -->  ASIGNACIÓN POR GRUPO (CURSO SIN EQUIPOS)");
-					activities = p2pActivityFinder.findByGroup(actId, p2pActivityId, 0, numValidaciones);
+					activities = p2pActivityFinder.findByGroup(actId, p2pActivity.getP2pActivityId(), 0, numValidaciones);
 				}
 			}else{
 				log.debug("******* USER ID "+p2pActivity.getUserId()  + " -->  ASIGNACIÓN POR GRUPO ");
-				activities = p2pActivityFinder.findByGroup(actId, p2pActivityId, 0, numValidaciones);
+				activities = p2pActivityFinder.findByGroup(actId, p2pActivity.getP2pActivityId(), 0, numValidaciones);
 			}
 		}
 			
@@ -509,12 +516,12 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 			if(serviceContext!=null){
 				User user = userLocalService.fetchUser(serviceContext.getUserId());
 				AuditFactory.audit(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(), LMSAuditConstants.GET, 
-						P2PActivity.class.getName(), p2pActivityId, serviceContext.getUserId(), 
+						P2PActivity.class.getName(), p2pActivity.getP2pActivityId(), serviceContext.getUserId(), 
 						user != null ? user.getFullName() : "", null);
 			}else if(la!=null){
 				User user = userLocalService.fetchUser(la.getUserId());
 				AuditFactory.audit(la.getCompanyId(), la.getGroupId(), LMSAuditConstants.GET, 
-						P2PActivity.class.getName(), p2pActivityId, la.getUserId(), 
+						P2PActivity.class.getName(), p2pActivity.getP2pActivityId(), la.getUserId(), 
 						user != null ? user.getFullName() : "", null);
 			}
 			
@@ -536,46 +543,15 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 	
 		//Actualizamos el try, que a su vez actualiza el result
 		LearningActivityTry  learningActivityTry =  LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(actId, userId);
-		
-		Date now = new Date();
-		User user = UserLocalServiceUtil.getUser(serviceContext.getUserId());
+		log.debug("*****learningActivityTry: " + (learningActivityTry != null ? learningActivityTry.getLatId() : "null"));
 		
 		if(learningActivityTry != null && correctionCompleted && ((!result) || (value >= activity.getPassPuntuation()) || correctionCompletedAboutMe)){
 			log.info("Modifico la fecha de fin del try");
-	
-			learningActivityTry.setModifiedDate(now);
-			learningActivityTry.setUserModifiedId(user.getUserId());
-			learningActivityTry.setUserModifiedName(user.getFullName());
-			learningActivityTry.setEndDate(now);
-			learningActivityTry.setResult(value);
-			LearningActivityTryLocalServiceUtil.updateLearningActivityTry(learningActivityTry);
-		}
-
-		LearningActivity learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-		
-		//Actualizamos el result, ya que puede bajar la nota, y en el Impl no se baja la nota nunca.
-		LearningActivityResult learningActivityResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, userId);
-		
-		learningActivityResult.setResult(value);
-		
-		//Solo le ponemos pasado y fecha de fin si se cumplen las condiciones:
-		//- Ha entregado todas las tareas
-		//&&
-		//- (La actividad no tiene nota) || (nota mayor a la necesaria para aprobar) || (recibido todas las correcciones)
-		if(correctionCompleted && ((!result) || (value >= activity.getPassPuntuation()) || correctionCompletedAboutMe)){
-			log.info("Modifiao la fecha de fin del result");
-			learningActivityResult.setPassed(value >= learningActivity.getPassPuntuation());
-			learningActivityResult.setEndDate(now);
-		}
-		
-		learningActivityResult.setModifiedDate(now);
-		learningActivityResult.setUserModifiedId(user.getUserId());
-		learningActivityResult.setUserModifiedName(user.getFullName());
-		
-		LearningActivityResultLocalServiceUtil.updateLearningActivityResult(learningActivityResult);
-		
-		if(learningActivityResult.getPassed()){
-			ModuleResultLocalServiceUtil.updateModuleResult(learningActivityResult, serviceContext);
+			
+			learningActivityTry = LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningActivityTry, value, serviceContext);
+		}else {
+			//Actualizamos sólo la nota
+			learningActivityTry = LearningActivityTryLocalServiceUtil.updateLearningActivityTry(learningActivityTry, value, serviceContext);
 		}
 	}
 	
@@ -609,8 +585,15 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 		return p2pFolder;
 	}
 	
-	public DLFileEntry addP2PFileEntry(String fileName, File file, String mimeType, long folderId, long groupId, long companyId) throws PortalException, IOException {
+	public DLFileEntry addP2PFileEntry(String fileName, File file, String mimeType, long folderId, long groupId, long companyId, long userCreatedId) throws PortalException, IOException {
 
+		log.debug("fileName: " + fileName);
+		log.debug("mimeType: " + mimeType);
+		log.debug("folderId: " + folderId);
+		log.debug("groupId: " + groupId);
+		log.debug("companyId: " + companyId);
+		log.debug("userCreatedId: " + userCreatedId);
+		
 		validateFile(fileName, file.length(), companyId);
 		
 		ServiceContext serviceContext = new ServiceContext();
@@ -619,7 +602,7 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 		serviceContext.setAddGuestPermissions(false);
 		
 		try (InputStream inputStream = new FileInputStream(file)) {
-			return dlFileEntryLocalService.addFileEntry(serviceContext.getUserId(), serviceContext.getScopeGroupId(), 
+			return dlFileEntryLocalService.addFileEntry(userCreatedId, groupId, 
 					groupId,folderId,fileName, mimeType, fileName, null, "Importation", 0, null, null , inputStream, file.length(), serviceContext);
 		}
 		
