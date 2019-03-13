@@ -349,6 +349,7 @@ public class CourseImpl extends CourseBaseImpl {
 		List<FriendlyURLEntry> friendlyURLEntries = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntries(getGroupId(), classNameId, getCourseId());
 
 		if (friendlyURLEntries.isEmpty()) {
+			
 			friendlyURLMap.put(LocaleUtil.fromLanguageId(getDefaultLanguageId()),getFriendlyURL().substring(getFriendlyURL().lastIndexOf("/")));
 
 			return friendlyURLMap;
@@ -409,7 +410,7 @@ public class CourseImpl extends CourseBaseImpl {
 		
 		log.debug("CourseImpl::isLocked::isApproved:" + isApproved());
 		
-		//Si el curso está cerrado
+		//Si el curso estï¿½ cerrado
 		if(!isApproved()){
 			return true;
 		}
@@ -488,7 +489,7 @@ public class CourseImpl extends CourseBaseImpl {
 			return true;
 		}
 		
-		//Ahora comprobamos la condición de allowFinishDate
+		//Ahora comprobamos la condiciï¿½n de allowFinishDate
 		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(this.getCourseId(), userId);
 		
 		if(courseResult != null){

@@ -183,14 +183,20 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 
 			Map<String, String> urlGroupMap = getURLGroupMap(serviceContext.getScopeGroupId(), course.getCourseId(), friendlyURLMap);
 			
-			friendlyURLEntryLocalService.addFriendlyURLEntry(serviceContext.getScopeGroupId(), classNameLocalService.getClassNameId(Course.class),
-					course.getCourseId(), urlGroupMap, serviceContext);
-		
 			//Creamos el group asociado, le cambiamos al nombre al grupo porque no deja crear dos con el mismo nombre por el groupKey
 			Map<Locale,String> titleMapGroup = new HashMap<Locale,String>();
 			
 			course.getTitleMap().forEach((k,v)->titleMapGroup.put(k, v + " (" + courseId + ")"));
 			
+			String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
+			if(Validator.isNull(urlGroup)) {
+				urlGroup = getFriendlyURL(serviceContext.getCompanyId(), urlGroup, course.getTitleMap());
+				urlGroupMap.put(LocaleUtil.toLanguageId(LocaleUtil.getDefault()), urlGroup.substring(1));
+			}
+			
+			friendlyURLEntryLocalService.addFriendlyURLEntry(serviceContext.getScopeGroupId(), classNameLocalService.getClassNameId(Course.class),
+					course.getCourseId(), urlGroupMap, serviceContext);
+		
 			int membershipRestriction = GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION;
 	
 			if (course.getParentCourseId() != GroupConstants.DEFAULT_PARENT_GROUP_ID) {
@@ -206,10 +212,8 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 				}
 			}
 			
-			String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
-			
 			Group group = GroupServiceUtil.addGroup(parentGroupId, 0, titleMapGroup, course.getDescriptionMap(), 
-					GroupConstants.TYPE_SITE_OPEN, true, membershipRestriction, getFriendlyURL(serviceContext.getCompanyId(), urlGroup, course.getTitleMap()), 
+					GroupConstants.TYPE_SITE_OPEN, true, membershipRestriction, urlGroup, 
 					true, false, true, serviceContext);
 			
 			course.setGroupCreatedId(group.getGroupId());
@@ -384,9 +388,9 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @param goodbye si se habilita el mensaje de despedida
 	 * @param goodbyeSubjectMap asunto del mensaje de despedida con las traducciones
 	 * @param goodbyeMsgMap cuerpo del mensaje de despedida con las traducciones
-	 * @param deniedInscription si se habilita el mensaje de denegación de la inscripción
-	 * @param deniedInscriptionSubjectMap asunto del mensaje de denegación de la inscripción con las traducciones
-	 * @param deniedInscriptionMsgMap cuerpod el mensaje de denegación de la inscripción con las traducciones
+	 * @param deniedInscription si se habilita el mensaje de denegaciï¿½n de la inscripciï¿½n
+	 * @param deniedInscriptionSubjectMap asunto del mensaje de denegaciï¿½n de la inscripciï¿½n con las traducciones
+	 * @param deniedInscriptionMsgMap cuerpod el mensaje de denegaciï¿½n de la inscripciï¿½n con las traducciones
 	 * @param status estado del curso
 	 * @param serviceContext contexto de la modificaciÃ³n del curso
 	 * @return curso modificado
