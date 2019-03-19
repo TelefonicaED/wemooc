@@ -6,5 +6,6 @@ Export-Package: \
 	com.ted.lms.learning.activity.p2p.model,\
 	com.ted.lms.learning.activity.p2p.service,\
 	com.ted.lms.learning.activity.p2p.service.persistence,\
-	com.ted.lms.learning.activity.p2p.util
+	com.ted.lms.learning.activity.p2p.util,\
+	com.ted.lms.learning.activity.p2p.constants
 -includeresource: META-INF/service.xml=../activity-p2p-service/service.xml

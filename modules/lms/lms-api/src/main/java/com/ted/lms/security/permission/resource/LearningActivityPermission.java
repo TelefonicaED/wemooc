@@ -16,33 +16,38 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(immediate = true)
 public class LearningActivityPermission {
-	public static boolean contains(
-            PermissionChecker permissionChecker, LearningActivity learningActivity,
-            String actionId)
-        throws PortalException {
-
-        return learningActivityModelResourcePermission.contains(
-            permissionChecker, learningActivity, actionId);
+	public static boolean contains(PermissionChecker permissionChecker, LearningActivity learningActivity,String actionId) {
+		boolean permission = false;
+        try {
+        	permission = learningActivityModelResourcePermission.contains(permissionChecker, learningActivity, actionId);
+		} catch (PortalException e) {
+			e.printStackTrace();
+		}
+        
+        return permission;
     }
 
-    public static boolean contains(
-            PermissionChecker permissionChecker, long actId, String actionId)
-        throws PortalException {
+    public static boolean contains(PermissionChecker permissionChecker, long actId, String actionId){
 
-        return learningActivityModelResourcePermission.contains(
-            permissionChecker, actId, actionId);
+    	boolean permission = false;
+    	
+        try {
+        	permission = learningActivityModelResourcePermission.contains( permissionChecker, actId, actionId);
+		} catch (PortalException e) {
+			e.printStackTrace();
+		}
+        
+        return permission;
     }
 
     @Reference(
         target = "(model.class.name=" + LMSConstants.LEARNING_ACTIVITY_MODEL_CLASS_NAME + ")",
         unbind = "-"
     )
-    protected void setCourseModelPermission(
-        ModelResourcePermission<LearningActivity> modelResourcePermission) {
+    protected void setLearningActivityModelPermission(ModelResourcePermission<LearningActivity> modelResourcePermission) {
 
     	learningActivityModelResourcePermission = modelResourcePermission;
     }
 
-    private static ModelResourcePermission<LearningActivity>
-    learningActivityModelResourcePermission;
+    private static ModelResourcePermission<LearningActivity> learningActivityModelResourcePermission;
 }

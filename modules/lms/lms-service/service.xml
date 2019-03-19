@@ -461,6 +461,11 @@
 			<finder-column name="actId" />
 			<finder-column name="userId" />
 		</finder>
+		<finder name="ActIdUserIdEndDate" return-type="Collection">
+			<finder-column name="actId" />
+			<finder-column name="userId" />
+			<finder-column name="endDate" />
+		</finder>
 
 		<!-- References -->
 

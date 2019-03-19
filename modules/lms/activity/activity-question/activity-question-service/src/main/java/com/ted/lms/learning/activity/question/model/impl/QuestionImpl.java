@@ -15,11 +15,15 @@
 package com.ted.lms.learning.activity.question.model.impl;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.ted.lms.learning.activity.question.model.QuestionType;
+import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
+import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -40,13 +44,9 @@ public class QuestionImpl extends QuestionBaseImpl {
 	 * Never reference this class directly. All methods that expect a question model instance should use the {@link com.ted.lms.learning.activity.question.model.Question} interface instead.
 	 */
 	private JSONObject extraContent = null;
+	private QuestionType questionType = null;
 	
 	public QuestionImpl() {
-	}
-	
-	@Override
-	public String getTextMapAsXML() {
-		return LocalizationUtil.updateLocalization(getTextMap(), StringPool.BLANK, "Text",getDefaultLanguageId());
 	}
 	
 	@Override
@@ -81,5 +81,14 @@ public class QuestionImpl extends QuestionBaseImpl {
 	public void setExtraContentJSON(JSONObject extraContent) {
 		this.extraContent = extraContent;
 		super.setExtraContent(extraContent.toJSONString());
+	}
+	
+	@Override
+	public QuestionType getQuestionType() throws PortalException {
+		if(questionType == null) {
+			QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(getQuestionTypeId());
+			questionType = questionTypeFactory.getQuestionType(this);
+		}
+		return questionType;
 	}
 }

@@ -117,4 +117,9 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	public double calculateResult(LearningActivityTry learningActivityTry) {
 		return learningActivityTry.getResult();
 	}
+	
+	@Override
+	public LearningActivity getLearningActivity() {
+		return activity;
+	}
 }

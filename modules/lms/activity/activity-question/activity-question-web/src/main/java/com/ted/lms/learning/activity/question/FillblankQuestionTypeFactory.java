@@ -29,8 +29,13 @@ public class FillblankQuestionTypeFactory extends BaseQuestionTypeFactory{
 	
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
-		return new FillblankQuestionType(question, answerLocalService);
+		return new FillblankQuestionType(question);
 	}
+	
+	public FillblankQuestionType getFillblankQuestionType(Question question) throws PortalException {
+		return new FillblankQuestionType(question);
+	}
+
 
 	@Override
 	public String getClassName() {
@@ -78,12 +83,5 @@ public class FillblankQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
-	
-	@Reference(unbind = "-")
-	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
-		this.answerLocalService = answerLocalService;
-	}
-	
-	protected AnswerLocalService answerLocalService;
 
 }

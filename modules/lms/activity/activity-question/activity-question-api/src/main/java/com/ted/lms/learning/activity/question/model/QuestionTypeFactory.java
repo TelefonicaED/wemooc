@@ -26,6 +26,7 @@ public interface QuestionTypeFactory {
 	public boolean getPenalize();
 	
 	public boolean isPartialCorrectAvailable();
+	public boolean isManualCorrection();
 	
 	public int getMinNumAnswers();
 	public int getMinNumCorrectAnswers();

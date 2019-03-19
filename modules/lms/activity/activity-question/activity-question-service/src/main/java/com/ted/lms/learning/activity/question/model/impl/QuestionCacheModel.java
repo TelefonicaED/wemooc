@@ -87,8 +87,8 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		sb.append(actId);
 		sb.append(", text=");
 		sb.append(text);
-		sb.append(", questionType=");
-		sb.append(questionType);
+		sb.append(", questionTypeId=");
+		sb.append(questionTypeId);
 		sb.append(", active=");
 		sb.append(active);
 		sb.append(", weight=");
@@ -148,7 +148,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 			questionImpl.setText(text);
 		}
 
-		questionImpl.setQuestionType(questionType);
+		questionImpl.setQuestionTypeId(questionTypeId);
 		questionImpl.setActive(active);
 		questionImpl.setWeight(weight);
 		questionImpl.setPenalize(penalize);
@@ -183,7 +183,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		actId = objectInput.readLong();
 		text = objectInput.readUTF();
 
-		questionType = objectInput.readLong();
+		questionTypeId = objectInput.readLong();
 
 		active = objectInput.readBoolean();
 
@@ -230,7 +230,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 			objectOutput.writeUTF(text);
 		}
 
-		objectOutput.writeLong(questionType);
+		objectOutput.writeLong(questionTypeId);
 
 		objectOutput.writeBoolean(active);
 
@@ -256,7 +256,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 	public long modifiedDate;
 	public long actId;
 	public String text;
-	public long questionType;
+	public long questionTypeId;
 	public boolean active;
 	public long weight;
 	public boolean penalize;

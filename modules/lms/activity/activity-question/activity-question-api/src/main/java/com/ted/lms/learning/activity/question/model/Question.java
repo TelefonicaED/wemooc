@@ -54,10 +54,11 @@ public interface Question extends QuestionModel, PersistedModel {
 			}
 		};
 
-	public String getTextMapAsXML();
-
 	public com.liferay.portal.kernel.json.JSONObject getExtraContentJSON();
 
 	public void setExtraContentJSON(
 		com.liferay.portal.kernel.json.JSONObject extraContent);
+
+	public QuestionType getQuestionType()
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

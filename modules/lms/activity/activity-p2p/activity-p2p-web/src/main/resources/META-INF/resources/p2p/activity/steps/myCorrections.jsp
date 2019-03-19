@@ -137,7 +137,7 @@ if(!p2pActCorList.isEmpty()){
 
 if(!correctionsDone){
 	%>
-	<div class="no-p2pActivites-corretion">
+	<div class="alert alert-info">
 		<liferay-ui:message key="learning-activity.p2p.steps.my-corrections.no-activites-corretion" />
 	</div>
 	<%

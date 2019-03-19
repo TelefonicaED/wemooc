@@ -1,3 +1,6 @@
+<%@page import="com.ted.lms.learning.activity.question.constants.QuestionConstants"%>
+<%@page import="com.ted.lms.learning.activity.test.web.activity.TestActivityType"%>
+<%@page import="com.ted.lms.learning.activity.test.web.activity.TestActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="java.text.NumberFormat"%>
@@ -7,10 +10,8 @@
 <%@page import="com.ted.lms.model.LearningActivity"%>
 <%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
 <%@page import="com.ted.lms.model.LearningActivityType"%>
-<%@page import="com.ted.lms.learning.activity.test.TestActivityTypeFactory"%>
-<%@page import="com.ted.lms.learning.activity.test.TestActivityType"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
-<%@ include file="../../init.jsp" %>
+<%@ include file="init.jsp" %>
 
 <%long actId = ParamUtil.getLong(request, "actId", 0);
 boolean canBeEdited = ParamUtil.getBoolean(request, "canBeEdited", true);
@@ -186,14 +187,14 @@ timeNumberFormat.setMinimumIntegerDigits(2);
 <div class="row">
 	<div class="col-md-6">
 		<aui:input name="showFeedback" label="learning-activity.test.show-feedback" 
-					type="toggle-switch" value="<%=(testActivityType != null && testActivityType.getShowFeedback()) || TestConstants.DEFAULT_SHOW_FEEDBACK%>" 
+					type="toggle-switch" value="<%=(testActivityType != null && testActivityType.getShowFeedback()) || QuestionConstants.DEFAULT_SHOW_FEEDBACK%>" 
 					ignoreRequestValue="true" helpMessage="learning-activity.test.show-feedback.help-message"/>
 	</div>
 	<div class="col-md-6">
 		<aui:input name="showCorrectAnswer" label="learning-activity.test.show-correct-answer" 
 					type="toggle-switch" value="<%=testActivityType != null && testActivityType.getShowCorrectAnswer() %>" 
 					ignoreRequestValue="true" helpMessage="learning-activity.test.show-correct-answer.help-message"
-					disabled="<%=(testActivityType == null && !TestConstants.DEFAULT_SHOW_FEEDBACK) || (testActivityType != null && !testActivityType.getShowFeedback()) %>"/>
+					disabled="<%=(testActivityType == null && !QuestionConstants.DEFAULT_SHOW_FEEDBACK) || (testActivityType != null && !testActivityType.getShowFeedback()) %>"/>
 	</div>
 	<div class="col-md-6">
 		<aui:input name="showCorrectAnswerOnlyOnFinalTry" label="learning-activity.test.show-correct-answer-only-on-final-try" 

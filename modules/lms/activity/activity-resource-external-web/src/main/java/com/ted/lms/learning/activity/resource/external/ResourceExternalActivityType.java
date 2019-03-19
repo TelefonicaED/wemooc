@@ -179,7 +179,7 @@ public class ResourceExternalActivityType extends BaseLearningActivityType {
 											}
 											
 											if(element != null){
-												questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(question.getQuestionType());
+												questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(question.getQuestionTypeId());
 												questionType = questionTypeFactory.getQuestionType(question);
 												
 												correct = questionType.correct(element);

@@ -62,7 +62,7 @@ public class UpgradeExtraContent extends UpgradeProcess {
 							questionExtraContent.put(QuestionConstants.JSON_PARTIAL_CORRECTION, Boolean.parseBoolean(partialCorrectionElement.getText()));
 						}
 
-						questionType = question.getQuestionType();
+						questionType = question.getQuestionTypeId();
 						
 						if(questionType == OptionsQuestionTypeFactory.TYPE || questionType == MultioptionsQuestionTypeFactory.TYPE
 								|| questionType == SurveyQuestionTypeFactory.TYPE || questionType == 7) {

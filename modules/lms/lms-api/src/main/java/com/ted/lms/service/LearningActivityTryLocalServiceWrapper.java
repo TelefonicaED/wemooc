@@ -211,6 +211,16 @@ public class LearningActivityTryLocalServiceWrapper
 	@Override
 	public com.ted.lms.model.LearningActivityTry finishLearningActivityTry(
 		com.ted.lms.model.LearningActivityTry learningActivityTry,
+		double result, java.util.Date endDate,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityTryLocalService.finishLearningActivityTry(learningActivityTry,
+			result, endDate, serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivityTry finishLearningActivityTry(
+		com.ted.lms.model.LearningActivityTry learningActivityTry,
 		double result,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -341,6 +351,18 @@ public class LearningActivityTryLocalServiceWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _learningActivityTryLocalService.getLearningActivityTryByUuidAndGroupId(uuid,
 			groupId);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivityTry getLearningActivityTryNotFinishedByActUser(
+		long actId, long userId) {
+		return _learningActivityTryLocalService.getLearningActivityTryNotFinishedByActUser(actId,
+			userId);
+	}
+
+	@Override
+	public int getNumTriesOpened(long actId, long userId) {
+		return _learningActivityTryLocalService.getNumTriesOpened(actId, userId);
 	}
 
 	/**

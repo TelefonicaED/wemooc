@@ -17,12 +17,17 @@ package com.ted.lms.service.impl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.audit.api.AuditFactory;
 import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.exception.NoSuchLearningActivityException;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
+import com.ted.lms.model.LearningActivityType;
+import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.base.LearningActivityTryLocalServiceBaseImpl;
 
 import java.util.Date;
@@ -56,6 +61,15 @@ public class LearningActivityTryLocalServiceImpl
 	
 	public List<LearningActivityTry> getLearningActivityTries(long actId, long userId){
 		return learningActivityTryPersistence.findByActIdUserId(actId, userId);
+	}
+	
+	public int getNumTriesOpened(long actId, long userId){
+		return learningActivityTryPersistence.countByActIdUserIdEndDate(actId, userId, null);
+	}
+	
+	public LearningActivityTry getLearningActivityTryNotFinishedByActUser(long actId, long userId) {
+		OrderByComparator<LearningActivityTry> orderByComparator = OrderByComparatorFactoryUtil.create("LMS_LearningActivityTry", "startDate", false);
+		return learningActivityTryPersistence.fetchByActIdUserIdEndDate_First(actId, userId, null, orderByComparator);
 	}
 	
 	public LearningActivityTry getLastLearningActivityTry(long actId, long userId) {
@@ -130,13 +144,18 @@ public class LearningActivityTryLocalServiceImpl
 	}
 	
 	public LearningActivityTry finishLearningActivityTry(LearningActivityTry learningActivityTry, double result, ServiceContext serviceContext) throws PortalException {
-		
 		Date now = new Date();
+		return finishLearningActivityTry(learningActivityTry, result, now, serviceContext);
+	}
+	
+	public LearningActivityTry finishLearningActivityTry(LearningActivityTry learningActivityTry, double result, Date endDate, ServiceContext serviceContext) throws PortalException {
+		
 		learningActivityTry.setResult(result);
-		learningActivityTry.setEndDate(now);
+		learningActivityTry.setEndDate(endDate);
 		
 		//Actualizamos los campos de auditoria
 		User user = userLocalService.getUser(serviceContext.getUserId());
+		Date now = new Date();
 		learningActivityTry.setUserModifiedId(serviceContext.getUserId());
 		learningActivityTry.setUserModifiedName(user.getFullName());
 		learningActivityTry.setModifiedDate(now);

@@ -1,4 +1,4 @@
-package com.ted.lms.learning.activity.test;
+package com.ted.lms.learning.activity.test.web.activity;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.ted.lms.learning.activity.QuestionsLearningActivityType;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
@@ -25,6 +26,8 @@ import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,25 +35,23 @@ import java.util.List;
 
 import javax.portlet.ActionRequest;
 
-public class TestActivityType extends BaseLearningActivityType {
+public class TestActivityType extends QuestionsLearningActivityType {
 	
-	private QuestionLocalService questionLocalService;
+	private LearningActivityTryLocalService learningActivityTryLocalService;
 	private static final Log log = LogFactoryUtil.getLog(TestActivityType.class);
 	private long random;
 	private String password;
 	private long timeStamp;
-	private boolean showCorrectAnswer;
-	private boolean showFeedback;
-	private boolean showCorrectAnswerOnlyOnFinalTry;
 	private boolean improve;
 	private boolean enableOrder;
 	private long questionsPerPage;
 	private boolean preview;
+	private List<Question> questions;
 
-	public TestActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
+	public TestActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityTryLocalService learningActivityTryLocalService,
 			QuestionLocalService questionLocalService) {
-		super(activity, learningActivityResultLocalService);
-		this.questionLocalService = questionLocalService;
+		super(activity, learningActivityResultLocalService, questionLocalService);
+		this.learningActivityTryLocalService = learningActivityTryLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -60,9 +61,6 @@ public class TestActivityType extends BaseLearningActivityType {
 				random = test.getLong(TestConstants.JSON_RANDOM, TestConstants.DEFAULT_RANDOM);
 				password = HtmlUtil.unescape(test.getString(TestConstants.JSON_PASSWORD, TestConstants.DEFAULT_PASSWORD));
 				timeStamp = test.getLong(TestConstants.JSON_TIME_STAMP, TestConstants.DEFAULT_TIME_STAMP);
-				showCorrectAnswer = test.getBoolean(TestConstants.JSON_SHOW_CORRECT_ANSWER, TestConstants.DEFAULT_SHOW_CORRECT_ANSWER);
-				showFeedback = test.getBoolean(TestConstants.JSON_SHOW_FEEDBACK, TestConstants.DEFAULT_SHOW_FEEDBACK);
-				showCorrectAnswerOnlyOnFinalTry = test.getBoolean(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, TestConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY);
 				improve = test.getBoolean(TestConstants.JSON_IMPROVE, TestConstants.DEFAULT_IMPROVE);
 				enableOrder = test.getBoolean(TestConstants.JSON_ENABLE_ORDER, TestConstants.DEFAULT_ENABLE_ORDER);
 				questionsPerPage = test.getLong(TestConstants.JSON_QUESTIONS_PER_PAGE, TestPrefsPropsValues.getQuestionPerPage(activity.getCompanyId()));
@@ -84,6 +82,8 @@ public class TestActivityType extends BaseLearningActivityType {
 	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
 		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
+		super.setExtraContent(actionRequest);
+		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		JSONObject testContent = extraContent.getJSONObject(TestConstants.JSON_TEST);
 		
@@ -99,9 +99,6 @@ public class TestActivityType extends BaseLearningActivityType {
 		timeStamp = ParamUtil.getLong(actionRequest, "testHourDuration",0) * 3600 
                 + ParamUtil.getLong(actionRequest, "testMinuteDuration",0) * 60 
                 + ParamUtil.getLong(actionRequest, "testSecondDuration",0);
-		showCorrectAnswer = ParamUtil.getBoolean(actionRequest, "showCorrectAnswer", TestConstants.DEFAULT_SHOW_CORRECT_ANSWER);
-		showFeedback = ParamUtil.getBoolean(actionRequest, "showFeedback", TestConstants.DEFAULT_SHOW_FEEDBACK);
-		showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(actionRequest, "showCorrectAnswerOnlyOnFinalTry", TestConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY);
 		improve = ParamUtil.getBoolean(actionRequest, "improve", TestConstants.DEFAULT_IMPROVE);
 		enableOrder = ParamUtil.getBoolean(actionRequest, "enableOrder", TestConstants.DEFAULT_ENABLE_ORDER);
 		questionsPerPage = ParamUtil.getLong(actionRequest, "questionsPerPage", TestPrefsPropsValues.getQuestionPerPage(themeDisplay.getCompanyId()));
@@ -111,9 +108,6 @@ public class TestActivityType extends BaseLearningActivityType {
 		testContent.put(TestConstants.JSON_PASSWORD, password);
 		testContent.put(TestConstants.JSON_TIME_STAMP, timeStamp);
 		
-		testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER, showCorrectAnswer);
-		testContent.put(TestConstants.JSON_SHOW_FEEDBACK, showFeedback);
-		testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, showCorrectAnswerOnlyOnFinalTry);
 		testContent.put(TestConstants.JSON_IMPROVE, improve);
 		testContent.put(TestConstants.JSON_ENABLE_ORDER, enableOrder);
 		testContent.put(TestConstants.JSON_QUESTIONS_PER_PAGE, questionsPerPage);
@@ -167,7 +161,7 @@ public class TestActivityType extends BaseLearningActivityType {
 								xmlQuestion = questions.get(Long.parseLong(element.attributeValue("id")));
 								if(Validator.isNotNull(xmlQuestion)){
 									numQuestions++;
-									questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(xmlQuestion.getQuestionType());
+									questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(xmlQuestion.getQuestionTypeId());
 									questionType = questionTypeFactory.getQuestionType(xmlQuestion);
 									correct = questionType.correct(element);
 									log.debug("correct: " + correct);
@@ -204,6 +198,23 @@ public class TestActivityType extends BaseLearningActivityType {
 		return score;
 	}
 	
+	public boolean hasTries(long userId) {
+		
+		//Si ya ha pasado el test, no puede hacer más intentos.
+		if(LearningActivityResultLocalServiceUtil.hasUserPassed(activity.getActId(), userId) && getImprove()) {
+			return false;	
+		} else if(activity.getTries() == 0) {
+			return true;
+		}
+		
+		//Mirar si los intentos que tiene son menores de los intentos posibles
+		int userTries = learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(), userId);
+		int numTriesOpened = learningActivityTryLocalService.getNumTriesOpened(activity.getActId(), userId);
+			
+		//Si tiene menos intentos de los que se puede hacer
+		return (userTries-numTriesOpened) < activity.getTries();
+	}
+	
 	
 	public long getRandom() {
 		return random;
@@ -229,18 +240,6 @@ public class TestActivityType extends BaseLearningActivityType {
 		return getTimeStamp() % 60;
 	}
 	
-	public boolean getShowCorrectAnswer() {
-		return showCorrectAnswer;
-	}
-	
-	public boolean getShowFeedback() {
-		return showFeedback;
-	}
-	
-	public boolean getShowCorrectAnswerOnlyOnFinalTry() {
-		return showCorrectAnswerOnlyOnFinalTry;
-	}
-	
 	public boolean getImprove() {
 		return improve;
 	}
@@ -257,13 +256,44 @@ public class TestActivityType extends BaseLearningActivityType {
 		return preview;
 	}
 	
+	public List<Question> getQuestions(){
+		if(questions == null) {
+			questions = questionLocalService.getQuestions(activity.getActId());
+		}
+		return questions;
+	}
+	
+	public void setQuestions(List<Question> questions) {
+		this.questions = questions;
+	}
+	
+	public boolean hasFreeQuestions() {
+		int i = 0;
+		QuestionTypeFactory questionTypeFactory = null;
+		HashMap<Long, QuestionTypeFactory> questionTypeFactories = new HashMap<>();
+		
+		List<Question> questions = getQuestions();
+		
+		boolean hasFreeQuestion = false;
+		
+		while(!hasFreeQuestion && i < questions.size()) {
+			if(questionTypeFactories.containsKey(questions.get(i).getQuestionTypeId())) {
+				questionTypeFactory = questionTypeFactories.get(questions.get(i).getQuestionTypeId());
+			}else {
+				questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questions.get(i).getQuestionTypeId());
+				questionTypeFactories.put(questions.get(i).getQuestionTypeId(), questionTypeFactory);
+			}
+			hasFreeQuestion = questionTypeFactory.isManualCorrection();
+			i++;
+		}
+		
+		return hasFreeQuestions();
+	}
+	
 	private void initializateActivity() {
 		random = TestConstants.DEFAULT_RANDOM;
 		password = TestConstants.DEFAULT_PASSWORD;
 		timeStamp = TestConstants.DEFAULT_TIME_STAMP;
-		showCorrectAnswer = TestConstants.DEFAULT_SHOW_CORRECT_ANSWER;
-		showFeedback = TestConstants.DEFAULT_SHOW_FEEDBACK;
-		showCorrectAnswerOnlyOnFinalTry = TestConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY;
 		improve = TestConstants.DEFAULT_IMPROVE;
 		enableOrder = TestConstants.DEFAULT_ENABLE_ORDER;
 		questionsPerPage = TestPrefsPropsValues.getQuestionPerPage(activity.getCompanyId());

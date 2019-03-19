@@ -19,11 +19,9 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.GroupedModel;
-import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -31,8 +29,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import java.io.Serializable;
 
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * The base model interface for the Question service. Represents a row in the &quot;qu_Question&quot; database table, with each column mapped to a property of this class.
@@ -49,7 +45,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface QuestionModel extends BaseModel<Question>, GroupedModel,
-	LocalizedModel, ShardedModel, StagedAuditedModel {
+	ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -233,58 +229,8 @@ public interface QuestionModel extends BaseModel<Question>, GroupedModel,
 	 *
 	 * @return the text of this question
 	 */
+	@AutoEscape
 	public String getText();
-
-	/**
-	 * Returns the localized text of this question in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized text of this question
-	 */
-	@AutoEscape
-	public String getText(Locale locale);
-
-	/**
-	 * Returns the localized text of this question in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized text of this question. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@AutoEscape
-	public String getText(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized text of this question in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized text of this question
-	 */
-	@AutoEscape
-	public String getText(String languageId);
-
-	/**
-	 * Returns the localized text of this question in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized text of this question
-	 */
-	@AutoEscape
-	public String getText(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getTextCurrentLanguageId();
-
-	@AutoEscape
-	public String getTextCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized texts of this question.
-	 *
-	 * @return the locales and localized texts of this question
-	 */
-	public Map<Locale, String> getTextMap();
 
 	/**
 	 * Sets the text of this question.
@@ -294,52 +240,18 @@ public interface QuestionModel extends BaseModel<Question>, GroupedModel,
 	public void setText(String text);
 
 	/**
-	 * Sets the localized text of this question in the language.
+	 * Returns the question type ID of this question.
 	 *
-	 * @param text the localized text of this question
-	 * @param locale the locale of the language
+	 * @return the question type ID of this question
 	 */
-	public void setText(String text, Locale locale);
+	public long getQuestionTypeId();
 
 	/**
-	 * Sets the localized text of this question in the language, and sets the default locale.
+	 * Sets the question type ID of this question.
 	 *
-	 * @param text the localized text of this question
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
+	 * @param questionTypeId the question type ID of this question
 	 */
-	public void setText(String text, Locale locale, Locale defaultLocale);
-
-	public void setTextCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized texts of this question from the map of locales and localized texts.
-	 *
-	 * @param textMap the locales and localized texts of this question
-	 */
-	public void setTextMap(Map<Locale, String> textMap);
-
-	/**
-	 * Sets the localized texts of this question from the map of locales and localized texts, and sets the default locale.
-	 *
-	 * @param textMap the locales and localized texts of this question
-	 * @param defaultLocale the default locale
-	 */
-	public void setTextMap(Map<Locale, String> textMap, Locale defaultLocale);
-
-	/**
-	 * Returns the question type of this question.
-	 *
-	 * @return the question type of this question
-	 */
-	public long getQuestionType();
-
-	/**
-	 * Sets the question type of this question.
-	 *
-	 * @param questionType the question type of this question
-	 */
-	public void setQuestionType(long questionType);
+	public void setQuestionTypeId(long questionTypeId);
 
 	/**
 	 * Returns the active of this question.
@@ -444,19 +356,6 @@ public interface QuestionModel extends BaseModel<Question>, GroupedModel,
 
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
-
-	@Override
-	public String[] getAvailableLanguageIds();
-
-	@Override
-	public String getDefaultLanguageId();
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException;
-
-	@Override
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException;
 
 	@Override
 	public Object clone();

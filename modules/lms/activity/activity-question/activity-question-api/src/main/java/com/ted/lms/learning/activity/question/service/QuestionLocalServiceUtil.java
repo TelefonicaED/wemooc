@@ -43,11 +43,10 @@ public class QuestionLocalServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.learning.activity.question.service.impl.QuestionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.ted.lms.learning.activity.question.model.Question addQuestion(
-		long actId, java.util.Map<java.util.Locale, String> questionTextMap,
-		long questionType, boolean penalize,
+		long actId, String questionText, long questionType, boolean penalize,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 		return getService()
-				   .addQuestion(actId, questionTextMap, questionType, penalize,
+				   .addQuestion(actId, questionText, questionType, penalize,
 			serviceContext);
 	}
 
@@ -316,6 +315,11 @@ public class QuestionLocalServiceUtil {
 		return getService().getQuestionsCount();
 	}
 
+	public static java.util.List<com.ted.lms.learning.activity.question.model.Question> getQuestionsOrder(
+		long actId) {
+		return getService().getQuestionsOrder(actId);
+	}
+
 	public static void saveQuestions(
 		javax.portlet.ActionRequest actionRequest, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -323,10 +327,8 @@ public class QuestionLocalServiceUtil {
 	}
 
 	public static com.ted.lms.learning.activity.question.model.Question updateQuestion(
-		long questionId,
-		java.util.Map<java.util.Locale, String> questionTextMap,
-		boolean penalize) {
-		return getService().updateQuestion(questionId, questionTextMap, penalize);
+		long questionId, String questionText, boolean penalize) {
+		return getService().updateQuestion(questionId, questionText, penalize);
 	}
 
 	/**

@@ -21,15 +21,12 @@ if(answerId > 0){
 	<aui:model-context bean="<%=answer %>" model="<%= Answer.class %>" />
 	
 	<div class="col-md-10">
-		<liferay-ui:input-localized
-			cssClass="form-control"
-			formName="fm"
+		<liferay-editor:editor
+			contents='<%=answer != null ? answer.getAnswer() : "" %>' 
 			name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
 			placeholder="write-here-answer"
-			type="editor"
-			xml='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
-			useNamespace="false"
-		/>		
+			required="<%= true %>"
+		>		
 	</div>
 	<div class="col-md-2">
 		<span class="newitem2"><a href="#" class="newitem2" onclick="<portlet:namespace />deleteNode('testAnswer_new<%=iterator %>');"><liferay-ui:message key="delete"/></a></span>

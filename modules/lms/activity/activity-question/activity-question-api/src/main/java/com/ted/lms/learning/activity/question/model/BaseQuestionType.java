@@ -12,6 +12,7 @@ import com.ted.lms.learning.activity.question.exception.MinNumAnswerException;
 import com.ted.lms.learning.activity.question.exception.MinNumCorrectAnswerException;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
 import com.ted.lms.learning.activity.question.service.AnswerLocalService;
+import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,10 @@ public abstract class BaseQuestionType implements QuestionType{
 	protected static final long INCORRECT = 0;
 	
 	protected Question question;
+	private QuestionTypeFactory questionTypeFactory;
 	
-	public BaseQuestionType(Question question, AnswerLocalService answerLocalService) {
+	public BaseQuestionType(Question question) {
 		this.question = question;
-		this.answerLocalService = answerLocalService;
 	}
 	
 	@Override
@@ -44,7 +45,7 @@ public abstract class BaseQuestionType implements QuestionType{
 	@Override
 	public void saveAnswers(ActionRequest actionRequest, String iteratorQuestion) throws PortalException {
 		//Obtengo un array con los ids de las respuestas que ya contenia la pregunta
-		List<Answer> existingAnswers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> existingAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
 		List<Long> existingAnswersIds = new ArrayList<Long>();
 		
 		for(Answer answer:existingAnswers){
@@ -58,7 +59,7 @@ public abstract class BaseQuestionType implements QuestionType{
 		if(newAnswersIds != null){
 			int counter = 1;
 			int trueCounter = 0;
-			Map<Locale, String> answerMap = null;
+			String answerText = null;
 			Map<Locale, String> feedbackCorrectMap = null;
 			Map<Locale, String> feedbackIncorrectMap = null;
 			boolean correct = false;
@@ -67,26 +68,26 @@ public abstract class BaseQuestionType implements QuestionType{
 			
 			for(String iteratorAnswer:newAnswersIds){
 				answerId = ParamUtil.getLong(actionRequest, iteratorQuestion + "_answerId_" + iteratorAnswer, 0);
-				answerMap = LocalizationUtil.getLocalizationMap(actionRequest, iteratorQuestion + "_answerMapAsXML");
+				answerText = ParamUtil.getString(actionRequest, iteratorQuestion + "_answer_" + iteratorAnswer);
 				
-				if(Validator.isNotNull(answerMap)){
+				if(Validator.isNotNull(answerText)){
 					correct = isCorrectRequest(actionRequest, iteratorQuestion, counter);
 					System.out.println("correct: " + correct);
 					counter++;
 					if(correct)trueCounter++;
 					
-					feedbackCorrectMap = LocalizationUtil.getLocalizationMap(actionRequest, iteratorQuestion + "_feedbackCorrectMapAsXML");
-					feedbackIncorrectMap = LocalizationUtil.getLocalizationMap(actionRequest, iteratorQuestion + "_feedbackInCorrectMapAsXML");
+					feedbackCorrectMap = LocalizationUtil.getLocalizationMap(actionRequest, iteratorQuestion + "_feedbackCorrectMapAsXML_" + iteratorAnswer);
+					feedbackIncorrectMap = LocalizationUtil.getLocalizationMap(actionRequest, iteratorQuestion + "_feedbackInCorrectMapAsXML_" + iteratorAnswer);
 
 					if(answerId == 0){
 						//creo respuesta
 						serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), actionRequest);
-						answerLocalService.addAnswer(question.getQuestionId(), question.getActId(), answerMap, feedbackCorrectMap, 
+						AnswerLocalServiceUtil.addAnswer(question.getQuestionId(), question.getActId(), answerText, feedbackCorrectMap, 
 								feedbackIncorrectMap, correct, serviceContext);
 					}else {
 						editingAnswersIds.add(answerId);//almaceno en array para posterior borrado de las que no esten
 						//actualizo respuesta
-						answerLocalService.updateAnswer(answerId, answerMap, feedbackCorrectMap, feedbackIncorrectMap, correct);
+						AnswerLocalServiceUtil.updateAnswer(answerId, answerText, feedbackCorrectMap, feedbackIncorrectMap, correct);
 					}
 				}
 			}
@@ -106,10 +107,10 @@ public abstract class BaseQuestionType implements QuestionType{
 		for(Long existingAnswerId:existingAnswersIds){
 			if(editingAnswersIds != null && editingAnswersIds.size()>0){
 				if(!editingAnswersIds.contains(existingAnswerId)){
-					answerLocalService.deleteAnswer(existingAnswerId);
+					AnswerLocalServiceUtil.deleteAnswer(existingAnswerId);
 				}
 			}else {
-				answerLocalService.deleteAnswer(existingAnswerId);
+				AnswerLocalServiceUtil.deleteAnswer(existingAnswerId);
 			}
 		}
 	}
@@ -129,8 +130,4 @@ public abstract class BaseQuestionType implements QuestionType{
 	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter) {
 		return true;
 	}
-	
-	private QuestionTypeFactory questionTypeFactory;
-	
-	protected AnswerLocalService answerLocalService;
 }

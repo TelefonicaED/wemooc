@@ -7,5 +7,6 @@ Export-Package: \
 	com.ted.lms.learning.activity.question.service,\
 	com.ted.lms.learning.activity.question.service.persistence,\
 	com.ted.lms.learning.activity.question.registry,\
-	com.ted.lms.learning.activity.question.constants
+	com.ted.lms.learning.activity.question.constants,\
+	com.ted.lms.learning.activity.question.util
 -includeresource: META-INF/service.xml=../activity-question-service/service.xml

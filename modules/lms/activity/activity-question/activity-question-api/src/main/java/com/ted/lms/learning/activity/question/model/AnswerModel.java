@@ -247,58 +247,8 @@ public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
 	 *
 	 * @return the answer of this answer
 	 */
+	@AutoEscape
 	public String getAnswer();
-
-	/**
-	 * Returns the localized answer of this answer in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized answer of this answer
-	 */
-	@AutoEscape
-	public String getAnswer(Locale locale);
-
-	/**
-	 * Returns the localized answer of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized answer of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@AutoEscape
-	public String getAnswer(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized answer of this answer in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized answer of this answer
-	 */
-	@AutoEscape
-	public String getAnswer(String languageId);
-
-	/**
-	 * Returns the localized answer of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized answer of this answer
-	 */
-	@AutoEscape
-	public String getAnswer(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getAnswerCurrentLanguageId();
-
-	@AutoEscape
-	public String getAnswerCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized answers of this answer.
-	 *
-	 * @return the locales and localized answers of this answer
-	 */
-	public Map<Locale, String> getAnswerMap();
 
 	/**
 	 * Sets the answer of this answer.
@@ -306,40 +256,6 @@ public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
 	 * @param answer the answer of this answer
 	 */
 	public void setAnswer(String answer);
-
-	/**
-	 * Sets the localized answer of this answer in the language.
-	 *
-	 * @param answer the localized answer of this answer
-	 * @param locale the locale of the language
-	 */
-	public void setAnswer(String answer, Locale locale);
-
-	/**
-	 * Sets the localized answer of this answer in the language, and sets the default locale.
-	 *
-	 * @param answer the localized answer of this answer
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setAnswer(String answer, Locale locale, Locale defaultLocale);
-
-	public void setAnswerCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized answers of this answer from the map of locales and localized answers.
-	 *
-	 * @param answerMap the locales and localized answers of this answer
-	 */
-	public void setAnswerMap(Map<Locale, String> answerMap);
-
-	/**
-	 * Sets the localized answers of this answer from the map of locales and localized answers, and sets the default locale.
-	 *
-	 * @param answerMap the locales and localized answers of this answer
-	 * @param defaultLocale the default locale
-	 */
-	public void setAnswerMap(Map<Locale, String> answerMap, Locale defaultLocale);
 
 	/**
 	 * Returns the correct of this answer.

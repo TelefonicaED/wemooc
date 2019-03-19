@@ -35,10 +35,9 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Question addQuestion(
-		long actId, java.util.Map<java.util.Locale, String> questionTextMap,
-		long questionType, boolean penalize,
+		long actId, String questionText, long questionType, boolean penalize,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _questionLocalService.addQuestion(actId, questionTextMap,
+		return _questionLocalService.addQuestion(actId, questionText,
 			questionType, penalize, serviceContext);
 	}
 
@@ -333,6 +332,12 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 	}
 
 	@Override
+	public java.util.List<com.ted.lms.learning.activity.question.model.Question> getQuestionsOrder(
+		long actId) {
+		return _questionLocalService.getQuestionsOrder(actId);
+	}
+
+	@Override
 	public void saveQuestions(javax.portlet.ActionRequest actionRequest,
 		long actId) throws com.liferay.portal.kernel.exception.PortalException {
 		_questionLocalService.saveQuestions(actionRequest, actId);
@@ -340,11 +345,9 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Question updateQuestion(
-		long questionId,
-		java.util.Map<java.util.Locale, String> questionTextMap,
-		boolean penalize) {
-		return _questionLocalService.updateQuestion(questionId,
-			questionTextMap, penalize);
+		long questionId, String questionText, boolean penalize) {
+		return _questionLocalService.updateQuestion(questionId, questionText,
+			penalize);
 	}
 
 	/**

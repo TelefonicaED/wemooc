@@ -39,7 +39,7 @@ public class PercentCalificationTypeFactory extends BaseCalificationTypeFactory{
 	}
 	
 	@Override
-	public CalificationType getCalificationType(Course course) throws PortalException {	
+	public CalificationType getCalificationType(Course course) {	
 		return new PercentCalificationType();
 	}
 	

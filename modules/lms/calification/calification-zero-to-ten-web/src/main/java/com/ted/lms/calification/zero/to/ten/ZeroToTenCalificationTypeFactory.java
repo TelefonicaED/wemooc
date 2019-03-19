@@ -39,7 +39,7 @@ public class ZeroToTenCalificationTypeFactory extends BaseCalificationTypeFactor
 	}
 	
 	@Override
-	public CalificationType getCalificationType(Course course) throws PortalException {	
+	public CalificationType getCalificationType(Course course) {	
 		return new ZeroToTenCalificationType();
 	}
 	

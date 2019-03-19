@@ -29,8 +29,8 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.ted.lms.learning.activity.resource.internal.web.ResourceInternalActivityType;
-import com.ted.lms.learning.activity.resource.internal.web.ResourceInternalActivityTypeFactory;
+import com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityType;
+import com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityTypeFactory;
 import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalPortletKeys;
 import com.ted.lms.learning.activity.resource.internal.web.util.EPUBProcessorUtil;
 import com.ted.lms.model.Course;
@@ -48,9 +48,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 
-@Component(immediate = true, property = { "javax.portlet.name=" + ResourceInternalPortletKeys.RESOURCE_INTERNAL,
-		"mvc.command.name=/",
-		"mvc.command.name=/activities/resource_internal/view_activity" }, service = MVCRenderCommand.class)
+@Component(
+	immediate = true, 
+	property = { "javax.portlet.name=" + ResourceInternalPortletKeys.RESOURCE_INTERNAL,
+			"mvc.command.name=/",
+			"mvc.command.name=/activities/resource_internal/view_activity" }, 
+	service = MVCRenderCommand.class
+)
 public class ResourceInternalActivityViewMVCRenderCommand implements MVCRenderCommand {
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {

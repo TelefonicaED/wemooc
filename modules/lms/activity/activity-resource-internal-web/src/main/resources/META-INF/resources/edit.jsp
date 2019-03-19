@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityType"%>
+<%@page import="com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.resource.internal.web.internal.display.context.InputResourceInternalDisplayContext"%>
 <%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%@page import="com.liferay.portal.kernel.util.UnicodeFormatter"%>
@@ -12,9 +14,7 @@
 <%@page import="com.liferay.asset.kernel.model.AssetEntry"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayPortletURL"%>
 <%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
-<%@page import="com.ted.lms.learning.activity.resource.internal.web.ResourceInternalActivityTypeFactory"%>
 <%@page import="com.ted.lms.model.LearningActivity"%>
-<%@page import="com.ted.lms.learning.activity.resource.internal.web.ResourceInternalActivityType"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@ include file="init.jsp" %>
 

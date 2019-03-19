@@ -8,7 +8,6 @@ import com.ted.lms.learning.activity.question.model.BaseQuestionTypeFactory;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
-import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -27,7 +26,7 @@ public class FreetextQuestionTypeFactory extends BaseQuestionTypeFactory{
 	
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
-		return new FreetextQuestionType(question, answerLocalService);
+		return new FreetextQuestionType(question);
 	}
 
 	@Override
@@ -38,6 +37,11 @@ public class FreetextQuestionTypeFactory extends BaseQuestionTypeFactory{
 	@Override
 	public long getType() {
 		return TYPE;
+	}
+	
+	@Override
+	public boolean isManualCorrection() {
+		return true;
 	}
 	
 	@Override
@@ -71,12 +75,5 @@ public class FreetextQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
-	
-	@Reference(unbind = "-")
-	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
-		this.answerLocalService = answerLocalService;
-	}
-	
-	protected AnswerLocalService answerLocalService;
 
 }

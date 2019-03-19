@@ -44,7 +44,7 @@ public class QuestionSoap implements Serializable {
 		soapModel.setModifiedDate(model.getModifiedDate());
 		soapModel.setActId(model.getActId());
 		soapModel.setText(model.getText());
-		soapModel.setQuestionType(model.getQuestionType());
+		soapModel.setQuestionTypeId(model.getQuestionTypeId());
 		soapModel.setActive(model.isActive());
 		soapModel.setWeight(model.getWeight());
 		soapModel.setPenalize(model.isPenalize());
@@ -181,12 +181,12 @@ public class QuestionSoap implements Serializable {
 		_text = text;
 	}
 
-	public long getQuestionType() {
-		return _questionType;
+	public long getQuestionTypeId() {
+		return _questionTypeId;
 	}
 
-	public void setQuestionType(long questionType) {
-		_questionType = questionType;
+	public void setQuestionTypeId(long questionTypeId) {
+		_questionTypeId = questionTypeId;
 	}
 
 	public boolean getActive() {
@@ -239,7 +239,7 @@ public class QuestionSoap implements Serializable {
 	private Date _modifiedDate;
 	private long _actId;
 	private String _text;
-	private long _questionType;
+	private long _questionTypeId;
 	private boolean _active;
 	private long _weight;
 	private boolean _penalize;

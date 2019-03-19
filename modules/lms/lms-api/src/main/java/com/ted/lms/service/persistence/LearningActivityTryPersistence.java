@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.service.persistence.BasePersistence;
 import com.ted.lms.exception.NoSuchLearningActivityTryException;
 import com.ted.lms.model.LearningActivityTry;
 
+import java.util.Date;
+
 /**
  * The persistence interface for the learning activity try service.
  *
@@ -643,6 +645,165 @@ public interface LearningActivityTryPersistence extends BasePersistence<Learning
 	* @return the number of matching learning activity tries
 	*/
 	public int countByActIdUserId(long actId, long userId);
+
+	/**
+	* Returns all the learning activity tries where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @return the matching learning activity tries
+	*/
+	public java.util.List<LearningActivityTry> findByActIdUserIdEndDate(
+		long actId, long userId, Date endDate);
+
+	/**
+	* Returns a range of all the learning activity tries where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityTryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param start the lower bound of the range of learning activity tries
+	* @param end the upper bound of the range of learning activity tries (not inclusive)
+	* @return the range of matching learning activity tries
+	*/
+	public java.util.List<LearningActivityTry> findByActIdUserIdEndDate(
+		long actId, long userId, Date endDate, int start, int end);
+
+	/**
+	* Returns an ordered range of all the learning activity tries where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityTryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param start the lower bound of the range of learning activity tries
+	* @param end the upper bound of the range of learning activity tries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching learning activity tries
+	*/
+	public java.util.List<LearningActivityTry> findByActIdUserIdEndDate(
+		long actId, long userId, Date endDate, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator);
+
+	/**
+	* Returns an ordered range of all the learning activity tries where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityTryModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param start the lower bound of the range of learning activity tries
+	* @param end the upper bound of the range of learning activity tries (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching learning activity tries
+	*/
+	public java.util.List<LearningActivityTry> findByActIdUserIdEndDate(
+		long actId, long userId, Date endDate, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator,
+		boolean retrieveFromCache);
+
+	/**
+	* Returns the first learning activity try in the ordered set where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity try
+	* @throws NoSuchLearningActivityTryException if a matching learning activity try could not be found
+	*/
+	public LearningActivityTry findByActIdUserIdEndDate_First(long actId,
+		long userId, Date endDate,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator)
+		throws NoSuchLearningActivityTryException;
+
+	/**
+	* Returns the first learning activity try in the ordered set where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching learning activity try, or <code>null</code> if a matching learning activity try could not be found
+	*/
+	public LearningActivityTry fetchByActIdUserIdEndDate_First(long actId,
+		long userId, Date endDate,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator);
+
+	/**
+	* Returns the last learning activity try in the ordered set where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity try
+	* @throws NoSuchLearningActivityTryException if a matching learning activity try could not be found
+	*/
+	public LearningActivityTry findByActIdUserIdEndDate_Last(long actId,
+		long userId, Date endDate,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator)
+		throws NoSuchLearningActivityTryException;
+
+	/**
+	* Returns the last learning activity try in the ordered set where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching learning activity try, or <code>null</code> if a matching learning activity try could not be found
+	*/
+	public LearningActivityTry fetchByActIdUserIdEndDate_Last(long actId,
+		long userId, Date endDate,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator);
+
+	/**
+	* Returns the learning activity tries before and after the current learning activity try in the ordered set where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param latId the primary key of the current learning activity try
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next learning activity try
+	* @throws NoSuchLearningActivityTryException if a learning activity try with the primary key could not be found
+	*/
+	public LearningActivityTry[] findByActIdUserIdEndDate_PrevAndNext(
+		long latId, long actId, long userId, Date endDate,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityTry> orderByComparator)
+		throws NoSuchLearningActivityTryException;
+
+	/**
+	* Removes all the learning activity tries where actId = &#63; and userId = &#63; and endDate = &#63; from the database.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	*/
+	public void removeByActIdUserIdEndDate(long actId, long userId, Date endDate);
+
+	/**
+	* Returns the number of learning activity tries where actId = &#63; and userId = &#63; and endDate = &#63;.
+	*
+	* @param actId the act ID
+	* @param userId the user ID
+	* @param endDate the end date
+	* @return the number of matching learning activity tries
+	*/
+	public int countByActIdUserIdEndDate(long actId, long userId, Date endDate);
 
 	/**
 	* Caches the learning activity try in the entity cache if it is enabled.

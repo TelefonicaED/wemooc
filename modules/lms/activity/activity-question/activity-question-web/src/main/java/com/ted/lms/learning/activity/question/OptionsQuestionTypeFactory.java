@@ -36,7 +36,7 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
-		return new OptionsQuestionType(question, answerLocalService);
+		return new OptionsQuestionType(question);
 	}
 
 	@Override
@@ -95,11 +95,4 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
-
-	@Reference(unbind = "-")
-	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
-		this.answerLocalService = answerLocalService;
-	}
-	
-	protected AnswerLocalService answerLocalService;
 }

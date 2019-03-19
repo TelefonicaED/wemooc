@@ -23,8 +23,8 @@
 		<column name="modifiedDate" type="Date" />
 		
 		<column name="actId" type="long" />
-		<column name="text" type="String" localized="true"/>
-		<column name="questionType" type="long" />
+		<column name="text" type="String" />
+		<column name="questionTypeId" type="long" />
 		<column name="active" type="boolean" />
 		<column name="weight" type="long" />
 		<column name="penalize" type="boolean" />
@@ -61,7 +61,7 @@
 		
 		<column name="questionId" type="long" />
 		<column name="actId" type="long" />
-		<column name="answer" type="String" localized="true"/>
+		<column name="answer" type="String" />
 		<column name="correct" type="boolean" />
 		<column name="feedbackCorrect" type="String" localized="true"/>
 		<column name="feedbackIncorrect" type="String" localized="true"/>

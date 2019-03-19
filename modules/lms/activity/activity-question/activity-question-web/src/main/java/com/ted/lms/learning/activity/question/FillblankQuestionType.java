@@ -1,23 +1,19 @@
 package com.ted.lms.learning.activity.question;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
-import com.ted.lms.learning.activity.question.constants.OptionConstants;
-import com.ted.lms.learning.activity.question.constants.QuestionConstants;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalService;
+import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import javax.portlet.ActionRequest;
 
 import org.jsoup.Jsoup;
 
@@ -25,8 +21,8 @@ public class FillblankQuestionType extends BaseQuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(FillblankQuestionType.class);
 
-	public FillblankQuestionType(Question question, AnswerLocalService answerLocalService) {
-		super(question, answerLocalService);
+	public FillblankQuestionType(Question question) {
+		super(question);
 	}
 	
 	@Override
@@ -40,8 +36,13 @@ public class FillblankQuestionType extends BaseQuestionType{
 	}
 	
 	@Override
+	public String getURLQuestion() {
+		return "/question/fillblank/view.jsp";
+	}
+	
+	@Override
 	public long correct(Element element) throws PortalException {
-		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> answers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
 		
 		Answer solution = null;
 		if(answers!=null && answers.size()>0)
@@ -76,7 +77,7 @@ public class FillblankQuestionType extends BaseQuestionType{
 		return INCORRECT;	
 	}
 	
-	private List<String> getQuestionSols(String textAnswer) {
+	public List<String> getQuestionSols(String textAnswer) {
 		List<String> sols = new ArrayList<String>();//array con las soluciones {...}
 		String temp="";
 		int start = textAnswer.indexOf("{"), end = 0;
@@ -99,7 +100,7 @@ public class FillblankQuestionType extends BaseQuestionType{
 		return sols;
 	}
 	
-	private boolean isCorrect(String solution, String answer){
+	public boolean isCorrect(String solution, String answer){
 		boolean correct = false;
 		Collator c = Collator.getInstance();
 		c.setStrength(Collator.PRIMARY);
@@ -121,7 +122,7 @@ public class FillblankQuestionType extends BaseQuestionType{
 		return false;
 	}
 	
-	private List<String> getBlankSols(String solution, boolean onlyCorrectOnes) {
+	public List<String> getBlankSols(String solution, boolean onlyCorrectOnes) {
 		List<String> correctSols =new ArrayList<String>();
 		if(solution.startsWith("{{")){
 			solution = solution.replace("{{", "");
@@ -152,4 +153,29 @@ public class FillblankQuestionType extends BaseQuestionType{
 		}
 		return correctSols;
 	}
+	
+	public String[] getAnswersSelected(Document document) {
+		String answer = "";
+		if(document != null){
+			Iterator<Element> nodeItr = document.getRootElement().elementIterator();
+			while(nodeItr.hasNext()) {
+				Element element = nodeItr.next();
+			     if("question".equals(element.getName()) && question.getQuestionId() == Long.valueOf(element.attributeValue("id"))){
+			    	 Iterator<Element> elementItr = element.elementIterator();
+			    	 if(elementItr.hasNext()) {
+			    		 Element elementElement = elementItr.next();
+			    		 if("answer".equals(elementElement.getName())) {
+			    			 try {
+								answer = elementElement.getText();
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+							}
+			    		 }
+			    	 }
+			     }
+			}
+		}
+		return answer.split(",");
+	}
+	
 }

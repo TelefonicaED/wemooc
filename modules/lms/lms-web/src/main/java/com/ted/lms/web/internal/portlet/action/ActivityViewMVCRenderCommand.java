@@ -74,12 +74,6 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					queryStringStringBundler.append("actId");
 					queryStringStringBundler.append(StringPool.EQUAL);
 					queryStringStringBundler.append(String.valueOf(actId));
-				/*	if(Validator.isNotNull(learningActivityTypeFactory.getMVCRenderCommandNameView())) {
-						queryStringStringBundler.append(StringPool.AMPERSAND);
-						queryStringStringBundler.append("mvcRenderCommandName");
-						queryStringStringBundler.append(StringPool.EQUAL);
-						queryStringStringBundler.append(learningActivityTypeFactory.getMVCRenderCommandNameView());
-					}*/
 					
 					System.out.println("queryStringBundler: " + queryStringStringBundler);
 					renderRequest.setAttribute("activity", activity);

@@ -8,7 +8,6 @@
 <%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%@page import="com.liferay.portal.kernel.json.JSONFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.json.JSONArray"%>
-<%@page import="com.ted.lms.learning.activity.p2p.web.constants.P2PConstants"%>
 <%@page import="com.ted.lms.learning.activity.p2p.web.constants.P2PPropsValues"%>
 <%@page import="com.ted.lms.learning.activity.p2p.web.activity.P2PActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.p2p.web.activity.P2PActivityType"%>
@@ -19,6 +18,7 @@
 <%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
 <%@page import="com.ted.lms.model.LearningActivityType"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
+<%@page import="com.ted.lms.learning.activity.p2p.constants.P2PConstants" %>
 <%@ include file="init.jsp" %>
 
 <%long actId = ParamUtil.getLong(request, "actId", 0);

@@ -17,7 +17,7 @@ import javax.portlet.PortletResponse;
 public abstract class BaseCalificationTypeFactory implements CalificationTypeFactory {
 
 	@Override
-	public CalificationType getCalificationType(Course course) throws PortalException {	
+	public CalificationType getCalificationType(Course course) {	
 		return null;
 	}
 

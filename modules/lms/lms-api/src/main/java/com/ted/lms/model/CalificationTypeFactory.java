@@ -17,7 +17,7 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface CalificationTypeFactory {
 
-	public CalificationType getCalificationType(Course course) throws PortalException;
+	public CalificationType getCalificationType(Course course);
 
 	public String getClassName();
 

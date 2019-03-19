@@ -48,11 +48,11 @@ if(questionId > 0){
 <script type="text/javascript">
 function <portlet:namespace />showHideSolution(){
 	var A = AUI();
-	if(A.one('input[id=<%=namespace + iteratorQuestion%>_include_solution]').attr('checked')) {
-		A.one('#<%=namespace + iteratorQuestion%>_solution').show();
+	if($('#<%=namespace + iteratorQuestion%>_include_solution').attr('checked')) {
+		$('#<%=namespace + iteratorQuestion%>_solution').show();
 		A.all('input[id="<%=namespace + iteratorQuestion%>_correct"]').val('true').attr('value', 'true');
-	}else if(A.one('input[id=<%=namespace + iteratorQuestion%>not_include_solution]').attr('checked')) {
-		A.one('#<%=namespace + iteratorQuestion%>_solution').hide();
+	}else if($('#<%=namespace + iteratorQuestion%>not_include_solution').attr('checked')) {
+		$('#<%=namespace + iteratorQuestion%>_solution').hide();
 		A.all('input[id="<%=namespace + iteratorQuestion%>_correct"]').val('false').attr('value', 'false');
 	}
 }

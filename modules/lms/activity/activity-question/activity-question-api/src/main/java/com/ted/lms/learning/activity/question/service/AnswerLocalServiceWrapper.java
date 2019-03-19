@@ -46,13 +46,12 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Answer addAnswer(
-		long questionId, long actId,
-		java.util.Map<java.util.Locale, String> answerMap,
+		long questionId, long actId, String answerText,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
 		boolean correct,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _answerLocalService.addAnswer(questionId, actId, answerMap,
+		return _answerLocalService.addAnswer(questionId, actId, answerText,
 			feedbackCorrectMap, feedbackIncorrectMap, correct, serviceContext);
 	}
 
@@ -347,11 +346,11 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Answer updateAnswer(
-		long answerId, java.util.Map<java.util.Locale, String> answerMap,
+		long answerId, String answerText,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
 		boolean correct) {
-		return _answerLocalService.updateAnswer(answerId, answerMap,
+		return _answerLocalService.updateAnswer(answerId, answerText,
 			feedbackCorrectMap, feedbackIncorrectMap, correct);
 	}
 

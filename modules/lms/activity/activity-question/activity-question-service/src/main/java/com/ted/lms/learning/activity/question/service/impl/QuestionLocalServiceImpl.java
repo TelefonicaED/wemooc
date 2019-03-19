@@ -21,6 +21,8 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.question.model.Question;
@@ -64,8 +66,13 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		return questionPersistence.findByActId(actId);
 	}
 	
+	public List<Question> getQuestionsOrder(long actId){
+		OrderByComparator<Question> orderByComparator = OrderByComparatorFactoryUtil.create("qu_question", "weight", true);
+		return questionPersistence.findByActId(actId, -1, -1, orderByComparator);
+	}
+	
 	@Override
-	public Question addQuestion(long actId, Map<Locale, String> questionTextMap, long questionType, boolean penalize, ServiceContext serviceContext) {
+	public Question addQuestion(long actId, String questionText, long questionType, boolean penalize, ServiceContext serviceContext) {
 		Question question = questionPersistence.create(counterLocalService.increment(Question.class.getName()));
 		
 		//Auditoria
@@ -79,9 +86,9 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		question.setCreateDate(new Date());
 		question.setModifiedDate(question.getCreateDate());
 		
-		question.setTextMap(questionTextMap);
+		question.setText(questionText);
 		question.setPenalize(penalize);
-		question.setQuestionType(questionType);
+		question.setQuestionTypeId(questionType);
 		question.setActId(actId);
 		question.setWeight(question.getQuestionId());
 		
@@ -90,11 +97,11 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 	}
 	
 	@Override
-	public Question updateQuestion(long questionId, Map<Locale, String> questionTextMap, boolean penalize) {
+	public Question updateQuestion(long questionId, String questionText, boolean penalize) {
 		Question question = questionPersistence.fetchByPrimaryKey(questionId);
 		
 		question.setModifiedDate(new Date());
-		question.setTextMap(questionTextMap);
+		question.setText(questionText);
 		question.setPenalize(penalize);
 		question.setModifiedDate(new Date());
 		
@@ -117,7 +124,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		
 		long questionId = 0;
 		long questionTypeId = 0;
-		Map<Locale, String> questionMap = null;
+		String questionText = null;
 		Question question = null;
 		
 		boolean penalize = false;
@@ -136,17 +143,17 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 				
 				questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionTypeId);
 				
-				questionMap = LocalizationUtil.getLocalizationMap(actionRequest, "questionTitleMapAsXML" + iteratorQuestion);
+				questionText = ParamUtil.getString(actionRequest, "questionTitle" + iteratorQuestion);
 				
 				log.debug("***penalize:"+penalize);			
 				log.debug("***questionId:"+questionId);
 				log.debug("***questionType: " + questionType);
-				log.debug("***questionText: " + questionMap.toString());
+				log.debug("***questionText: " + questionText.toString());
 				
 				if(questionId == 0){
-					question = questionLocalService.addQuestion(actId, questionMap, questionTypeId, penalize, serviceContext);
+					question = questionLocalService.addQuestion(actId, questionText, questionTypeId, penalize, serviceContext);
 				}else{
-					question = questionLocalService.updateQuestion(questionId, questionMap, penalize);
+					question = questionLocalService.updateQuestion(questionId, questionText, penalize);
 				}
 				
 				questionType = questionTypeFactory.getQuestionType(question);
@@ -155,7 +162,7 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 				questionLocalService.updateQuestion(question);
 				editingQuestionIds.add(question.getQuestionId());
 				
-				log.debug("question.getQuestionType() " + question.getQuestionType());
+				log.debug("question.getQuestionType() " + question.getQuestionTypeId());
 				
 				//Cada tipo de pregunta guarda sus respuestas
 				questionType.saveAnswers(actionRequest, iteratorQuestion);

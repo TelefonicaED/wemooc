@@ -76,8 +76,8 @@ public interface AnswerLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Answer addAnswer(Answer answer);
 
-	public Answer addAnswer(long questionId, long actId,
-		Map<Locale, String> answerMap, Map<Locale, String> feedbackCorrectMap,
+	public Answer addAnswer(long questionId, long actId, String answerText,
+		Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackIncorrectMap, boolean correct,
 		ServiceContext serviceContext);
 
@@ -297,7 +297,7 @@ public interface AnswerLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Answer updateAnswer(Answer answer);
 
-	public Answer updateAnswer(long answerId, Map<Locale, String> answerMap,
+	public Answer updateAnswer(long answerId, String answerText,
 		Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackIncorrectMap, boolean correct);
 }

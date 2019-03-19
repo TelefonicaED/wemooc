@@ -44,4 +44,6 @@ public interface LearningActivityType {
 
 	public boolean hasViewPermission(PermissionChecker permissionChecker) throws PortalException;
 
+	public LearningActivity getLearningActivity();
+
 }

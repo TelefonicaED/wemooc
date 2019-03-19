@@ -1,6 +1,7 @@
 package com.ted.lms.learning.activity.question;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
@@ -8,6 +9,8 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys;
+import com.ted.lms.learning.activity.question.model.Question;
+import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 
 import java.util.Locale;
@@ -29,6 +32,11 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	public static final long TYPE = 6;
 	
 	public static final String URL_EDIT_ANSWER = "/question/survey/answer.jsp";
+	
+	@Override
+	public QuestionType getQuestionType(Question question) throws PortalException {
+		return new SurveyQuestionType(question);
+	}
 
 	@Override
 	public String getClassName() {

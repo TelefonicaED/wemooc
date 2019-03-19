@@ -41,8 +41,6 @@ import com.ted.lms.learning.activity.question.model.Question;
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import javax.portlet.ActionRequest;
 
@@ -68,9 +66,8 @@ public interface QuestionLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link QuestionLocalServiceUtil} to access the question local service. Add custom service methods to {@link com.ted.lms.learning.activity.question.service.impl.QuestionLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public Question addQuestion(long actId,
-		Map<Locale, String> questionTextMap, long questionType,
-		boolean penalize, ServiceContext serviceContext);
+	public Question addQuestion(long actId, String questionText,
+		long questionType, boolean penalize, ServiceContext serviceContext);
 
 	/**
 	* Adds the question to the database. Also notifies the appropriate model listeners.
@@ -289,11 +286,14 @@ public interface QuestionLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getQuestionsCount();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Question> getQuestionsOrder(long actId);
+
 	public void saveQuestions(ActionRequest actionRequest, long actId)
 		throws PortalException;
 
-	public Question updateQuestion(long questionId,
-		Map<Locale, String> questionTextMap, boolean penalize);
+	public Question updateQuestion(long questionId, String questionText,
+		boolean penalize);
 
 	/**
 	* Updates the question in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

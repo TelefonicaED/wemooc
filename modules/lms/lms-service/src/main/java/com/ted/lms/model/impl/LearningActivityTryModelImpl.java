@@ -125,10 +125,11 @@ public class LearningActivityTryModelImpl extends BaseModelImpl<LearningActivity
 			true);
 	public static final long ACTID_COLUMN_BITMASK = 1L;
 	public static final long COMPANYID_COLUMN_BITMASK = 2L;
-	public static final long GROUPID_COLUMN_BITMASK = 4L;
-	public static final long USERID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long LATID_COLUMN_BITMASK = 32L;
+	public static final long ENDDATE_COLUMN_BITMASK = 4L;
+	public static final long GROUPID_COLUMN_BITMASK = 8L;
+	public static final long USERID_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long LATID_COLUMN_BITMASK = 64L;
 	public static final long LOCK_EXPIRATION_TIME = GetterUtil.getLong(com.ted.lms.service.util.ServiceProps.get(
 				"lock.expiration.time.com.ted.lms.model.LearningActivityTry"));
 
@@ -521,7 +522,17 @@ public class LearningActivityTryModelImpl extends BaseModelImpl<LearningActivity
 
 	@Override
 	public void setEndDate(Date endDate) {
+		_columnBitmask |= ENDDATE_COLUMN_BITMASK;
+
+		if (_originalEndDate == null) {
+			_originalEndDate = _endDate;
+		}
+
 		_endDate = endDate;
+	}
+
+	public Date getOriginalEndDate() {
+		return _originalEndDate;
 	}
 
 	@Override
@@ -683,6 +694,8 @@ public class LearningActivityTryModelImpl extends BaseModelImpl<LearningActivity
 		learningActivityTryModelImpl._originalUserId = learningActivityTryModelImpl._userId;
 
 		learningActivityTryModelImpl._setOriginalUserId = false;
+
+		learningActivityTryModelImpl._originalEndDate = learningActivityTryModelImpl._endDate;
 
 		learningActivityTryModelImpl._columnBitmask = 0;
 	}
@@ -932,6 +945,7 @@ public class LearningActivityTryModelImpl extends BaseModelImpl<LearningActivity
 	private String _comments;
 	private Date _startDate;
 	private Date _endDate;
+	private Date _originalEndDate;
 	private Date _endUserDate;
 	private String _tryResultData;
 	private long _columnBitmask;

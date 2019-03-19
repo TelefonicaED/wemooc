@@ -19,7 +19,7 @@ import org.osgi.service.component.annotations.Component;
 		"javax.portlet.init-param.view-template=" + QuestionsWebPortletKeys.EDIT_QUESTIONS_JSP,
 		"javax.portlet.name=" + QuestionsWebPortletKeys.EDIT_QUESTIONS,
 		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user",
+		"javax.portlet.security-role-ref=user",
 		"com.liferay.portlet.add-default-resource=true"
 		
 	},

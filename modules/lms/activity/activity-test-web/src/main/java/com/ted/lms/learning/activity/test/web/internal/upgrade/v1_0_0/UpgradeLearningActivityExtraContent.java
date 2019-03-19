@@ -11,6 +11,10 @@ import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.constants.LearningActivityConstants;
+import com.ted.lms.learning.activity.question.constants.QuestionConstants;
+import com.ted.lms.learning.activity.question.model.Question;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
+import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityLocalService;
@@ -20,9 +24,11 @@ import java.util.List;
 public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 
 	public UpgradeLearningActivityExtraContent(LearningActivityLocalService learningActivityLocalService, 
-												ReleaseLocalService releaseLocalService) {
+												ReleaseLocalService releaseLocalService,
+												QuestionLocalService questionLocalService) {
 		this.learningActivityLocalService = learningActivityLocalService;
 		this.releaseLocalService = releaseLocalService;
+		this.questionLocalService = questionLocalService;
 	}
 	
 	@Override
@@ -35,6 +41,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 			Document document = null;
 			Element rootElement = null;
 			JSONObject testContent = null;
+			JSONObject questionsContent = null;
 			Element randomElement = null;
 			Element passwordElement = null;
 			Element timeStampElement = null;
@@ -46,6 +53,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 			Element questionPerPageElement = null;
 			Element previewElement = null;
 			Element teamElement = null;
+			List<Question> questions = null;
 			
 			for(LearningActivity learningActivity: listLearningActivities) {
 				if(Validator.isNotNull(learningActivity.getExtraContent())) {
@@ -53,6 +61,24 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						document=SAXReaderUtil.read(learningActivity.getExtraContent());
 						rootElement =document.getRootElement();
 						activityExtraContent = JSONFactoryUtil.createJSONObject();
+						
+						questionsContent = JSONFactoryUtil.createJSONObject();
+						activityExtraContent.put(QuestionConstants.JSON_QUESTIONS, questionsContent);
+						
+						showCorrectAnswerElement = rootElement.element("showCorrectAnswer");
+						if(showCorrectAnswerElement != null) {
+							questionsContent.put(QuestionConstants.JSON_SHOW_CORRECT_ANSWER, Boolean.parseBoolean(showCorrectAnswerElement.getText()));
+						}
+						
+						hideFeedbackElement = rootElement.element("hideFeedback");
+						if(hideFeedbackElement != null) {
+							questionsContent.put(QuestionConstants.JSON_SHOW_FEEDBACK, !Boolean.parseBoolean(hideFeedbackElement.getText()));
+						}
+						
+						showCorrectAnswerOnlyOnFinalTryElement = rootElement.element("showCorrectAnswerOnlyOnFinalTry");
+						if(showCorrectAnswerOnlyOnFinalTryElement != null) {
+							questionsContent.put(QuestionConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, Boolean.parseBoolean(showCorrectAnswerOnlyOnFinalTryElement.getText()));
+						}
 						
 						testContent = JSONFactoryUtil.createJSONObject();
 						activityExtraContent.put(TestConstants.JSON_TEST, testContent);
@@ -70,21 +96,6 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						timeStampElement = rootElement.element("timeStamp");
 						if(timeStampElement != null) {
 							testContent.put(TestConstants.JSON_TIME_STAMP, Long.parseLong(timeStampElement.getText()));
-						}
-						
-						showCorrectAnswerElement = rootElement.element("showCorrectAnswer");
-						if(showCorrectAnswerElement != null) {
-							testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER, Boolean.parseBoolean(showCorrectAnswerElement.getText()));
-						}
-						
-						hideFeedbackElement = rootElement.element("hideFeedback");
-						if(hideFeedbackElement != null) {
-							testContent.put(TestConstants.JSON_SHOW_FEEDBACK, !Boolean.parseBoolean(hideFeedbackElement.getText()));
-						}
-						
-						showCorrectAnswerOnlyOnFinalTryElement = rootElement.element("showCorrectAnswerOnlyOnFinalTry");
-						if(showCorrectAnswerOnlyOnFinalTryElement != null) {
-							testContent.put(TestConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, Boolean.parseBoolean(showCorrectAnswerOnlyOnFinalTryElement.getText()));
 						}
 						
 						improveElement = rootElement.element("improve");
@@ -119,10 +130,19 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						e.printStackTrace();
 					}
 				}
+				
+				questions = questionLocalService.getQuestions(learningActivity.getActId());
+				for(Question question : questions){
+					if(question.getWeight()==0){
+						question.setWeight(question.getQuestionId());
+						questionLocalService.updateQuestion(question);
+					}
+				}
 			}
 		}	
 	}
 	
 	private final LearningActivityLocalService learningActivityLocalService;
+	private final QuestionLocalService questionLocalService;
 	private final ReleaseLocalService releaseLocalService;
 }

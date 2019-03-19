@@ -28,7 +28,7 @@ public class SortableQuestionTypeFactory extends BaseQuestionTypeFactory{
 	
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
-		return new SortableQuestionType(question, answerLocalService);
+		return new SortableQuestionType(question);
 	}
 
 	@Override
@@ -76,12 +76,5 @@ public class SortableQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
-	
-	@Reference(unbind = "-")
-	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
-		this.answerLocalService = answerLocalService;
-	}
-	
-	protected AnswerLocalService answerLocalService;
 
 }

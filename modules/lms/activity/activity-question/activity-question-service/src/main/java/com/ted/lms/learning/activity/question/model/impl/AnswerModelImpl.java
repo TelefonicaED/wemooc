@@ -90,7 +90,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "questionId", Types.BIGINT },
 			{ "actId", Types.BIGINT },
-			{ "answer", Types.VARCHAR },
+			{ "answer", Types.CLOB },
 			{ "correct", Types.BOOLEAN },
 			{ "feedbackCorrect", Types.VARCHAR },
 			{ "feedbackIncorrect", Types.VARCHAR }
@@ -108,13 +108,13 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("answer", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("answer", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("correct", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("feedbackCorrect", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,actId LONG,answer STRING null,correct BOOLEAN,feedbackCorrect STRING null,feedbackIncorrect STRING null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,actId LONG,answer TEXT null,correct BOOLEAN,feedbackCorrect STRING null,feedbackIncorrect STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Answer";
 	public static final String ORDER_BY_JPQL = " ORDER BY answer.answerId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Answer.answerId ASC";
@@ -524,91 +524,8 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
-	public String getAnswer(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getAnswer(languageId);
-	}
-
-	@Override
-	public String getAnswer(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getAnswer(languageId, useDefault);
-	}
-
-	@Override
-	public String getAnswer(String languageId) {
-		return LocalizationUtil.getLocalization(getAnswer(), languageId);
-	}
-
-	@Override
-	public String getAnswer(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(getAnswer(), languageId,
-			useDefault);
-	}
-
-	@Override
-	public String getAnswerCurrentLanguageId() {
-		return _answerCurrentLanguageId;
-	}
-
-	@JSON
-	@Override
-	public String getAnswerCurrentValue() {
-		Locale locale = getLocale(_answerCurrentLanguageId);
-
-		return getAnswer(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getAnswerMap() {
-		return LocalizationUtil.getLocalizationMap(getAnswer());
-	}
-
-	@Override
 	public void setAnswer(String answer) {
 		_answer = answer;
-	}
-
-	@Override
-	public void setAnswer(String answer, Locale locale) {
-		setAnswer(answer, locale, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setAnswer(String answer, Locale locale, Locale defaultLocale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(answer)) {
-			setAnswer(LocalizationUtil.updateLocalization(getAnswer(),
-					"Answer", answer, languageId, defaultLanguageId));
-		}
-		else {
-			setAnswer(LocalizationUtil.removeLocalization(getAnswer(),
-					"Answer", languageId));
-		}
-	}
-
-	@Override
-	public void setAnswerCurrentLanguageId(String languageId) {
-		_answerCurrentLanguageId = languageId;
-	}
-
-	@Override
-	public void setAnswerMap(Map<Locale, String> answerMap) {
-		setAnswerMap(answerMap, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setAnswerMap(Map<Locale, String> answerMap, Locale defaultLocale) {
-		if (answerMap == null) {
-			return;
-		}
-
-		setAnswer(LocalizationUtil.updateLocalization(answerMap, getAnswer(),
-				"Answer", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@Override
@@ -861,17 +778,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	public String[] getAvailableLanguageIds() {
 		Set<String> availableLanguageIds = new TreeSet<String>();
 
-		Map<Locale, String> answerMap = getAnswerMap();
-
-		for (Map.Entry<Locale, String> entry : answerMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
 		Map<Locale, String> feedbackCorrectMap = getFeedbackCorrectMap();
 
 		for (Map.Entry<Locale, String> entry : feedbackCorrectMap.entrySet()) {
@@ -899,7 +805,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String getDefaultLanguageId() {
-		String xml = getAnswer();
+		String xml = getFeedbackCorrect();
 
 		if (xml == null) {
 			return "";
@@ -929,15 +835,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		Locale defaultLocale = LocaleUtil.getSiteDefault();
 
 		String modelDefaultLanguageId = getDefaultLanguageId();
-
-		String answer = getAnswer(defaultLocale);
-
-		if (Validator.isNull(answer)) {
-			setAnswer(getAnswer(modelDefaultLanguageId), defaultLocale);
-		}
-		else {
-			setAnswer(getAnswer(defaultLocale), defaultLocale, defaultLocale);
-		}
 
 		String feedbackCorrect = getFeedbackCorrect(defaultLocale);
 
@@ -1286,7 +1183,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	private boolean _setOriginalQuestionId;
 	private long _actId;
 	private String _answer;
-	private String _answerCurrentLanguageId;
 	private boolean _correct;
 	private String _feedbackCorrect;
 	private String _feedbackCorrectCurrentLanguageId;

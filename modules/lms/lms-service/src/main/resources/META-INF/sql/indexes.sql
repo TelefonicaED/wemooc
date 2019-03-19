@@ -21,7 +21,7 @@ create unique index IX_AD9F417A on LMS_LearningActivityResult (actId, userId);
 create index IX_92E29591 on LMS_LearningActivityResult (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_D8854C53 on LMS_LearningActivityResult (uuid_[$COLUMN_LENGTH:75$], groupId);
 
-create index IX_70571C50 on LMS_LearningActivityTry (actId, userId);
+create index IX_A111CDC9 on LMS_LearningActivityTry (actId, userId, endDate);
 create index IX_2445C2FB on LMS_LearningActivityTry (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_6CC8CC3D on LMS_LearningActivityTry (uuid_[$COLUMN_LENGTH:75$], groupId);
 

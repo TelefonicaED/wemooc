@@ -12,7 +12,9 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="questionId" type="long" />
 		<field name="actId" type="long" />
-		<field localized="true" name="answer" type="String" />
+		<field name="answer" type="String">
+			<hint-collection name="EDITOR" />
+		</field>
 		<field name="correct" type="boolean" />
 		<field localized="true" name="feedbackCorrect" type="String" />
 		<field localized="true" name="feedbackIncorrect" type="String" />
@@ -27,8 +29,10 @@
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
 		<field name="actId" type="long" />
-		<field localized="true" name="text" type="String" />
-		<field name="questionType" type="long" />
+		<field name="text" type="String">
+			<hint-collection name="EDITOR" />
+		</field>
+		<field name="questionTypeId" type="long" />
 		<field name="active" type="boolean" />
 		<field name="weight" type="long" />
 		<field name="penalize" type="boolean" />

@@ -1,4 +1,4 @@
-package com.ted.lms.learning.activity.resource.internal.web;
+package com.ted.lms.learning.activity.resource.internal.web.activity;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;

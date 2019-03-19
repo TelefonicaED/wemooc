@@ -49,7 +49,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		return answerPersistence.findByQuestionId(questionId);
 	}
 	
-	public Answer addAnswer(long questionId, long actId, Map<Locale, String> answerMap, Map<Locale, String> feedbackCorrectMap, 
+	public Answer addAnswer(long questionId, long actId, String answerText, Map<Locale, String> feedbackCorrectMap, 
 			Map<Locale, String> feedbackIncorrectMap, boolean correct, ServiceContext serviceContext) {
 		Answer answer = answerPersistence.create(counterLocalService.increment(Answer.class.getName()));
 		
@@ -65,7 +65,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		answer.setModifiedDate(answer.getCreateDate());
 		
 		answer.setActId(actId);
-		answer.setAnswerMap(answerMap);
+		answer.setAnswer(answerText);
 		answer.setFeedbackCorrectMap(feedbackCorrectMap);
 		answer.setFeedbackIncorrectMap(feedbackIncorrectMap);
 		answer.setCorrect(correct);
@@ -74,11 +74,11 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 	}
 	
 
-	public Answer updateAnswer(long answerId, Map<Locale, String> answerMap, Map<Locale, String> feedbackCorrectMap,
+	public Answer updateAnswer(long answerId, String answerText, Map<Locale, String> feedbackCorrectMap,
 			Map<Locale, String> feedbackIncorrectMap, boolean correct) {
 		
 		Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
-		answer.setAnswerMap(answerMap);
+		answer.setAnswer(answerText);
 		answer.setFeedbackCorrectMap(feedbackCorrectMap);
 		answer.setFeedbackIncorrectMap(feedbackIncorrectMap);
 		answer.setCorrect(correct);

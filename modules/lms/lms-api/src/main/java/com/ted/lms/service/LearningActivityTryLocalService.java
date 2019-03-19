@@ -40,6 +40,7 @@ import com.ted.lms.model.LearningActivityTry;
 
 import java.io.Serializable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -195,6 +196,10 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 		String uuid, long groupId);
 
 	public LearningActivityTry finishLearningActivityTry(
+		LearningActivityTry learningActivityTry, double result, Date endDate,
+		ServiceContext serviceContext) throws PortalException;
+
+	public LearningActivityTry finishLearningActivityTry(
 		LearningActivityTry learningActivityTry, double result,
 		ServiceContext serviceContext) throws PortalException;
 
@@ -289,6 +294,13 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public LearningActivityTry getLearningActivityTryByUuidAndGroupId(
 		String uuid, long groupId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LearningActivityTry getLearningActivityTryNotFinishedByActUser(
+		long actId, long userId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getNumTriesOpened(long actId, long userId);
 
 	/**
 	* Returns the OSGi service identifier.

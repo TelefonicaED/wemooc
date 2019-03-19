@@ -28,7 +28,7 @@ System.out.println("questions_question.jsp::namespace: " + namespace);
 Question question = null;
 if(questionId > 0){
 	question = QuestionLocalServiceUtil.getQuestion(questionId);
-	questionType = question.getQuestionType();
+	questionType = question.getQuestionTypeId();
 }
 QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionType);
 %>
@@ -60,12 +60,11 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 	<div class="col-md-12">
 		<div class="row">
 			<div class="question-title col-md-11">
-				<label for="<portlet:namespace />questionTitleMapAsXML<%=iteratorQuestion %>"><liferay-ui:message key="question" /></label>
+				<label for="<portlet:namespace />questionTitle<%=iteratorQuestion %>"><liferay-ui:message key="question" /></label>
 				
 				<liferay-ui:input-editor
-					contents="<%= (question != null) ? question.getTextMapAsXML() : StringPool.BLANK %>"
-					
-					name="<%="questionTitleMapAsXML" + iteratorQuestion%>"
+					contents="<%= (question != null) ? question.getText() : StringPool.BLANK %>"
+					name="<%="questionTitle" + iteratorQuestion%>"
 					placeholder="description"
 					required="<%= true %>"
 				>

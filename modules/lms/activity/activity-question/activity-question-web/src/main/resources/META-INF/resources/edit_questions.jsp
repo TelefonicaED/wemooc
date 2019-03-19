@@ -41,7 +41,7 @@ List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUti
 					<liferay-util:include page="/questions_question.jsp" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" >
 						<liferay-util:param name="questionId" value="<%=String.valueOf(question.getQuestionId()) %>" />
 						<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(numQuestion) %>" />
-						<liferay-util:param name="questionType" value="<%=String.valueOf(question.getQuestionType()) %>" />
+						<liferay-util:param name="questionType" value="<%=String.valueOf(question.getQuestionTypeId()) %>" />
 						<liferay-util:param name="namespace" value="<%=renderResponse.getNamespace() %>" />
 					</liferay-util:include>
 				</div> 

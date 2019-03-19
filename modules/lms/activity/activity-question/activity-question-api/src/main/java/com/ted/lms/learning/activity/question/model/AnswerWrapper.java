@@ -195,62 +195,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
-	* Returns the localized answer of this answer in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized answer of this answer
-	*/
-	@Override
-	public String getAnswer(java.util.Locale locale) {
-		return _answer.getAnswer(locale);
-	}
-
-	/**
-	* Returns the localized answer of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized answer of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
-	@Override
-	public String getAnswer(java.util.Locale locale, boolean useDefault) {
-		return _answer.getAnswer(locale, useDefault);
-	}
-
-	/**
-	* Returns the localized answer of this answer in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized answer of this answer
-	*/
-	@Override
-	public String getAnswer(String languageId) {
-		return _answer.getAnswer(languageId);
-	}
-
-	/**
-	* Returns the localized answer of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized answer of this answer
-	*/
-	@Override
-	public String getAnswer(String languageId, boolean useDefault) {
-		return _answer.getAnswer(languageId, useDefault);
-	}
-
-	@Override
-	public String getAnswerCurrentLanguageId() {
-		return _answer.getAnswerCurrentLanguageId();
-	}
-
-	@Override
-	public String getAnswerCurrentValue() {
-		return _answer.getAnswerCurrentValue();
-	}
-
-	/**
 	* Returns the answer ID of this answer.
 	*
 	* @return the answer ID of this answer
@@ -258,21 +202,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public long getAnswerId() {
 		return _answer.getAnswerId();
-	}
-
-	/**
-	* Returns a map of the locales and localized answers of this answer.
-	*
-	* @return the locales and localized answers of this answer
-	*/
-	@Override
-	public Map<java.util.Locale, String> getAnswerMap() {
-		return _answer.getAnswerMap();
-	}
-
-	@Override
-	public String getAnswerMapAsXML() {
-		return _answer.getAnswerMapAsXML();
 	}
 
 	@Override
@@ -637,35 +566,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	}
 
 	/**
-	* Sets the localized answer of this answer in the language.
-	*
-	* @param answer the localized answer of this answer
-	* @param locale the locale of the language
-	*/
-	@Override
-	public void setAnswer(String answer, java.util.Locale locale) {
-		_answer.setAnswer(answer, locale);
-	}
-
-	/**
-	* Sets the localized answer of this answer in the language, and sets the default locale.
-	*
-	* @param answer the localized answer of this answer
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
-	@Override
-	public void setAnswer(String answer, java.util.Locale locale,
-		java.util.Locale defaultLocale) {
-		_answer.setAnswer(answer, locale, defaultLocale);
-	}
-
-	@Override
-	public void setAnswerCurrentLanguageId(String languageId) {
-		_answer.setAnswerCurrentLanguageId(languageId);
-	}
-
-	/**
 	* Sets the answer ID of this answer.
 	*
 	* @param answerId the answer ID of this answer
@@ -673,28 +573,6 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public void setAnswerId(long answerId) {
 		_answer.setAnswerId(answerId);
-	}
-
-	/**
-	* Sets the localized answers of this answer from the map of locales and localized answers.
-	*
-	* @param answerMap the locales and localized answers of this answer
-	*/
-	@Override
-	public void setAnswerMap(Map<java.util.Locale, String> answerMap) {
-		_answer.setAnswerMap(answerMap);
-	}
-
-	/**
-	* Sets the localized answers of this answer from the map of locales and localized answers, and sets the default locale.
-	*
-	* @param answerMap the locales and localized answers of this answer
-	* @param defaultLocale the default locale
-	*/
-	@Override
-	public void setAnswerMap(Map<java.util.Locale, String> answerMap,
-		java.util.Locale defaultLocale) {
-		_answer.setAnswerMap(answerMap, defaultLocale);
 	}
 
 	@Override

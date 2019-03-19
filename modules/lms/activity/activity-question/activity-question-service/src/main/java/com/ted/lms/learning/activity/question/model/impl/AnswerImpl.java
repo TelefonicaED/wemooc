@@ -39,17 +39,12 @@ public class AnswerImpl extends AnswerBaseImpl {
 	}
 	
 	@Override
-	public String getAnswerMapAsXML() {
-		return LocalizationUtil.updateLocalization(getAnswerMap(), StringPool.BLANK, "Answer",getDefaultLanguageId());
-	}
-	
-	@Override
 	public String getFeedbackCorrectMapAsXML() {
-		return LocalizationUtil.updateLocalization(getAnswerMap(), StringPool.BLANK, "FeedbackCorrect",getDefaultLanguageId());
+		return LocalizationUtil.updateLocalization(getFeedbackCorrectMap(), StringPool.BLANK, "FeedbackCorrect",getDefaultLanguageId());
 	}
 	
 	@Override
 	public String getFeedbackIncorrectMapAsXML() {
-		return LocalizationUtil.updateLocalization(getAnswerMap(), StringPool.BLANK, "FeedbackIncorrect",getDefaultLanguageId());
+		return LocalizationUtil.updateLocalization(getFeedbackIncorrectMap(), StringPool.BLANK, "FeedbackIncorrect",getDefaultLanguageId());
 	}
 }

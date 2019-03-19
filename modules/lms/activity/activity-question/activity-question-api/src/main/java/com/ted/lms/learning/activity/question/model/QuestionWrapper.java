@@ -69,7 +69,7 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("actId", getActId());
 		attributes.put("text", getText());
-		attributes.put("questionType", getQuestionType());
+		attributes.put("questionTypeId", getQuestionTypeId());
 		attributes.put("active", isActive());
 		attributes.put("weight", getWeight());
 		attributes.put("penalize", isPenalize());
@@ -140,10 +140,10 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 			setText(text);
 		}
 
-		Long questionType = (Long)attributes.get("questionType");
+		Long questionTypeId = (Long)attributes.get("questionTypeId");
 
-		if (questionType != null) {
-			setQuestionType(questionType);
+		if (questionTypeId != null) {
+			setQuestionTypeId(questionTypeId);
 		}
 
 		Boolean active = (Boolean)attributes.get("active");
@@ -201,11 +201,6 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 		return _question.getActive();
 	}
 
-	@Override
-	public String[] getAvailableLanguageIds() {
-		return _question.getAvailableLanguageIds();
-	}
-
 	/**
 	* Returns the company ID of this question.
 	*
@@ -224,11 +219,6 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	@Override
 	public Date getCreateDate() {
 		return _question.getCreateDate();
-	}
-
-	@Override
-	public String getDefaultLanguageId() {
-		return _question.getDefaultLanguageId();
 	}
 
 	@Override
@@ -306,14 +296,20 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 		return _question.getQuestionId();
 	}
 
+	@Override
+	public QuestionType getQuestionType()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _question.getQuestionType();
+	}
+
 	/**
-	* Returns the question type of this question.
+	* Returns the question type ID of this question.
 	*
-	* @return the question type of this question
+	* @return the question type ID of this question
 	*/
 	@Override
-	public long getQuestionType() {
-		return _question.getQuestionType();
+	public long getQuestionTypeId() {
+		return _question.getQuestionTypeId();
 	}
 
 	/**
@@ -324,77 +320,6 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	@Override
 	public String getText() {
 		return _question.getText();
-	}
-
-	/**
-	* Returns the localized text of this question in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized text of this question
-	*/
-	@Override
-	public String getText(java.util.Locale locale) {
-		return _question.getText(locale);
-	}
-
-	/**
-	* Returns the localized text of this question in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized text of this question. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
-	@Override
-	public String getText(java.util.Locale locale, boolean useDefault) {
-		return _question.getText(locale, useDefault);
-	}
-
-	/**
-	* Returns the localized text of this question in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized text of this question
-	*/
-	@Override
-	public String getText(String languageId) {
-		return _question.getText(languageId);
-	}
-
-	/**
-	* Returns the localized text of this question in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized text of this question
-	*/
-	@Override
-	public String getText(String languageId, boolean useDefault) {
-		return _question.getText(languageId, useDefault);
-	}
-
-	@Override
-	public String getTextCurrentLanguageId() {
-		return _question.getTextCurrentLanguageId();
-	}
-
-	@Override
-	public String getTextCurrentValue() {
-		return _question.getTextCurrentValue();
-	}
-
-	/**
-	* Returns a map of the locales and localized texts of this question.
-	*
-	* @return the locales and localized texts of this question
-	*/
-	@Override
-	public Map<java.util.Locale, String> getTextMap() {
-		return _question.getTextMap();
-	}
-
-	@Override
-	public String getTextMapAsXML() {
-		return _question.getTextMapAsXML();
 	}
 
 	/**
@@ -490,19 +415,6 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	@Override
 	public void persist() {
 		_question.persist();
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport()
-		throws com.liferay.portal.kernel.exception.LocaleException {
-		_question.prepareLocalizedFieldsForImport();
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport(
-		java.util.Locale defaultImportLocale)
-		throws com.liferay.portal.kernel.exception.LocaleException {
-		_question.prepareLocalizedFieldsForImport(defaultImportLocale);
 	}
 
 	/**
@@ -643,13 +555,13 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	}
 
 	/**
-	* Sets the question type of this question.
+	* Sets the question type ID of this question.
 	*
-	* @param questionType the question type of this question
+	* @param questionTypeId the question type ID of this question
 	*/
 	@Override
-	public void setQuestionType(long questionType) {
-		_question.setQuestionType(questionType);
+	public void setQuestionTypeId(long questionTypeId) {
+		_question.setQuestionTypeId(questionTypeId);
 	}
 
 	/**
@@ -660,57 +572,6 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	@Override
 	public void setText(String text) {
 		_question.setText(text);
-	}
-
-	/**
-	* Sets the localized text of this question in the language.
-	*
-	* @param text the localized text of this question
-	* @param locale the locale of the language
-	*/
-	@Override
-	public void setText(String text, java.util.Locale locale) {
-		_question.setText(text, locale);
-	}
-
-	/**
-	* Sets the localized text of this question in the language, and sets the default locale.
-	*
-	* @param text the localized text of this question
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
-	@Override
-	public void setText(String text, java.util.Locale locale,
-		java.util.Locale defaultLocale) {
-		_question.setText(text, locale, defaultLocale);
-	}
-
-	@Override
-	public void setTextCurrentLanguageId(String languageId) {
-		_question.setTextCurrentLanguageId(languageId);
-	}
-
-	/**
-	* Sets the localized texts of this question from the map of locales and localized texts.
-	*
-	* @param textMap the locales and localized texts of this question
-	*/
-	@Override
-	public void setTextMap(Map<java.util.Locale, String> textMap) {
-		_question.setTextMap(textMap);
-	}
-
-	/**
-	* Sets the localized texts of this question from the map of locales and localized texts, and sets the default locale.
-	*
-	* @param textMap the locales and localized texts of this question
-	* @param defaultLocale the default locale
-	*/
-	@Override
-	public void setTextMap(Map<java.util.Locale, String> textMap,
-		java.util.Locale defaultLocale) {
-		_question.setTextMap(textMap, defaultLocale);
 	}
 
 	/**

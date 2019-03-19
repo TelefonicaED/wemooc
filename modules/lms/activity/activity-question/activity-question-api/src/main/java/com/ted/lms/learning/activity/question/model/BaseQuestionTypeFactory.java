@@ -55,6 +55,11 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	}
 	
 	@Override
+	public boolean isManualCorrection() {
+		return false;
+	}
+	
+	@Override
 	public int getMinNumAnswers() {
 		return 0;
 	}

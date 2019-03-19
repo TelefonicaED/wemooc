@@ -18,14 +18,11 @@ if(answerId > 0){
 <div class="col-md-12">
 	<aui:model-context bean="<%=answer %>" model="<%= Answer.class %>" />
 	
-	<liferay-ui:input-localized
-			cssClass="form-control"
-			formName="fm"
-			name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
-			placeholder="write-here-answer"
-			type="editor"
-			xml='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
-			useNamespace="false"
+	<liferay-editor:editor
+		name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
+		placeholder="write-here-answer"
+		contents='<%=answer != null ? answer.getAnswer() : "" %>' 
+		required="<%= true %>"
 		/>	
 
 	<aui:input name="<%=namespace + iteratorQuestion + \"_feedbackCorrect_\"+iterator %>" label="question.feedback-correct" value="" size="60" useNamespace="false" localized="true"/>

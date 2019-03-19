@@ -5,11 +5,13 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.service.AnswerLocalService;
+import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -22,8 +24,8 @@ public class SortableQuestionType extends BaseQuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(SortableQuestionType.class);
 
-	public SortableQuestionType(Question question, AnswerLocalService answerLocalService) {
-		super(question, answerLocalService);
+	public SortableQuestionType(Question question) {
+		super(question);
 	}
 	
 	@Override
@@ -34,6 +36,11 @@ public class SortableQuestionType extends BaseQuestionType{
 	@Override
 	public long getType() {
 		return SortableQuestionTypeFactory.TYPE;
+	}
+	
+	@Override
+	public String getURLQuestion() {
+		return "/question/sortable/view.jsp";
 	}
 	
 	@Override
@@ -51,7 +58,7 @@ public class SortableQuestionType extends BaseQuestionType{
 			answersId.add(Long.parseLong(elementAnswer.attributeValue("id")));
 		}
 		
-		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> answers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
 		
 		if(!isCorrect(answersId, answers)){
 			return INCORRECT;
@@ -61,12 +68,38 @@ public class SortableQuestionType extends BaseQuestionType{
 	}
 	
 	
-	protected boolean isCorrect(List<Long> answersId, List<Answer> answers){
+	public boolean isCorrect(List<Long> answersId, List<Answer> answers){
 		boolean correct = true;
 		for(int i=0;i<answers.size();i++){ 
 			if(answersId.get(i) == -1 || answersId.get(i) != answers.get(i).getAnswerId())	
 				correct = false;
 		}
 		return correct;
+	}
+	
+	public List<Answer> getAnswerSelected(Document document,long questionId){
+		List<Answer> answerSelected = new ArrayList<Answer>();
+		if (document != null) {
+			Iterator<Element> nodeItr = document.getRootElement().elementIterator();
+			while(nodeItr.hasNext()) {
+				Element element = nodeItr.next();
+		         if("question".equals(element.getName()) && questionId == Long.valueOf(element.attributeValue("id"))){
+		        	 Iterator<Element> elementItr = element.elementIterator();
+		        	 while(elementItr.hasNext()) {
+		        		 Element elementElement = elementItr.next();
+		        		 if("answer".equals(elementElement.getName())) {
+		        			 try {
+								answerSelected.add(AnswerLocalServiceUtil.getAnswer(Long.valueOf(elementElement.attributeValue("id"))));
+							} catch (NumberFormatException e) {
+								e.printStackTrace();
+							} catch (PortalException e) {
+								e.printStackTrace();
+							}
+		        		 }
+		        	 }
+		         }
+		    }
+		}
+		return answerSelected;
 	}
 }

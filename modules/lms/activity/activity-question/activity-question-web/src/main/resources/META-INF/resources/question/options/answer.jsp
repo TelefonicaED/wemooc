@@ -23,8 +23,7 @@ if(answerId > 0){
 				useNamespace="false" id='<%=namespace + iteratorQuestion + "_correct_" + iterator %>'/>
 	
 	 <liferay-editor:editor
-		contents='<%=answer != null ? answer.getAnswerMapAsXML() : "" %>' 
-		editorName='alloyeditor'
+		contents='<%=answer != null ? answer.getAnswer() : "" %>' 
 		name='<%=namespace + iteratorQuestion + "_answer_" + iterator %>'
 		placeholder="write-here-answer"
 		required="<%= true %>"
