@@ -39,11 +39,12 @@ String answersFeedBack="", feedMessage = "";
 String namespace = themeDisplay.getPortletDisplay().getNamespace();
 String cssclass = "";
 
-String html = "";
-
 //Cogemos el TestAnswer de la pregunta para rellenar las respuestas dadas por el alumno
 List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
-if(answers!=null && answers.size()>0){
+%>
+
+<c:if test="<%=answers!=null && answers.size()>0 %>">
+	<%
 	//Comprobamos si todos los blancos son acertados para ver si la pregunta resulta correcta o no
 	Answer solution = answers.get(0);
 	List<String> solutions = fillblankQuestionType.getQuestionSols(solution.getAnswer());
@@ -72,88 +73,89 @@ if(answers!=null && answers.size()>0){
 			feedMessage=solution.getFeedbackIncorrect();
 			cssclass=" incorrect";
 		}
-	}
+	}%>
+	<div class='<%="question"+ cssclass + " questiontype_" + fillblankQuestionType.getType()%> '>
 	
-	//Obtain feedback
-	String solok="";
-	answersFeedBack = solution.getAnswer().replace("\n", "<br/>").replace("\r", "<br/>");
-	
-	int i=0;
-	for(String sol:solutions){
-		//String ans = (userAnswers.length>i)?userAnswers[i]:"";
-		String ans= StringUtil.merge(answers, ",");
-		String auxans = "";
-		List<String> blankSols = fillblankQuestionType.getBlankSols(sol, true);
+		<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+		<div class='questiontext'><%=question.getText()%></div>
 		
-		if(sol.contains(":SHORTANSWER") || sol.contains(":SA") || sol.contains(":MW")
-				|| sol.contains(":NUMERICAL:") || sol.contains(":NM:") || sol.contains("{{")) {
+		<div class='answer-fillblank'>
+		
+			<%//Obtain feedback
+			String solok="";
+			answersFeedBack = solution.getAnswer().replace("\n", "<br/>").replace("\r", "<br/>");
 			
-			ans= (userAnswers.length>i)?userAnswers[i]:"";
-			String readonly = "";
-			if (feedback) {
-				readonly = "readonly";
+			int i=0;
+			for(String sol:solutions){
+				//String ans = (userAnswers.length>i)?userAnswers[i]:"";
+				String ans= StringUtil.merge(answers, ",");
+				String auxans = "";
+				List<String> blankSols = fillblankQuestionType.getBlankSols(sol, true);
+				
+				if(sol.contains(":SHORTANSWER") || sol.contains(":SA") || sol.contains(":MW")
+						|| sol.contains(":NUMERICAL:") || sol.contains(":NM:") || sol.contains("{{")) {
+					
+					ans= (userAnswers.length>i)?userAnswers[i]:"";
+					String readonly = "";
+					if (feedback) {
+						readonly = "readonly";
+					}
+					auxans= "<label for=\""+namespace+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+namespace+"question_" + question.getQuestionId()+"_"+i+"\" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" "+readonly+" type=\"text\" value=\""+ans+"\" /></label>";//input
+					
+					if("true".equals(showCorrectAnswer)) {
+						for(String blankSol:blankSols){
+							if(solok != "") solok += " | ";
+							solok += blankSol;
+						}
+						auxans += "<div class=\" font_14 color_cuarto negrita\"> (" + solok + ") </div>";
+					}
+				}else if(sol.contains(":MULTICHOICE_") || sol.contains(":MCV") || sol.contains(":MCH")){
+					String aux = "";
+					auxans = "<br/><div class=\"multichoice\">";
+					List<String> totalBlankSols = fillblankQuestionType.getBlankSols(sol, false);
+					for(String blankSol:totalBlankSols){
+						String checked = "", disabled = "", correct = "";
+						if(blankSol.equals(ans)) checked="checked='checked'";
+						if(feedback) disabled = "disabled='disabled'";
+						if("true".equals(showCorrectAnswer) && blankSols.contains(blankSol)) correct = "font_14 color_cuarto negrita";
+						aux = "<div class=\"answer " + correct + "\"> <label for=\""+namespace+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" type=\"radio\"" + checked + "value=\"" + blankSol + "\" "+disabled+" /></label>" + blankSol + "</div>";//radiobuttons
+						auxans += aux;
+					}
+					auxans += "</div>";
+				}else if(sol.contains(":MULTICHOICE:") || sol.contains(":MC:")){
+					String disabled = "";
+					if(feedback) disabled = "disabled='disabled'";
+					auxans+="<select "+disabled+" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" >";
+					auxans+="<option value=\"\" "+disabled+" label=\"\"/>";//primer valor vac�o
+					List<String> totalBlankSols = fillblankQuestionType.getBlankSols(sol, false);
+					for(String blankSol:totalBlankSols){
+						String selected = "";
+						if(ans.equals(blankSol)) selected ="selected";							
+						auxans+="<option value=\""+ blankSol +"\" "+disabled+" label=\""+blankSol +"\" "+ selected +"/>";//dropdown
+					}
+					auxans+="</select>";
+					if("true".equals(showCorrectAnswer)) {
+						for(String blankSol:blankSols){
+							if(solok != "") solok += " | ";
+							solok += blankSol;
+						}
+						auxans += "<div class=\" font_14 color_cuarto negrita\"> (" + solok + ") </div>";
+					}
+				}else{
+					auxans+=sol;
+				}
+				answersFeedBack = answersFeedBack.substring(0,answersFeedBack.indexOf(sol))+auxans+answersFeedBack.substring(answersFeedBack.indexOf(sol)+sol.length()); 
+				i++;solok="";
 			}
-			auxans= "<label for=\""+namespace+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+namespace+"question_" + question.getQuestionId()+"_"+i+"\" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" "+readonly+" type=\"text\" value=\""+ans+"\" /></label>";//input
 			
-			if("true".equals(showCorrectAnswer)) {
-				for(String blankSol:blankSols){
-					if(solok != "") solok += " | ";
-					solok += blankSol;
+			if(feedback) {
+				answersFeedBack = "<div class=\"content_answer\">" + answersFeedBack + "</div>";
+				if (!"".equals(feedMessage)) {
+					answersFeedBack += "<div class=\"questionFeedback\">" + feedMessage + "</div>";
 				}
-				auxans += "<div class=\" font_14 color_cuarto negrita\"> (" + solok + ") </div>";
-			}
-		}else if(sol.contains(":MULTICHOICE_") || sol.contains(":MCV") || sol.contains(":MCH")){
-			String aux = "";
-			auxans = "<br/><div class=\"multichoice\">";
-			List<String> totalBlankSols = fillblankQuestionType.getBlankSols(sol, false);
-			for(String blankSol:totalBlankSols){
-				String checked = "", disabled = "", correct = "";
-				if(blankSol.equals(ans)) checked="checked='checked'";
-				if(feedback) disabled = "disabled='disabled'";
-				if("true".equals(showCorrectAnswer) && blankSols.contains(blankSol)) correct = "font_14 color_cuarto negrita";
-				aux = "<div class=\"answer " + correct + "\"> <label for=\""+namespace+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" type=\"radio\"" + checked + "value=\"" + blankSol + "\" "+disabled+" /></label>" + blankSol + "</div>";//radiobuttons
-				auxans += aux;
-			}
-			auxans += "</div>";
-		}else if(sol.contains(":MULTICHOICE:") || sol.contains(":MC:")){
-			String disabled = "";
-			if(feedback) disabled = "disabled='disabled'";
-			auxans+="<select "+disabled+" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" >";
-			auxans+="<option value=\"\" "+disabled+" label=\"\"/>";//primer valor vac�o
-			List<String> totalBlankSols = fillblankQuestionType.getBlankSols(sol, false);
-			for(String blankSol:totalBlankSols){
-				String selected = "";
-				if(ans.equals(blankSol)) selected ="selected";							
-				auxans+="<option value=\""+ blankSol +"\" "+disabled+" label=\""+blankSol +"\" "+ selected +"/>";//dropdown
-			}
-			auxans+="</select>";
-			if("true".equals(showCorrectAnswer)) {
-				for(String blankSol:blankSols){
-					if(solok != "") solok += " | ";
-					solok += blankSol;
-				}
-				auxans += "<div class=\" font_14 color_cuarto negrita\"> (" + solok + ") </div>";
-			}
-		}else{
-			auxans+=sol;
-		}
-		answersFeedBack = answersFeedBack.substring(0,answersFeedBack.indexOf(sol))+auxans+answersFeedBack.substring(answersFeedBack.indexOf(sol)+sol.length()); 
-		i++;solok="";
-	}
-	
-	if(feedback) {
-		answersFeedBack = "<div class=\"content_answer\">" + answersFeedBack + "</div>";
-		if (!"".equals(feedMessage)) {
-			answersFeedBack += "<div class=\"questionFeedback\">" + feedMessage + "</div>";
-		}
-	}
-	
-	html += "<div class=\"question" + cssclass + " questiontype_" + fillblankQuestionType.getType() + "\">" + 
-				"<input type=\"hidden\" name=\""+namespace+"question\" value=\"" + question.getQuestionId() + "\"/>"+
-				"<div class=\"questiontext\">" + question.getText() + "</div><div class=\"answer-fillblank\">" +
-				answersFeedBack +
-			"</div></div>";
-}
-%>
+			}%>
+			<%=answersFeedBack%>
+		</div>
+	</div>
 
-<%=html%>
+</c:if>

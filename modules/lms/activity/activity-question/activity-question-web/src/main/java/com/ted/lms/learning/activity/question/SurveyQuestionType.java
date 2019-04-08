@@ -1,7 +1,6 @@
 package com.ted.lms.learning.activity.question;
 
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 public class SurveyQuestionType extends OptionsQuestionType{
 
@@ -17,5 +16,9 @@ public class SurveyQuestionType extends OptionsQuestionType{
 	@Override
 	public String getURLQuestion() {
 		return "/question/survey/view.jsp";
+	}
+	
+	protected boolean isQuestionCorrect(int correctAnswers, int correctAnswered, int incorrectAnswered){
+		return true;
 	}
 }

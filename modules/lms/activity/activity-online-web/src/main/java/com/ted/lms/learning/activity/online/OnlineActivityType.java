@@ -14,8 +14,8 @@ import javax.portlet.ActionRequest;
 
 public class OnlineActivityType extends BaseLearningActivityType {
 
-	public OnlineActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
-		super(activity, learningActivityResultLocalService);
+	public OnlineActivityType(LearningActivity activity) {
+		super(activity);
 	}
 
 	@Override

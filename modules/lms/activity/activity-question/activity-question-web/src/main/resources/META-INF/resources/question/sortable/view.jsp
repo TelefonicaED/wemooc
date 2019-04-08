@@ -51,30 +51,31 @@ if(feedback){
 	}
 	if(sortableQuestionType.isCorrect(answersSelectedIds, tA)) correctionClass = " correct";
 	else correctionClass = " incorrect";
-}
+}%>
 
-html += "<div id=\"id"+questionId+"\" class=\"question sortable" + correctionClass + " questiontype_" + sortableQuestionType.getType() + "\">"+
-			"<input type=\"hidden\" name=\""+themeDisplay.getPortletDisplay().getNamespace()+"question\" value=\"" + question.getQuestionId() + "\"/>"+
-			"<div class=\"questiontext\">" + question.getText() + "</div>" +
-			"<div class=\"content_answer\">"+
-				"<ul class=\"sortable\" id=\"question_"+question.getQuestionId() + "\" >";
+<div id='<%="id"+questionId%>' class='<%="question sortable" + correctionClass + " questiontype_" + sortableQuestionType.getType()%>'>
+	<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
+	<div class="questiontext">
+		<%=question.getText()%>
+	</div>
+	<div class="content_answer">
+		<ul class="sortable" id='<%="question_"+question.getQuestionId()%>' >
+			<%List<Answer> answers = testAnswers;
+			if(answersSelected != null && answersSelected.size()>0) answers = answersSelected;
+			for(int i=0;i<answers.size();i++){%>
+				<li class="ui-sortable-default" id='<%=answers.get(i).getAnswerId()%>'>
+					<input type="hidden" name='<%=namespace+"question_" + question.getQuestionId()+"_ans"%>'  value='<%=answers.get(i).getAnswerId()%>'/>
+					<div class="answer ui-corner-all">
+						<%=answers.get(i).getAnswer()%>
+					</div>
+				</li>
+				<c:if test="<%=showCorrectAnswer %>">
+					<div class="font_14 color_cuarto negrita">
+						<%=tA.get(i).getAnswer()%>
+					</div>
+				</c:if>
+			<%}%>
+		</ul>
+	</div>
+</div>
 
-					List<Answer> answers = testAnswers;
-					if(answersSelected != null && answersSelected.size()>0) answers = answersSelected;
-					for(int i=0;i<answers.size();i++){
-						html += "<li class=\"ui-sortable-default\" id=\""+answers.get(i).getAnswerId()+"\">"+
-									"<input type=\"hidden\" name=\""+namespace+"question_" + question.getQuestionId()+"_ans\"  value=\""+answers.get(i).getAnswerId()+"\"/>"+
-									"<div class=\"answer ui-corner-all\">"+ answers.get(i).getAnswer() + "</div>" +
-								"</li> ";
-						if("true".equals(showCorrectAnswer)) {
-							html += "<div class=\" font_14 color_cuarto negrita\">" + tA.get(i).getAnswer() + "</div>";
-						}
-					}
-
-	html += 	"</ul>"+
-			"</div>";
-html += "</div>";
-
-%>
-
-<%=html%>

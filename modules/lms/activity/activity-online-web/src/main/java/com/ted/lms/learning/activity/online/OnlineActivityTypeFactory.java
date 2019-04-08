@@ -36,7 +36,7 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new OnlineActivityType(activity, learningActivityResultLocalService);
+		return new OnlineActivityType(activity);
 	}
 	
 	@Override
@@ -90,13 +90,6 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	public boolean canBeSeenResults() {
 		return true;
 	}
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
 	@Reference(unbind = "-")
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {

@@ -120,26 +120,28 @@ if(feedback){
 	if (!"".equals(feedMessage)) {
 		answersFeedBack += "<div class=\"questionFeedback\">" + feedMessage + "</div>";
 	}
-}
+}%>
 
-if (isCombo && !feedback){
-	html += "<div class=\"question " + cssclass + "_select questiontype_" + optionsQuestionType.getType() + "\">" +
-				"<input type=\"hidden\" name=\""+namespace+"question\" value=\"" + question.getQuestionId() + "\"/>"+
-				"<div class=\"questiontext select\">" + question.getText() + "</div>" +
-				"<div class=\"answer select\">" +
-					"<select "+ disabled + "class=\"answer select\" id=\""+namespace+"question_"+question.getQuestionId()+"_"+numAnswer+"\" name=\""+namespace+"question_"+question.getQuestionId()+"\" />"+
-						answersFeedBack +
-					"</select>" +
-				"</div>" +
-			"</div>";
-}else{
-	html += "<div class=\"question " + cssclass + " questiontype_" + optionsQuestionType.getType() + "\">" +
-			"<input type=\"hidden\" name=\""+namespace+"question\" value=\"" + question.getQuestionId() + "\"/>"+
-			"<div class=\"questiontext " + cssclass + "\">" + question.getText() + "</div>" +
-				answersFeedBack +
-			"</div>";	
-}
-
-%>
-
-<%=html%>
+<c:choose>
+	<c:when test="<%=isCombo && !feedback %>">
+		<div class='<%="question " + cssclass + "_select questiontype_" + optionsQuestionType.getType()%>'>
+			<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+			<div class="questiontext select"><%=question.getText()%></div>
+			<div class="answer select">
+				<select <%=disabled %> class="answer select" id='<%=namespace+"question_"+question.getQuestionId()+"_"+numAnswer %>' 
+					name='<%=namespace+"question_"+question.getQuestionId()%>' />"+
+					<%=answersFeedBack %>
+				</select>
+			</div>
+		</div>	
+	</c:when>
+	<c:otherwise>
+		<div class='<%="question " + cssclass + " questiontype_" + optionsQuestionType.getType()%>'>
+			<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+			<div class='<%="questiontext " + cssclass%>'>
+				<%=question.getText()%>
+			</div>
+			<%=answersFeedBack%>
+		</div>		
+	</c:otherwise>	
+</c:choose>

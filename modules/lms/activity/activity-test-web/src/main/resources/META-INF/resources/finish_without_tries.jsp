@@ -12,7 +12,7 @@
 	</c:when>
 	<c:otherwise>
 		<p><liferay-ui:message key="learning-activity.test.your-result" arguments="${calificationType.translate(themeDisplay.locale, learningActivityResult.result) }" /></p>
-		<p class="bold"><liferay-ui:message key="learning-activity.test.your-result-dont-pass"  arguments="${calificationType.translate(themeDisplay.locale, activity.passPuntuation }" /></p>
+		<p class="bold"><liferay-ui:message key="learning-activity.test.your-result-dont-pass"  arguments="${calificationType.translate(themeDisplay.locale, activity.passPuntuation) }" /></p>
 		<p><liferay-ui:message key="learning-activity.test.your-result-no-more-tries" /></p>
 	</c:otherwise>
 </c:choose>

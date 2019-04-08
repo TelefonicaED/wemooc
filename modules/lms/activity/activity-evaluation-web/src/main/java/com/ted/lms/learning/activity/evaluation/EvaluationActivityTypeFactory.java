@@ -36,7 +36,7 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new EvaluationActivityType(activity, learningActivityResultLocalService);
+		return new EvaluationActivityType(activity);
 	}
 	
 	@Override
@@ -73,13 +73,6 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	public boolean isScoreConfigurable() {
 		return true;
 	}
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
 	@Reference(unbind = "-")
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {

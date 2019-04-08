@@ -287,6 +287,9 @@ public interface QuestionLocalService extends BaseLocalService,
 	public int getQuestionsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getQuestionsCount(long actId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Question> getQuestionsOrder(long actId);
 
 	public void saveQuestions(ActionRequest actionRequest, long actId)

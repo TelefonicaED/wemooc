@@ -7,6 +7,7 @@ import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
 import com.ted.lms.learning.activity.question.exception.MinNumAnswerException;
 import com.ted.lms.learning.activity.question.exception.MinNumCorrectAnswerException;
@@ -20,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
+import javax.portlet.PortletRequest;
 
 public abstract class BaseQuestionType implements QuestionType{
 	protected static final long CORRECT = 100;
@@ -34,12 +36,6 @@ public abstract class BaseQuestionType implements QuestionType{
 	
 	@Override
 	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
-		
-		JSONObject extraContent = question.getExtraContentJSON();
-		
-		boolean partialCorrection = ParamUtil.getBoolean(actionRequest, "partialCorrection", QuestionConstants.DEFAULT_PARTIAL_CORRECTION);
-		
-		extraContent.put(QuestionConstants.JSON_PARTIAL_CORRECTION, partialCorrection);
 	}
 	
 	@Override
@@ -124,6 +120,11 @@ public abstract class BaseQuestionType implements QuestionType{
 		questionTypeFactory = (QuestionTypeFactory) QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(getType());
 
 		return questionTypeFactory;
+	}
+	
+	@Override
+	public Element getResults(PortletRequest portletRequest){
+		return null;
 	}
 	
 	@Override

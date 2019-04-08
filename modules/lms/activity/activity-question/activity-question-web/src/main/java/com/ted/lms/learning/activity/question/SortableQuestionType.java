@@ -4,21 +4,19 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.portlet.ActionRequest;
+import javax.portlet.PortletRequest;
 
 public class SortableQuestionType extends BaseQuestionType{
 	
@@ -67,6 +65,31 @@ public class SortableQuestionType extends BaseQuestionType{
 		}
 	}
 	
+	@Override
+	public Element getResults(PortletRequest portletRequest){
+
+		List<Long> answersId = new ArrayList<Long>();
+		long[] answers = ParamUtil.getLongValues(portletRequest, "question_"+question.getQuestionId()+"_ans");
+		for(long id:answers){
+			answersId.add(id);
+		}
+
+		Element questionXML=SAXReaderUtil.createElement("question");
+		questionXML.addAttribute("id", Long.toString(question.getQuestionId()));
+		
+		long currentQuestionId = ParamUtil.getLong(portletRequest, "currentQuestionId");
+		if (currentQuestionId == question.getQuestionId()) {
+			questionXML.addAttribute("current", "true");
+		}
+
+		for(long answer:answersId){
+			Element answerXML=SAXReaderUtil.createElement("answer");
+			answerXML.addAttribute("id", Long.toString(answer));
+			questionXML.add(answerXML);
+		}
+		return questionXML;
+	}
+	
 	
 	public boolean isCorrect(List<Long> answersId, List<Answer> answers){
 		boolean correct = true;
@@ -75,6 +98,23 @@ public class SortableQuestionType extends BaseQuestionType{
 				correct = false;
 		}
 		return correct;
+	}
+	
+	@Override
+	public long isCorrect(PortletRequest portletRequest) throws PortalException {
+		List<Long> answersId = new ArrayList<Long>();
+		long[] answers = ParamUtil.getLongValues(portletRequest, "question_"+question.getQuestionId()+"_ans");
+		for(long id:answers){
+			answersId.add(id);
+		}
+
+		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		
+		if(!isCorrect(answersId, testAnswers)){
+			return INCORRECT;
+		}else{
+			return CORRECT;
+		}
 	}
 	
 	public List<Answer> getAnswerSelected(Document document,long questionId){
@@ -102,4 +142,5 @@ public class SortableQuestionType extends BaseQuestionType{
 		}
 		return answerSelected;
 	}
+
 }

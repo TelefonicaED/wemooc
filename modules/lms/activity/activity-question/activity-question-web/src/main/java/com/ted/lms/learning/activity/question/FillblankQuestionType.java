@@ -3,8 +3,10 @@ package com.ted.lms.learning.activity.question;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
@@ -14,6 +16,8 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.portlet.PortletRequest;
 
 import org.jsoup.Jsoup;
 
@@ -77,6 +81,40 @@ public class FillblankQuestionType extends BaseQuestionType{
 		return INCORRECT;	
 	}
 	
+	@Override
+	public Element getResults(PortletRequest portletRequest){
+		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+
+		Answer solution = null;
+		if(testAnswers!=null && testAnswers.size()>0)
+			solution = testAnswers.get(0);
+		
+		String answer = "";
+		
+		if(solution!=null){
+			int i = getQuestionSols(solution.getAnswer()).size();
+			for(int k=0; k<i; k++){
+				if(answer!="") answer+=",";
+				answer+= ParamUtil.getString(portletRequest, "question_"+question.getQuestionId()+"_"+k, "").replace(",", ""); //Quito la , de la respuesta del usaurio
+			}
+		}
+    	
+		Element questionXML=SAXReaderUtil.createElement("question");
+		questionXML.addAttribute("id", Long.toString(question.getQuestionId()));
+		
+		long currentQuestionId = ParamUtil.getLong(portletRequest, "currentQuestionId");
+		if (currentQuestionId == question.getQuestionId()) {
+			questionXML.addAttribute("current", "true");
+		}
+		
+		Element answerXML=SAXReaderUtil.createElement("answer");
+		answerXML.addText(answer);
+		
+		questionXML.add(answerXML);
+		
+		return questionXML;
+	}
+	
 	public List<String> getQuestionSols(String textAnswer) {
 		List<String> sols = new ArrayList<String>();//array con las soluciones {...}
 		String temp="";
@@ -112,6 +150,42 @@ public class FillblankQuestionType extends BaseQuestionType{
 			}
 		}
 		return correct;
+	}
+	
+	public long isCorrect(PortletRequest portletRequest){
+		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		
+		Answer solution = null;
+		if(testAnswers!=null && testAnswers.size()>0)
+			solution = testAnswers.get(0);
+		
+		if(solution!=null){
+			int correctAnswers=0;
+			
+			List<String> sols = getQuestionSols(solution.getAnswer());
+			int i=0;
+			for(String sol:sols){
+				String answer= ParamUtil.getString(portletRequest, "question_"+question.getQuestionId()+"_"+i, "").replace(",", "");
+				if(isCorrect(sol, answer)){
+					log.debug("CORRECT "+i);
+					correctAnswers++;
+				}
+				i++;
+			}
+			if(sols.size()>0){
+				double puntuation = correctAnswers*100.0/sols.size(); 
+				log.debug("----PUNTUATION "+puntuation);
+				return Math.round(puntuation);
+			}
+			
+			if(correctAnswers==sols.size()){
+				return CORRECT;
+			}else{
+				return INCORRECT;
+			}
+		}
+	
+		return INCORRECT;
 	}
 	
 	private boolean isMoodleAnswer(String temp) {

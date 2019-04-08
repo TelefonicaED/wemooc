@@ -7,8 +7,8 @@ import com.ted.lms.service.LearningActivityResultLocalService;
 
 public class SurveyActivityType extends BaseLearningActivityType {
 	
-	public SurveyActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
-		super(activity, learningActivityResultLocalService);
+	public SurveyActivityType(LearningActivity activity) {
+		super(activity);
 	}
 	
 	@Override

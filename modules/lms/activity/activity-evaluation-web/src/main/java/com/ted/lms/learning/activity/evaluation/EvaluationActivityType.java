@@ -10,13 +10,14 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 
 import javax.portlet.ActionRequest;
 
 public class EvaluationActivityType extends BaseLearningActivityType {
 
-	public EvaluationActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
-		super(activity, learningActivityResultLocalService);
+	public EvaluationActivityType(LearningActivity activity) {
+		super(activity);
 	} 
 	
 	@Override
@@ -29,7 +30,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 		LearningActivityResult learningActivityResult = null;
 		
 		for(int i = 0; i < activities.length(); i++){
-			learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(activities.getJSONObject(i).getLong(EvaluationConstants.JSON_ACT_ID), learningActivityTry.getUserId());
+			learningActivityResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(activities.getJSONObject(i).getLong(EvaluationConstants.JSON_ACT_ID), learningActivityTry.getUserId());
 			values[i] = learningActivityResult != null ? learningActivityResult.getResult() : 0;
 			weights[i]=activities.getJSONObject(i).getInt(EvaluationConstants.JSON_WEIGHT);	
 		}

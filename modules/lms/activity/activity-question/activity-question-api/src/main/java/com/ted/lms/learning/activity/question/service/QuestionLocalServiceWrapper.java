@@ -332,6 +332,11 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 	}
 
 	@Override
+	public int getQuestionsCount(long actId) {
+		return _questionLocalService.getQuestionsCount(actId);
+	}
+
+	@Override
 	public java.util.List<com.ted.lms.learning.activity.question.model.Question> getQuestionsOrder(
 		long actId) {
 		return _questionLocalService.getQuestionsOrder(actId);

@@ -38,11 +38,11 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new TestActivityType(activity, learningActivityResultLocalService, learningActivityTryLocalService, questionLocalService);
+		return new TestActivityType(activity);
 	}
 	
 	public TestActivityType getTestActivityType(LearningActivity activity) {
-		return new TestActivityType(activity, learningActivityResultLocalService, learningActivityTryLocalService, questionLocalService);
+		return new TestActivityType(activity);
 	}
 	
 	@Override
@@ -106,27 +106,6 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	public boolean canDeleteTries() {
 		return true;
 	}
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityTryLocalService(LearningActivityTryLocalService learningActivityTryLocalService) {
-		this.learningActivityTryLocalService = learningActivityTryLocalService;
-	}
-	
-	protected LearningActivityTryLocalService learningActivityTryLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
-		this.questionLocalService = questionLocalService;
-	}
-	
-	protected QuestionLocalService questionLocalService;
 	
 	@Reference(
 		unbind = "-"

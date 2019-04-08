@@ -27,7 +27,7 @@ if(feedback){
 
 FreetextQuestionType freetextQuestionType = new FreetextQuestionType(question);
 
-String html = "", answersFeedBack= "", cssclass = "";
+String answersFeedBack= "", cssclass = "";
 String namespace = themeDisplay.getPortletDisplay().getNamespace();
 String feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank") ;
 String answer=freetextQuestionType.getAnswersSelected(documentTryResultData);
@@ -67,13 +67,19 @@ if(feedback) {
 		answersFeedBack += "<div class=\"questionFeedback\">" + feedMessage + "</div>";
 	}
 }
-
-html += "<div class=\"question" + cssclass + " questiontype_" + freetextQuestionType.getType() + "\">" + 
-		"<input type=\"hidden\" name=\""+namespace+"question\" value=\"" + question.getQuestionId() + "\"/>"+
-		"<div class=\"questiontext\">" + question.getText() + "</div>" +
-		(!feedback ? "<div class=\"answer\"><label for=\""+namespace+"question_" + question.getQuestionId() + "\" /><textarea rows=\"4\" cols=\"60\" maxlength=\"1000\" id=\""+namespace+"question_" + question.getQuestionId() + "\" name=\""+namespace+"question_" + question.getQuestionId() + "\">"+answer+"</textarea></div>" : "") +
-		answersFeedBack +
-		"</div>";	
 %>
-
-<%=html%>
+<div class='<%="question" + cssclass + " questiontype_" + freetextQuestionType.getType()%>'>
+	<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+	
+	<div class="questiontext"><%=question.getText()%></div>
+	
+	<c:if test="<%=!feedback %>">
+		<div class="answer">
+			<label for='<%=namespace+"question_" + question.getQuestionId()%>' />
+			<textarea rows="4" cols="60" maxlength="1000" id='<%=namespace+"question_" + question.getQuestionId()%>' name='<%=namespace+"question_" + question.getQuestionId()%>'>
+				<%=answer%>
+			</textarea>
+		</div>
+	</c:if>
+	<%=answersFeedBack%>
+</div>	

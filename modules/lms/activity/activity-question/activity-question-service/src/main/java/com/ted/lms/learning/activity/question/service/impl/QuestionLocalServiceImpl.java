@@ -66,6 +66,10 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		return questionPersistence.findByActId(actId);
 	}
 	
+	public int getQuestionsCount(long actId){
+		return questionPersistence.countByActId(actId);
+	}
+	
 	public List<Question> getQuestionsOrder(long actId){
 		OrderByComparator<Question> orderByComparator = OrderByComparatorFactoryUtil.create("qu_question", "weight", true);
 		return questionPersistence.findByActId(actId, -1, -1, orderByComparator);

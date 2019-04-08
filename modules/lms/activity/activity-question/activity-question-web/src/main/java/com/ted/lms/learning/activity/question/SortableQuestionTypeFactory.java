@@ -8,8 +8,6 @@ import com.ted.lms.learning.activity.question.model.BaseQuestionTypeFactory;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
-import com.ted.lms.learning.activity.question.service.AnswerLocalService;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 

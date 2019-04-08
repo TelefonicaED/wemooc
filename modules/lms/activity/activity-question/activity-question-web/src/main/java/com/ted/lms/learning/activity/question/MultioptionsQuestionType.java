@@ -1,7 +1,6 @@
 package com.ted.lms.learning.activity.question;
 
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 public class MultioptionsQuestionType extends OptionsQuestionType{
 
@@ -20,6 +19,6 @@ public class MultioptionsQuestionType extends OptionsQuestionType{
 	}
 	
 	public boolean isQuestionCorrect(int correctAnswers, int correctAnswered, int incorrectAnswered){
-		return correctAnswered>0 && incorrectAnswered==0;
+		return correctAnswers==correctAnswered && incorrectAnswered==0;
 	}
 }

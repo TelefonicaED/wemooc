@@ -6,22 +6,17 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
-import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.service.LearningActivityResultLocalService;
 import javax.portlet.ActionRequest;
 
 public abstract class QuestionsLearningActivityType extends BaseLearningActivityType {
-	protected QuestionLocalService questionLocalService;
 	private boolean showCorrectAnswer;
 	private boolean showFeedback;
 	private boolean showCorrectAnswerOnlyOnFinalTry;
 	
-	public QuestionsLearningActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, 
-			QuestionLocalService questionLocalService) {
-		super(activity, learningActivityResultLocalService);
-		this.questionLocalService = questionLocalService;
+	public QuestionsLearningActivityType(LearningActivity activity) {
+		super(activity);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -66,7 +61,7 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 	
 	
 	public boolean getShowCorrectAnswer() {
-		return showCorrectAnswer;
+		return showCorrectAnswer; 
 	}
 	
 	public boolean getShowFeedback() {

@@ -37,7 +37,7 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService);
+		return new ResourceExternalActivityType(activity);
 	}
 	
 	@Override
@@ -76,20 +76,6 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	public boolean canDeleteTries() {
 		return true;
 	}
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
-		this.questionLocalService = questionLocalService;
-	}
-	
-	protected QuestionLocalService questionLocalService;
 	
 	@Reference(unbind = "-")
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {

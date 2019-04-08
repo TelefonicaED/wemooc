@@ -52,11 +52,11 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService);
+		return new ResourceInternalActivityType(activity);
 	}
 	
 	public ResourceInternalActivityType getResourceInternalType(LearningActivity activity) {
-		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService);
+		return new ResourceInternalActivityType(activity);
 	}
 	
 	@Override
@@ -112,20 +112,5 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
-	
-	@Reference(unbind = "-")
-	protected void setAssetEntryLocalService(AssetEntryLocalService assetEntryLocalService) {
-
-		this.assetEntryLocalService = assetEntryLocalService;
-	}
-	
-	protected AssetEntryLocalService assetEntryLocalService;
 	
 }

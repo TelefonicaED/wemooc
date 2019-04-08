@@ -3,9 +3,11 @@ package com.ted.lms.learning.activity.question;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
@@ -14,6 +16,8 @@ import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
 import java.text.Collator;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.portlet.PortletRequest;
 
 public class FreetextQuestionType extends BaseQuestionType{
 	
@@ -56,10 +60,44 @@ public class FreetextQuestionType extends BaseQuestionType{
 		return result;
 	}
 	
+	@Override
+	public Element getResults(PortletRequest portletRequest){
+		String answer= ParamUtil.getString(portletRequest, "question_"+question.getQuestionId(), "");
+
+		Element questionXML=SAXReaderUtil.createElement("question");
+		questionXML.addAttribute("id", Long.toString(question.getQuestionId()));
+
+		long currentQuestionId = ParamUtil.getLong(portletRequest, "currentQuestionId");
+		if (currentQuestionId == question.getQuestionId()) {
+			questionXML.addAttribute("current", "true");
+		}
+
+		Element answerXML=SAXReaderUtil.createElement("answer");
+		answerXML.addText(answer);
+		questionXML.add(answerXML);
+
+		return questionXML;
+	}
+	
 	public boolean isCorrect(Answer solution, String answer){
 		Collator c = Collator.getInstance();
 		c.setStrength(Collator.PRIMARY);
 		return c.compare(solution.getAnswer(), answer) == 0;
+	}
+	
+	public long isCorrect(PortletRequest portletRequest){
+		String answer= ParamUtil.getString(portletRequest, "question_"+question.getQuestionId(), "");
+		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+
+		if(testAnswers!=null && testAnswers.size()>0){
+			Answer solution = testAnswers.get(0);
+			if (isCorrect(solution, answer)){
+				return CORRECT;
+			}else{
+				return INCORRECT;
+			}
+		}
+		return INCORRECT;
 	}
 	
 	public String getAnswersSelected(Document document){

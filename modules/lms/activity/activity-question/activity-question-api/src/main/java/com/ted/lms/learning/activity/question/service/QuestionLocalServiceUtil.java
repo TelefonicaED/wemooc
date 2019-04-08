@@ -315,6 +315,10 @@ public class QuestionLocalServiceUtil {
 		return getService().getQuestionsCount();
 	}
 
+	public static int getQuestionsCount(long actId) {
+		return getService().getQuestionsCount(actId);
+	}
+
 	public static java.util.List<com.ted.lms.learning.activity.question.model.Question> getQuestionsOrder(
 		long actId) {
 		return getService().getQuestionsOrder(actId);

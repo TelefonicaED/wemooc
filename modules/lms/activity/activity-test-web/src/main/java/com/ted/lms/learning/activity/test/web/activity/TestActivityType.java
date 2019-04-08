@@ -20,6 +20,7 @@ import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
+import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.util.TestPrefsPropsValues;
 import com.ted.lms.model.BaseLearningActivityType;
@@ -28,6 +29,7 @@ import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +39,6 @@ import javax.portlet.ActionRequest;
 
 public class TestActivityType extends QuestionsLearningActivityType {
 	
-	private LearningActivityTryLocalService learningActivityTryLocalService;
 	private static final Log log = LogFactoryUtil.getLog(TestActivityType.class);
 	private long random;
 	private String password;
@@ -48,10 +49,8 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	private boolean preview;
 	private List<Question> questions;
 
-	public TestActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityTryLocalService learningActivityTryLocalService,
-			QuestionLocalService questionLocalService) {
-		super(activity, learningActivityResultLocalService, questionLocalService);
-		this.learningActivityTryLocalService = learningActivityTryLocalService;
+	public TestActivityType(LearningActivity activity) {
+		super(activity);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -116,7 +115,7 @@ public class TestActivityType extends QuestionsLearningActivityType {
 		activity.setExtraContent(extraContent.toJSONString());
 		
 		//Ahora guardamos las preguntas
-		questionLocalService.saveQuestions(actionRequest, activity.getActId());
+		QuestionLocalServiceUtil.saveQuestions(actionRequest, activity.getActId());
 	}
 
 	@Override
@@ -131,7 +130,7 @@ public class TestActivityType extends QuestionsLearningActivityType {
 			
 			score = learningActivityTry.getResult();
 			log.debug("score del try: " + score);
-			List<Question> listQuestions = questionLocalService.getQuestions(activity.getActId());
+			List<Question> listQuestions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
 					
 			if(listQuestions != null && listQuestions.size() > 0){
 				log.debug("tiene preguntas: " + listQuestions.size());
@@ -208,8 +207,8 @@ public class TestActivityType extends QuestionsLearningActivityType {
 		}
 		
 		//Mirar si los intentos que tiene son menores de los intentos posibles
-		int userTries = learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(), userId);
-		int numTriesOpened = learningActivityTryLocalService.getNumTriesOpened(activity.getActId(), userId);
+		int userTries = LearningActivityTryLocalServiceUtil.getLearningActivityTriesCount(activity.getActId(), userId);
+		int numTriesOpened = LearningActivityTryLocalServiceUtil.getNumTriesOpened(activity.getActId(), userId);
 			
 		//Si tiene menos intentos de los que se puede hacer
 		return (userTries-numTriesOpened) < activity.getTries();
@@ -258,7 +257,7 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	
 	public List<Question> getQuestions(){
 		if(questions == null) {
-			questions = questionLocalService.getQuestions(activity.getActId());
+			questions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
 		}
 		return questions;
 	}
@@ -287,7 +286,7 @@ public class TestActivityType extends QuestionsLearningActivityType {
 			i++;
 		}
 		
-		return hasFreeQuestions();
+		return hasFreeQuestion;
 	}
 	
 	private void initializateActivity() {

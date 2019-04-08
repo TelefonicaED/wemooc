@@ -1,10 +1,10 @@
 package com.ted.lms.learning.activity.question.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.xml.Element;
 
 import javax.portlet.ActionRequest;
+import javax.portlet.PortletRequest;
 
 public interface QuestionType {
 	
@@ -12,6 +12,8 @@ public interface QuestionType {
 	
 	public String getClassName();
 	public long correct(Element element) throws PortalException;
+	public long isCorrect(PortletRequest portletRequest) throws PortalException;
+	public Element getResults(PortletRequest portletRequest);
 	
 	public QuestionTypeFactory getQuestionTypeFactory();
 	

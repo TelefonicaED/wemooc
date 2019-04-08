@@ -21,9 +21,8 @@ public class ResourceInternalActivityType extends BaseLearningActivityType{
 	
 	private long assetEntryId;
 	
-	public ResourceInternalActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, 
-			AssetEntryLocalService assetEntryLocalService) {
-		super(activity, learningActivityResultLocalService);
+	public ResourceInternalActivityType(LearningActivity activity) {
+		super(activity);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -77,9 +76,5 @@ public class ResourceInternalActivityType extends BaseLearningActivityType{
 	public long getAssetEntryId() {
 		return assetEntryId;
 	}
-	
-	
-	@Reference
-	private LearningActivityUtil learningActivityUtil;
 
 }

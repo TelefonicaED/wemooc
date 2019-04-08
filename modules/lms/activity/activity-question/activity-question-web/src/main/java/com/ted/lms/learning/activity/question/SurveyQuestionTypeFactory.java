@@ -1,13 +1,8 @@
 package com.ted.lms.learning.activity.question;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
-import com.liferay.portal.kernel.portlet.LiferayPortletURL;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
@@ -15,9 +10,6 @@ import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.WindowStateException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -73,6 +65,10 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	@Override
 	public String getPortletId() {
 		return QuestionsWebPortletKeys.EDIT_QUESTIONS;
+	}
+	
+	public boolean getPenalize(){
+		return false;
 	}
 	
 	@Reference(

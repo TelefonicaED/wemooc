@@ -6,7 +6,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
-import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 
 import javax.portlet.ActionRequest;
 
@@ -18,11 +18,9 @@ import javax.portlet.ActionRequest;
 public abstract class BaseLearningActivityType implements LearningActivityType {
 	
 	protected LearningActivity activity;
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
-	public BaseLearningActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
+	public BaseLearningActivityType(LearningActivity activity) {
 		this.activity = activity;
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
 	}
 
 	@Override
@@ -81,7 +79,7 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	
 	@Override
 	public boolean isDone(long userId) {
-		LearningActivityResult lar=learningActivityResultLocalService.getLearningActivityResult(activity.getActId(), userId);
+		LearningActivityResult lar=LearningActivityResultLocalServiceUtil.getLearningActivityResult(activity.getActId(), userId);
 		if(lar==null){
 			return false;
 		} else {

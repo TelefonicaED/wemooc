@@ -36,7 +36,7 @@ public class SurveyActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new SurveyActivityType(activity, learningActivityResultLocalService);
+		return new SurveyActivityType(activity);
 	}
 	
 	@Override
@@ -75,13 +75,6 @@ public class SurveyActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	public boolean canDeleteTries() {
 		return true;
 	}
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-	
-	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
 	@Reference(unbind = "-")
 	public void setResourceBundleLoader(ResourceBundleLoader resourceBundleLoader) {
