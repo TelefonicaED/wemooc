@@ -66,6 +66,10 @@ public class FreetextQuestionTypeFactory extends BaseQuestionTypeFactory{
 		return QuestionsWebPortletKeys.EDIT_QUESTIONS;
 	}
 	
+	public String getIconCssClass() {
+		return "freetext";
+	}
+	
 	@Reference(
 		unbind = "-"
 	)

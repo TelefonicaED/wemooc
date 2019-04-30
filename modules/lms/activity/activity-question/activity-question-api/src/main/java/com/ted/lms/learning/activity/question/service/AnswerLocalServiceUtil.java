@@ -55,14 +55,12 @@ public class AnswerLocalServiceUtil {
 	}
 
 	public static com.ted.lms.learning.activity.question.model.Answer addAnswer(
-		long questionId, long actId, String answerText,
-		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
-		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
-		boolean correct,
+		long questionId, long actId, String answerText, String feedbackCorrect,
+		String feedbackIncorrect, boolean correct,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
 		return getService()
-				   .addAnswer(questionId, actId, answerText,
-			feedbackCorrectMap, feedbackIncorrectMap, correct, serviceContext);
+				   .addAnswer(questionId, actId, answerText, feedbackCorrect,
+			feedbackIncorrect, correct, serviceContext);
 	}
 
 	/**
@@ -331,13 +329,11 @@ public class AnswerLocalServiceUtil {
 	}
 
 	public static com.ted.lms.learning.activity.question.model.Answer updateAnswer(
-		long answerId, String answerText,
-		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
-		java.util.Map<java.util.Locale, String> feedbackIncorrectMap,
-		boolean correct) {
+		long answerId, String answerText, String feedbackCorrect,
+		String feedbackIncorrect, boolean correct) {
 		return getService()
-				   .updateAnswer(answerId, answerText, feedbackCorrectMap,
-			feedbackIncorrectMap, correct);
+				   .updateAnswer(answerId, answerText, feedbackCorrect,
+			feedbackIncorrect, correct);
 	}
 
 	public static AnswerLocalService getService() {

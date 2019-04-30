@@ -72,6 +72,10 @@ public class FillblankQuestionTypeFactory extends BaseQuestionTypeFactory{
 		return QuestionsWebPortletKeys.EDIT_QUESTIONS;
 	}
 	
+	public String getIconCssClass() {
+		return "fillblank";
+	}
+	
 	@Reference(
 		unbind = "-"
 	)

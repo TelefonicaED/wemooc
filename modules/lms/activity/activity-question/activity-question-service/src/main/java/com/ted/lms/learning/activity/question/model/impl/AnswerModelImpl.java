@@ -22,9 +22,7 @@ import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 
 import com.liferay.portal.kernel.bean.AutoEscapeBeanHandler;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.ModelWrapper;
 import com.liferay.portal.kernel.model.User;
@@ -32,12 +30,9 @@ import com.liferay.portal.kernel.model.impl.BaseModelImpl;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.Validator;
 
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.AnswerModel;
@@ -51,10 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * The base model implementation for the Answer service. Represents a row in the &quot;qu_Answer&quot; database table, with each column mapped to a property of this class.
@@ -113,7 +105,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,actId LONG,answer TEXT null,correct BOOLEAN,feedbackCorrect STRING null,feedbackIncorrect STRING null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,actId LONG,answer TEXT null,correct BOOLEAN,feedbackCorrect VARCHAR(75) null,feedbackIncorrect VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Answer";
 	public static final String ORDER_BY_JPQL = " ORDER BY answer.answerId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Answer.answerId ASC";
@@ -553,95 +545,8 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
-	public String getFeedbackCorrect(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getFeedbackCorrect(languageId);
-	}
-
-	@Override
-	public String getFeedbackCorrect(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getFeedbackCorrect(languageId, useDefault);
-	}
-
-	@Override
-	public String getFeedbackCorrect(String languageId) {
-		return LocalizationUtil.getLocalization(getFeedbackCorrect(), languageId);
-	}
-
-	@Override
-	public String getFeedbackCorrect(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(getFeedbackCorrect(),
-			languageId, useDefault);
-	}
-
-	@Override
-	public String getFeedbackCorrectCurrentLanguageId() {
-		return _feedbackCorrectCurrentLanguageId;
-	}
-
-	@JSON
-	@Override
-	public String getFeedbackCorrectCurrentValue() {
-		Locale locale = getLocale(_feedbackCorrectCurrentLanguageId);
-
-		return getFeedbackCorrect(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getFeedbackCorrectMap() {
-		return LocalizationUtil.getLocalizationMap(getFeedbackCorrect());
-	}
-
-	@Override
 	public void setFeedbackCorrect(String feedbackCorrect) {
 		_feedbackCorrect = feedbackCorrect;
-	}
-
-	@Override
-	public void setFeedbackCorrect(String feedbackCorrect, Locale locale) {
-		setFeedbackCorrect(feedbackCorrect, locale, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setFeedbackCorrect(String feedbackCorrect, Locale locale,
-		Locale defaultLocale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(feedbackCorrect)) {
-			setFeedbackCorrect(LocalizationUtil.updateLocalization(
-					getFeedbackCorrect(), "FeedbackCorrect", feedbackCorrect,
-					languageId, defaultLanguageId));
-		}
-		else {
-			setFeedbackCorrect(LocalizationUtil.removeLocalization(
-					getFeedbackCorrect(), "FeedbackCorrect", languageId));
-		}
-	}
-
-	@Override
-	public void setFeedbackCorrectCurrentLanguageId(String languageId) {
-		_feedbackCorrectCurrentLanguageId = languageId;
-	}
-
-	@Override
-	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap) {
-		setFeedbackCorrectMap(feedbackCorrectMap, LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap,
-		Locale defaultLocale) {
-		if (feedbackCorrectMap == null) {
-			return;
-		}
-
-		setFeedbackCorrect(LocalizationUtil.updateLocalization(
-				feedbackCorrectMap, getFeedbackCorrect(), "FeedbackCorrect",
-				LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@Override
@@ -655,99 +560,8 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
-	public String getFeedbackIncorrect(Locale locale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getFeedbackIncorrect(languageId);
-	}
-
-	@Override
-	public String getFeedbackIncorrect(Locale locale, boolean useDefault) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-
-		return getFeedbackIncorrect(languageId, useDefault);
-	}
-
-	@Override
-	public String getFeedbackIncorrect(String languageId) {
-		return LocalizationUtil.getLocalization(getFeedbackIncorrect(),
-			languageId);
-	}
-
-	@Override
-	public String getFeedbackIncorrect(String languageId, boolean useDefault) {
-		return LocalizationUtil.getLocalization(getFeedbackIncorrect(),
-			languageId, useDefault);
-	}
-
-	@Override
-	public String getFeedbackIncorrectCurrentLanguageId() {
-		return _feedbackIncorrectCurrentLanguageId;
-	}
-
-	@JSON
-	@Override
-	public String getFeedbackIncorrectCurrentValue() {
-		Locale locale = getLocale(_feedbackIncorrectCurrentLanguageId);
-
-		return getFeedbackIncorrect(locale);
-	}
-
-	@Override
-	public Map<Locale, String> getFeedbackIncorrectMap() {
-		return LocalizationUtil.getLocalizationMap(getFeedbackIncorrect());
-	}
-
-	@Override
 	public void setFeedbackIncorrect(String feedbackIncorrect) {
 		_feedbackIncorrect = feedbackIncorrect;
-	}
-
-	@Override
-	public void setFeedbackIncorrect(String feedbackIncorrect, Locale locale) {
-		setFeedbackIncorrect(feedbackIncorrect, locale,
-			LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setFeedbackIncorrect(String feedbackIncorrect, Locale locale,
-		Locale defaultLocale) {
-		String languageId = LocaleUtil.toLanguageId(locale);
-		String defaultLanguageId = LocaleUtil.toLanguageId(defaultLocale);
-
-		if (Validator.isNotNull(feedbackIncorrect)) {
-			setFeedbackIncorrect(LocalizationUtil.updateLocalization(
-					getFeedbackIncorrect(), "FeedbackIncorrect",
-					feedbackIncorrect, languageId, defaultLanguageId));
-		}
-		else {
-			setFeedbackIncorrect(LocalizationUtil.removeLocalization(
-					getFeedbackIncorrect(), "FeedbackIncorrect", languageId));
-		}
-	}
-
-	@Override
-	public void setFeedbackIncorrectCurrentLanguageId(String languageId) {
-		_feedbackIncorrectCurrentLanguageId = languageId;
-	}
-
-	@Override
-	public void setFeedbackIncorrectMap(
-		Map<Locale, String> feedbackIncorrectMap) {
-		setFeedbackIncorrectMap(feedbackIncorrectMap,
-			LocaleUtil.getSiteDefault());
-	}
-
-	@Override
-	public void setFeedbackIncorrectMap(
-		Map<Locale, String> feedbackIncorrectMap, Locale defaultLocale) {
-		if (feedbackIncorrectMap == null) {
-			return;
-		}
-
-		setFeedbackIncorrect(LocalizationUtil.updateLocalization(
-				feedbackIncorrectMap, getFeedbackIncorrect(),
-				"FeedbackIncorrect", LocaleUtil.toLanguageId(defaultLocale)));
 	}
 
 	@Override
@@ -771,91 +585,6 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		ExpandoBridge expandoBridge = getExpandoBridge();
 
 		expandoBridge.setAttributes(serviceContext);
-	}
-
-	@Override
-	public String[] getAvailableLanguageIds() {
-		Set<String> availableLanguageIds = new TreeSet<String>();
-
-		Map<Locale, String> feedbackCorrectMap = getFeedbackCorrectMap();
-
-		for (Map.Entry<Locale, String> entry : feedbackCorrectMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
-		Map<Locale, String> feedbackIncorrectMap = getFeedbackIncorrectMap();
-
-		for (Map.Entry<Locale, String> entry : feedbackIncorrectMap.entrySet()) {
-			Locale locale = entry.getKey();
-			String value = entry.getValue();
-
-			if (Validator.isNotNull(value)) {
-				availableLanguageIds.add(LocaleUtil.toLanguageId(locale));
-			}
-		}
-
-		return availableLanguageIds.toArray(new String[availableLanguageIds.size()]);
-	}
-
-	@Override
-	public String getDefaultLanguageId() {
-		String xml = getFeedbackCorrect();
-
-		if (xml == null) {
-			return "";
-		}
-
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		return LocalizationUtil.getDefaultLanguageId(xml, defaultLocale);
-	}
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException {
-		Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
-
-		Locale[] availableLocales = LocaleUtil.fromLanguageIds(getAvailableLanguageIds());
-
-		Locale defaultImportLocale = LocalizationUtil.getDefaultImportLocale(Answer.class.getName(),
-				getPrimaryKey(), defaultLocale, availableLocales);
-
-		prepareLocalizedFieldsForImport(defaultImportLocale);
-	}
-
-	@Override
-	@SuppressWarnings("unused")
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException {
-		Locale defaultLocale = LocaleUtil.getSiteDefault();
-
-		String modelDefaultLanguageId = getDefaultLanguageId();
-
-		String feedbackCorrect = getFeedbackCorrect(defaultLocale);
-
-		if (Validator.isNull(feedbackCorrect)) {
-			setFeedbackCorrect(getFeedbackCorrect(modelDefaultLanguageId),
-				defaultLocale);
-		}
-		else {
-			setFeedbackCorrect(getFeedbackCorrect(defaultLocale),
-				defaultLocale, defaultLocale);
-		}
-
-		String feedbackIncorrect = getFeedbackIncorrect(defaultLocale);
-
-		if (Validator.isNull(feedbackIncorrect)) {
-			setFeedbackIncorrect(getFeedbackIncorrect(modelDefaultLanguageId),
-				defaultLocale);
-		}
-		else {
-			setFeedbackIncorrect(getFeedbackIncorrect(defaultLocale),
-				defaultLocale, defaultLocale);
-		}
 	}
 
 	@Override
@@ -1184,9 +913,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	private String _answer;
 	private boolean _correct;
 	private String _feedbackCorrect;
-	private String _feedbackCorrectCurrentLanguageId;
 	private String _feedbackIncorrect;
-	private String _feedbackIncorrectCurrentLanguageId;
 	private long _columnBitmask;
 	private Answer _escapedModel;
 }

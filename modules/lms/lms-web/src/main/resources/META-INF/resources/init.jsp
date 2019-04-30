@@ -17,3 +17,4 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <liferay-theme:defineObjects />
 <liferay-trash:defineObjects />
 <portlet:defineObjects /> 
+

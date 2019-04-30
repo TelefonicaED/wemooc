@@ -82,6 +82,18 @@ public class LearningActivityTryLocalServiceImpl
 		return learningActivityTry;
 	}
 	
+	public LearningActivityTry getLastLearningActivityTryFinished(long actId, long userId) {
+		LearningActivityTry learningActivityTry = null;
+		
+		OrderByComparator<LearningActivityTry> orderByComparator = OrderByComparatorFactoryUtil.create("LMS_LearningActivityTry", "endDate", true);
+		
+		List<LearningActivityTry> learningActivityTries =  learningActivityTryPersistence.findByActIdUserId(actId, userId, -1,-1, orderByComparator);
+		if(learningActivityTries != null && learningActivityTries.size() > 0) {
+			learningActivityTry = learningActivityTries.get(learningActivityTries.size()-1);
+		}
+		return learningActivityTry;
+	}
+	
 	public LearningActivityTry addLearningActivityTry(long actId, long userId, ServiceContext serviceContext) throws PortalException {
 		LearningActivity learningActivity = learningActivityPersistence.fetchByPrimaryKey(actId);
 		
@@ -152,6 +164,7 @@ public class LearningActivityTryLocalServiceImpl
 		
 		learningActivityTry.setResult(result);
 		learningActivityTry.setEndDate(endDate);
+		learningActivityTry.setEndUserDate(endDate);
 		
 		//Actualizamos los campos de auditoria
 		User user = userLocalService.getUser(serviceContext.getUserId());

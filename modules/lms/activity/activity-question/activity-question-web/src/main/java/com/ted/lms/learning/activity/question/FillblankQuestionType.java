@@ -57,13 +57,12 @@ public class FillblankQuestionType extends BaseQuestionType{
 			
 			List<String> sols = getQuestionSols(solution.getAnswer());
 			String[] userAnswers = element.element("answer").getText().split(",");
-			
+			log.debug("sols: " + sols.size());
 			for(int i = 0; i < sols.size(); i++){
 				if(isCorrect(sols.get(i), userAnswers[i])){
 					log.debug("CORRECT "+i);
 					correctAnswers++;
 				}
-				i++;
 			}
 			if(sols.size()>0){
 				double puntuation = correctAnswers*100.0/sols.size(); 

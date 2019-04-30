@@ -16,8 +16,6 @@ package com.ted.lms.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.petra.string.StringBundler;
-
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -37,6 +35,7 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -186,6 +185,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	public List<LearningActivity> findByUuid(String uuid, int start, int end,
 		OrderByComparator<LearningActivity> orderByComparator,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -209,7 +210,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LearningActivity learningActivity : list) {
-					if (!Objects.equals(uuid, learningActivity.getUuid())) {
+					if (!uuid.equals(learningActivity.getUuid())) {
 						list = null;
 
 						break;
@@ -233,10 +234,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -419,6 +417,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	public LearningActivity[] findByUuid_PrevAndNext(long actId, String uuid,
 		OrderByComparator<LearningActivity> orderByComparator)
 		throws NoSuchLearningActivityException {
+		uuid = Objects.toString(uuid, "");
+
 		LearningActivity learningActivity = findByPrimaryKey(actId);
 
 		Session session = null;
@@ -464,10 +464,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 		boolean bindUuid = false;
 
-		if (uuid == null) {
-			query.append(_FINDER_COLUMN_UUID_UUID_1);
-		}
-		else if (uuid.equals("")) {
+		if (uuid.isEmpty()) {
 			query.append(_FINDER_COLUMN_UUID_UUID_3);
 		}
 		else {
@@ -587,6 +584,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	 */
 	@Override
 	public int countByUuid(String uuid) {
+		uuid = Objects.toString(uuid, "");
+
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
 
 		Object[] finderArgs = new Object[] { uuid };
@@ -600,10 +599,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -718,6 +714,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	@Override
 	public LearningActivity fetchByUUID_G(String uuid, long groupId,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		Object[] finderArgs = new Object[] { uuid, groupId };
 
 		Object result = null;
@@ -743,10 +741,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -830,6 +825,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
+		uuid = Objects.toString(uuid, "");
+
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_G;
 
 		Object[] finderArgs = new Object[] { uuid, groupId };
@@ -843,10 +840,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -993,6 +987,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 		int start, int end,
 		OrderByComparator<LearningActivity> orderByComparator,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -1020,7 +1016,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LearningActivity learningActivity : list) {
-					if (!Objects.equals(uuid, learningActivity.getUuid()) ||
+					if (!uuid.equals(learningActivity.getUuid()) ||
 							(companyId != learningActivity.getCompanyId())) {
 						list = null;
 
@@ -1045,10 +1041,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1247,6 +1240,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	public LearningActivity[] findByUuid_C_PrevAndNext(long actId, String uuid,
 		long companyId, OrderByComparator<LearningActivity> orderByComparator)
 		throws NoSuchLearningActivityException {
+		uuid = Objects.toString(uuid, "");
+
 		LearningActivity learningActivity = findByPrimaryKey(actId);
 
 		Session session = null;
@@ -1292,10 +1287,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 		boolean bindUuid = false;
 
-		if (uuid == null) {
-			query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-		}
-		else if (uuid.equals("")) {
+		if (uuid.isEmpty()) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 		}
 		else {
@@ -1421,6 +1413,8 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
+		uuid = Objects.toString(uuid, "");
+
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_C;
 
 		Object[] finderArgs = new Object[] { uuid, companyId };
@@ -1434,10 +1428,7 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {

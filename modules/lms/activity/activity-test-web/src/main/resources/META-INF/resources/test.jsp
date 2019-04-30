@@ -1,3 +1,9 @@
+<%@page import="com.liferay.portal.kernel.language.UnicodeLanguageUtil"%>
+<%@page import="com.ted.lms.learning.activity.question.model.QuestionType"%>
+<%@page import="java.util.Map"%>
+<%@page import="com.ted.lms.learning.activity.question.model.QuestionTypeFactory"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="com.ted.lms.learning.activity.test.web.constants.TestConstants"%>
 <%@page import="com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
 <%@page import="java.util.List"%>
@@ -13,89 +19,91 @@
 
 <c:if test="${activityTimestamp > 0}">				  									
 	<script type="text/javascript">
-	<!--	AUI().ready('liferay-notice', 'collection', function(A) {
+		AUI().ready('liferay-notice', 'collection', function(A) {
 
-		var TestActivity = function(options) {
-			var instance = this;
-			instance.timeout=options.timeout||false;
-			instance.warningText=options.warningText||'Timeout Warning: <span class="countdown-timer"/>';
-			instance.expiredText=options.expiredText||'Text timeout';
-			instance.onClose=options.onClose;
-
-			instance.banner=null;
-			if(instance.timeout) {
-				instance.banner=new Liferay.Notice({content:instance.warningText,closeText:false,toggleText:false});
-				instance.countdowntext=instance.banner.one('.countdown-timer');
-				if(instance.countdowntext){
-					instance.countdowntext.text(instance._formatTime(instance.timeout));
-				}
-
-				var interval=1000;
-				instance.finishtime = new Date().getTime()+instance.timeout;
-
-				instance._countdownTimer = setInterval(
-					function() {
-
-						var currentTimeout = instance.finishtime-new Date().getTime();
-
-						if (currentTimeout > 0) {
-							instance.countdowntext.text(instance._formatTime(currentTimeout));
-						}
-						else {
-							instance.banner.html(instance.expiredText);
-							instance.banner.toggleClass('popup-alert-notice').toggleClass('popup-alert-warning');
-							
-							if (instance._countdownTimer) {
-								clearInterval(instance._countdownTimer);
-							}
-
-							if (instance.onClose) {
-								instance.onClose();
-							}
-						}
-					},
-					interval
-				);
-			}
-		};
-
-		TestActivity.prototype = {
-			_formatNumber: function(num) {
+			var TestActivity = function(options) {
 				var instance = this;
-		
-				if (num <= 9) {
-					num = '0' + num;
+				instance.timeout=options.timeout||false;
+				instance.warningText=options.warningText||'Timeout Warning: <span class="countdown-timer"/>';
+				instance.expiredText=options.expiredText||'Text timeout';
+				instance.onClose=options.onClose;
+	
+				instance.banner=null;
+				if(instance.timeout) {
+					instance.banner=new Liferay.Notice({content:instance.warningText,closeText:false,toggleText:false});
+					instance.countdowntext=instance.banner.one('.countdown-timer');
+					if(instance.countdowntext){
+						instance.countdowntext.text(instance._formatTime(instance.timeout));
+					}
+	
+					var interval=1000;
+					var dateTime = new Date().getTime();
+					instance.finishtime = dateTime + parseInt(instance.timeout);
+	
+					instance._countdownTimer = setInterval(
+						function() {
+	
+							var currentTimeout = (instance.finishtime)-new Date().getTime();
+	
+							if (currentTimeout > 0) {
+								instance.countdowntext.text(instance._formatTime(currentTimeout));
+							}
+							else {
+								instance.banner.html(instance.expiredText);
+								instance.banner.toggleClass('popup-alert-notice').toggleClass('popup-alert-warning');
+								
+								if (instance._countdownTimer) {
+									clearInterval(instance._countdownTimer);
+								}
+	
+								if (instance.onClose) {
+									window.onbeforeunload=function(){}
+									instance.onClose();
+								}
+							}
+						},
+						interval
+					);
 				}
+			};
+	
+			TestActivity.prototype = {
+				_formatNumber: function(num) {
+					var instance = this;
+			
+					if (num <= 9) {
+						num = '0' + num;
+					}
+	
+					return num;
+				},
+				_formatTime: function(time) {
+					var instance = this;
+	
+					time = Math.floor(time/1000);
+	
+					var hours = Math.floor(time/3600);
+					time = time%3600;
+	
+					var minutes = Math.floor(time/60);
+					time = time%60;
+	
+					var seconds = Math.floor(time);
+					
+					return A.Array.map([hours,minutes,seconds], instance._formatNumber).join(':');
+					
+				}
+	
+			};
+	
+			new TestActivity({timeout:'${timestamp}',
+			  warningText: Liferay.Language.get("learning-activity.test.timeout.warning"),
+			  expiredText: Liferay.Language.get("learning-activity.test.timeout"),
+			  onClose:function(){
+					document.getElementById('<portlet:namespace/>formulario').submit();
+			}});
 
-				return num;
-			},
-			_formatTime: function(time) {
-				var instance = this;
-
-				time = Math.floor(time/1000);
-
-				var hours = Math.floor(time/3600);
-				time = time%3600;
-
-				var minutes = Math.floor(time/60);
-				time = time%60;
-
-				var seconds = Math.floor(time);
-				
-				return A.Array.map([hours,minutes,seconds], instance._formatNumber).join(':');
-				
-			}
-
-		};
-
-		new TestActivity({timeout:'${timestamp}',
-						  warningText: Liferay.Language.get("execActivity.timeout.warning"),
-						  expiredText: Liferay.Language.get("execActivity.timeout"),
-						  onClose:function(){
-							document.getElementById('<portlet:namespace/>formulario').submit();
-						}});
-
-		});-->
+		});
 
 	</script>
 </c:if>
@@ -107,10 +115,10 @@
 		        function(question) {
 					var A = AUI();
 					var questionValidators = {
-						questiontype_options : function(question) {
+						questiontype_0 : function(question) {
 							return (question.all('div.answer input[type="radio"]:checked').size() > 0);
 						},
-						questiontype_options_select : function(question) {
+						questiontype_0_select : function(question) {
 							var selectAnswers = question.all('select.answer');
 							var validSelects = true;
 							selectAnswers.each(function (selectAnswer){
@@ -120,13 +128,13 @@
 							});
 							return validSelects;
 						},
-						questiontype_multioptions : function(question) {
+						questiontype_1 : function(question) {
 							return (question.all('div.answer input[type="checkbox"]:checked').size() > 0);
 						},
-						questiontype_freetext : function(question) {
+						questiontype_2 : function(question) {
 							return (A.Lang.trim(question.one('div.answer textarea').val()) != '');
 						},
-						questiontype_fillblank : function(question) {
+						questiontype_3 : function(question) {
 							var texts = question.all(':text');
 							var validTexts = true;
 							texts.each(function(node) {
@@ -143,10 +151,10 @@
 							
 							return validTexts && validSelecteds && validCheckeds;
 						},
-						questiontype_sortable : function(question) {
+						questiontype_5 : function(question) {
 							return true;
 						},
-						questiontype_draganddrop : function(question) {
+						questiontype_4 : function(question) {
 							return (question.all('div.drop > input[type="hidden"][value="-1"]').size() == 0);
 						},
 						
@@ -171,33 +179,94 @@
 		        },
 		        ['node', 'aui-dialog', 'event', 'node-event-simulate']
 		);
+			
+		Liferay.provide(
+				window,
+	        '<portlet:namespace />popConfirm',
+	        function(content, boton) {
+				var A = AUI();
+			
+				var dialog = Liferay.Util.Window.getWindow(
+				    {
+				    	dialog: {
+				    		bodyContent: content,
+					        width: 'auto',
+					        height: 'auto',
+					        resizable: false,
+					        destroyOnClose: true,
+					        modal: true,
+					        toolbars: {
+								footer: [
+									{
+										cssClass: 'btn-secondary',
+										label: '<liferay-ui:message key="cancel" />',
+										on: {
+											click: function() {
+												dialog.hide();
+											}
+										}
+									},
+									{
+										cssClass: 'btn-primary',
+										label: '<liferay-ui:message key="ok" />',
+										on: {
+											click: function() {
+												A.one('#<portlet:namespace/>formulario').detach('submit');
+						                		document.getElementById('<portlet:namespace/>formulario').submit();
+
+												dialog.hide();
+											}
+										},
+										primary: true
+									}
+								]
+							}
+				    	},
+				        title: '<%= UnicodeLanguageUtil.get(request, "confirm") %>'
+				    }
+				).render();
+				
+	        },
+	        ['aui-alert', 'liferay-util-window']
+		);
 
 		Liferay.provide(
-			      window,
-			        '<portlet:namespace />popContinue',
-			        function(content, boton) {
-						var A = AUI();
+		        window,
+		        '<portlet:namespace />popContinue',
+		        function(content, boton) {
+					var A = AUI();
 					
-						window.<portlet:namespace />confirmDialog = new A.Dialog(
-						    {
-						        title: Liferay.Language.get("execactivity.confirm.title"),
+					window.<portlet:namespace />confirmDialog = Liferay.Util.Window.getWindow(
+					    {
+					        title: '<%= UnicodeLanguageUtil.get(request, "access-from-desktop") %>',
+					        dialog: {
 						        bodyContent: content,
-						        buttons: [
-						                  {
-						                	  label: Liferay.Language.get("continue"),
-						                	  handler: function() {
-						                		  A.one('#<portlet:namespace/>formulario').detach('submit');
-						                		  document.getElementById('<portlet:namespace/>formulario').submit();
-						                		  <portlet:namespace />confirmDialog.close();
-						                	  }
-						                  },
-						                  {
-						                	  label: Liferay.Language.get("lms.dialog.cancel"),
-						                	  handler: function() {
-						                		  <portlet:namespace />confirmDialog.close();
-						                	  }
-						                  }
-						                  ],
+						        toolbars: {
+									footer: [
+										{
+											cssClass: 'btn-secondary',
+											label: '<liferay-ui:message key="cancel" />',
+											on: {
+												click: function() {
+													dialog.hide();
+												}
+											}
+										},
+										{
+											cssClass: 'btn-primary',
+											label: '<liferay-ui:message key="continue" />',
+											on: {
+												click: function() {
+													A.one('#<portlet:namespace/>formulario').detach('submit');
+							                		document.getElementById('<portlet:namespace/>formulario').submit();
+	
+													dialog.hide();
+												}
+											},
+											primary: true
+										}
+									]
+								},
 						        width: 'auto',
 						        height: 'auto',
 						        resizable: false,
@@ -207,95 +276,12 @@
 						        destroyOnClose: true,
 						        centered: true,
 						        modal: true
-						    }
-						).render();
-						
-			        },
-			        ['node', 'aui-dialog', 'event', 'node-event-simulate']
-			);
-			
-			Liferay.provide(
-					window,
-		        '<portlet:namespace />popConfirm',
-		        function(content, boton) {
-					var A = AUI();
-				
-					window.<portlet:namespace />confirmDialog = new A.Dialog(
-					    {
-					        title: Liferay.Language.get("execactivity.confirm.title"),
-					        bodyContent: content,
-					        buttons: [
-					                  {
-					                	  label: Liferay.Language.get("lms.dialog.ok"),
-					                	  handler: function() {
-					                		  A.one('#<portlet:namespace/>formulario').detach('submit');
-					                		  document.getElementById('<portlet:namespace/>formulario').submit();
-					                		  <portlet:namespace />confirmDialog.close();
-					                	  }
-					                  },
-					                  {
-					                	  label: Liferay.Language.get("lms.dialog.cancel"),
-					                	  handler: function() {
-					                		  <portlet:namespace />confirmDialog.close();
-					                	  }
-					                  }
-					                  ],
-					        width: 'auto',
-					        height: 'auto',
-					        resizable: false,
-					        draggable: false,
-					        close: true,
-							cssClass: 'dialog-principal',
-					        destroyOnClose: true,
-					        centered: true,
-					        modal: true
+					        }
 					    }
 					).render();
 					
 		        },
-		        ['node', 'aui-dialog', 'event', 'node-event-simulate']
-		);
-
-		Liferay.provide(
-		        window,
-		        '<portlet:namespace />popContinue',
-		        function(content, boton) {
-					var A = AUI();
-				
-					window.<portlet:namespace />confirmDialog = new A.Dialog(
-					    {
-					        title: Liferay.Language.get("execactivity.confirm.title"),
-					        bodyContent: content,
-					        buttons: [
-					                  {
-					                	  label: Liferay.Language.get("continue"),
-					                	  handler: function() {
-					                		  A.one('#<portlet:namespace/>formulario').detach('submit');
-					                		  document.getElementById('<portlet:namespace/>formulario').submit();
-					                		  <portlet:namespace />confirmDialog.close();
-					                	  }
-					                  },
-					                  {
-					                	  label: Liferay.Language.get("lms.dialog.cancel"),
-					                	  handler: function() {
-					                		  <portlet:namespace />confirmDialog.close();
-					                	  }
-					                  }
-					                  ],
-					        width: 'auto',
-					        height: 'auto',
-					        resizable: false,
-					        draggable: false,
-					        close: true,
-							cssClass: 'dialog-principal',
-					        destroyOnClose: true,
-					        centered: true,
-					        modal: true
-					    }
-					).render();
-					
-		        },
-		        ['node', 'aui-dialog', 'event', 'node-event-simulate']
+		        ['aui-alert', 'liferay-util-window']
 		);
 		
 		Liferay.provide(
@@ -330,10 +316,10 @@
 				    		targ = e.srcElement.blur();
 				    	}
 				    	
-				    	if(testActivityType.getQuestionsPerPage() > 0){
-				    		<portlet:namespace />popContinue(Liferay.Language.get("execativity.test.questions.without.responsepagination"), e.srcElement);
+				    	if(parseInt('${testActivityType.getQuestionsPerPage()}') > 0){
+				    		<portlet:namespace />popContinue(Liferay.Language.get("learning-activity.test.questions-without-response.pagination"), e.srcElement);
 				    	}else{
-				    		<portlet:namespace />popConfirm(Liferay.Language.get("execativity.test.questions.without.response"), e.srcElement);
+				    		<portlet:namespace />popConfirm(Liferay.Language.get("learning-activity.test.questions-without-response"), e.srcElement);
 				    	}
    					}
 			    }
@@ -378,9 +364,8 @@
 			long limitChunk = (Long)request.getAttribute("limitChunk");	
 			long currentQuestionId = (Long)request.getAttribute("currentQuestionId");
 			TestActivityType testActivityType = (TestActivityType)request.getAttribute("testActivityType");
-							
-			System.out.println("random: " + random);
-			System.out.println("limitChunk: " + limitChunk);
+			
+			Map<Long, QuestionTypeFactory> questionTypeFactories = new HashMap<Long, QuestionTypeFactory>();
 			
 			for(int index = 0; index < random; index += limitChunk) {
 				boolean questionPageCurrent = false;
@@ -388,22 +373,27 @@
 				<div class='question-page' id="<%=questionPageId %>">
 					
 					<%Question question = null;
+					QuestionType questionType = null;
+					QuestionTypeFactory questionTypeFactory = null;
 					for(int jndex = 0; jndex < Math.min(limitChunk, random - index); jndex++) {
 						question = questions.get(jndex + index);
 						if (question.getQuestionId() == currentQuestionId) {
 							questionPageCurrent = true;
 						}
-						request.setAttribute("question", question);
+						questionType = question.getQuestionType();
+						questionTypeFactory = questionType.getQuestionTypeFactory();
+						if(!questionTypeFactories.containsKey(questionTypeFactory.getType())){
+							questionTypeFactories.put(questionTypeFactory.getType(), questionTypeFactory);
+						}
 						%>
-						<liferay-util:include page="<%=question.getQuestionType().getURLQuestion() %>" portletId="<%=question.getQuestionType().getQuestionTypeFactory().getPortletId() %>" >
+						<liferay-util:include page="<%=questionType.getURLQuestion() %>" portletId="<%=questionTypeFactory.getPortletId() %>" >
 							<liferay-util:param name="questionId" value="<%=String.valueOf(question.getQuestionId()) %>"/>
 							<liferay-util:param name="tryResultData" value="${tryResultData }" />
 							<liferay-util:param name="canUserDoNewTry" value="${canUserDoNewTry }" />
-							<liferay-util:param name="showCorrectAnswer" value="<%=String.valueOf(testActivityType.getShowCorrectAnswer()) %>"/>
-							<liferay-util:param name="showCorrectAnswerOnlyOnFinalTry" value="<%=String.valueOf(testActivityType.getShowCorrectAnswerOnlyOnFinalTry()) %>"/>
+							<liferay-util:param name="showCorrectAnswer" value="false"/>
+							<liferay-util:param name="showCorrectAnswerOnlyOnFinalTry" value="false"/>
 						</liferay-util:include>
 					<%} 
-					System.out.println("questionPageCurrent: " + questionPageCurrent);
 					boolean markAsCurrentPage = questionPageCurrent || (currentQuestionId == 0 && index == 0);
 					if (markAsCurrentPage && index != 0) {%>
 						<c:set var="showPrevious" value="true" />
@@ -414,6 +404,8 @@
 					if (markAsCurrentPage) {%>
 						<script>$('#<%=questionPageId%>').addClass("question-page-current");</script>
 						<c:set var="currentPage" value="<%=(testActivityType.getQuestionsPerPage() == 0 ? 0 : index / testActivityType.getQuestionsPerPage()) + 1%>" />
+					<%}else{%>
+						<script>$('#<%=questionPageId%>').addClass("hide");</script>
 					<%}
 					%>
 				</div>
@@ -421,14 +413,14 @@
 			}%>
 			<c:choose>
 				<c:when test="${testActivityType.questionsPerPage == 0 }">
-					<aui:button type="button" value="send" onClick='${renderResponse.namespace}submitForm(event, null);' ></aui:button>
+					<aui:button value="send" onClick='${renderResponse.namespace}submitForm(event, null);' />
 				</c:when>
 				<c:otherwise>
 					
 					<div id="testactivity-navigator" class="taglib-page-iterator">
 						<c:if test="${showPrevious }">
 							<div id="testactivity-navigator-previous">
-								<aui:button type="button" value="execactivity.editActivity.questionsPerPage.previous" onClick="${renderResponse.namespace}submitForm(event, 'backward');" ></aui:button>
+								<aui:button type="button" value="learning-activity.test.previous" onClick="${renderResponse.namespace}submitForm(event, 'backward');" ></aui:button>
 							</div>
 						</c:if>
 						<c:if test="${(showPrevious || showNext) && currentPage >= 1 }">
@@ -438,7 +430,7 @@
 									<c:forEach var="i" begin="1" end="${totalPages }">
 										<c:set var="browsed" value="${i <=currentPage }" />
 										<div id="testactivity-navigator-progress-frame-${i}" class='testactivity-navigator-progress-frame ${browsed ? "testactivity-navigator-progress-frame-browsed" : "testactivity-navigator-progress-frame-not-browsed"}' 
-											style='width: ${(width_frame / 100) + "." + (width_frame % 100) }%'></div>
+											style='width: ${(width_frame / 100)}.${(width_frame % 100)}%'></div>
 									</c:forEach>
 								</div>
 							</div>
@@ -446,7 +438,7 @@
 						<div id="testactivity-navigator-next">
 							<c:choose>
 								<c:when test="${showNext }">
-									<aui:button type="button" value="execactivity.editActivity.questionsPerPage.next" 
+									<aui:button type="button" value="learning-activity.test.next" 
 										onClick="${renderResponse.namespace}submitForm(event, 'forward');" />
 								</c:when>
 								<c:otherwise>
@@ -459,12 +451,22 @@
 			</c:choose>
 	
 			<aui:input type="hidden" name="navigate" value=""/>
+			
+			<%//Importamos el javascript necesario para las preguntas
+			for (Map.Entry<Long, QuestionTypeFactory> questionEntry : questionTypeFactories.entrySet()) { 
+				String[] importJavascript = questionEntry.getValue().getJavascriptImport(themeDisplay.getCDNHost());
+				if(importJavascript != null){
+					for(String javascript: importJavascript){%>
+						<script src="<%=javascript %>" type="text/javascript"></script>
+			<%		}	
+				}
+			} %>
 		</aui:form>
 		
 		<script>
 		$(document).ready(function(){
 			window.onbeforeunload = function() { 
-				return Liferay.Language.get("execativity.test.try.confirm.close");
+				return Liferay.Language.get("learning-activity.test.try-confirm.close");
 			}
 		})
 		</script>

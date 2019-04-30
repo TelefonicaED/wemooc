@@ -47,16 +47,12 @@ import com.ted.lms.learning.activity.p2p.service.base.P2PActivityLocalServiceBas
 import com.ted.lms.learning.activity.p2p.util.P2PPrefsPropsValues;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.CourseLocalServiceUtil;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
 import com.ted.lms.service.ModuleLocalServiceUtil;
-import com.ted.lms.service.ModuleResultLocalServiceUtil;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -85,6 +81,7 @@ import javax.mail.internet.InternetAddress;
  * @see com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil
  */
 public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl {
+	
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -93,8 +90,8 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 	
 	@Override
 	public boolean hasP2PActivity(long actId) {
-		System.out.println("actId: " + actId);
-		System.out.println("count: " + p2pActivityPersistence.countByActId(actId));
+		log.debug("actId: " + actId);
+		log.debug("count: " + p2pActivityPersistence.countByActId(actId));
 		return p2pActivityPersistence.countByActId(actId) > 0;
 	}
 	
@@ -447,7 +444,7 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 		//Obtenemos las asignaciones que ya están realidas.
 		try {
 			activityAsignations = p2pActivityCorrectionsLocalService.getCorrectionsCount(p2pActivity.getActId(),p2pActivity.getUserId());
-			System.out.println("asignaciones ya asginadas: " + activityAsignations);
+			log.debug("asignaciones ya asginadas: " + activityAsignations);
 		
 			//Si la actividad no tiene asignadas todas las tareas que tiene que corregir.
 			if( activityAsignations < numValidations && !p2pActivity.isAsignationsCompleted()){

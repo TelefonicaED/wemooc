@@ -37,14 +37,4 @@ public class AnswerImpl extends AnswerBaseImpl {
 	 */
 	public AnswerImpl() {
 	}
-	
-	@Override
-	public String getFeedbackCorrectMapAsXML() {
-		return LocalizationUtil.updateLocalization(getFeedbackCorrectMap(), StringPool.BLANK, "FeedbackCorrect",getDefaultLanguageId());
-	}
-	
-	@Override
-	public String getFeedbackIncorrectMapAsXML() {
-		return LocalizationUtil.updateLocalization(getFeedbackIncorrectMap(), StringPool.BLANK, "FeedbackIncorrect",getDefaultLanguageId());
-	}
 }

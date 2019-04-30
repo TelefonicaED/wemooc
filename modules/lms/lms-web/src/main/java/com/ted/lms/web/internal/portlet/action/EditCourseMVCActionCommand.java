@@ -373,7 +373,7 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
 		int workflowAction = ParamUtil.getInteger(actionRequest, "workflowAction", WorkflowConstants.ACTION_SAVE_DRAFT);
 		
-		System.out.println("workflowAction: " + workflowAction);
+		log.debug("workflowAction: " + workflowAction);
 		
 		Course course = courseService.updateCourse(courseId, welcome, welcomeSubjectMap, welcomeMsgMap, goodbye, goodbyeSubjectMap, 
 				goodbyeMsgMap, deniedInscription, deniedInscriptionSubjectMap, deniedInscriptionMsgMap, workflowAction, serviceContext);

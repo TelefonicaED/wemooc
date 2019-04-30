@@ -102,7 +102,7 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 
 		String activityPath = ExportImportPathUtil.getModelPath(activity);
 		
-		System.out.println("activityPath: " + activityPath);
+		log.debug("activityPath: " + activityPath);
 		
 		activityElement.addAttribute("path", activityPath);
 		

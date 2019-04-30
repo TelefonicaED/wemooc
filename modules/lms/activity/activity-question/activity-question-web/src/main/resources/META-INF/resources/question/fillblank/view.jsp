@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.xml.SAXReaderUtil"%>
 <%@page import="com.liferay.petra.string.StringUtil"%>
@@ -26,7 +27,7 @@ boolean showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(request, "showCor
 
 Question question = QuestionLocalServiceUtil.getQuestion(questionId);
 Document documentTryResultData = null;
-if(feedback){
+if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
@@ -36,7 +37,6 @@ FillblankQuestionType fillblankQuestionType = new FillblankQuestionType(question
 String[] userAnswers = fillblankQuestionType.getAnswersSelected(documentTryResultData);
 
 String answersFeedBack="", feedMessage = "";
-String namespace = themeDisplay.getPortletDisplay().getNamespace();
 String cssclass = "";
 
 //Cogemos el TestAnswer de la pregunta para rellenar las respuestas dadas por el alumno
@@ -50,7 +50,7 @@ List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.get
 	List<String> solutions = fillblankQuestionType.getQuestionSols(solution.getAnswer());
 
 	if (feedback){
-		feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank") ;
+		feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank") ;
 		if (showCorrectAnswerOnlyOnFinalTry && canUserDoNewTry) {
 			showCorrectAnswer = false;
 		}else if(showCorrectAnswerOnlyOnFinalTry){
@@ -76,7 +76,7 @@ List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.get
 	}%>
 	<div class='<%="question"+ cssclass + " questiontype_" + fillblankQuestionType.getType()%> '>
 	
-		<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+		<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
 		<div class='questiontext'><%=question.getText()%></div>
 		
 		<div class='answer-fillblank'>
@@ -100,14 +100,14 @@ List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.get
 					if (feedback) {
 						readonly = "readonly";
 					}
-					auxans= "<label for=\""+namespace+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+namespace+"question_" + question.getQuestionId()+"_"+i+"\" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" "+readonly+" type=\"text\" value=\""+ans+"\" /></label>";//input
+					auxans= "<label for=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()+"_"+i+"\" name=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()+"_"+i + "\" "+readonly+" type=\"text\" value=\""+ans+"\" /></label>";//input
 					
-					if("true".equals(showCorrectAnswer)) {
+					if(showCorrectAnswer) {
 						for(String blankSol:blankSols){
 							if(solok != "") solok += " | ";
 							solok += blankSol;
 						}
-						auxans += "<div class=\" font_14 color_cuarto negrita\"> (" + solok + ") </div>";
+						auxans += "<div class=\" correct\"> (" + solok + ") </div>";
 					}
 				}else if(sol.contains(":MULTICHOICE_") || sol.contains(":MCV") || sol.contains(":MCH")){
 					String aux = "";
@@ -117,15 +117,15 @@ List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.get
 						String checked = "", disabled = "", correct = "";
 						if(blankSol.equals(ans)) checked="checked='checked'";
 						if(feedback) disabled = "disabled='disabled'";
-						if("true".equals(showCorrectAnswer) && blankSols.contains(blankSol)) correct = "font_14 color_cuarto negrita";
-						aux = "<div class=\"answer " + correct + "\"> <label for=\""+namespace+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" type=\"radio\"" + checked + "value=\"" + blankSol + "\" "+disabled+" /></label>" + blankSol + "</div>";//radiobuttons
+						if(showCorrectAnswer && blankSols.contains(blankSol)) correct = "correct";
+						aux = "<div class=\"answer " + correct + "\"> <label for=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+i+"\" > <input id=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()+"_"+i + "\" name=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()+"_"+i + "\" type=\"radio\"" + checked + "value=\"" + blankSol + "\" "+disabled+" /></label>" + blankSol + "</div>";//radiobuttons
 						auxans += aux;
 					}
 					auxans += "</div>";
 				}else if(sol.contains(":MULTICHOICE:") || sol.contains(":MC:")){
 					String disabled = "";
 					if(feedback) disabled = "disabled='disabled'";
-					auxans+="<select "+disabled+" name=\""+namespace+"question_" + question.getQuestionId()+"_"+i + "\" >";
+					auxans+="<select "+disabled+" name=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()+"_"+i + "\" >";
 					auxans+="<option value=\"\" "+disabled+" label=\"\"/>";//primer valor vac�o
 					List<String> totalBlankSols = fillblankQuestionType.getBlankSols(sol, false);
 					for(String blankSol:totalBlankSols){
@@ -134,12 +134,12 @@ List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.get
 						auxans+="<option value=\""+ blankSol +"\" "+disabled+" label=\""+blankSol +"\" "+ selected +"/>";//dropdown
 					}
 					auxans+="</select>";
-					if("true".equals(showCorrectAnswer)) {
+					if(showCorrectAnswer) {
 						for(String blankSol:blankSols){
 							if(solok != "") solok += " | ";
 							solok += blankSol;
 						}
-						auxans += "<div class=\" font_14 color_cuarto negrita\"> (" + solok + ") </div>";
+						auxans += "<div class=\" correct\"> (" + solok + ") </div>";
 					}
 				}else{
 					auxans+=sol;

@@ -49,8 +49,8 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		return answerPersistence.findByQuestionId(questionId);
 	}
 	
-	public Answer addAnswer(long questionId, long actId, String answerText, Map<Locale, String> feedbackCorrectMap, 
-			Map<Locale, String> feedbackIncorrectMap, boolean correct, ServiceContext serviceContext) {
+	public Answer addAnswer(long questionId, long actId, String answerText, String feedbackCorrect, 
+			String feedbackIncorrect, boolean correct, ServiceContext serviceContext) {
 		Answer answer = answerPersistence.create(counterLocalService.increment(Answer.class.getName()));
 		
 		answer.setQuestionId(questionId);
@@ -66,21 +66,21 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		
 		answer.setActId(actId);
 		answer.setAnswer(answerText);
-		answer.setFeedbackCorrectMap(feedbackCorrectMap);
-		answer.setFeedbackIncorrectMap(feedbackIncorrectMap);
+		answer.setFeedbackCorrect(feedbackCorrect);
+		answer.setFeedbackIncorrect(feedbackIncorrect);
 		answer.setCorrect(correct);
 		
 		return answerPersistence.update(answer);
 	}
 	
 
-	public Answer updateAnswer(long answerId, String answerText, Map<Locale, String> feedbackCorrectMap,
-			Map<Locale, String> feedbackIncorrectMap, boolean correct) {
+	public Answer updateAnswer(long answerId, String answerText, String feedbackCorrect,
+			String feedbackIncorrect, boolean correct) {
 		
 		Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
 		answer.setAnswer(answerText);
-		answer.setFeedbackCorrectMap(feedbackCorrectMap);
-		answer.setFeedbackIncorrectMap(feedbackIncorrectMap);
+		answer.setFeedbackCorrect(feedbackCorrect);
+		answer.setFeedbackIncorrect(feedbackIncorrect);
 		answer.setCorrect(correct);
 		answer.setModifiedDate(new Date());
 		

@@ -41,8 +41,6 @@ import com.ted.lms.learning.activity.question.model.Answer;
 import java.io.Serializable;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Provides the local service interface for Answer. Methods of this
@@ -77,8 +75,7 @@ public interface AnswerLocalService extends BaseLocalService,
 	public Answer addAnswer(Answer answer);
 
 	public Answer addAnswer(long questionId, long actId, String answerText,
-		Map<Locale, String> feedbackCorrectMap,
-		Map<Locale, String> feedbackIncorrectMap, boolean correct,
+		String feedbackCorrect, String feedbackIncorrect, boolean correct,
 		ServiceContext serviceContext);
 
 	/**
@@ -298,6 +295,5 @@ public interface AnswerLocalService extends BaseLocalService,
 	public Answer updateAnswer(Answer answer);
 
 	public Answer updateAnswer(long answerId, String answerText,
-		Map<Locale, String> feedbackCorrectMap,
-		Map<Locale, String> feedbackIncorrectMap, boolean correct);
+		String feedbackCorrect, String feedbackIncorrect, boolean correct);
 }

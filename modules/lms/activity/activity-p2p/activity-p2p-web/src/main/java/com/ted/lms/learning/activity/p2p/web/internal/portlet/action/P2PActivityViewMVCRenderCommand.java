@@ -33,9 +33,7 @@ public class P2PActivityViewMVCRenderCommand implements MVCRenderCommand {
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
-		
-		
-		ParamUtil.print(renderRequest);
+
 		long actId = ParamUtil.getLong(renderRequest, "actId", 0);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);

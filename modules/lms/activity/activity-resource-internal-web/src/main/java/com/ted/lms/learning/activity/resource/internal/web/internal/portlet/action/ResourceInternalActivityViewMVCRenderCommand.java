@@ -59,7 +59,6 @@ public class ResourceInternalActivityViewMVCRenderCommand implements MVCRenderCo
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 
-		ParamUtil.print(renderRequest);
 		long actId = ParamUtil.getLong(renderRequest, "actId", 0);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
@@ -182,8 +181,6 @@ public class ResourceInternalActivityViewMVCRenderCommand implements MVCRenderCo
 						}
 					} else if(isEPUB) {
 						String urlEPUB = DLUtil.getPreviewURL(fileEntry, fileVersion, themeDisplay, StringPool.BLANK);
-						System.out.println("urlEPUB: " + urlEPUB);
-						
 						
 						previewFileURLs = new String[1];
 						previewFileURLs[0] = urlEPUB;

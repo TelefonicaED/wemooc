@@ -93,9 +93,16 @@ public class SortableQuestionType extends BaseQuestionType{
 	
 	public boolean isCorrect(List<Long> answersId, List<Answer> answers){
 		boolean correct = true;
-		for(int i=0;i<answers.size();i++){ 
-			if(answersId.get(i) == -1 || answersId.get(i) != answers.get(i).getAnswerId())	
-				correct = false;
+		log.debug("Número de respuestas del usuario: " + answersId.size());
+		log.debug("Número de respuestas: " + answers.size());
+		if(answersId.size() > 0) {
+			for(int i=0;i<answers.size();i++){ 
+				log.debug("Respuesta del usuario: " + answersId.get(i) + " -  Respuesta correcta: " +answers.get(i).getAnswerId() );
+				if(answersId.get(i) == -1 || answersId.get(i) != answers.get(i).getAnswerId())	
+					correct = false;
+			}
+		}else {
+			correct = false;
 		}
 		return correct;
 	}

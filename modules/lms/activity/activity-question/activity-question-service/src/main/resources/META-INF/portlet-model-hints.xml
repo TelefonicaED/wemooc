@@ -16,8 +16,8 @@
 			<hint-collection name="EDITOR" />
 		</field>
 		<field name="correct" type="boolean" />
-		<field localized="true" name="feedbackCorrect" type="String" />
-		<field localized="true" name="feedbackIncorrect" type="String" />
+		<field name="feedbackCorrect" type="String" />
+		<field name="feedbackIncorrect" type="String" />
 	</model>
 	<model name="com.ted.lms.learning.activity.question.model.Question">
 		<field name="uuid" type="String" />

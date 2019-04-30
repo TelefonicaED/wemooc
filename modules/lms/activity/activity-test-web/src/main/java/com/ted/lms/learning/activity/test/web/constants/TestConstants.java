@@ -21,4 +21,6 @@ public class TestConstants {
 	public static final long TYPE = 0;
 	public static final double DEFAULT_SCORE = 50;
 	
+	public static final String DEFAULT_QUESTIONS_ALLOWED = "0,1,2,3,4,5";
+	
 }

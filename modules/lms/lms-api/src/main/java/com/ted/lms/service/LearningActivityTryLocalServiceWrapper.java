@@ -251,6 +251,13 @@ public class LearningActivityTryLocalServiceWrapper
 			userId);
 	}
 
+	@Override
+	public com.ted.lms.model.LearningActivityTry getLastLearningActivityTryFinished(
+		long actId, long userId) {
+		return _learningActivityTryLocalService.getLastLearningActivityTryFinished(actId,
+			userId);
+	}
+
 	/**
 	* Returns a range of all the learning activity tries.
 	*

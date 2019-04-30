@@ -81,11 +81,11 @@
 				<c:if test="${learningActivityTypeFactory.isScoreConfigurable() }">
 					<div class="col-md-4">
 						<div class="row">
-							<div class="col-md-8">
+							<div class="col-md-6">
 								<aui:input name="passPuntuationToggle" label="${learningActivityTypeFactory.scoreConfigurableProperty }" 
 									type="toggle-switch" value="${activity.passPuntuation > 0 }" />
 							</div>
-							<div class="col-md-4">
+							<div class="col-md-6">
 								<aui:input name="passPuntuation" label="" type="text" suffix="%" disabled="${empty activity || activity.passPuntuation == 0 }"
 									value="${not empty activity ? activity.passPuntuation : learningActivityTypeFactory.defaultScore }"/>
 							</div>

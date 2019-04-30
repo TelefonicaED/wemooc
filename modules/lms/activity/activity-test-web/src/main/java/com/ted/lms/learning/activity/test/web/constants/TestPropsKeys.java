@@ -9,4 +9,5 @@ import com.liferay.portal.kernel.util.PropsKeys;
  */
 public class TestPropsKeys implements PropsKeys{
 	public static final String QUESTION_PER_PAGE = "lms.questionsPerPage";
+	public static final String QUESTIONS_ALLOWED = "lms.questions.allowed.for." + TestConstants.TYPE;
 }

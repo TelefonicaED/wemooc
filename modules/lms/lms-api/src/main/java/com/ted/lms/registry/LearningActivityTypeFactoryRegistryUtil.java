@@ -177,7 +177,7 @@ public class LearningActivityTypeFactoryRegistryUtil {
 				learningActivityFactory = registry.getService(serviceReference);
 	
 				String className = learningActivityFactory.getClassName();
-				System.out.println("learningActivityFactory: " + className);
+				_log.debug("learningActivityFactory: " + className);
 
 				LearningActivityTypeFactory classNameLearningActivityTypeFactory =
 					_learningActivityFactoriesMapByClassName.put(

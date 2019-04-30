@@ -23,14 +23,13 @@ boolean showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(request, "showCor
 
 Question question = QuestionLocalServiceUtil.getQuestion(questionId);
 Document documentTryResultData = null;
-if(feedback){
+if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
 SurveyQuestionType surveyQuestionType = new SurveyQuestionType(question);
 
 String html = "", answersFeedBack="", feedMessage = "", cssclass="", selected="";
-String namespace = themeDisplay.getPortletDisplay().getNamespace();
 String timestamp="";
 boolean isCombo = false;
 
@@ -69,13 +68,13 @@ for(Answer answer:testAnswers){
 		timestamp = String.valueOf(now.getTime());
 	}
 	if(surveyQuestionType.isCorrect(answer)){
-		if("true".equals(showCorrectAnswer)) correct="font_14 color_cuarto negrita";
+		if(showCorrectAnswer) correct="correct";
 		if(answersSelected.contains(answer)){
 			correctAnswered = true;
 			checked="checked='checked'";
 			notAnswers = false;
 			if(Validator.isNotNull(answer.getFeedbackCorrect())){
-				feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackCorrect():answer.getFeedbackCorrect();
+				feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackCorrect():answer.getFeedbackCorrect();
 			}
 		}
 	}else if(answersSelected.contains(answer)){
@@ -83,7 +82,7 @@ for(Answer answer:testAnswers){
 		selected="selected";
 		notAnswers = false;
 		if(Validator.isNotNull(answer.getFeedbackIncorrect())){
-			feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackIncorrect():answer.getFeedbackIncorrect();
+			feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackIncorrect():answer.getFeedbackIncorrect();
 		}
 	}
 
@@ -93,8 +92,8 @@ for(Answer answer:testAnswers){
 							"</option>";
 	}else{
 		answersFeedBack += "<div class=\"answer " + cssclass + correct + "\">" +
-								"<label for=\""+namespace+"question_"+question.getQuestionId()+"_"+numAnswer+"\" />"+
-								"<input id=\""+namespace+"question_"+question.getQuestionId()+"_"+numAnswer+"\" type=\"radio\" name=\""+namespace+"question_" + question.getQuestionId() +timestamp+ "\" " + checked + " value=\"" 
+								"<label for=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+numAnswer+"\" />"+
+								"<input id=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+numAnswer+"\" type=\"radio\" name=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId() +timestamp+ "\" " + checked + " value=\"" 
 										+ answer.getAnswerId() +"\" " + disabled + ">" +
 								"<div class=\"answer-options\">" + answer.getAnswer() + 
 								"</div>" + 
@@ -107,7 +106,7 @@ for(Answer answer:testAnswers){
 if(feedback){
 	
 	if(notAnswers){
-		feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank");
+		feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank");
 	}
 	
 	
@@ -123,11 +122,11 @@ if(feedback){
 <c:choose>
 	<c:when test="<%=isCombo && !feedback %>">
 		<div class='<%="question " + cssclass + "_select questiontype_" + surveyQuestionType.getType()%>'>
-			<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+			<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
 			<div class="questiontext select"><%=question.getText()%></div>
 			<div class="answer select">
-				<select <%=disabled %> class="answer select" id='<%=namespace+"question_"+question.getQuestionId()+"_"+numAnswer %>' 
-					name='<%=namespace+"question_"+question.getQuestionId()%>' />"+
+				<select <%=disabled %> class="answer select" id='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+numAnswer %>' 
+					name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()%>' />"+
 					<%=answersFeedBack %>
 				</select>
 			</div>
@@ -135,7 +134,7 @@ if(feedback){
 	</c:when>
 	<c:otherwise>
 		<div class='<%="question " + cssclass + " questiontype_" + surveyQuestionType.getType()%>'>
-			<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+			<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
 			<div class='<%="questiontext " + cssclass%>'>
 				<%=question.getText()%>
 			</div>

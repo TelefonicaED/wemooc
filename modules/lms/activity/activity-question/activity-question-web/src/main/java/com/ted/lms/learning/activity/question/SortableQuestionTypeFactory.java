@@ -8,6 +8,8 @@ import com.ted.lms.learning.activity.question.model.BaseQuestionTypeFactory;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
+import com.ted.lms.learning.activity.question.web.internal.constants.QuestionConstants;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -61,8 +63,22 @@ public class SortableQuestionTypeFactory extends BaseQuestionTypeFactory{
 		return QuestionsWebPortletKeys.EDIT_QUESTIONS;
 	}
 	
+	@Override
 	public int getMinNumAnswers() {
 		return 2;
+	}
+	
+	@Override
+	public String[] getJavascriptImport(String cdnHost) {
+		String[] javascript = new String[1];
+		
+		javascript[0] = cdnHost + QuestionConstants.PATH_JAVA_SCRIPT + "/js/sortable.js";
+		
+		return javascript;
+	}
+	
+	public String getIconCssClass() {
+		return "sortable";
 	}
 	
 	@Reference(

@@ -1,3 +1,5 @@
+<%@page import="com.liferay.portal.kernel.util.ArrayUtil"%>
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.ted.lms.learning.activity.question.exception.MinNumCorrectAnswerException"%>
 <%@page import="com.ted.lms.learning.activity.question.exception.MinNumAnswerException"%>
 <%@page import="com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys"%>
@@ -25,36 +27,41 @@ if(actId > 0){
 	questions = QuestionLocalServiceUtil.getQuestions(actId);
 }
 List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId());
+String questionIdsAllowedString = ParamUtil.getString(request, "questionIdsAllowed", "");
+long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? StringUtil.split(questionIdsAllowedString,",", 0L) : null;
+
 %>
 
-<liferay-ui:error exception="<%= MinNumAnswerException.class %>" message="the-url-title-is-already-in-use-please-enter-a-unique-url-title" />
-<liferay-ui:error exception="<%= MinNumCorrectAnswerException.class %>" message="the-url-title-is-already-in-use-please-enter-a-unique-url-title" />
+<liferay-ui:error exception="<%= MinNumAnswerException.class %>" message="questions.error.min-num-answers" />
+<liferay-ui:error exception="<%= MinNumCorrectAnswerException.class %>" message="questions.error.min-num-correct-answers" />
 
 <aui:fieldset cssClass="questions" label="learning-activity.test.questions-and-answers">
-	<div id="${renderResponse.namespace }questions">
+	<div id="${themeDisplay.getPortletDisplay().getNamespace()}questions">
 		<%if(questions != null && questions.size() > 0){
 			int numQuestion = 0;
 			for(Question question: questions){
 				numQuestion++; %>
-				<div class="row" id='<%=renderResponse.getNamespace() + "div_question_" + numQuestion %>' >
+				<div id='<%=renderResponse.getNamespace() + "div_question_" + numQuestion %>' >
 				
 					<liferay-util:include page="/questions_question.jsp" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" >
 						<liferay-util:param name="questionId" value="<%=String.valueOf(question.getQuestionId()) %>" />
 						<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(numQuestion) %>" />
 						<liferay-util:param name="questionType" value="<%=String.valueOf(question.getQuestionTypeId()) %>" />
-						<liferay-util:param name="namespace" value="<%=renderResponse.getNamespace() %>" />
+						<liferay-util:param name="questionIdsAllowed" value="<%=questionIdsAllowedString %>" />
 					</liferay-util:include>
 				</div> 
 			<%}
 		}%>
 	</div>
 	<aui:button value="new-question" name="newQuestion"/>
-	<div class="row" id="${renderResponse.namespace }new_question_factory" style="display:none">
+	<div class="row" id="${themeDisplay.getPortletDisplay().getNamespace() }new_question_factory" style="display:none">
 		<%for(QuestionTypeFactory questionTypeFactory: questionTypeFactories){ %>
-			<div class="col-md-4">
-				<aui:button value="<%=questionTypeFactory.getTitle(themeDisplay.getLocale()) %>" name="questionType" 
-					onClick='<%=renderResponse.getNamespace() + "addQuestion('" + questionTypeFactory.getURLAddQuestion(liferayPortletResponse) + "');" %>'/>
-			</div>
+			<c:if test="<%=questionIdsAllowed == null || ArrayUtil.contains(questionIdsAllowed, questionTypeFactory.getType()) %>">
+				<div class="col-md-4">
+					<aui:button value="<%=questionTypeFactory.getTitle(themeDisplay.getLocale()) %>" name="questionType" 
+						onClick='<%=renderResponse.getNamespace() + "addQuestion('" + questionTypeFactory.getURLAddQuestion(liferayPortletResponse) + "');" %>'/>
+				</div>
+			</c:if>
 		<%} %>
 	</div>
 </aui:fieldset>
@@ -62,7 +69,7 @@ List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUti
 <script>
 function <portlet:namespace />addQuestion(questionUrl){
 	$('#<portlet:namespace />new_question_factory').toggle("hide");
-	AUI().use('aui-node', 'aui-io', 'aui-io-deprecated',
+	AUI().use('aui-node', 'aui-base', 'aui-io-deprecated',
 		function(A) {
 			var parent = A.one('#<portlet:namespace />questions');
 			var list = A.all('#<portlet:namespace />questions > div').filter('[id^=<portlet:namespace />div_question_]'),lastNode=null;
@@ -74,14 +81,27 @@ function <portlet:namespace />addQuestion(questionUrl){
 				iter = parseInt(iter) +1;
 			}
 			
+			
+			var newQuestion = A.Node.create('<div id="<portlet:namespace />div_question_'+iter+'" ></div>');
+			
 			questionUrl += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iteratorQuestion=' + iter;
-			console.log("questionUrl: " + questionUrl);
+			questionUrl += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_questionIdsAllowed=<%=questionIdsAllowedString%>';
+			
+			parent.append(newQuestion);
+			console.log("iter: "+iter);
+			
+			if (!newQuestion.io) {
+				newQuestion.plug(
+					A.Plugin.IO,
+					{
+						autoLoad: false,
+						method: 'GET'
+					}
+				);
+			}
 
-			if(parent!=null) parent.append(A.Node.create('<div id="<portlet:namespace />div_question_'+iter+'" class="row"></div>').plug(A.Plugin.IO,{
-				uri:questionUrl,
-				parseContent:true,
-				data:{iteratorQuestion:iter}
-			}));
+			newQuestion.io.set('uri', questionUrl);
+			newQuestion.io.start();
 		}
 	);
 }
@@ -93,6 +113,51 @@ $('#<portlet:namespace />newQuestion').on(
 		$('#<portlet:namespace />new_question_factory').toggle("hide");
 	}
 );
+
+function <portlet:namespace />editQuestion(iteratorQuestion){
+	$('#<portlet:namespace />questionEdit' + iteratorQuestion).removeClass("hide");
+}
+
+function <portlet:namespace />showAnswers(iteratorQuestion){
+	$('#<portlet:namespace />answers' + iteratorQuestion).toggle("hide");
+}
+
+function <portlet:namespace />addAnswer(iteratorQuestion, urlAnswer){
+	AUI().use('aui-node', 'aui-base', 'aui-io-deprecated',
+		function(A) {
+			var parent = A.one('#<portlet:namespace />div_answers_' + iteratorQuestion);
+			var list = A.all('#<portlet:namespace />div_answers_' + iteratorQuestion + ' > div'),lastNode=null;
+			var iter = 1;
+			
+			if (list.size()) {
+				lastNode = list.item(list.size() - 1);
+				iter = A.all('#'+lastNode.get('id') +' input[name="<portlet:namespace />' + iteratorQuestion + '_iterator"]').val();
+				iter = parseInt(iter) +1;
+			}
+			
+			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iterator=' + iter;
+			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iteratorQuestion=' + iteratorQuestion;
+			
+			var newQuestion = A.Node.create('<div class="row" id="<portlet:namespace />' + iteratorQuestion + '_answer_'+iter+'" ></div>');
+			
+			parent.append(newQuestion);
+			
+			if (!newQuestion.io) {
+				newQuestion.plug(
+					A.Plugin.IO,
+					{
+						autoLoad: false,
+						method: 'POST'
+					}
+				);
+			}
+
+			newQuestion.io.set('uri', urlAnswer);
+			newQuestion.io.start();
+		}
+	);
+}
+
 </script>
 
 

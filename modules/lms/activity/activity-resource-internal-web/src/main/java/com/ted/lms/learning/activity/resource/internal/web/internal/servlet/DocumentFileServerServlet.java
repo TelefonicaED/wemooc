@@ -76,20 +76,19 @@ public class DocumentFileServerServlet extends HttpServlet {
 			HttpServletResponse response) throws ServletException,
 			IOException {
 		
-		System.out.println("******************************SERVLET**************************");
+		log.debug("******************************SERVLET**************************");
 
 		try {
 
 			String path = HttpUtil.fixPath(request.getPathInfo());
-			System.out.println("path http: " + path);
+			log.debug("path http: " + path);
 			String[] pathArray = StringUtil.split(path, CharPool.SLASH);
 			
 			sendFile(request, response, pathArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out
-					.println("Error en el processRequest() de ServidorArchivos: "
+			log.debug("Error en el processRequest() de ServidorArchivos: "
 							+ e.getMessage());
 		}
 
@@ -281,9 +280,9 @@ public class DocumentFileServerServlet extends HttpServlet {
 	}
 
 	protected FileEntry getFileEntry(String[] pathArray) throws Exception {
-		System.out.println("*****pathArray*********");
+		log.debug("*****pathArray*********");
 		for(String path: pathArray) {
-			System.out.println("path: " + path);
+			log.debug("path: " + path);
 		}
 		if (pathArray.length == 1) {
 			long fileShortcutId = GetterUtil.getLong(pathArray[0]);

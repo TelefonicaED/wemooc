@@ -118,7 +118,6 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 
 				throw new PortalException(cause);
 			} else if (cmd.equals(Constants.ADD) ||  cmd.equals(Constants.UPDATE)) {
-				ParamUtil.print(actionRequest);
 				Callable<Module> updateModuleCallable = new UpdateModuleCallable(actionRequest);
 
 				module = TransactionInvokerUtil.invoke(_transactionConfig, updateModuleCallable);
@@ -333,7 +332,7 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 
 		long oldSmallImageId = 0;
 		
-		System.out.println("moduleId: " + moduleId);
+		log.debug("moduleId: " + moduleId);
 		
 		if (moduleId != 0) {
 			Module module = moduleLocalService.getModule(moduleId);

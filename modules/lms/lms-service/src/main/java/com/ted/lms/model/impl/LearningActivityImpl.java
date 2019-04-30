@@ -24,6 +24,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -55,6 +57,8 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public class LearningActivityImpl extends LearningActivityBaseImpl {
+	
+	private static final Log log = LogFactoryUtil.getLog(LearningActivityImpl.class);
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -176,28 +180,28 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 			Course course) throws PortalException{
 		
 		if(LMSPermission.contains(permissionChecker, this.getGroupId(), LMSActionKeys.ACCESSLOCK)){
-			System.out.println("tienes acceso a los cursos bloqueados");
+			log.debug("tienes acceso a los cursos bloqueados");
 			return true;
 		}
 		
-		System.out.println("viewActivityFinish: " + viewActivityFinish);
-		System.out.println("course.hasPermissionAccessCourseFinished(user.getUserId()): " + course.hasPermissionAccessCourseFinished(user.getUserId()));
+		log.debug("viewActivityFinish: " + viewActivityFinish);
+		log.debug("course.hasPermissionAccessCourseFinished(user.getUserId()): " + course.hasPermissionAccessCourseFinished(user.getUserId()));
 		
 		if(viewActivityFinish && course.hasPermissionAccessCourseFinished(user.getUserId())){
 			return true;
 		}
 
 		//Primero comprobamos bloqueo de curso
-		System.out.println("course.isLocked(user, permissionChecker): " + course.isLocked(user, permissionChecker));
+		log.debug("course.isLocked(user, permissionChecker): " + course.isLocked(user, permissionChecker));
 		if(!course.isLocked(user, permissionChecker)){
 			
 			//Ahora comprobamos que no tengas bloqueado el m�dulo y si no lo tengo bloqueado ya comprobamos los bloqueos de la actividad
 			Module module = ModuleLocalServiceUtil.getModule(this.getModuleId());
 			
-			System.out.println("module.isLocked(user.getUserId(), permissionChecker): " + module.isLocked(user.getUserId(), permissionChecker));
-			System.out.println("isLocked(user, permissionChecker): " + isLocked(user, permissionChecker));
+			log.debug("module.isLocked(user.getUserId(), permissionChecker): " + module.isLocked(user.getUserId(), permissionChecker));
+			log.debug("isLocked(user, permissionChecker): " + isLocked(user, permissionChecker));
 			
-			System.out.println("LearningActivityPermission.contains(permissionChecker, this, ActionKeys.UPDATE): " + LearningActivityPermission.contains(permissionChecker, this, ActionKeys.UPDATE));
+			log.debug("LearningActivityPermission.contains(permissionChecker, this, ActionKeys.UPDATE): " + LearningActivityPermission.contains(permissionChecker, this, ActionKeys.UPDATE));
 			
 			if((!module.isLocked(user.getUserId(), permissionChecker) && !isLocked(user, permissionChecker))
 					|| LearningActivityPermission.contains(permissionChecker, this, ActionKeys.UPDATE)){

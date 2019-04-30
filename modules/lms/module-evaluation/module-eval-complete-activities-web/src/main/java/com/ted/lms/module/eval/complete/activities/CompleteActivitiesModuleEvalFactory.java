@@ -2,6 +2,8 @@ package com.ted.lms.module.eval.complete.activities;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.model.BaseModuleEvalFactory;
@@ -27,11 +29,13 @@ import org.osgi.service.component.annotations.Reference;
     service = ModuleEvalFactory.class
 )
 public class CompleteActivitiesModuleEvalFactory extends BaseModuleEvalFactory{
+	
+	private static final Log log = LogFactoryUtil.getLog(CompleteActivitiesModuleEvalFactory.class);
 	public static final long TYPE = 0;
 	
 	@Override
 	public ModuleEval getModuleEval(Module module, ServiceContext serviceContext) throws PortalException {	
-		System.out.println("getModuleEval");
+		log.debug("getModuleEval");
 		return new CompleteActivitiesModuleEval(module, serviceContext, courseResultLocalService,
 				learningActivityResultLocalService, learningActivityLocalService, 
 				moduleResultLocalService);

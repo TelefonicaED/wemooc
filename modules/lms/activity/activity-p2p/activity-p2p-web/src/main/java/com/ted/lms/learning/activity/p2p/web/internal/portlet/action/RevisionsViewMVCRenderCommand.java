@@ -1,7 +1,7 @@
 package com.ted.lms.learning.activity.p2p.web.internal.portlet.action;
 
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.JSPNavigationItemList;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -26,11 +26,13 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCRenderCommand.class
 )
 public class RevisionsViewMVCRenderCommand implements MVCRenderCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(RevisionsViewMVCRenderCommand.class);
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
-		ParamUtil.print(renderRequest);
-		System.out.println("***********RevisionsViewMVCRenderCommand**************");
+
+		log.debug("***********RevisionsViewMVCRenderCommand**************");
 		long actId = ParamUtil.getLong(renderRequest, "actId", 0);
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
@@ -45,8 +47,7 @@ public class RevisionsViewMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("searchURL", searchURL);
 		
 		String criteria = ParamUtil.getString(renderRequest, "criteria");
-		System.out.println("criteria:_ " + criteria);
-		System.out.println("vir: " + ParamUtil.getBoolean(renderRequest, "vir", false));
+		log.debug("criteria:_ " + criteria);
 		renderRequest.setAttribute("criteria", criteria);
 		
 		renderRequest.setAttribute("actId", actId);

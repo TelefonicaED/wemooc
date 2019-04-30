@@ -8,6 +8,8 @@ import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.ModuleService;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
@@ -59,6 +61,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class ModulesActivitiesPortlet extends MVCPortlet {
 	
+	private static final Log log = LogFactoryUtil.getLog(ModulesActivitiesPortlet.class);
+	
 	@Override
 	public void render(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
@@ -67,15 +71,15 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 		
 		//Comprobamos el permiso de acceder a bloqueados
 		boolean accessLock = LMSPermission.contains(themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(), LMSActionKeys.ACCESSLOCK);
-		System.out.println("accessLock: " + accessLock);
+		log.debug("accessLock: " + accessLock);
 		
 		//Comprobamos si el curso est� bloqueado
 		Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		boolean courseIsLocked = course.isLocked(themeDisplay.getUser(), themeDisplay.getPermissionChecker());
-		System.out.println("courseIsLocked: " + courseIsLocked);
+		log.debug("courseIsLocked: " + courseIsLocked);
 		
 		long moduleId = ParamUtil.getLong(renderRequest, "moduleId");
-		System.out.println("moduleId: " + moduleId);
+		log.debug("moduleId: " + moduleId);
 		
 		renderRequest.setAttribute("listModules", listModules);
 		renderRequest.setAttribute("trashHelper", trashHelper);

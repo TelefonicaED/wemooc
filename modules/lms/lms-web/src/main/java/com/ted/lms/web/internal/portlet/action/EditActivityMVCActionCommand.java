@@ -76,6 +76,9 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCActionCommand.class
 )
 public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(EditActivityMVCActionCommand.class);
+	
 	@Override
 	protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 
@@ -87,7 +90,6 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 			LearningActivity activity = null;
 
 			if (cmd.equals(Constants.ADD) ||  cmd.equals(Constants.UPDATE)) {
-				ParamUtil.print(actionRequest);
 				Callable<LearningActivity> updateLearningActivityCallable = new UpdateLearningActivityCallable(actionRequest);
 
 				activity = TransactionInvokerUtil.invoke(_transactionConfig, updateLearningActivityCallable);
@@ -180,7 +182,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 			actionResponse.setRenderParameter("mvcRenderCommandName", "/activities/edit_activity");
 			hideDefaultSuccessMessage(actionRequest);
 		} catch (Throwable t) {
-			System.out.println("exception throwable: " + t.getLocalizedMessage());
+			log.debug("exception throwable: " + t.getLocalizedMessage());
 			log.error(t, t);
 
 			actionResponse.setRenderParameter("mvcPath", "/activities/error.jsp");
@@ -338,7 +340,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		Map<Locale, String> feedbackNoCorrectMap = LocalizationUtil.getLocalizationMap(actionRequest, "feedbackNoCorrectMapAsXML");
 		boolean commentsActivated = ParamUtil.getBoolean(actionRequest, "commentsActivated", false);
 		
-		System.out.println("actId: " + actId);
+		log.debug("actId: " + actId);
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivity.class.getName(), actionRequest);
 
@@ -378,8 +380,6 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 
 		return activity;
 	}
-	
-	private static final Log log = LogFactoryUtil.getLog(EditActivityMVCActionCommand.class);
 	
 	private static final TransactionConfig _transactionConfig = TransactionConfig.Factory.create(Propagation.REQUIRED, new Class<?>[] {Exception.class});
 	

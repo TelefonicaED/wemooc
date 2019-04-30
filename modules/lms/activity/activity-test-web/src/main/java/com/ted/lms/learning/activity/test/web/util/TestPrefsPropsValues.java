@@ -8,4 +8,8 @@ public class TestPrefsPropsValues {
 	public static int getQuestionPerPage(long companyId) {
 		return PrefsPropsUtil.getInteger(companyId, TestPropsKeys.QUESTION_PER_PAGE, TestPropsValues.QUESTION_PER_PAGE);
 	}
+	
+	public static String getQuestionsAllowed(long companyId) {
+		return PrefsPropsUtil.getString(companyId, TestPropsKeys.QUESTIONS_ALLOWED, TestPropsValues.QUESTIONS_ALLOWED);
+	}
 }

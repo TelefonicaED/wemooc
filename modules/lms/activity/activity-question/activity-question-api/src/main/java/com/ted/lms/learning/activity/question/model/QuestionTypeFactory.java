@@ -34,4 +34,8 @@ public interface QuestionTypeFactory {
 	public String getURLAddQuestion(LiferayPortletResponse liferayPortletResponse);
 	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse);
 	
+	public String[] getJavascriptImport(String cdnHost);
+	
+	public String getIconCssClass();
+	
 }

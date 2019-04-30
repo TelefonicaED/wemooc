@@ -132,7 +132,6 @@ if(actId!=0){%>
 					
 					if(p2pActivity.getUserId()!=userId){
 						
-						System.out.println("fecha de corrección: " + myP2PActiCor.getDate());
 						urlFile = "";
 						sizeKb = 0;
 						size = 0;

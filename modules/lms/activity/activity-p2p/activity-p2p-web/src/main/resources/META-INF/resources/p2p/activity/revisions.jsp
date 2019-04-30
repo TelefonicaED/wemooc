@@ -31,7 +31,6 @@
 <%
 long actId=ParamUtil.getLong(request,"actId",0);
 String criteria = ParamUtil.getString(renderRequest,"criteria","");
-System.out.println("criteria: " + criteria);
 PortletURL portletURL = renderResponse.createRenderURL();
 portletURL.setParameter("mvcPath","/p2p/activity/revisions.jsp");
 portletURL.setParameter("criteria", criteria);
@@ -91,13 +90,9 @@ P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(acti
 							+ "WHERE users_teams.teamId IN (" + teamIds + ")", null));
 				}
 				
-				System.out.println("groupId: " + themeDisplay.getScopeGroupId());
 				OrderByComparator obc = null;
 				List<User> userListPage = UserLocalServiceUtil.search(themeDisplay.getCompanyId(), criteria, WorkflowConstants.STATUS_APPROVED, userParams, searchContainer.getStart(), searchContainer.getEnd(), obc);
 				int userCount = UserLocalServiceUtil.searchCount(themeDisplay.getCompanyId(), criteria, WorkflowConstants.STATUS_APPROVED, userParams);
-				
-				System.out.println("userListPage: " + userListPage.size());
-				System.out.println("userCount: " + userCount);
 						
 				pageContext.setAttribute("results", userListPage);
 			    pageContext.setAttribute("total", userCount);

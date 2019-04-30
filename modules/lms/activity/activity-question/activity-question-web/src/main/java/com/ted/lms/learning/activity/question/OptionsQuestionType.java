@@ -53,7 +53,18 @@ public class OptionsQuestionType extends BaseQuestionType{
 
 	@Override
 	public long correct(Element element) throws PortalException {
-		return 0;
+		Iterator<Element> iteratorAnswers = element.elementIterator("answer");
+		List<Long> arrayAnswersId = new ArrayList<Long>();
+		
+		Element elementAnswer = null;
+		
+		while(iteratorAnswers.hasNext()) {
+			elementAnswer = iteratorAnswers.next();
+			arrayAnswersId.add(Long.parseLong(elementAnswer.attributeValue("id")));
+		}
+		
+		
+		return correct(arrayAnswersId);
 	}
 	
 	@Override
@@ -77,9 +88,9 @@ public class OptionsQuestionType extends BaseQuestionType{
 	@Override
 	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter) {
 		boolean correct = false;
-		System.out.println("iteratorQuestion: " + iteratorQuestion);
-		System.out.println("counter: " + counter);
-		System.out.println("correct: " + ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct_" + counter));
+		log.debug("iteratorQuestion: " + iteratorQuestion);
+		log.debug("counter: " + counter);
+		log.debug("correct: " + ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct_" + counter));
 		
 		if(ParamUtil.getInteger(actionRequest, iteratorQuestion + "_correct") == counter){
 			correct = true;
@@ -194,7 +205,7 @@ public class OptionsQuestionType extends BaseQuestionType{
 				retVal = CORRECT;
 			}
 			else{
-				retVal = getQuestionTypeFactory().getPenalize() ? -CORRECT : INCORRECT;
+				retVal = question.getPenalize() ? -CORRECT : INCORRECT;
 			}
 		}
 		

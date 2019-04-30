@@ -11,8 +11,8 @@ create table qu_Answer (
 	actId LONG,
 	answer TEXT null,
 	correct BOOLEAN,
-	feedbackCorrect STRING null,
-	feedbackIncorrect STRING null
+	feedbackCorrect VARCHAR(75) null,
+	feedbackIncorrect VARCHAR(75) null
 );
 
 create table qu_Question (

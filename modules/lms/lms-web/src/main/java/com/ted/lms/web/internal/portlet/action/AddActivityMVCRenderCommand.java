@@ -1,5 +1,7 @@
 package com.ted.lms.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -25,6 +27,8 @@ import org.osgi.service.component.annotations.Component;
 )
 public class AddActivityMVCRenderCommand implements MVCRenderCommand {
 	
+	private static final Log log = LogFactoryUtil.getLog(AddActivityMVCRenderCommand.class);
+	
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
@@ -34,7 +38,7 @@ public class AddActivityMVCRenderCommand implements MVCRenderCommand {
 		List<LearningActivityTypeFactory> listLearningActivityTypeFactory = 
 				LearningActivityTypeFactoryRegistryUtil.getLearningActivityFactories(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		for(LearningActivityTypeFactory lat: listLearningActivityTypeFactory) {
-			System.out.println("lat: " + lat.getName(themeDisplay.getLocale()));
+			log.debug("lat: " + lat.getName(themeDisplay.getLocale()));
 		}
 		
 		PortalUtil.clearRequestParameters(renderRequest);

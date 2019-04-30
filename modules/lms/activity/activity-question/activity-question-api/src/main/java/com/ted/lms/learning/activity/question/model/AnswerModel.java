@@ -19,11 +19,9 @@ import aQute.bnd.annotation.ProviderType;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
-import com.liferay.portal.kernel.exception.LocaleException;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.model.GroupedModel;
-import com.liferay.portal.kernel.model.LocalizedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 import com.liferay.portal.kernel.model.StagedAuditedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -31,8 +29,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import java.io.Serializable;
 
 import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * The base model interface for the Answer service. Represents a row in the &quot;qu_Answer&quot; database table, with each column mapped to a property of this class.
@@ -49,7 +45,7 @@ import java.util.Map;
  */
 @ProviderType
 public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
-	LocalizedModel, ShardedModel, StagedAuditedModel {
+	ShardedModel, StagedAuditedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -283,58 +279,8 @@ public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
 	 *
 	 * @return the feedback correct of this answer
 	 */
+	@AutoEscape
 	public String getFeedbackCorrect();
-
-	/**
-	 * Returns the localized feedback correct of this answer in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized feedback correct of this answer
-	 */
-	@AutoEscape
-	public String getFeedbackCorrect(Locale locale);
-
-	/**
-	 * Returns the localized feedback correct of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized feedback correct of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@AutoEscape
-	public String getFeedbackCorrect(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized feedback correct of this answer in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized feedback correct of this answer
-	 */
-	@AutoEscape
-	public String getFeedbackCorrect(String languageId);
-
-	/**
-	 * Returns the localized feedback correct of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized feedback correct of this answer
-	 */
-	@AutoEscape
-	public String getFeedbackCorrect(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getFeedbackCorrectCurrentLanguageId();
-
-	@AutoEscape
-	public String getFeedbackCorrectCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized feedback corrects of this answer.
-	 *
-	 * @return the locales and localized feedback corrects of this answer
-	 */
-	public Map<Locale, String> getFeedbackCorrectMap();
 
 	/**
 	 * Sets the feedback correct of this answer.
@@ -344,98 +290,12 @@ public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
 	public void setFeedbackCorrect(String feedbackCorrect);
 
 	/**
-	 * Sets the localized feedback correct of this answer in the language.
-	 *
-	 * @param feedbackCorrect the localized feedback correct of this answer
-	 * @param locale the locale of the language
-	 */
-	public void setFeedbackCorrect(String feedbackCorrect, Locale locale);
-
-	/**
-	 * Sets the localized feedback correct of this answer in the language, and sets the default locale.
-	 *
-	 * @param feedbackCorrect the localized feedback correct of this answer
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setFeedbackCorrect(String feedbackCorrect, Locale locale,
-		Locale defaultLocale);
-
-	public void setFeedbackCorrectCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized feedback corrects of this answer from the map of locales and localized feedback corrects.
-	 *
-	 * @param feedbackCorrectMap the locales and localized feedback corrects of this answer
-	 */
-	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap);
-
-	/**
-	 * Sets the localized feedback corrects of this answer from the map of locales and localized feedback corrects, and sets the default locale.
-	 *
-	 * @param feedbackCorrectMap the locales and localized feedback corrects of this answer
-	 * @param defaultLocale the default locale
-	 */
-	public void setFeedbackCorrectMap(Map<Locale, String> feedbackCorrectMap,
-		Locale defaultLocale);
-
-	/**
 	 * Returns the feedback incorrect of this answer.
 	 *
 	 * @return the feedback incorrect of this answer
 	 */
+	@AutoEscape
 	public String getFeedbackIncorrect();
-
-	/**
-	 * Returns the localized feedback incorrect of this answer in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the locale of the language
-	 * @return the localized feedback incorrect of this answer
-	 */
-	@AutoEscape
-	public String getFeedbackIncorrect(Locale locale);
-
-	/**
-	 * Returns the localized feedback incorrect of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param locale the local of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized feedback incorrect of this answer. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	 */
-	@AutoEscape
-	public String getFeedbackIncorrect(Locale locale, boolean useDefault);
-
-	/**
-	 * Returns the localized feedback incorrect of this answer in the language. Uses the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @return the localized feedback incorrect of this answer
-	 */
-	@AutoEscape
-	public String getFeedbackIncorrect(String languageId);
-
-	/**
-	 * Returns the localized feedback incorrect of this answer in the language, optionally using the default language if no localization exists for the requested language.
-	 *
-	 * @param languageId the ID of the language
-	 * @param useDefault whether to use the default language if no localization exists for the requested language
-	 * @return the localized feedback incorrect of this answer
-	 */
-	@AutoEscape
-	public String getFeedbackIncorrect(String languageId, boolean useDefault);
-
-	@AutoEscape
-	public String getFeedbackIncorrectCurrentLanguageId();
-
-	@AutoEscape
-	public String getFeedbackIncorrectCurrentValue();
-
-	/**
-	 * Returns a map of the locales and localized feedback incorrects of this answer.
-	 *
-	 * @return the locales and localized feedback incorrects of this answer
-	 */
-	public Map<Locale, String> getFeedbackIncorrectMap();
 
 	/**
 	 * Sets the feedback incorrect of this answer.
@@ -443,43 +303,6 @@ public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
 	 * @param feedbackIncorrect the feedback incorrect of this answer
 	 */
 	public void setFeedbackIncorrect(String feedbackIncorrect);
-
-	/**
-	 * Sets the localized feedback incorrect of this answer in the language.
-	 *
-	 * @param feedbackIncorrect the localized feedback incorrect of this answer
-	 * @param locale the locale of the language
-	 */
-	public void setFeedbackIncorrect(String feedbackIncorrect, Locale locale);
-
-	/**
-	 * Sets the localized feedback incorrect of this answer in the language, and sets the default locale.
-	 *
-	 * @param feedbackIncorrect the localized feedback incorrect of this answer
-	 * @param locale the locale of the language
-	 * @param defaultLocale the default locale
-	 */
-	public void setFeedbackIncorrect(String feedbackIncorrect, Locale locale,
-		Locale defaultLocale);
-
-	public void setFeedbackIncorrectCurrentLanguageId(String languageId);
-
-	/**
-	 * Sets the localized feedback incorrects of this answer from the map of locales and localized feedback incorrects.
-	 *
-	 * @param feedbackIncorrectMap the locales and localized feedback incorrects of this answer
-	 */
-	public void setFeedbackIncorrectMap(
-		Map<Locale, String> feedbackIncorrectMap);
-
-	/**
-	 * Sets the localized feedback incorrects of this answer from the map of locales and localized feedback incorrects, and sets the default locale.
-	 *
-	 * @param feedbackIncorrectMap the locales and localized feedback incorrects of this answer
-	 * @param defaultLocale the default locale
-	 */
-	public void setFeedbackIncorrectMap(
-		Map<Locale, String> feedbackIncorrectMap, Locale defaultLocale);
 
 	@Override
 	public boolean isNew();
@@ -513,19 +336,6 @@ public interface AnswerModel extends BaseModel<Answer>, GroupedModel,
 
 	@Override
 	public void setExpandoBridgeAttributes(ServiceContext serviceContext);
-
-	@Override
-	public String[] getAvailableLanguageIds();
-
-	@Override
-	public String getDefaultLanguageId();
-
-	@Override
-	public void prepareLocalizedFieldsForImport() throws LocaleException;
-
-	@Override
-	public void prepareLocalizedFieldsForImport(Locale defaultImportLocale)
-		throws LocaleException;
 
 	@Override
 	public Object clone();

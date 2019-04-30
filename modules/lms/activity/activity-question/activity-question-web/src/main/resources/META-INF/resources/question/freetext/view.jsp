@@ -1,3 +1,4 @@
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Answer"%>
@@ -21,15 +22,14 @@ boolean showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(request, "showCor
 
 Question question = QuestionLocalServiceUtil.getQuestion(questionId);
 Document documentTryResultData = null;
-if(feedback){
+if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
 FreetextQuestionType freetextQuestionType = new FreetextQuestionType(question);
 
 String answersFeedBack= "", cssclass = "";
-String namespace = themeDisplay.getPortletDisplay().getNamespace();
-String feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank") ;
+String feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank") ;
 String answer=freetextQuestionType.getAnswersSelected(documentTryResultData);
 
 List<Answer> testAnswers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
@@ -53,12 +53,12 @@ if(testAnswers!=null && testAnswers.size()>0){//el profesor puso alguna soluciï¿
 	}
 
 	answersFeedBack = answer;
-	if("true".equals(showCorrectAnswer)) answersFeedBack += "<br/>" +"<div class=\"answer font_14 color_cuarto negrita\">" +
+	if(showCorrectAnswer) answersFeedBack += "<br/>" +"<div class=\"answer correct\">" +
 																			solution.getAnswer() +
 																	"</div>";
 }else{//el profesor lo corregira manualmente
 	answersFeedBack = answer;
-	if(feedback) feedMessage = LanguageUtil.get(themeDisplay.getLocale(), "manually-correction");
+	if(feedback) feedMessage = LanguageUtil.get(themeDisplay.getLocale(), "learning-activity.question.free-text.manually-correction");
 }
 
 if(feedback) { 
@@ -69,14 +69,14 @@ if(feedback) {
 }
 %>
 <div class='<%="question" + cssclass + " questiontype_" + freetextQuestionType.getType()%>'>
-	<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+	<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
 	
 	<div class="questiontext"><%=question.getText()%></div>
 	
 	<c:if test="<%=!feedback %>">
 		<div class="answer">
-			<label for='<%=namespace+"question_" + question.getQuestionId()%>' />
-			<textarea rows="4" cols="60" maxlength="1000" id='<%=namespace+"question_" + question.getQuestionId()%>' name='<%=namespace+"question_" + question.getQuestionId()%>'>
+			<label for='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()%>' />
+			<textarea rows="4" cols="60" maxlength="1000" id='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()%>' name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId()%>'>
 				<%=answer%>
 			</textarea>
 		</div>

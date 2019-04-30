@@ -7,29 +7,29 @@
 	</c:if>
 	
 	<p>
-		<liferay-ui:message key="execativity.test.try.notification" />
+		<liferay-ui:message key="learning-activity.test.try-notification" />
 	</p>
 	
 	<c:if test="${activity.tries > 0 }">
 		<p class="negrita">
-			<liferay-ui:message key="execativity.test.try.count" arguments="${argumentsTries }" />
+			<liferay-ui:message key="learning-activity.test.try-count" arguments="${argumentsTries }" />
 		</p>
 	</c:if>
 	<c:if test="${activity.passPuntuation > 0 }">
 		<p>
-			<liferay-ui:message key="execativity.test.try.pass.puntuation"arguments="${argumentsPassPuntuation }" />
+			<liferay-ui:message key="learning-activity.test.try-pass-puntuation"arguments="${argumentsPassPuntuation }" />
 		</p>
 	</c:if>
 	<c:choose>
 		<c:when test="${hasQuestions && hasTries }">
-			<p class="color_tercero textcenter negrita">
-				<liferay-ui:message key="execativity.test.try.confirmation" />
+			<p>
+				<liferay-ui:message key="learning-activity.test.try-confirmation" />
 			</p>
-			<aui:button value="execativity.test.try.start" onClick="${correctURL}"/>
+			<aui:button value="learning-activity.test.try-start" onClick="${correctURL}"/>
 		</c:when>
 		<c:when test="${!hasQuestions }">
-			<p class="negrita">
-				<liferay-ui:message key="execativity.test.no.question" />
+			<p>
+				<liferay-ui:message key="learning-activity.test.no-questions" />
 			</p>
 		</c:when>
 	</c:choose>

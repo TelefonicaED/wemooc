@@ -63,8 +63,8 @@
 		<column name="actId" type="long" />
 		<column name="answer" type="String" />
 		<column name="correct" type="boolean" />
-		<column name="feedbackCorrect" type="String" localized="true"/>
-		<column name="feedbackIncorrect" type="String" localized="true"/>
+		<column name="feedbackCorrect" type="String"/>
+		<column name="feedbackIncorrect" type="String"/>
 		
 		<order by="asc">
 			<order-column name="answerId" />

@@ -31,6 +31,8 @@ public class MultioptionsQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	
 	public static final long TYPE = 1;
 	
+	public static final String URL_EDIT_ANSWER = "/question/multioptions/answer.jsp";
+	
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
 		return new MultioptionsQuestionType(question);
@@ -60,27 +62,21 @@ public class MultioptionsQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	
 	@Override
 	public String getURLEditAnswer() {
-		return "/question/options/edit.jsp";
+		return URL_EDIT_ANSWER;
 	}
 	
 	@Override
-	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse) {
-		LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(QuestionsWebPortletKeys.EDIT_QUESTIONS, 
-				PortletRequest.RENDER_PHASE);
-		try {
-	        liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
-	    }
-	    catch (WindowStateException wse) {
-	    	wse.printStackTrace();
-	    }
-		liferayPortletURL.setParameter(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, StringPool.TRUE);
-		liferayPortletURL.setParameter("mvcPath", "/question/options/add.jsp");
-	    return liferayPortletURL.toString();
+	public String getURLEditAnswers() {
+		return "/question/multioptions/answers.jsp";
 	}
 	
 	@Override
 	public String getPortletId() {
 		return QuestionsWebPortletKeys.EDIT_QUESTIONS;
+	}
+	
+	public String getIconCssClass() {
+		return "multioptions";
 	}
 	
 	@Reference(

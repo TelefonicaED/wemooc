@@ -238,6 +238,11 @@ public class LearningActivityTryLocalServiceUtil {
 		return getService().getLastLearningActivityTry(actId, userId);
 	}
 
+	public static com.ted.lms.model.LearningActivityTry getLastLearningActivityTryFinished(
+		long actId, long userId) {
+		return getService().getLastLearningActivityTryFinished(actId, userId);
+	}
+
 	/**
 	* Returns a range of all the learning activity tries.
 	*

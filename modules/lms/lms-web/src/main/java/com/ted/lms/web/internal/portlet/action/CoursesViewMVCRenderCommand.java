@@ -55,8 +55,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("searchURL", searchURL.toString());
 		
 		String criteria = ParamUtil.getString(renderRequest, "criteria");
-		System.out.println("render criteria:_ " + criteria);
-		System.out.println("render vir: " + ParamUtil.getBoolean(renderRequest, "vir", false));
+		log.debug("render criteria:_ " + criteria);
 		
 		String keywords = ParamUtil.getString(renderRequest, "keywords", null);
 		

@@ -32,8 +32,6 @@ boolean result = p2pActivityType.getResult();
 
 JSONArray evaluationCriteria = p2pActivityType.getEvaluationCriteria();
 
-System.out.println("are: " + P2PActivityCorrectionsLocalServiceUtil.areAllCorrectionsDoneByUserInP2PActivity(201, 20139, 1));
-
 %>
 
 <!-- Start PopUp confirmation -->
@@ -288,7 +286,6 @@ boolean allCorrected = true;
 
 //Obtenemos todas las correcciones que tiene asignado el usuario.
 List<P2PActivityCorrections> p2pActList = P2PActivityCorrectionsLocalServiceUtil.getCorrections(actId, userId);
-System.out.println("correcciones asignadas: " + p2pActList.size());
 
 int contaValidations = 0;
 
@@ -330,7 +327,6 @@ if(!p2pActList.isEmpty()){
 		cont++;
 		//Si no estamos en el usuario actual.
 		if(p2pActivity.getUserId()!=themeDisplay.getUserId()){
-			System.out.println("fecha de corrección: " + myP2PActiCor.getDate());
 			String urlFile = "";
 			int sizeKb = 0;
 			int size = 0;

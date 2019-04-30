@@ -136,7 +136,7 @@ public class P2PActivityType extends BaseLearningActivityType {
 				}
 			}
 			
-			System.out.println("p2pContent: " + p2pContent.toJSONString());
+			log.debug("p2pContent: " + p2pContent.toJSONString());
 			
 		}else{
 			log.debug("***NO SE ACTUALIZA EL EXTRA CONTENT PORQUE YA HAY P2PACTIVITY ASOCIADOS A LA ACTIVIDAD***");

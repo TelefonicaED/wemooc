@@ -2,20 +2,15 @@ package com.ted.lms.learning.activity.p2p.web.internal.portlet;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
-import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil;
-import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil;
 import com.ted.lms.learning.activity.p2p.web.activity.P2PActivityType;
 import com.ted.lms.learning.activity.p2p.web.activity.P2PActivityTypeFactory;
 import com.ted.lms.learning.activity.p2p.web.constants.P2PWebPortletKeys;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +39,6 @@ import javax.portlet.Portlet;
 import javax.portlet.ProcessAction;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Virginia Martín Agudo
@@ -81,7 +75,7 @@ public class P2PWebPortlet extends MVCPortlet {
 			} 	
 			
 			Map<String, String[]> parameters = uploadRequest.getParameterMap();
-			parameters.forEach((k,v)->System.out.println("name : " + k + " value : " + v));
+			parameters.forEach((k,v)->log.debug("name : " + k + " value : " + v));
 			
 			String description = ParamUtil.getString(uploadRequest, "description");
 			long actId = ParamUtil.getLong(actionRequest, "actId");
@@ -182,7 +176,7 @@ public class P2PWebPortlet extends MVCPortlet {
 			JSONArray jArray = JSONFactoryUtil.createJSONArray();
 			for(int i = 0; i < p2pActivityType.getEvaluationCriteria().length(); i++) {
 				String desc = ParamUtil.getString(actionRequest, "description_" + numCorrection + "_" + i);
-				System.out.println("desc: " + desc);
+				log.debug("desc: " + desc);
 				if(Validator.isNotNull(desc)){
 					fill=true;
 					JSONObject jo = JSONFactoryUtil.createJSONObject();
@@ -268,9 +262,9 @@ public class P2PWebPortlet extends MVCPortlet {
 		P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
 		P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
 		
-		System.out.println("p2pActivity: " + p2pActivity.getP2pActivityId());
-		System.out.println("numValidations: " + p2pActivityType.getNumValidations());
-		System.out.println("assignationType: " + p2pActivityType.getAssignationType());
+		log.debug("p2pActivity: " + p2pActivity.getP2pActivityId());
+		log.debug("numValidations: " + p2pActivityType.getNumValidations());
+		log.debug("assignationType: " + p2pActivityType.getAssignationType());
 		
 		P2PActivityLocalServiceUtil.asignCorrectionP2PActivity(p2pActivity, p2pActivityType.getNumValidations(), p2pActivityType.getAssignationType());
 		if(p2pActivity.getAsignationsCompleted()){

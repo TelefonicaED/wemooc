@@ -2,6 +2,8 @@ package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
@@ -43,10 +45,12 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 	
+	private static final Log log = LogFactoryUtil.getLog(EditActivityMVCRenderCommand.class);
+	
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
-		System.out.println("EditActivityMVCRenderCommand::render");
+		log.debug("EditActivityMVCRenderCommand::render");
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
@@ -54,7 +58,7 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 
 		long actId = BeanParamUtil.getLong(activity, renderRequest, "actId");
 		
-		System.out.println("EditActivityMVCRenderCommand::render::actId: " + actId);
+		log.debug("EditActivityMVCRenderCommand::render::actId: " + actId);
 		
 		if(activity == null && actId > 0) {
 			activity = learningActivityLocalService.fetchLearningActivity(actId);

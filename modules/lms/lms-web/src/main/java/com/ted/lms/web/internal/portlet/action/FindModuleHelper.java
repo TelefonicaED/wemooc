@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -20,6 +22,9 @@ import com.ted.lms.service.ModuleLocalService;
 	service = FindActionHelper.class
 )
 public class FindModuleHelper extends BaseFindActionHelper {
+	
+	private static final Log log = LogFactoryUtil.getLog(FindModuleHelper.class);
+	
 	@Override
 	public long getGroupId(long primaryKey) throws Exception {
 		Module module = moduleLocalService.getModule(primaryKey);
@@ -64,7 +69,7 @@ public class FindModuleHelper extends BaseFindActionHelper {
 
 		portletURL.setParameter("mvcRenderCommandName", mvcRenderCommandName);
 		
-		System.out.println("portletURL: " + portletURL.toString());
+		log.debug("portletURL: " + portletURL.toString());
 	}
 	
 	@Override

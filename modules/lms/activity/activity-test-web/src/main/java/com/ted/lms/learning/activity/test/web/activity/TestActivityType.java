@@ -156,9 +156,12 @@ public class TestActivityType extends QuestionsLearningActivityType {
 					while(questionIterator.hasNext()){
 						try{
 							element = questionIterator.next();
+							log.debug("element: " + element.getName() + " - " + element.attributeValue("id"));
 							if(element != null){
 								xmlQuestion = questions.get(Long.parseLong(element.attributeValue("id")));
+								
 								if(Validator.isNotNull(xmlQuestion)){
+									log.debug("xmlQuestion: " + xmlQuestion.getQuestionId());
 									numQuestions++;
 									questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(xmlQuestion.getQuestionTypeId());
 									questionType = questionTypeFactory.getQuestionType(xmlQuestion);

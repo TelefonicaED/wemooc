@@ -23,12 +23,11 @@ boolean showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(request, "showCor
 
 Question question = QuestionLocalServiceUtil.getQuestion(questionId);
 Document documentTryResultData = null;
-if(feedback){
+if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
 String html = "", answersFeedBack="", feedMessage = "", cssclass="", selected="";
-String namespace = themeDisplay.getPortletDisplay().getNamespace();
 
 MultioptionsQuestionType multioptionsQuestionType = new MultioptionsQuestionType(question);
 
@@ -60,7 +59,7 @@ for(Answer answer:testAnswers){
 	
 	int maxNumberOfCheck = QuestionPrefsPropsValues.getMultioptionsEditFormat(themeDisplay.getCompanyId());
 	
-	onclick = "onclick=\""+namespace+"checkMaxNumberOfChecks('"+question.getQuestionId()+"','"+numAnswer+"')\"";
+	onclick = "onclick=\""+themeDisplay.getPortletDisplay().getNamespace()+"checkMaxNumberOfChecks('"+question.getQuestionId()+"','"+numAnswer+"')\"";
 
 	String correct="", checked="";
 	disabled = "";
@@ -78,13 +77,13 @@ for(Answer answer:testAnswers){
 	}
 	if(multioptionsQuestionType.isCorrect(answer)){
 		correctAnswers++;
-		if("true".equals(showCorrectAnswer)) correct="font_14 color_cuarto negrita";
+		if(showCorrectAnswer) correct="correct";
 		if(answersSelected.contains(answer)){
 			correctAnswered++;
 			checked="checked='checked'";
 			notAnswers = false;
 			if(Validator.isNotNull(answer.getFeedbackCorrect())){
-				feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackCorrect():answer.getFeedbackCorrect();
+				feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackCorrect():answer.getFeedbackCorrect();
 			}
 		}
 	}else if(answersSelected.contains(answer)){
@@ -93,7 +92,7 @@ for(Answer answer:testAnswers){
 		selected="selected";
 		notAnswers = false;
 		if(Validator.isNotNull(answer.getFeedbackIncorrect())){
-			feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackIncorrect():answer.getFeedbackIncorrect();
+			feedMessage=(!LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank").equals(feedMessage))?feedMessage+"<br/>"+answer.getFeedbackIncorrect():answer.getFeedbackIncorrect();
 		}
 	}
 
@@ -103,8 +102,8 @@ for(Answer answer:testAnswers){
 							"</option>";
 	}else{
 		answersFeedBack += "<div class=\"answer " + cssclass + correct + "\">" +
-								"<label for=\""+namespace+"question_"+question.getQuestionId()+"_"+numAnswer+"\" />"+
-								"<input "+onclick+" id=\""+namespace+"question_"+question.getQuestionId()+"_"+numAnswer+"\" type=\"checkbox\" name=\""+namespace+"question_" + question.getQuestionId() +timestamp+ "\" " + checked + " value=\"" 
+								"<label for=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+numAnswer+"\" />"+
+								"<input "+onclick+" id=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+numAnswer+"\" type=\"checkbox\" name=\""+themeDisplay.getPortletDisplay().getNamespace()+"question_" + question.getQuestionId() +timestamp+ "\" " + checked + " value=\"" 
 										+ answer.getAnswerId() +"\" " + disabled + ">" +
 								"<div class=\"answer-options\">" + answer.getAnswer() + 
 								"</div>" + 
@@ -117,7 +116,7 @@ for(Answer answer:testAnswers){
 if(feedback){
 	
 	if(notAnswers){
-		feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"answer-in-blank");
+		feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank");
 	}
 	
 	
@@ -133,11 +132,11 @@ if(feedback){
 <c:choose>
 	<c:when test="<%=isCombo && !feedback %>">
 		<div class='<%="question " + cssclass + "_select questiontype_" + multioptionsQuestionType.getType()%>'>
-			<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+			<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
 			<div class="questiontext select"><%=question.getText()%></div>
 			<div class="answer select">
-				<select <%=disabled %> class="answer select" id='<%=namespace+"question_"+question.getQuestionId()+"_"+numAnswer %>' 
-					name='<%=namespace+"question_"+question.getQuestionId()%>' />"+
+				<select <%=disabled %> class="answer select" id='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()+"_"+numAnswer %>' 
+					name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question_"+question.getQuestionId()%>' />"+
 					<%=answersFeedBack %>
 				</select>
 			</div>
@@ -145,7 +144,7 @@ if(feedback){
 	</c:when>
 	<c:otherwise>
 		<div class='<%="question " + cssclass + " questiontype_" + multioptionsQuestionType.getType()%>'>
-			<input type="hidden" name='<%=namespace+"question"%>' value='<%=question.getQuestionId()%>'/>
+			<input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace()+"question"%>' value='<%=question.getQuestionId()%>'/>
 			<div class='<%="questiontext " + cssclass%>'>
 				<%=question.getText()%>
 			</div>
@@ -159,7 +158,7 @@ if(feedback){
 	var numberOfChecks = 0; 
 	function <portlet:namespace/>checkMaxNumberOfChecks(idQ,idA){
 		var A = AUI();
-		if(A.one('#" + namespace + "question_'+idQ+'_'+idA+':checked')){
+		if(A.one('#<portlet:namespace/>question_'+idQ+'_'+idA+':checked')){
 			numberOfChecks++;
 			if(numberOfChecks==" + maxNumberOfCheck + "){ 
 				A.all('div.answer input[type=\"checkbox\"]').setAttribute('disabled','disabled');

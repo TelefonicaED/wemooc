@@ -71,6 +71,10 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory{
 		return false;
 	}
 	
+	public String getIconCssClass() {
+		return "survey";
+	}
+	
 	@Reference(
 		unbind = "-"
 	)

@@ -76,6 +76,10 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 		return 1;
 	}
 	
+	public String getIconCssClass() {
+		return "options";
+	}
+	
 	@Reference(
 		unbind = "-"
 	)

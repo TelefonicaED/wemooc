@@ -114,6 +114,9 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 	
 	public void saveQuestions(ActionRequest actionRequest, long actId) throws PortalException {
 		
+		
+		ParamUtil.print(actionRequest);
+		
 		//Pedimos las preguntas que ya existían por si alguna ha sido borrada eliminarla
 		List<Question> existingQuestions = questionPersistence.findByActId(actId);
 		List<Long> existingQuestionIds = new ArrayList<Long>();
@@ -147,12 +150,12 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 				
 				questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionTypeId);
 				
-				questionText = ParamUtil.getString(actionRequest, "questionTitle" + iteratorQuestion);
+				questionText = ParamUtil.getString(actionRequest, "question_title_" + iteratorQuestion);
 				
 				log.debug("***penalize:"+penalize);			
 				log.debug("***questionId:"+questionId);
 				log.debug("***questionType: " + questionType);
-				log.debug("***questionText: " + questionText.toString());
+				log.debug("***questionText: " + questionText);
 				
 				if(questionId == 0){
 					question = questionLocalService.addQuestion(actId, questionText, questionTypeId, penalize, serviceContext);

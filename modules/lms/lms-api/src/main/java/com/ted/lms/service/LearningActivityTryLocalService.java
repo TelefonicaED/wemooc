@@ -217,6 +217,10 @@ public interface LearningActivityTryLocalService extends BaseLocalService,
 	public LearningActivityTry getLastLearningActivityTry(long actId,
 		long userId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public LearningActivityTry getLastLearningActivityTryFinished(long actId,
+		long userId);
+
 	/**
 	* Returns a range of all the learning activity tries.
 	*

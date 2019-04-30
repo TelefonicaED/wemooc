@@ -4,3 +4,4 @@ Bundle-Version: 1.0.0
 Export-Package: \
 	com.ted.lms.learning.activity.question.web.constants,\
 	com.ted.lms.learning.activity
+Web-ContextPath: /activity-question-web

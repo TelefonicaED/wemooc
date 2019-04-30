@@ -3,6 +3,8 @@ package com.ted.lms.web.internal.portlet.action;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -33,10 +35,11 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCRenderCommand.class
 )
 public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(ActivityViewMVCRenderCommand.class);
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
-		ParamUtil.print(renderRequest);
 		long actId = ParamUtil.getLong(renderRequest, "actId", 0);
 		
 		LearningActivity activity = null;
@@ -75,7 +78,7 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					queryStringStringBundler.append(StringPool.EQUAL);
 					queryStringStringBundler.append(String.valueOf(actId));
 					
-					System.out.println("queryStringBundler: " + queryStringStringBundler);
+					log.debug("queryStringBundler: " + queryStringStringBundler);
 					renderRequest.setAttribute("activity", activity);
 					renderRequest.setAttribute("activityPortletName", learningActivityTypeFactory.getPortletId());
 					renderRequest.setAttribute("defaultPreferences", sb);
@@ -83,7 +86,7 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					
 					return "/activities/view_activity.jsp";
 				}else {
-					System.out.println("no puedes acceder al curso");
+					log.debug("no puedes acceder al curso");
 					renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
 					return null;
 				}

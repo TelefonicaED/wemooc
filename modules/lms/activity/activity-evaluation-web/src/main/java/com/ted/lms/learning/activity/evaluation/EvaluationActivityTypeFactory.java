@@ -2,6 +2,8 @@ package com.ted.lms.learning.activity.evaluation;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationPortletKeys;
@@ -23,6 +25,8 @@ import org.osgi.service.component.annotations.Reference;
     service = LearningActivityTypeFactory.class
 )
 public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFactory{
+	
+	private static final Log log = LogFactoryUtil.getLog(EvaluationActivityTypeFactory.class);
 	
 	@Override
 	public String getClassName() {
@@ -46,10 +50,10 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	
 	@Override
 	public String getName(Locale locale) {
-		System.out.println("*********************Activity: " + resourceBundleLoader.toString());
+		log.debug("*********************Activity: " + resourceBundleLoader.toString());
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
-		System.out.println("*********************Resource bundle: " + resourceBundle.getBaseBundleName());
-		System.out.println("*********************LanguageUtil: " + LanguageUtil.get(resourceBundle, "learningactivity.evaluation"));
+		log.debug("*********************Resource bundle: " + resourceBundle.getBaseBundleName());
+		log.debug("*********************LanguageUtil: " + LanguageUtil.get(resourceBundle, "learningactivity.evaluation"));
 		return LanguageUtil.get(resourceBundle, "learning-activity.evaluation");
 	}
 	

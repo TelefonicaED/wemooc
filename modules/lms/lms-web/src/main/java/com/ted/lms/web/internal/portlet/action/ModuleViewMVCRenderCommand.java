@@ -1,5 +1,7 @@
 package com.ted.lms.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.ted.lms.constants.LMSPortletKeys;
@@ -21,11 +23,13 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCRenderCommand.class
 )
 public class ModuleViewMVCRenderCommand implements MVCRenderCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(ModuleViewMVCRenderCommand.class);
 
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		long moduleId = ParamUtil.getLong(renderRequest, "moduleId", 0);
-		System.out.println("render view moduleId: " + moduleId);
+		log.debug("render view moduleId: " + moduleId);
 		
 		Module module = null;
 		

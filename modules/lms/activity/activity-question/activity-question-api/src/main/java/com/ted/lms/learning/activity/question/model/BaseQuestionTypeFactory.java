@@ -111,4 +111,9 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	public String getURLEditAnswer() {
 		return null;
 	}
+	
+	@Override
+	public String[] getJavascriptImport(String cdnHost) {
+		return null;
+	}
 }
