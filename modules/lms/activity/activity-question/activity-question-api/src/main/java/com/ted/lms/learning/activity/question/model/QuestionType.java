@@ -17,7 +17,7 @@ public interface QuestionType {
 	
 	public QuestionTypeFactory getQuestionTypeFactory();
 	
-	public void setExtraContent(ActionRequest actionRequest) throws PortalException;
+	public void setExtraContent(ActionRequest actionRequest, String iteratorQuestion) throws PortalException;
 	public void saveAnswers(ActionRequest actionRequest, String iteratorQuestion) throws PortalException;
 	
 	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter);

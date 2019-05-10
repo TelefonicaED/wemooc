@@ -343,6 +343,12 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		log.debug("actId: " + actId);
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivity.class.getName(), actionRequest);
+		
+		String[] tags = serviceContext.getAssetTagNames();
+		for(String tag: tags) {
+			log.debug("tag: " + tag);
+		}
+		
 
 		LearningActivity activity = null;
 

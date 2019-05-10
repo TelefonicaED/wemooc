@@ -17,7 +17,7 @@ if(questionId > 0){
 	int i=0;
 	for(Answer answer:answers){
 		i++;%>
-		<div class="row" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_answer_" + i%>'>
+		<div class="row" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_div_answer_" + i%>'>
 			<liferay-util:include page="<%=OptionsQuestionTypeFactory.URL_EDIT_ANSWER %>" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" servletContext="<%=this.getServletContext() %>">
 				<liferay-util:param name="iterator" value="<%=String.valueOf(i) %>" />
 				<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
@@ -27,7 +27,7 @@ if(questionId > 0){
 	<%}
 }else{
 	for(int i = 1; i <= 2; i++){%>
-		<div class="row" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_answer_" + i%>'>
+		<div class="row" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_div_answer_" + i%>'>
 			<liferay-util:include page="<%=OptionsQuestionTypeFactory.URL_EDIT_ANSWER %>" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" servletContext="<%=this.getServletContext() %>">
 				<liferay-util:param name="iterator" value="<%=String.valueOf(i) %>" />
 				<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />

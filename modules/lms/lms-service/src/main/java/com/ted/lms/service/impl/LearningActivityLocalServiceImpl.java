@@ -216,7 +216,7 @@ public class LearningActivityLocalServiceImpl
 					LearningActivityEndDateException.class);
 		}
 		
-		return learningActivityLocalService.updateLearningActivity(actId, titleMap, descriptionMap, startDate, endDate, tries, passPuntuation, 
+		return updateLearningActivity(actId, titleMap, descriptionMap, startDate, endDate, tries, passPuntuation, 
 				feedbackCorrectMap, feedbackNoCorrectMap, required, commentsActivated, serviceContext);
 	}
 	
@@ -228,7 +228,7 @@ public class LearningActivityLocalServiceImpl
 		
 		LearningActivity activity = learningActivityPersistence.findByPrimaryKey(actId);
 		
-		return learningActivityLocalService.updateLearningActivity(actId, activity.getModuleId(), titleMap, descriptionMap, activity.getTypeId(), 
+		return updateLearningActivity(actId, activity.getModuleId(), titleMap, descriptionMap, activity.getTypeId(), 
 				startDate, endDate, tries, passPuntuation, activity.getPriority(), activity.getExtraContent(), feedbackCorrectMap, feedbackNoCorrectMap, 
 				required, commentsActivated, serviceContext);
 		

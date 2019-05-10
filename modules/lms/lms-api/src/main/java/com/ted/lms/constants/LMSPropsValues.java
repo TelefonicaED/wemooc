@@ -22,4 +22,6 @@ public class LMSPropsValues {
 	
 	public static final String[] PREREQUISITES_MODULE = PropsUtil.getArray(LMSPropsKeys.PREREQUISITES_MODULE);
 	public static final String[] PREREQUISITES_LEARNING_ACTIVITY = PropsUtil.getArray(LMSPropsKeys.PREREQUISITES_LEARNING_ACTIVITY);
+	
+	public static final boolean USERS_FIRST_LAST_NAME = GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.USERS_FIRST_LAST_NAME));
 }

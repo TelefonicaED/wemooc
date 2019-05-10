@@ -175,3 +175,14 @@ if(feedback){
 		}
 	}
 </script>
+
+
+<script>
+	function <portlet:namespace />validateQuestion<%=questionId%>(){
+		if('<%=isCombo%>' == 'true'){
+			return $('select[name="<portlet:namespace />question_<%=questionId%>"] > option[value=""]:selected').length == 0;
+		}else{
+			return $("input[name='<portlet:namespace />question_<%=questionId%>']:checked").length > 0;
+		}
+	}
+</script>

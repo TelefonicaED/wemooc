@@ -164,5 +164,9 @@ public class LearningActivityResultLocalServiceImpl
 
 	}
 	
+	public long countStudentFinished(long actId, long companyId, long courseGroupId) {
+		return learningActivityResultFinder.countStudentsFinished(actId, courseGroupId, companyId);
+	}
+	
 	private static Log log = LogFactoryUtil.getLog(LearningActivityResultLocalServiceImpl.class);
 }

@@ -18,7 +18,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER,
-		"mvc.command.name=/", "mvc.command.name=/modules/view_module"
+		"mvc.command.name=/modules/view_module"
 	},
 	service = MVCRenderCommand.class
 )

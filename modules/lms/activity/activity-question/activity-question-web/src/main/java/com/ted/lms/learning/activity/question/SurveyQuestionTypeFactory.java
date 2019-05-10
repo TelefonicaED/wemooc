@@ -53,6 +53,11 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	}
 	
 	@Override
+	public String getURLEditAnswers() {
+		return "/question/survey/answers.jsp";
+	}
+	
+	@Override
 	public String getURLEditAnswer() {
 		return URL_EDIT_ANSWER;
 	}

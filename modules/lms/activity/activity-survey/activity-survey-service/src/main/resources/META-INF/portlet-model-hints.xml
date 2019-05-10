@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="com.ted.lms.learning.activity.survey.model.SurveyResult">
+		<field name="uuid" type="String" />
+		<field name="surveyResultId" type="long" />
+		<field name="actId" type="long" />
+		<field name="latId" type="long" />
+		<field name="questionId" type="long" />
+		<field name="answerId" type="long" />
+		<field name="userId" type="long" />
+		<field name="freeAnswer" type="String">
+			<hint name="max-length">50000</hint>
+		</field>
+	</model>
+</model-hints>

@@ -11,6 +11,7 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.trash.api"
 	compileOnly group: "com.liferay", name: "com.liferay.trash.taglib"
 	compileOnly group: "com.liferay", name: "com.liferay.upload.api"
+	compileOnly group: "com.liferay", name: "com.liferay.asset.taglib"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"

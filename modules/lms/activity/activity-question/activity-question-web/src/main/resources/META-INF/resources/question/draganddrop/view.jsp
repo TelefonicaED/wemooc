@@ -24,8 +24,8 @@
 long questionId = ParamUtil.getLong(request, "questionId");
 boolean feedback = ParamUtil.getBoolean(request, "feedback", false);
 String tryResultData = ParamUtil.getString(request, "tryResultData");
-boolean showCorrectAnswer = ParamUtil.getBoolean(request, "showCorrectAnswer");
-boolean showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(request, "showCorrectAnswerOnlyOnFinalTry");
+boolean showCorrectAnswer = ParamUtil.getBoolean(request, "showCorrectAnswer", false);
+boolean showCorrectAnswerOnlyOnFinalTry = ParamUtil.getBoolean(request, "showCorrectAnswerOnlyOnFinalTry", false);
 
 Question question = QuestionLocalServiceUtil.getQuestion(questionId);
 Document documentTryResultData = null;
@@ -145,3 +145,9 @@ html+=	"</div>";
 %>
 
 <%=html%>
+
+<script>
+	function <portlet:namespace />validateQuestion<%=questionId%>(){
+		return $('input[name^="<portlet:namespace />question_<%=questionId%>_"][type="hidden"][value="-1"]').length == 0;
+	}
+</script>

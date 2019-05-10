@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+
+<custom-sql>
+	<sql id="com.ted.lms.learning.activity.survey.service.persistence.SurveyResultFinder.countStartedOnlyStudents">
+		<![CDATA[   			
+			SELECT 
+				count(1) AS COUNT_VALUE
+			FROM 
+				lms_learningactivityresult r 
+			INNER JOIN 
+				users_groups ug 
+					ON r.userId = ug.userId AND ug.groupId = ?
+			INNER JOIN
+				usergrouprole ugrT 
+					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?
+			INNER JOIN
+				usergrouprole ugrE 
+					ON ugrE.userId = r.userId AND ugrE.groupId = ug.groupId AND ugrE.roleId = ?		
+			WHERE 
+				actId = ?
+				AND ugrT.userId IS NULL AND ugrE.userId IS NULL 
+		]]>
+	</sql>
+	<sql id="com.ted.lms.learning.activity.survey.service.persistence.SurveyResultFinder.countStudentsByQuestionIdAnswerId">
+		<![CDATA[   			
+			SELECT 
+				count(1) AS COUNT_VALUE
+			FROM 
+				survey_surveyresult r 
+			INNER JOIN 
+				users_groups ug 
+					ON r.userId = ug.userId AND ug.groupId = ?
+			INNER JOIN
+				usergrouprole ugrT 
+					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?
+			INNER JOIN
+				usergrouprole ugrE 
+					ON ugrE.userId = r.userId AND ugrE.groupId = ug.groupId AND ugrE.roleId = ?	
+			WHERE 
+				answerId = ? 
+				AND questionId = ?
+				AND ugrT.userId IS NULL AND ugrE.userId IS NULL 
+
+		]]>
+	</sql>
+	<sql id="com.ted.lms.learning.activity.survey.service.persistence.SurveyResultFinder.countStudentsByQuestionId">
+		<![CDATA[   			
+			SELECT 
+				count(1) AS COUNT_VALUE
+			FROM 
+				survey_surveyresult r 
+			INNER JOIN 
+				users_groups ug 
+					ON r.userId = ug.userId AND ug.groupId = ?
+			INNER JOIN
+				usergrouprole ugrT 
+					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?
+			INNER JOIN
+				usergrouprole ugrE 
+					ON ugrE.userId = r.userId AND ugrE.groupId = ug.groupId AND ugrE.roleId = ?	
+			WHERE 
+				questionId = ?
+				AND ugrT.userId IS NULL AND ugrE.userId IS NULL 
+
+		]]>
+	</sql>
+</custom-sql>

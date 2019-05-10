@@ -1,8 +1,15 @@
 package com.ted.lms.learning.activity.question;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.ted.lms.learning.activity.question.model.Question;
 
+import javax.portlet.ActionRequest;
+
 public class SurveyQuestionType extends OptionsQuestionType{
+	
+	private static final Log log = LogFactoryUtil.getLog(SurveyQuestionType.class);
 
 	public SurveyQuestionType(Question question) {
 		super(question);
@@ -19,6 +26,11 @@ public class SurveyQuestionType extends OptionsQuestionType{
 	}
 	
 	protected boolean isQuestionCorrect(int correctAnswers, int correctAnswered, int incorrectAnswered){
+		return true;
+	}
+	
+	@Override
+	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter) {
 		return true;
 	}
 }

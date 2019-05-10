@@ -18,6 +18,7 @@ public interface QuestionTypeFactory {
 	
 	public String getDescription(Locale locale);
 	
+	public String getURLQuestionExtraData();
 	public String getURLEditAnswers();
 	public String getURLEditAnswer();
 	

@@ -70,6 +70,11 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	}
 	
 	@Override
+	public String getURLQuestionExtraData() {
+		return null;
+	}
+	
+	@Override
 	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse) {
 		String urlAddAnswer = null;
 		if(Validator.isNotNull(getURLEditAnswer())) {

@@ -255,7 +255,7 @@ timeNumberFormat.setMinimumIntegerDigits(2);
 		}
 	);
 </script>
-<div class="activity-test-questions" >
+<div class="col-md-12 activity-test-questions" >
 	<liferay-util:include page="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS_JSP %>" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" >
 		<liferay-util:param name="actId" value="<%=String.valueOf(actId)%>" />
 		<liferay-util:param name="canBeEdited" value="<%=String.valueOf(canBeEdited)%>" />

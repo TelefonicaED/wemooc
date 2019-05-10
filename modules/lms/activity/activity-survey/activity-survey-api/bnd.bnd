@@ -1,0 +1,9 @@
+Bundle-Name: activity-survey-api
+Bundle-SymbolicName: com.ted.lms.learning.activity.survey.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	com.ted.lms.learning.activity.survey.exception,\
+	com.ted.lms.learning.activity.survey.model,\
+	com.ted.lms.learning.activity.survey.service,\
+	com.ted.lms.learning.activity.survey.service.persistence
+-includeresource: META-INF/service.xml=../activity-survey-service/service.xml

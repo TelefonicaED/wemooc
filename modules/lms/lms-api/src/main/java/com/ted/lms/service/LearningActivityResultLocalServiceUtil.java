@@ -54,6 +54,11 @@ public class LearningActivityResultLocalServiceUtil {
 		return getService().addLearningActivityResult(learningActivityResult);
 	}
 
+	public static long countStudentFinished(long actId, long companyId,
+		long courseGroupId) {
+		return getService().countStudentFinished(actId, companyId, courseGroupId);
+	}
+
 	/**
 	* Creates a new learning activity result with the primary key. Does not add the learning activity result to the database.
 	*

@@ -1,5 +1,6 @@
 package com.ted.lms.service.persistence.impl;
 
+import com.liferay.admin.kernel.util.PortalUserPersonalBarApplicationType;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
@@ -16,6 +17,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
@@ -23,11 +25,15 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.model.impl.UserImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.constants.CourseParams;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.impl.CourseImpl;
 import com.ted.lms.service.persistence.CourseFinder;
+import com.ted.lms.util.LMSPrefsPropsValues;
+import com.ted.lms.util.LMSUtil;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,6 +86,32 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			CourseFinder.class.getName() + ".whereStatus";
 	public static final String WHERE_PARENT_COURSE_ID = 
 			CourseFinder.class.getName() + ".whereParentCourseId";
+	public static final String FIND_STUDENTS = 
+			CourseFinder.class.getName() +
+				".findStudents";
+	public static final String COUNT_STUDENTS = 
+			CourseFinder.class.getName() +
+				".countStudents";
+	public static final String WHERE_SCREEN_NAME =
+		    CourseFinder.class.getName() +
+		        ".whereScreenName";
+	public static final String WHERE_FIRST_NAME =
+		    CourseFinder.class.getName() +
+		        ".whereFirstName";
+	public static final String WHERE_LAST_NAME =
+		    CourseFinder.class.getName() +
+		        ".whereLastName";
+	public static final String WHERE_EMAIL_ADDRESS =
+		    CourseFinder.class.getName() +
+		        ".whereEmailAddress";	
+	public static final String WHERE_USER_SEARCH = 
+			CourseFinder.class.getName() + 
+				".whereUserSearch";
+	public static final String WHERE_USER_STATUS = 
+			CourseFinder.class.getName() + 
+				".whereUserStatus";
+	public static final String INNER_JOIN_TEAM = 
+			CourseFinder.class.getName() + ".innerJoinTeam";
 	
 	public static final String FIND_CHILD_REGISTRED_USER = 
 			CourseFinder.class.getName() + ".findChildRegistredUser";
@@ -815,6 +847,226 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	
 	    return listCourse;
 	}
+	
+	public List<User> findStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
+			long[] teamIds,boolean andOperator, int start, int end,OrderByComparator obc){
+		Session session = null;
+		try{
+			
+			/** Para la query es necesario si no es null o vacío que añade los porcentajes, y si es vacío ponerlo a null*/
+			if(log.isDebugEnabled()){
+				log.debug("ScreenName:"+screenName);
+				log.debug("firstName:"+firstName);
+				log.debug("lastName:"+lastName);
+				log.debug("emailAddress:"+emailAddress);
+				log.debug("start: " + start);
+				log.debug("end: " + end);
+				log.debug("order: " + obc != null ? obc.toString() : "null");
+			}
+			
+			session = openSession();
+			
+			String sql = customSQL.get(getClass(), FIND_STUDENTS);
+			
+			sql = replaceJoinWhereUser(sql, screenName, firstName, lastName, emailAddress, status, teamIds, andOperator);
+			
+			sql = customSQL.replaceAndOperator(sql, andOperator);
+			
+			sql = replaceOrderUser(sql, obc, companyId);
+			
+			if(start >= 0 && end >= 0){
+				sql += " LIMIT " + start + ", " + (end-start);
+			}
+			
+			if(log.isDebugEnabled()) log.debug("sql: " + sql);
+			
+			SQLQuery q = session.createSQLQuery(sql);
+			q.addEntity("User_",UserImpl.class);
+			
+			//Obtenemos el rol de editor del curso y profesor
+			
+			QueryPos qPos = QueryPos.getInstance(q);
+			qPos.add(LMSUtil.getTeacherRoleId(companyId));
+			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(courseId);
+
+			if(status != WorkflowConstants.STATUS_ANY){
+				qPos.add(status);
+			}
+			
+			qPos = replaceQPosJoinWhereUser(qPos, screenName, firstName, lastName, emailAddress);
+					
+			
+			if(log.isDebugEnabled()){
+				log.debug("courseId: " + courseId);
+				log.debug("firstName: " + firstName);
+				log.debug("lastName: " + lastName);
+				log.debug("screenName: " + screenName);
+				log.debug("emailAddress: " + emailAddress);	
+			}
+			
+			
+			List<User> listUsers = (List<User>) q.list();
+			return listUsers;
+			
+		} catch (Exception e) {
+	       e.printStackTrace();
+	    } finally {
+	    	closeSession(session);
+	    }
+	
+	    return new ArrayList<User>();
+	}
+	
+	public long countStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds,
+			boolean andOperator){
+		Session session = null;
+		try{
+			
+			if(log.isDebugEnabled()){
+				log.debug("ScreenName:"+screenName);
+				log.debug("firstName:"+firstName);
+				log.debug("lastName:"+lastName);
+				log.debug("emailAddress:"+emailAddress);
+			}
+						
+			session = openSession();
+			
+			String sql = customSQL.get(getClass(), COUNT_STUDENTS);
+			
+			sql = replaceJoinWhereUser(sql, screenName, firstName, lastName, emailAddress, status, teamIds, andOperator);
+			
+			sql = customSQL.replaceAndOperator(sql, andOperator);
+			
+			log.debug("sql: " + sql);
+			
+			SQLQuery q = session.createSQLQuery(sql);
+			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
+			
+			QueryPos qPos = QueryPos.getInstance(q);
+			qPos.add(LMSUtil.getTeacherRoleId(companyId));
+			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(courseId);
+			if(status != WorkflowConstants.STATUS_ANY){
+				qPos.add(status);
+			}
+			
+			qPos = replaceQPosJoinWhereUser(qPos, screenName, firstName, lastName, emailAddress);
+			
+			Iterator<Long> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Long count = itr.next();
+
+				if (count != null) {
+					return count.intValue();
+				}
+			}
+			
+		} catch (Exception e) {
+	       e.printStackTrace();
+	    } finally {
+	    	closeSession(session);
+	    }
+	
+	    return 0;
+	}
+	
+	private String replaceJoinWhereUser(String sql, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds, boolean andOperator){
+		boolean whereClause = false;
+		if(teamIds != null && teamIds.length > 0){
+			sql = StringUtil.replace(sql, "[$JOINTEAM$]", customSQL.get(getClass(), INNER_JOIN_TEAM));
+			String teams = "";
+			for(int i = 0; i < teamIds.length;i++){
+				teams += teamIds[i] + ",";
+			}
+			if(teams.length() > 0){
+				teams = teams.substring(0, teams.length()-1);
+			}
+			sql = StringUtil.replace(sql, "[$TEAMIDS$]", teams);
+		}else{
+			sql = sql.replace("[$JOINTEAM$]", "");
+		}
+		
+		String sqlWhere = customSQL.get(getClass(), WHERE_USER_SEARCH);
+		if(Validator.isNotNull(screenName)){
+			sqlWhere = sqlWhere.replace("[$WHERESCREENNAME$]", customSQL.get(getClass(), WHERE_SCREEN_NAME));
+			whereClause=true;
+		}else{
+			sqlWhere = sqlWhere.replace("[$WHERESCREENNAME$]", "");
+		}
+		if(Validator.isNotNull(firstName)){
+			sqlWhere = sqlWhere.replace("[$WHEREFIRSTNAME$]", customSQL.get(getClass(), WHERE_FIRST_NAME));
+			whereClause=true;
+		}else{
+			sqlWhere = sqlWhere.replace("[$WHEREFIRSTNAME$]", "");
+		}
+		if(Validator.isNotNull(lastName)){
+			sqlWhere = sqlWhere.replace("[$WHERELASTNAME$]", customSQL.get(getClass(), WHERE_LAST_NAME));
+			whereClause=true;
+		}else{
+			sqlWhere = sqlWhere.replace("[$WHERELASTNAME$]", "");
+		}
+		if(Validator.isNotNull(emailAddress)){
+			sqlWhere = sqlWhere.replace("[$WHEREEMAILADDRESS$]", customSQL.get(getClass(), WHERE_EMAIL_ADDRESS));
+			whereClause=true;
+		}else{
+			sqlWhere = sqlWhere.replace("[$WHEREEMAILADDRESS$]", "");
+		}
+		if(status != WorkflowConstants.STATUS_ANY){
+			sql = StringUtil.replace(sql, "[$WHERESTATUS$]", customSQL.get(getClass(), WHERE_USER_STATUS));
+		}else{
+			sql = StringUtil.replace(sql, "[$WHERESTATUS$]", "");
+		}
+
+		if(whereClause && !andOperator){
+			sqlWhere = sqlWhere.replace("[$DEFAULT$]", " 1 = 0 ");	
+			sql = StringUtil.replace(sql, "[$WHERESEARCH$]", sqlWhere);
+		}else if(whereClause && andOperator){
+			sqlWhere = sqlWhere.replace("[$DEFAULT$]", " 1 = 1 ");	
+			sql = StringUtil.replace(sql, "[$WHERESEARCH$]", sqlWhere);
+		}else{
+			sql = StringUtil.replace(sql, "[$WHERESEARCH$]", "");
+		}
+		
+		return sql;
+	}
+	
+	private String replaceOrderUser(String sql, OrderByComparator obc, long companyId) {
+		if (obc != null && obc.getOrderBy() != null && !obc.getOrderBy().equals("")) {
+			sql = sql.replace("[$ORDERBY$]", obc.toString());
+		}else{
+			if(LMSPrefsPropsValues.getUsersFirstLastName(companyId)){
+				sql = sql.replace("[$ORDERBY$]", "u.lastName, u.firstName, u.middleName ");
+			}else{
+				sql = sql.replace("[$ORDERBY$]", "u.firstName, u.middleName, u.lastName ");
+			}
+		}
+		
+		return sql;
+	}
+	
+	private QueryPos replaceQPosJoinWhereUser(QueryPos qPos, String screenName, String firstName, String lastName, String emailAddress) {
+		
+		if(Validator.isNotNull(screenName)){
+			screenName = "%"+screenName+"%";
+			qPos.add(screenName);
+		}
+		if(Validator.isNotNull(firstName)){
+			firstName = "%"+firstName+"%";
+			qPos.add(firstName);
+		}
+		if(Validator.isNotNull(lastName)){
+			lastName = "%"+lastName+"%";
+			qPos.add(lastName);
+		}			
+		if(Validator.isNotNull(emailAddress)){
+			emailAddress = "%"+emailAddress+"%";
+			qPos.add(emailAddress);
+		}
+		
+		return qPos;
+	}	
 	
 	@ServiceReference(type=CustomSQL.class)
 	private CustomSQL customSQL;

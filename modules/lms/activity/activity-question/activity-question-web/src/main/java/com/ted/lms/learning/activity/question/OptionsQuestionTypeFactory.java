@@ -52,6 +52,11 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 	
 	@Override
+	public String getURLQuestionExtraData() {
+		return "/question/options/extra_data.jsp";
+	}
+	
+	@Override
 	public String getURLEditAnswers() {
 		return "/question/options/answers.jsp";
 	}

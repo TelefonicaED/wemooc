@@ -28,4 +28,6 @@ public class LMSPropsKeys implements PropsKeys{
 	
 	public static final String PREREQUISITES_MODULE = "prerequisites.module";
 	public static final String PREREQUISITES_LEARNING_ACTIVITY = "prerequisites.learning-activity";
+	
+	public static final String USERS_FIRST_LAST_NAME = "users.first.last.name";
 }

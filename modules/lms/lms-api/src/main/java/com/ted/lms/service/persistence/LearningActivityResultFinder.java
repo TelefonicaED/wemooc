@@ -27,4 +27,7 @@ public interface LearningActivityResultFinder {
 
 	public int countRequiredLearningActivityResultsByModule(long moduleId,
 		long userId);
+
+	public long countStudentsFinished(long actId, long courseGroupCreatedId,
+		long companyId);
 }

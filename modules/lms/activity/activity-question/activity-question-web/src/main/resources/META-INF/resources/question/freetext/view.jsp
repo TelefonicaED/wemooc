@@ -83,3 +83,10 @@ if(feedback) {
 	</c:if>
 	<%=answersFeedBack%>
 </div>	
+
+
+<script>
+	function <portlet:namespace />validateQuestion<%=questionId%>(){
+		return $("textarea[name='<portlet:namespace />question_<%=questionId%>']").val().trim() != "";
+	}
+</script>

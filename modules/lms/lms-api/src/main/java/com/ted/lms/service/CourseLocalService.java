@@ -125,6 +125,25 @@ public interface CourseLocalService extends BaseLocalService,
 		String language, int status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params, boolean andOperator);
 
+	public long countStudentsFromCourse(long courseId, long companyId);
+
+	/**
+	* Usar este método para contar los estudiantes de un curso
+	*
+	* @param courseId id del curso
+	* @param companyId id de company
+	* @param screenName nombre de usuario
+	* @param firstName nombre
+	* @param lastName apellido
+	* @param emailAddress direccion de correo
+	* @param status estado del usuario (WorkflowConstants)
+	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
+	* @return
+	*/
+	public long countStudentsFromCourse(long courseId, long companyId,
+		String screenName, String firstName, String lastName,
+		String emailAddress, int status, boolean andOperator);
+
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
 	*

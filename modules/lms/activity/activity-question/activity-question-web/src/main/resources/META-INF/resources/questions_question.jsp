@@ -24,6 +24,7 @@ long questionId = ParamUtil.getLong(request, "questionId");
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion");
 String questionIdsAllowedString = ParamUtil.getString(request, "questionIdsAllowed");
 long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? StringUtil.split(questionIdsAllowedString,",", 0L) : null;
+String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
 
 Question question = null;
 if(questionId > 0){
@@ -33,12 +34,12 @@ if(questionId > 0){
 QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionType);
 %>
 
-<aui:input  type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + "questionId_" + iteratorQuestion %>' id='<%=themeDisplay.getPortletDisplay().getNamespace() + "questionId_" + iteratorQuestion%>' value="<%=questionId%>" useNamespace="false" />
-<aui:input  type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + "iteratorQuestion" %>' id='<%=themeDisplay.getPortletDisplay().getNamespace() + "iteratorQuestion" %>' value="<%=iteratorQuestion %>" useNamespace="false" />
-<aui:input  type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + "questionType_" + iteratorQuestion %>' id='<%=themeDisplay.getPortletDisplay().getNamespace() + "questionType_" + iteratorQuestion  %>' 
+<aui:input  type="hidden" name='<%=namespace + "questionId_" + iteratorQuestion %>' id='<%=namespace + "questionId_" + iteratorQuestion%>' value="<%=questionId%>" useNamespace="false" />
+<aui:input  type="hidden" name='<%=namespace + "iteratorQuestion" %>' id='<%=namespace + "iteratorQuestion" %>' value="<%=iteratorQuestion %>" useNamespace="false" />
+<aui:input  type="hidden" name='<%=namespace + "questionType_" + iteratorQuestion %>' id='<%=namespace + "questionType_" + iteratorQuestion  %>' 
 	value="<%=questionType %>" useNamespace="false" />
 <c:if test="<%=questionTypeFactory.getPenalize()%>">
-    <aui:input name='<%=themeDisplay.getPortletDisplay().getNamespace() + "penalize_" + iteratorQuestion %>' id='<%=themeDisplay.getPortletDisplay().getNamespace() + "penalize_" + iteratorQuestion %>' type="hidden" 
+    <aui:input name='<%=namespace + "penalize_" + iteratorQuestion %>' id='<%=namespace + "penalize_" + iteratorQuestion %>' type="hidden" 
     	value="<%=question!=null?question.isPenalize():false%>" useNamespace="false" />
 </c:if>
 
@@ -49,7 +50,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 	
 		<div class="row question-title-edit <%=questionTypeFactory.getIconCssClass() %>">
 		
-			<div class="col-md-11 question-title-collapsible" onclick="<%="javascript:" + renderResponse.getNamespace() + "showAnswers(" + iteratorQuestion + ")" %>">
+			<div class="col-md-11 question-title-collapsible" onclick="<%="javascript:" + namespace + "showAnswers(" + iteratorQuestion + ")" %>">
 				<span><%=HtmlUtil.extractText(question.getText()) %></span>
 			</div>
 			<div class="col-md-1 question-title-action">
@@ -63,11 +64,12 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 					>
 						<liferay-ui:icon
 							message="edit-question"
-							url='<%="javascript:" + renderResponse.getNamespace() + "editQuestion(" + iteratorQuestion + ")" %>'
+							url='<%="javascript:" + namespace + "editQuestion(" + iteratorQuestion + ")" %>'
 						/>
 						<liferay-ui:icon-delete
 							label="true"
-							url="javascript:${themeDisplay.getPortletDisplay().getNamespace() }deleteQuestion(<%=iteratorQuestion %>)"
+							url='<%="javascript:" + namespace + "deleteQuestion(" + iteratorQuestion + ")" %>'
+							confirmation="question.delete-question.confirm"
 						/>
 					</liferay-ui:icon-menu>
 			</div>
@@ -76,7 +78,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 		<%List<Answer> answers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());%>
 		
 		<c:if test="<%=answers != null && answers.size() > 0 %>">
-			<ul class="answers-edit" id="${themeDisplay.getPortletDisplay().getNamespace() }answers<%=iteratorQuestion%>" style="display:none">
+			<ul class="answers-edit" id='<%=namespace + "answers" + iteratorQuestion%>' style="display:none">
 				<%for(Answer answer: answers){ %>
 					<li class='answer-edit <%=answer.isCorrect() ? "correct" : ""%>'>
 						<span><%=HtmlUtil.extractText(answer.getAnswer()) %></span>
@@ -87,7 +89,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 	</div>
 </c:if>
 
-<div class='question-editing <%=(question != null) ? "hide":"" %>' id="${themeDisplay.getPortletDisplay().getNamespace() }questionEdit<%=iteratorQuestion%>">
+<div class='question-editing <%=(question != null) ? "hide":"" %>' id='<%=namespace + "questionEdit" + iteratorQuestion %>'>
 	<div class="row">
 		<%for(QuestionTypeFactory questionTypeFactoryIterator: questionTypeFactories){ %>
 			<c:if test="<%=questionIdsAllowed == null || ArrayUtil.contains(questionIdsAllowed, questionTypeFactoryIterator.getType()) %>">
@@ -100,6 +102,14 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 	</div>
 	
 	<div class="col-md-12">
+		<c:if test="<%=Validator.isNotNull(questionTypeFactory.getURLQuestionExtraData()) %>">
+			<div class="row">
+				<liferay-util:include page="<%=questionTypeFactory.getURLQuestionExtraData()%>" portletId="<%=questionTypeFactory.getPortletId()%>" servletContext="<%=this.getServletContext() %>">
+					<liferay-util:param name="questionId" value="<%=String.valueOf(questionId) %>" />
+					<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
+				</liferay-util:include>
+			</div>
+		</c:if>
 		<div class="row">
 			<div class="question-title col-md-11">
 				<label for="<portlet:namespace />questionTitle<%=iteratorQuestion %>"><liferay-ui:message key="question" /></label>
@@ -112,7 +122,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 					editorName="alloyeditor"
 					onChangeMethod='<%="changeQuestion" + iteratorQuestion%>'
 				/>
-				<aui:input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + "question_title_" + iteratorQuestion %>' useNamespace="false" value="<%=(question != null) ? question.getText() : StringPool.BLANK %>"/>
+				<aui:input type="hidden" name='<%=namespace + "question_title_" + iteratorQuestion %>' useNamespace="false" value="<%=(question != null) ? question.getText() : StringPool.BLANK %>"/>
 			</div>
 			<div class="col-md-1">
 				<liferay-ui:icon-menu
@@ -125,14 +135,14 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 			>
 				<liferay-ui:icon
 					message="add-answer"
-					url='<%="javascript:" + themeDisplay.getPortletDisplay().getNamespace() + "addAnswer(" + iteratorQuestion + ",'" + questionTypeFactory.getURLAddAnswer(liferayPortletResponse) + "')" %>'
+					url='<%="javascript:" + namespace + "addAnswer(" + iteratorQuestion + ",'" + questionTypeFactory.getURLAddAnswer(liferayPortletResponse) + "')" %>'
 				/>
 			</liferay-ui:icon-menu>
 			</div>
 		</div>
 	</div>
 	
-	<div id="${themeDisplay.getPortletDisplay().getNamespace() }div_answers_<%=iteratorQuestion%>" >
+	<div id='<%=namespace + "div_answers_" + iteratorQuestion%>' >
 		
 		<liferay-util:include page="<%=questionTypeFactory.getURLEditAnswers()%>" portletId="<%=questionTypeFactory.getPortletId()%>" servletContext="<%=this.getServletContext() %>">
 			<liferay-util:param name="questionId" value="<%=String.valueOf(questionId) %>" />
@@ -143,6 +153,6 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 
 <script>
 	function <portlet:namespace />changeQuestion<%=iteratorQuestion%>(val){
-		$('#<portlet:namespace />question_title_<%=iteratorQuestion%>').val(val);
+		$('#<%=namespace%>question_title_<%=iteratorQuestion%>').val(val);
 	}
 </script>

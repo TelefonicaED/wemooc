@@ -4,6 +4,7 @@ import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -11,6 +12,7 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.impl.LearningActivityResultImpl;
 import com.ted.lms.service.persistence.LearningActivityResultFinder;
+import com.ted.lms.util.LMSUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +21,7 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 	
 	public static final String FIND_REQUIRED_LEARNING_ACTIVITY_RESULTS = LearningActivityResultFinder.class.getName() + ".findRequiredLearningActivityResults";
 	public static final String COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS_BY_MODULE = LearningActivityResultFinder.class.getName() + ".countRequiredLearningActivityResultsByModule";
+	public static final String COUNT_STUDENTS_FINISHED = LearningActivityResultFinder.class.getName() + ".countStudentsFinished";
 	
 	private static final Log log = LogFactoryUtil.getLog(LearningActivityResultFinderImpl.class);
 	
@@ -96,6 +99,45 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 		}
 		
 		return countLearningActivities;
+	}
+	
+	public long countStudentsFinished(long actId, long courseGroupCreatedId, long companyId) {
+		long countStartedOnlyStudents = 0;
+		Session session = null;
+		try{
+			
+			session = openSession();
+			String sql = customSQL.get(getClass(), COUNT_STUDENTS_FINISHED);
+		
+			if(log.isDebugEnabled()){
+				log.debug("sql: " + sql);
+			}
+			
+			SQLQuery q = session.createSQLQuery(sql);
+			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
+			
+			QueryPos qPos = QueryPos.getInstance(q);	
+			qPos.add(LMSUtil.getTeacherRoleId(companyId));
+			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(actId);
+							
+			Iterator<Long> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Long count = itr.next();
+
+				if (count != null) {
+					countStartedOnlyStudents = count.intValue();
+				}
+			}
+			
+		} catch (Exception e) {
+	       e.printStackTrace();
+	    } finally {
+	        closeSession(session);
+	    }
+	
+		return countStartedOnlyStudents;
 	}
 	
 	@ServiceReference(type=CustomSQL.class)

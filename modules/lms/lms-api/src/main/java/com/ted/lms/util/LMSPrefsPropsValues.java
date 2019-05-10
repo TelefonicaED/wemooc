@@ -79,4 +79,8 @@ public class LMSPrefsPropsValues {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_CHANGE_VISIBILITY, LMSPropsValues.LEARNING_ACTIVITY_CHANGE_VISIBILITY);
 	}
 	
+	public static boolean getUsersFirstLastName(long companyId) {
+		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.USERS_FIRST_LAST_NAME, LMSPropsValues.USERS_FIRST_LAST_NAME);
+	}
+	
 }

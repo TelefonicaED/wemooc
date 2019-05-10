@@ -53,7 +53,31 @@ long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? Stri
 			<%}
 		}%>
 	</div>
-	<aui:button value="new-question" name="newQuestion"/>
+	<div class="row">
+		<div class="col-md-6">
+			<aui:button value="new-question" name="newQuestion"/>
+		</div>
+		<div class="col-md-6">
+			<liferay-ui:icon-menu
+				direction="down"
+				message="question.import-export"
+				showWhenSingleIcon="true"
+				showArrow="true"
+				
+			>
+				<liferay-ui:icon label="true" message="question.import-questions.xml" url=''/>
+				
+				<liferay-ui:icon label="true" message="question.import-questions.csv" url='' />
+
+				<liferay-ui:icon label="true" message="question.export-questions.csv" url="" />
+				
+				<liferay-ui:icon label="true" message="question.export-questions.xml" url="" />
+				
+				<liferay-ui:icon label="true" message="question.export-questions.excel" url="" />
+			</liferay-ui:icon-menu>
+			
+		</div>
+	</div>
 	<div class="row" id="${themeDisplay.getPortletDisplay().getNamespace() }new_question_factory" style="display:none">
 		<%for(QuestionTypeFactory questionTypeFactory: questionTypeFactories){ %>
 			<c:if test="<%=questionIdsAllowed == null || ArrayUtil.contains(questionIdsAllowed, questionTypeFactory.getType()) %>">
@@ -86,6 +110,7 @@ function <portlet:namespace />addQuestion(questionUrl){
 			
 			questionUrl += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iteratorQuestion=' + iter;
 			questionUrl += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_questionIdsAllowed=<%=questionIdsAllowedString%>';
+			questionUrl += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_namespace=<portlet:namespace />';
 			
 			parent.append(newQuestion);
 			console.log("iter: "+iter);
@@ -137,8 +162,9 @@ function <portlet:namespace />addAnswer(iteratorQuestion, urlAnswer){
 			
 			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iterator=' + iter;
 			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_iteratorQuestion=' + iteratorQuestion;
+			urlAnswer += '&_<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>_namespace=<portlet:namespace />';
 			
-			var newQuestion = A.Node.create('<div class="row" id="<portlet:namespace />' + iteratorQuestion + '_answer_'+iter+'" ></div>');
+			var newQuestion = A.Node.create('<div class="row" id="<portlet:namespace />' + iteratorQuestion + '_div_answer_'+iter+'" ></div>');
 			
 			parent.append(newQuestion);
 			
@@ -151,11 +177,21 @@ function <portlet:namespace />addAnswer(iteratorQuestion, urlAnswer){
 					}
 				);
 			}
+			
+			console.log("urlAnswer: " + urlAnswer);
 
 			newQuestion.io.set('uri', urlAnswer);
 			newQuestion.io.start();
 		}
 	);
+}
+
+function <portlet:namespace />deleteQuestion(iteratorQuestion){
+	$('#<portlet:namespace />div_question_' + iteratorQuestion).remove();
+}
+
+function <portlet:namespace />deleteAnswer(iteratorQuestion,iteratorAnswer){
+	$('#<portlet:namespace />' + iteratorQuestion + "_div_answer_" + iteratorAnswer).remove();
 }
 
 </script>

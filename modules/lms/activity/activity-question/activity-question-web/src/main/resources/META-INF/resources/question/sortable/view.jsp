@@ -79,3 +79,9 @@ if(feedback){
 	</div>
 </div>
 
+
+<script>
+	function <portlet:namespace />validateQuestion<%=questionId%>(){
+		return true;
+	}
+</script>

@@ -201,12 +201,18 @@
 			<h3 class="sheet-subtitle"><liferay-ui:message key="categorization" /></h3>
 			<div class="row">
 				<div class="col-md-6">
-					<aui:field-wrapper label="tags">
-						<liferay-ui:asset-tags-selector className="<%=LearningActivity.class.getName() %>" classPK="${activity.actId }" />
-					</aui:field-wrapper>
+					<liferay-asset:asset-categories-selector
+						className="<%= LearningActivity.class.getName() %>"
+						classPK="${activity.actId }"
+						
+					/>
 				</div>
+			
 				<div class="col-md-6">
-					<liferay-ui:asset-categories-selector className="<%=LearningActivity.class.getName() %>" classPK="${activity.actId }" />
+					<liferay-asset:asset-tags-selector
+						className="<%= LearningActivity.class.getName() %>"
+						classPK="${activity.actId }"
+					/>
 				</div>
 			</div>
 		</div>

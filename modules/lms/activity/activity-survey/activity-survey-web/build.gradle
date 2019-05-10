@@ -1,0 +1,14 @@
+dependencies {
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.executor"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.upgrade.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
+	compileOnly group: "javax.portlet", name: "portlet-api"
+	compileOnly group: "javax.servlet", name: "javax.servlet-api"
+	compileOnly group: "jstl", name: "jstl"
+	compileOnly group: "org.osgi", name: "osgi.cmpn"
+	compileOnly project(":modules:lms:lms-api")
+	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
+	compileOnly project(":modules:lms:activity:activity-survey:activity-survey-api")
+}

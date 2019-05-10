@@ -1,3 +1,4 @@
+<%@page import="com.liferay.petra.string.StringPool"%>
 <%@page import="com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Answer"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
@@ -10,14 +11,14 @@ Answer answer = null;
 if(answerId > 0){
 	answer = AnswerLocalServiceUtil.getAnswer(answerId);
 } 
-
+String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
 %>
-<aui:input  type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_answerId_" + iterator%>' value="<%=answerId %>" useNamespace="false" />
-<aui:input  type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_iteratorAnswer" %>' id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_iteratorAnswer" %>' value="<%=iterator%>" useNamespace="false"  />
+<aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_answerId_" + iterator%>' value="<%=answerId %>" useNamespace="false" />
+<aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_iteratorAnswer" %>' id='<%=namespace + iteratorQuestion + "_iteratorAnswer" %>' value="<%=iterator%>" useNamespace="false"  />
 <div class="col-md-10">
 	
-	<aui:input type="checkbox" name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_correct"%>' label="correct" value="<%=iterator%>" checked="<%=answer != null ? answer.isCorrect() : false %>" 
-				useNamespace="false" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_correct_" + iterator %>' />
+	<aui:input type="checkbox" name='<%=namespace + iteratorQuestion + "_correct"%>' label="correct" value="<%=iterator%>" checked="<%=answer != null ? answer.isCorrect() : false %>" 
+				useNamespace="false" id='<%=namespace + iteratorQuestion + "_correct_" + iterator %>' />
 	
 	 <liferay-editor:editor
 		contents='<%=answer != null ? answer.getAnswer() : "" %>' 
@@ -30,17 +31,30 @@ if(answerId > 0){
 	>
 		<aui:validator name="required" />
 	</liferay-editor:editor>
-	<aui:input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_answer_title_" + iterator %>' useNamespace="false" value="<%=answer != null ? answer.getAnswer() : "" %>"/>
+	<aui:input type="hidden" name='<%=namespace + iteratorQuestion + "_answer_title_" + iterator %>' useNamespace="false" value="<%=answer != null ? answer.getAnswer() : "" %>"/>
 	
 	
-	<aui:input type="text" name="<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + \"feedbackCorrect_\"+iterator %>" label="feedback" value='<%=answer != null ? answer.getFeedbackCorrect(): "" %>' useNamespace="false" />	
+	<aui:input type="text" name="<%=namespace + iteratorQuestion + \"_feedbackCorrect_\"+iterator %>" label="feedback" value='<%=answer != null ? answer.getFeedbackCorrect(): "" %>' useNamespace="false" />	
 </div>
 <div class="col-md-2">
-	<span class="newitem2"><a href="#" class="newitem2" onclick="<portlet:namespace />deleteNode('testAnswer_new<%=iterator %>');"><liferay-ui:message key="delete"/></a></span>
+	<liferay-ui:icon-menu
+		cssClass='entry-options inline'
+		direction="left-side"
+		icon="<%= StringPool.BLANK %>"
+		markupView="lexicon"
+		message="<%= StringPool.BLANK %>"
+		showWhenSingleIcon="true"
+	>
+		<liferay-ui:icon-delete
+			label="true"
+			url='<%="javascript:" + namespace + "deleteAnswer(" + iteratorQuestion + "," + iterator + ")" %>'
+			confirmation="question.delete-question.confirm"
+		/>
+	</liferay-ui:icon-menu>
 </div>
 
 <script>
 	function <portlet:namespace /><%=iteratorQuestion%>changeAnswer<%=iterator%>(val){
-		$('#<portlet:namespace /><%=iteratorQuestion%>_answer_title_<%=iterator%>').val(val);
+		$('#<%=namespace + iteratorQuestion%>_answer_title_<%=iterator%>').val(val);
 	}
 </script>

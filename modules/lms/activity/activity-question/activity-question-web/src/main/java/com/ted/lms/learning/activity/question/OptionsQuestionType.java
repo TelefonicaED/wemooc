@@ -1,10 +1,12 @@
 package com.ted.lms.learning.activity.question;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
@@ -30,6 +32,8 @@ public class OptionsQuestionType extends BaseQuestionType{
 		super(question);
 		
 		JSONObject extraContent = question.getExtraContentJSON();
+		
+		log.debug("extraContent: " + extraContent);
 		
 		if(extraContent != null) {
 			JSONObject options = extraContent.getJSONObject(QuestionConstants.JSON_OPTIONS);
@@ -73,16 +77,29 @@ public class OptionsQuestionType extends BaseQuestionType{
 	}
 
 	@Override
-	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
-		super.setExtraContent(actionRequest);
+	public void setExtraContent(ActionRequest actionRequest, String iteratorQuestion) throws PortalException {
+		super.setExtraContent(actionRequest, iteratorQuestion);
 		
 		JSONObject extraContent = question.getExtraContentJSON();
 		
-		formatType = ParamUtil.getInteger(actionRequest, "formatType", OptionConstants.OPTION_FORMAT_TYPE_VERTICAL);
-		partialCorrection = ParamUtil.getBoolean(actionRequest, "partialCorrection", QuestionConstants.DEFAULT_PARTIAL_CORRECTION);
+		log.debug("extraContent: " + extraContent);
 		
-		extraContent.put(QuestionConstants.JSON_FORMAT_TYPE, formatType);
-		extraContent.put(QuestionConstants.JSON_PARTIAL_CORRECTION, partialCorrection);
+		JSONObject optionsContent = extraContent.getJSONObject(QuestionConstants.JSON_OPTIONS);
+		
+		if(Validator.isNull(optionsContent)) {
+			optionsContent = JSONFactoryUtil.createJSONObject();
+			extraContent.put(QuestionConstants.JSON_OPTIONS, optionsContent);
+		}
+		
+		formatType = ParamUtil.getInteger(actionRequest, iteratorQuestion + "_formatType", OptionConstants.OPTION_FORMAT_TYPE_VERTICAL);
+		partialCorrection = ParamUtil.getBoolean(actionRequest, iteratorQuestion + "_partialCorrection", QuestionConstants.DEFAULT_PARTIAL_CORRECTION);
+		
+		optionsContent.put(QuestionConstants.JSON_FORMAT_TYPE, formatType);
+		optionsContent.put(QuestionConstants.JSON_PARTIAL_CORRECTION, partialCorrection);
+		
+		log.debug("extraContent modified: " + extraContent);
+		
+		question.setExtraContent(extraContent.toJSONString());
 	}
 
 	@Override

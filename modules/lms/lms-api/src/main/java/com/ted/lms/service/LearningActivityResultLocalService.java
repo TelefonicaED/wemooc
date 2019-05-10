@@ -76,6 +76,9 @@ public interface LearningActivityResultLocalService extends BaseLocalService,
 	public LearningActivityResult addLearningActivityResult(
 		LearningActivityResult learningActivityResult);
 
+	public long countStudentFinished(long actId, long companyId,
+		long courseGroupId);
+
 	/**
 	* Creates a new learning activity result with the primary key. Does not add the learning activity result to the database.
 	*

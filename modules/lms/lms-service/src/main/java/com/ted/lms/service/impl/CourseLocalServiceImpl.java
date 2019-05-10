@@ -78,6 +78,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.kernel.workflow.comparator.WorkflowComparatorFactory;
 import com.liferay.portal.liveusers.LiveUsers;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.sites.kernel.util.SitesUtil;
@@ -1025,6 +1026,26 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		}
 
 		return allowAccessToCompletedCourses;
+	}
+	
+	/**
+	 * Usar este método para contar los estudiantes de un curso
+	 * @param courseId id del curso
+	 * @param companyId id de company
+	 * @param screenName nombre de usuario
+	 * @param firstName nombre
+	 * @param lastName apellido
+	 * @param emailAddress direccion de correo
+	 * @param status estado del usuario (WorkflowConstants)
+	 * @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
+	 * @return
+	 */
+	public long countStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, boolean andOperator){
+		return courseFinder.countStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, andOperator);
+	}
+	
+	public long countStudentsFromCourse(long courseId, long companyId) {
+		return countStudentsFromCourse(courseId, companyId, null, null, null, null, WorkflowConstants.STATUS_APPROVED, true);
 	}
 	
 	@Override

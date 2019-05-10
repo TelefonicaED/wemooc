@@ -159,3 +159,11 @@ List<Answer> answers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.get
 	</div>
 
 </c:if>
+
+<script>
+	function <portlet:namespace />validateQuestion<%=questionId%>(){
+		return $('input[name^="<portlet:namespace />question_<%=questionId%>_"][type="text"]').filter(function(){return this.value==""}).length == 0
+			&& $('select[name^="<portlet:namespace />question_<%=questionId%>_"] > option[value=""]:selected').length == 0
+			&& $("input[name^='<portlet:namespace />question_<%=questionId%>_'][type='radio']:checked").val() != undefined;
+	}
+</script>

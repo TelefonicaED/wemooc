@@ -108,6 +108,32 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 			language, status, parentCourseId, groupId, params, andOperator);
 	}
 
+	@Override
+	public long countStudentsFromCourse(long courseId, long companyId) {
+		return _courseLocalService.countStudentsFromCourse(courseId, companyId);
+	}
+
+	/**
+	* Usar este método para contar los estudiantes de un curso
+	*
+	* @param courseId id del curso
+	* @param companyId id de company
+	* @param screenName nombre de usuario
+	* @param firstName nombre
+	* @param lastName apellido
+	* @param emailAddress direccion de correo
+	* @param status estado del usuario (WorkflowConstants)
+	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
+	* @return
+	*/
+	@Override
+	public long countStudentsFromCourse(long courseId, long companyId,
+		String screenName, String firstName, String lastName,
+		String emailAddress, int status, boolean andOperator) {
+		return _courseLocalService.countStudentsFromCourse(courseId, companyId,
+			screenName, firstName, lastName, emailAddress, status, andOperator);
+	}
+
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
 	*

@@ -21,7 +21,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + P2PWebPortletKeys.P2P,
-		"mvc.command.name=/", "mvc.command.name=/activities/p2p/revisions"
+		"mvc.command.name=/activities/p2p/revisions"
 	},
 	service = MVCRenderCommand.class
 )

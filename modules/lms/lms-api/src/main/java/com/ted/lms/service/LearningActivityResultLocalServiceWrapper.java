@@ -46,6 +46,13 @@ public class LearningActivityResultLocalServiceWrapper
 		return _learningActivityResultLocalService.addLearningActivityResult(learningActivityResult);
 	}
 
+	@Override
+	public long countStudentFinished(long actId, long companyId,
+		long courseGroupId) {
+		return _learningActivityResultLocalService.countStudentFinished(actId,
+			companyId, courseGroupId);
+	}
+
 	/**
 	* Creates a new learning activity result with the primary key. Does not add the learning activity result to the database.
 	*

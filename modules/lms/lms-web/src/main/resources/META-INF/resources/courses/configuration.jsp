@@ -178,11 +178,14 @@
 			</aui:field-wrapper>
 		</div>
 		<div class="col-md-6">
-			<liferay-ui:asset-categories-selector className="<%=Course.class.getName() %>" classPK="${course.courseId }" />
+			<liferay-asset:asset-categories-selector className="<%=Course.class.getName() %>" classPK="${course.courseId }" />
 		</div>
 		<div class="col-md-6">
 			<aui:field-wrapper label="tags">
-				<liferay-ui:asset-tags-selector className="<%=Course.class.getName() %>" classPK="${course.courseId }" />
+				<liferay-asset:asset-tags-selector
+						className="<%= Course.class.getName() %>"
+						classPK="${course.courseId }"
+					/>
 			</aui:field-wrapper>
 		</div>	
 		<div class="col-md-6">	

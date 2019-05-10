@@ -82,4 +82,14 @@ public interface CourseFinder {
 
 	public java.util.List<com.ted.lms.model.Course> findChildRegistredUser(
 		long parentCourseId, long userId);
+
+	public java.util.List<com.liferay.portal.kernel.model.User> findStudents(
+		long courseId, long companyId, String screenName, String firstName,
+		String lastName, String emailAddress, int status, long[] teamIds,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc);
+
+	public long countStudents(long courseId, long companyId, String screenName,
+		String firstName, String lastName, String emailAddress, int status,
+		long[] teamIds, boolean andOperator);
 }

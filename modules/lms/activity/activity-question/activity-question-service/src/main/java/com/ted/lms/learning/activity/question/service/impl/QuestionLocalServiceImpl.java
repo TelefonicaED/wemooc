@@ -158,22 +158,21 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 				log.debug("***questionText: " + questionText);
 				
 				if(questionId == 0){
-					question = questionLocalService.addQuestion(actId, questionText, questionTypeId, penalize, serviceContext);
+					question = addQuestion(actId, questionText, questionTypeId, penalize, serviceContext);
 				}else{
-					question = questionLocalService.updateQuestion(questionId, questionText, penalize);
+					question = updateQuestion(questionId, questionText, penalize);
 				}
 				
 				questionType = questionTypeFactory.getQuestionType(question);
-				questionType.setExtraContent(actionRequest);
+				questionType.setExtraContent(actionRequest, iteratorQuestion);
 	
-				questionLocalService.updateQuestion(question);
+				questionPersistence.update(question);
 				editingQuestionIds.add(question.getQuestionId());
 				
 				log.debug("question.getQuestionType() " + question.getQuestionTypeId());
 				
 				//Cada tipo de pregunta guarda sus respuestas
 				questionType.saveAnswers(actionRequest, iteratorQuestion);
-				
 			}
 		}
 		
@@ -181,10 +180,10 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		for(Long existingQuestionId:existingQuestionIds){
 			if(editingQuestionIds != null && editingQuestionIds.size()>0){
 				if(!editingQuestionIds.contains(existingQuestionId)){
-					answerLocalService.deleteAnswer(existingQuestionId);
+					questionPersistence.remove(existingQuestionId);
 				}
 			}else {
-				answerLocalService.deleteAnswer(existingQuestionId);
+				questionPersistence.remove(existingQuestionId);
 			}
 		}
 		

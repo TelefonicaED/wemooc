@@ -1,0 +1,18 @@
+dependencies {
+	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.dao.orm.custom.sql.api"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+	compileOnly project(":modules:lms:activity:activity-survey:activity-survey-api")
+	compileOnly project(":modules:lms:lms-api")
+	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
+	compileOnly group: "javax.servlet", name: "javax.servlet-api"
+	compileInclude group: 'org.apache.poi', name: 'poi', version: '4.1.0'
+}
+
+buildService {
+	apiDir = "../activity-survey-api/src/main/java"
+}
+
+group = "com.ted.survey"

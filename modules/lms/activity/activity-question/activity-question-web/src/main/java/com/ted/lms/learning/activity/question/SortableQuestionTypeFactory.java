@@ -64,6 +64,11 @@ public class SortableQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 	
 	@Override
+	public String getURLEditAnswer() {
+		return URL_EDIT_ANSWER;
+	}
+	
+	@Override
 	public int getMinNumAnswers() {
 		return 2;
 	}

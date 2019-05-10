@@ -33,7 +33,7 @@ public abstract class BaseQuestionType implements QuestionType{
 	}
 	
 	@Override
-	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
+	public void setExtraContent(ActionRequest actionRequest, String iteratorQuestion) throws PortalException {
 	}
 	
 	@Override
@@ -72,7 +72,7 @@ public abstract class BaseQuestionType implements QuestionType{
 				log.debug("iteratorAnswer: " + iteratorAnswer);
 				
 				answerId = ParamUtil.getLong(actionRequest, iteratorQuestion + "_answerId_" + iteratorAnswer, 0);
-				answerText = ParamUtil.getString(actionRequest, iteratorQuestion + "_answer_" + iteratorAnswer);
+				answerText = ParamUtil.getString(actionRequest, iteratorQuestion + "_answer_title_" + iteratorAnswer);
 				
 				log.debug("answerText: " + answerText);
 				log.debug("answerId: " + answerId);
@@ -83,8 +83,8 @@ public abstract class BaseQuestionType implements QuestionType{
 					counter++;
 					if(correct)trueCounter++;
 					
-					feedbackCorrect = ParamUtil.getString(actionRequest, iteratorQuestion + "_feedbackCorrectMapAsXML_" + iteratorAnswer);
-					feedbackIncorrect = ParamUtil.getString(actionRequest, iteratorQuestion + "_feedbackInCorrectMapAsXML_" + iteratorAnswer);
+					feedbackCorrect = ParamUtil.getString(actionRequest, iteratorQuestion + "_feedbackCorrect_" + iteratorAnswer);
+					feedbackIncorrect = ParamUtil.getString(actionRequest, iteratorQuestion + "_feedbackIncorrect_" + iteratorAnswer);
 
 					if(answerId == 0){
 						//creo respuesta
@@ -133,12 +133,17 @@ public abstract class BaseQuestionType implements QuestionType{
 	
 	@Override
 	public QuestionTypeFactory getQuestionTypeFactory(){
+		log.debug("questionTypeFactory: " + questionTypeFactory);
 		if (questionTypeFactory != null) {
+			log.debug("questionTypeFactory: " + questionTypeFactory.getType());
 			return questionTypeFactory;
 		}
 
+		log.debug("type: " + getType());
+		
 		questionTypeFactory = (QuestionTypeFactory) QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(getType());
 
+		log.debug("questionTypeFactory: " + questionTypeFactory.getType());
 		return questionTypeFactory;
 	}
 	
