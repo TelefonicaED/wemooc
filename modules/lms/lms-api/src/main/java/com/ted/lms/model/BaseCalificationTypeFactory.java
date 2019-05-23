@@ -5,6 +5,8 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.ted.lms.constants.LMSPortletKeys;
+
 import java.util.Locale;
 
 import javax.portlet.PortletResponse;
@@ -58,12 +60,17 @@ public abstract class BaseCalificationTypeFactory implements CalificationTypeFac
 	}
 	
 	@Override
+	public String getURLEditResult() {
+		return "/calification/base_edit_result.jsp";
+	}
+	
+	@Override
 	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse) {
 		return true;
 	}
 	
 	@Override
 	public String getPortletId() {
-		return "";
+		return LMSPortletKeys.CALIFICATION;
 	}
 }

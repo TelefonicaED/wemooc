@@ -42,6 +42,14 @@ public class LearningActivityLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.LearningActivityLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static com.liferay.portal.kernel.repository.model.FileEntry addAttachment(
+		long userId, com.ted.lms.model.LearningActivity activity,
+		String fileName, java.io.InputStream inputStream, String mimeType)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .addAttachment(userId, activity, fileName, inputStream,
+			mimeType);
+	}
 
 	/**
 	* Adds the learning activity to the database. Also notifies the appropriate model listeners.
@@ -65,7 +73,7 @@ public class LearningActivityLocalServiceUtil {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
@@ -75,7 +83,7 @@ public class LearningActivityLocalServiceUtil {
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, required, tries, passPuntuation,
 			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
-			serviceContext);
+			selectedFileNames, serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity addLearningActivity(
@@ -86,14 +94,14 @@ public class LearningActivityLocalServiceUtil {
 		int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addLearningActivity(moduleId, type, titleMap,
 			descriptionMap, startDate, endDate, required, tries,
 			passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-			commentsActivated, serviceContext);
+			commentsActivated, selectedFileNames, serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity addLearningActivity(
@@ -104,13 +112,14 @@ public class LearningActivityLocalServiceUtil {
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
 		boolean required, boolean commentsActivated,
+		String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .addLearningActivity(moduleId, titleMap, descriptionMap,
 			typeId, startDate, endDate, tries, passPuntuation, priority,
 			extraContent, feedbackCorrectMap, feedbackNoCorrectMap, required,
-			commentsActivated, serviceContext);
+			commentsActivated, selectedFileNames, serviceContext);
 	}
 
 	/**
@@ -456,13 +465,15 @@ public class LearningActivityLocalServiceUtil {
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
 		boolean required, boolean commentsActivated,
+		String[] selectedFileNames, long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .updateLearningActivity(actId, moduleId, titleMap,
 			descriptionMap, typeId, startDate, endDate, tries, passPuntuation,
 			priority, extraContent, feedbackCorrectMap, feedbackNoCorrectMap,
-			required, commentsActivated, serviceContext);
+			required, commentsActivated, selectedFileNames, removeFileEntryIds,
+			serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity updateLearningActivity(
@@ -475,7 +486,8 @@ public class LearningActivityLocalServiceUtil {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
+		long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
@@ -485,7 +497,7 @@ public class LearningActivityLocalServiceUtil {
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, required, tries, passPuntuation,
 			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
-			serviceContext);
+			selectedFileNames, removeFileEntryIds, serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity updateLearningActivity(
@@ -496,12 +508,14 @@ public class LearningActivityLocalServiceUtil {
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
 		boolean required, boolean commentsActivated,
+		String[] selectedFileNames, long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
 				   .updateLearningActivity(actId, titleMap, descriptionMap,
 			startDate, endDate, tries, passPuntuation, feedbackCorrectMap,
-			feedbackNoCorrectMap, required, commentsActivated, serviceContext);
+			feedbackNoCorrectMap, required, commentsActivated,
+			selectedFileNames, removeFileEntryIds, serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity updateStatus(long userId,

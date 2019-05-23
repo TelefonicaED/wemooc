@@ -48,11 +48,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		
-		PortletURL searchURL = renderResponse.createRenderURL();
-		searchURL.setParameter("mvcRenderCommandName", "/courses/view");
-		searchURL.setParameter("actId", String.valueOf(201));
-		renderRequest.setAttribute("searchURL", searchURL.toString());
+
 		
 		String criteria = ParamUtil.getString(renderRequest, "criteria");
 		log.debug("render criteria:_ " + criteria);
@@ -60,6 +56,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		String keywords = ParamUtil.getString(renderRequest, "keywords", null);
 		
 		log.debug("keywords: " + keywords);
+		log.debug("status: " + ParamUtil.getInteger(renderRequest, "status"));
 		
 		boolean inputFiltersShowOptions = ParamUtil.getBoolean(renderRequest, "inputFiltersShowOptions", false);
 		

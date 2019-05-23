@@ -340,7 +340,15 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		Map<Locale, String> feedbackNoCorrectMap = LocalizationUtil.getLocalizationMap(actionRequest, "feedbackNoCorrectMapAsXML");
 		boolean commentsActivated = ParamUtil.getBoolean(actionRequest, "commentsActivated", false);
 		
+		String[] selectedFileNames = ParamUtil.getParameterValues(actionRequest, "selectedFileName");
+		
 		log.debug("actId: " + actId);
+		
+		if(selectedFileNames != null) {
+			for(String file: selectedFileNames) {
+				log.debug("selectedFileName: " + file);
+			}
+		}
 
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivity.class.getName(), actionRequest);
 		
@@ -357,13 +365,16 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 			// Añadir módulo
 			activity = learningActivityService.addLearningActivity(moduleId, type, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 					startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
-					endDateHour, endDateMinute, required, tries, score, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, serviceContext);
+					endDateHour, endDateMinute, required, tries, score, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, selectedFileNames,
+					serviceContext);
 		} else {
+			long[] removeFileEntryIds = ParamUtil.getLongValues(actionRequest, "removeFileEntryIds");
 			// Actualizamos el módulo
 			activity = learningActivityService.updateLearningActivity(
 				actId, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 				startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
-				endDateHour, endDateMinute, required, tries, score, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, serviceContext);
+				endDateHour, endDateMinute, required, tries, score, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, selectedFileNames,
+				removeFileEntryIds, serviceContext);
 		} 
 		
 		//Guardamos los campos personalizados del método de evaluación

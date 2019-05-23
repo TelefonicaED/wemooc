@@ -17,6 +17,8 @@ public class LMSPropsKeys implements PropsKeys{
 	
 	public static final String LEARNING_ACTIVITY_TYPE = "learning.activity.type";
 	public static final String LEARNING_ACTIVITY_CHANGE_VISIBILITY = "learning.activity.change.visibility";
+	public static final String LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS = "learning.activity.documetns.extensions";
+	public static final String LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE = "learning.activity.documents.max.size";
 	
 	public static final String COURSE_IMAGE_EXTENSIONS = "course.image.extensions";
 	public static final String COURSE_IMAGE_MAX_SIZE = "course.image.max-size";

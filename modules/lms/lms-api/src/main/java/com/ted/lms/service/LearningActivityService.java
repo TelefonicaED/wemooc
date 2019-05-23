@@ -67,7 +67,8 @@ public interface LearningActivityService extends BaseService {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated,
-		ServiceContext serviceContext) throws PortalException;
+		String[] selectedFileNames, ServiceContext serviceContext)
+		throws PortalException;
 
 	public LearningActivity deleteLearningActivity(long actId)
 		throws PortalException;
@@ -81,6 +82,9 @@ public interface LearningActivityService extends BaseService {
 	* @return the OSGi service identifier
 	*/
 	public String getOSGiServiceIdentifier();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String[] getTempFileNames(long groupId) throws PortalException;
 
 	public LearningActivity moveDownLearningActivity(long actId,
 		ServiceContext serviceContext) throws PortalException;
@@ -103,6 +107,7 @@ public interface LearningActivityService extends BaseService {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated,
+		String[] selectedFileNames, long[] removeFileEntryIds,
 		ServiceContext serviceContext)
 		throws PrincipalException, PortalException;
 }

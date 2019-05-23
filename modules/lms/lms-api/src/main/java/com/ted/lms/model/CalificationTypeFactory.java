@@ -33,6 +33,8 @@ public interface CalificationTypeFactory {
 
 	public String getURLSpecificContent();
 	
+	public String getURLEditResult();
+	
 	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse);
 	
 	public String getPortletId();

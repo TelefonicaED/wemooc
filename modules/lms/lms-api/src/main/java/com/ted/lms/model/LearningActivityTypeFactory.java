@@ -54,9 +54,10 @@ public interface LearningActivityTypeFactory {
 	
 	public boolean isAutoCorrect();
 	
-	public boolean canBeSeenResults();
 	public String getSpecificResultsPage();
 	public void specificValidations(ActionRequest actionRequest) throws PortalException;
 	
 	public boolean canAccessFinished();
+	
+	public boolean hasDocuments();
 }

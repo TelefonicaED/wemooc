@@ -160,6 +160,7 @@ public class LearningActivityServiceSoap {
 		String[] feedbackCorrectMapValues,
 		String[] feedbackNoCorrectMapLanguageIds,
 		String[] feedbackNoCorrectMapValues, boolean commentsActivated,
+		String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -179,7 +180,7 @@ public class LearningActivityServiceSoap {
 					useEndExecutionDateCourse, endDateMonth, endDateDay,
 					endDateYear, endDateHour, endDateMinute, required, tries,
 					passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-					commentsActivated, serviceContext);
+					commentsActivated, selectedFileNames, serviceContext);
 
 			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
 		}
@@ -202,6 +203,7 @@ public class LearningActivityServiceSoap {
 		String[] feedbackCorrectMapValues,
 		String[] feedbackNoCorrectMapLanguageIds,
 		String[] feedbackNoCorrectMapValues, boolean commentsActivated,
+		String[] selectedFileNames, long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
 		try {
@@ -220,7 +222,8 @@ public class LearningActivityServiceSoap {
 					startDateMinute, useEndExecutionDateCourse, endDateMonth,
 					endDateDay, endDateYear, endDateHour, endDateMinute,
 					required, tries, passPuntuation, feedbackCorrectMap,
-					feedbackNoCorrectMap, commentsActivated, serviceContext);
+					feedbackNoCorrectMap, commentsActivated, selectedFileNames,
+					removeFileEntryIds, serviceContext);
 
 			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
 		}
@@ -237,6 +240,20 @@ public class LearningActivityServiceSoap {
 			java.util.List<com.ted.lms.model.LearningActivity> returnValue = LearningActivityServiceUtil.getActivities(moduleId);
 
 			return com.ted.lms.model.LearningActivitySoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static String[] getTempFileNames(long groupId)
+		throws RemoteException {
+		try {
+			String[] returnValue = LearningActivityServiceUtil.getTempFileNames(groupId);
+
+			return returnValue;
 		}
 		catch (Exception e) {
 			_log.error(e, e);

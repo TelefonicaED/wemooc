@@ -1,10 +1,12 @@
 package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.portal.kernel.bean.BeanParamUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -24,6 +26,9 @@ import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.web.internal.ModulesItemSelectorHelper;
 import com.ted.lms.web.internal.servlet.taglib.ui.FormNavigatorConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.portlet.PortletConfig;
@@ -85,6 +90,13 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 		Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		Module module = moduleLocalService.fetchModule(moduleId);
 		
+		List<FileEntry> attachmentsFileEntries = new ArrayList<FileEntry>();
+		try {
+			attachmentsFileEntries = activity != null ? activity.getAttachmentsFileEntries() : new ArrayList<FileEntry>();
+		} catch (PortalException e) {
+			e.printStackTrace();
+		}
+		
 		renderRequest.setAttribute("module", module);
 		renderRequest.setAttribute("cmd", cmd);
 		renderRequest.setAttribute("moduleId", moduleId);
@@ -94,6 +106,7 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("learningActivityTypeFactory", learningActivityTypeFactory);
 		renderRequest.setAttribute("activity", activity);
 		renderRequest.setAttribute("type", type);
+		renderRequest.setAttribute("attachmentsFileEntries", attachmentsFileEntries);
 		
 		return "/activities/edit_activity.jsp";
 	}

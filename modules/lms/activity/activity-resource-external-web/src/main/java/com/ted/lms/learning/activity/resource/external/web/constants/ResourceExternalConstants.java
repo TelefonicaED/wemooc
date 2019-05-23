@@ -19,4 +19,11 @@ public class ResourceExternalConstants {
 	
 	public static final long TYPE = 2;
 	public static final double DEFAULT_SCORE = BaseLearningActivityTypeFactory.DEFAULT_SCORE;
+	public static final boolean DEFAULT_SHOW_CONTROLS = true;
+	public static final int DEFAULT_CORRECT_MODE = CORRECT_VIDEO;
+	public static final boolean DEFAULT_FINAL_FEEDBACK = false;
+	public static final boolean DEFAULT_QUESTION_FEEDBACK = false;
+	
+	public static final String DEFAULT_QUESTIONS_ALLOWED = "0,1,2,3,4,5";
+	
 }

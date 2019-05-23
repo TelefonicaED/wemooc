@@ -2,6 +2,7 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.upload.UploadRequest;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
 
 import java.util.Locale;
@@ -42,6 +43,13 @@ public abstract class BaseCalificationType implements CalificationType{
 	@Override
 	public double getMinValue() {
 		return 0;
+	}
+	
+	@Override
+	public double getResultBase100(ActionRequest actionRequest) throws PortalException {
+		String result = ParamUtil.getString(actionRequest, "result");
+		
+		return toBase100(result);
 	}
 	
 	@Override

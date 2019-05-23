@@ -8,6 +8,10 @@
 <div class="container-activity isFeedback">
 	<div class="description">${activity.getDescription(themeDisplay.locale)}</div>
 	
+	<c:if test="${isTeacher }">
+		<aui:button type="button" value="learning-activity.test.correct" href="${goToCorrectionURL }"/>
+	</c:if>
+	
 	<p><liferay-ui:message key="learning-activity.test.test-done" /></p>
 	
 	<liferay-util:include page="/html/execactivity/test/timeout.jsp" servletContext="<%=this.getServletContext() %>">

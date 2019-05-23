@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LMSPropsKeys;
 import com.ted.lms.constants.LMSPropsValues;
 
@@ -81,6 +82,18 @@ public class LMSPrefsPropsValues {
 	
 	public static boolean getUsersFirstLastName(long companyId) {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.USERS_FIRST_LAST_NAME, LMSPropsValues.USERS_FIRST_LAST_NAME);
+	}
+	
+	public static String[] getActivityDocumentsExtensions(long companyId) {
+		String[] defaultValues = LMSPropsValues.LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS;
+		if(Validator.isNull(defaultValues) || defaultValues.length == 0) {
+			defaultValues = LMSConstants.DEFAULT_LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS;
+		}
+		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS, StringPool.COMMA, defaultValues);
+	}
+	
+	public static long getActivityDocumentsMaxSize(long companyId) {
+		return PrefsPropsUtil.getLong(companyId, LMSPropsKeys.LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE, LMSPropsValues.LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE);
 	}
 	
 }

@@ -3,16 +3,12 @@ package com.ted.lms.learning.activity.test.web.activity;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
 import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
-import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.service.LearningActivityTryLocalService;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -105,6 +101,11 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	@Override
 	public boolean canDeleteTries() {
 		return true;
+	}
+	
+	@Override
+	public String getSpecificResultsPage() {
+		return "/view_results.jsp";
 	}
 	
 	@Reference(

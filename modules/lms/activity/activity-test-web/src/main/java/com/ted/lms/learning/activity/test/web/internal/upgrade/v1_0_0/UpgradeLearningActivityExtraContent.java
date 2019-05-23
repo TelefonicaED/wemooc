@@ -14,7 +14,6 @@ import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityLocalService;

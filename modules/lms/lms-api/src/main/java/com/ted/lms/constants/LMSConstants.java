@@ -15,4 +15,6 @@ public class LMSConstants {
 	public static final String SERVICE_NAME = "com.ted.lms";
 	
 	public static final String CHANGE_VISIBILITY = "change_visibility";
+	
+	public static final String[] DEFAULT_LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS = {".gif",".jpeg",".jpg",".png",".txt",".doc",".docx"};
 }

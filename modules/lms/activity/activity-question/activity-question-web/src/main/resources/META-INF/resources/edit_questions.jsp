@@ -124,6 +124,7 @@ function <portlet:namespace />addQuestion(questionUrl){
 					}
 				);
 			}
+			
 
 			newQuestion.io.set('uri', questionUrl);
 			newQuestion.io.start();
@@ -193,6 +194,8 @@ function <portlet:namespace />deleteQuestion(iteratorQuestion){
 function <portlet:namespace />deleteAnswer(iteratorQuestion,iteratorAnswer){
 	$('#<portlet:namespace />' + iteratorQuestion + "_div_answer_" + iteratorAnswer).remove();
 }
+
+
 
 </script>
 

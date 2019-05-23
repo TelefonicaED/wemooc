@@ -92,8 +92,8 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	}
 	
 	@Override
-	public boolean canBeSeenResults(){
-		return true;
+	public String getSpecificResultsPage(){
+		return "/p2p/activity/detalleAct.jsp";
 	}
 	
 	@Override

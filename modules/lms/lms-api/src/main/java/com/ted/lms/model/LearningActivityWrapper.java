@@ -301,6 +301,18 @@ public class LearningActivityWrapper implements LearningActivity,
 	}
 
 	@Override
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivity.getAttachmentsFileEntries();
+	}
+
+	@Override
+	public long getAttachmentsFolderId()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivity.getAttachmentsFolderId();
+	}
+
+	@Override
 	public String[] getAvailableLanguageIds() {
 		return _learningActivity.getAvailableLanguageIds();
 	}

@@ -1040,12 +1040,18 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
 	 * @return
 	 */
-	public long countStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, boolean andOperator){
+	public int countStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, boolean andOperator){
 		return courseFinder.countStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, andOperator);
 	}
 	
-	public long countStudentsFromCourse(long courseId, long companyId) {
+	public int countStudentsFromCourse(long courseId, long companyId) {
 		return countStudentsFromCourse(courseId, companyId, null, null, null, null, WorkflowConstants.STATUS_APPROVED, true);
+	}
+	
+	public List<User> getStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, boolean andOperator, int start,
+			int end, OrderByComparator obc){
+		return courseFinder.findStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, andOperator, start, end, obc);
+			
 	}
 	
 	@Override

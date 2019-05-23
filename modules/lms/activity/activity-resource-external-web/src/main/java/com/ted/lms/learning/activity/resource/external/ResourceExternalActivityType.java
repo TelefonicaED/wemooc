@@ -13,30 +13,52 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.ted.lms.learning.activity.QuestionsLearningActivityType;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.util.ResourceExternalPrefsPropsValues;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.LearningActivityResultLocalService;
-
 import java.util.Iterator;
 import java.util.List;
 
 import javax.portlet.ActionRequest;
 
-public class ResourceExternalActivityType extends BaseLearningActivityType {
+public class ResourceExternalActivityType extends QuestionsLearningActivityType {
 	
 	private static final Log log = LogFactoryUtil.getLog(ResourceExternalActivityType.class);
+	private String video;
+	private boolean showControls;
+	private int correctMode;
+	private boolean finalFeedback;
+	private boolean questionFeedback;
+	private JSONObject questionPositions;
 
 	public ResourceExternalActivityType(LearningActivity activity) {
 		super(activity);
+		
+		JSONObject extraContent = activity.getExtraContentJSON();
+		
+		if(extraContent != null) {
+			JSONObject resourceExternal = extraContent.getJSONObject(ResourceExternalConstants.JSON_RESOURCE_EXTERNAL);
+			if(resourceExternal != null) {
+				video = resourceExternal.getString(ResourceExternalConstants.JSON_VIDEO, null);
+				showControls = resourceExternal.getBoolean(ResourceExternalConstants.JSON_VIDEO_CONTROL, ResourceExternalConstants.DEFAULT_SHOW_CONTROLS);
+				correctMode = resourceExternal.getInt(ResourceExternalConstants.JSON_CORRECT_MODE, ResourceExternalConstants.DEFAULT_CORRECT_MODE);
+				finalFeedback = resourceExternal.getBoolean(ResourceExternalConstants.JSON_FINAL_FEEDBACK, ResourceExternalConstants.DEFAULT_FINAL_FEEDBACK);
+				questionFeedback = resourceExternal.getBoolean(ResourceExternalConstants.JSON_QUESTION_FEEDBACK, ResourceExternalConstants.DEFAULT_QUESTION_FEEDBACK);
+				questionPositions = resourceExternal.getJSONObject(ResourceExternalConstants.JSON_QUESTION_POSITIONS);
+			}else {
+				initializateActivity();
+			}
+		}else {
+			initializateActivity();
+		}
 	}
 	
 	@Override
@@ -48,7 +70,9 @@ public class ResourceExternalActivityType extends BaseLearningActivityType {
 	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
 		ThemeDisplay themeDisplay = (ThemeDisplay) actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
-		String youtubecode=ParamUtil.getString(actionRequest,"youtubecode");
+		super.setExtraContent(actionRequest);
+		
+		String video = ParamUtil.getString(actionRequest,"video");
 		
 		int maxfile = ResourceExternalPrefsPropsValues.getMaxFiles(themeDisplay.getCompanyId());
 		
@@ -56,13 +80,13 @@ public class ResourceExternalActivityType extends BaseLearningActivityType {
 		
 		JSONObject resourceExternalContent = extraContent.getJSONObject(ResourceExternalConstants.JSON_RESOURCE_EXTERNAL);
 		
-		if(Validator.isNotNull(resourceExternalContent)) {
+		if(Validator.isNull(resourceExternalContent)) {
 			resourceExternalContent = JSONFactoryUtil.createJSONObject();
 			extraContent.put(ResourceExternalConstants.JSON_RESOURCE_EXTERNAL, resourceExternalContent);
 		}
 		
-		if(Validator.isNotNull(youtubecode)) {
-			resourceExternalContent.put(ResourceExternalConstants.JSON_VIDEO, "video");
+		if(Validator.isNotNull(video)) {
+			resourceExternalContent.put(ResourceExternalConstants.JSON_VIDEO, video);
 		}else if(resourceExternalContent.has(ResourceExternalConstants.JSON_VIDEO)){
 			resourceExternalContent.remove(ResourceExternalConstants.JSON_VIDEO);
 		}
@@ -216,5 +240,38 @@ public class ResourceExternalActivityType extends BaseLearningActivityType {
 		}
 		log.debug("score: " + score);
 		return score;
+	}
+	
+	public String getVideo() {
+		return video;
+	}
+	
+	public boolean getShowControls() {
+		return showControls;
+	}
+	
+	public int getCorrectMode() {
+		return correctMode;
+	}
+	
+	public boolean getFinalFeedback() {
+		return finalFeedback;
+	}
+	
+	public boolean getQuestionFeedback() {
+		return questionFeedback;
+	}
+	
+	public JSONObject getQuestionPositions() {
+		return questionPositions;
+	}
+	
+	private void initializateActivity() {
+		video = null;
+		showControls = ResourceExternalConstants.DEFAULT_SHOW_CONTROLS;
+		correctMode = ResourceExternalConstants.DEFAULT_CORRECT_MODE;
+		finalFeedback = ResourceExternalConstants.DEFAULT_FINAL_FEEDBACK;
+		questionFeedback = ResourceExternalConstants.DEFAULT_QUESTION_FEEDBACK;
+		questionPositions = null;
 	}
 }

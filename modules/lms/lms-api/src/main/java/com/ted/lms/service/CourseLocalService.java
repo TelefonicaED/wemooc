@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -125,7 +126,7 @@ public interface CourseLocalService extends BaseLocalService,
 		String language, int status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params, boolean andOperator);
 
-	public long countStudentsFromCourse(long courseId, long companyId);
+	public int countStudentsFromCourse(long courseId, long companyId);
 
 	/**
 	* Usar este método para contar los estudiantes de un curso
@@ -140,7 +141,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
 	* @return
 	*/
-	public long countStudentsFromCourse(long courseId, long companyId,
+	public int countStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
 		String emailAddress, int status, boolean andOperator);
 
@@ -369,6 +370,12 @@ public interface CourseLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<User> getStudentsFromCourse(long courseId, long companyId,
+		String screenName, String firstName, String lastName,
+		String emailAddress, int status, boolean andOperator, int start,
+		int end, OrderByComparator obc);
 
 	/**
 	* Método para buscar cursos

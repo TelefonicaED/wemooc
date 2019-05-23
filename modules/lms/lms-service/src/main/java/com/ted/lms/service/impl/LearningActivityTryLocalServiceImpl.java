@@ -164,7 +164,9 @@ public class LearningActivityTryLocalServiceImpl
 		
 		learningActivityTry.setResult(result);
 		learningActivityTry.setEndDate(endDate);
-		learningActivityTry.setEndUserDate(endDate);
+		//No se actualiza la fecha de finalización del usuario si ya tiene
+		if(learningActivityTry.getEndUserDate() == null)
+			learningActivityTry.setEndUserDate(endDate);
 		
 		//Actualizamos los campos de auditoria
 		User user = userLocalService.getUser(serviceContext.getUserId());

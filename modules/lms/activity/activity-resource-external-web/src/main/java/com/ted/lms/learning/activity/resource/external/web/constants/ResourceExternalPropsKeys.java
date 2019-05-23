@@ -9,4 +9,5 @@ import com.liferay.portal.kernel.util.PropsKeys;
  */
 public class ResourceExternalPropsKeys implements PropsKeys{
 	public static final String MAX_FILES = "lms.learningactivity.maxfile";
+	public static final String QUESTIONS_ALLOWED = "lms.questions.allowed.for." + ResourceExternalConstants.TYPE;
 }

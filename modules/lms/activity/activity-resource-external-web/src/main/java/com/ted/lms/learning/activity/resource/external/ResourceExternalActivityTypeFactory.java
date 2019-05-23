@@ -3,15 +3,12 @@ package com.ted.lms.learning.activity.resource.external;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalPortletKeys;
 import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
-import com.ted.lms.service.LearningActivityResultLocalService;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -33,6 +30,10 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	@Override
 	public long getType() {
 		return ResourceExternalConstants.TYPE;
+	}
+	
+	public ResourceExternalActivityType getResourceExternalActivityType(LearningActivity activity) {
+		return new ResourceExternalActivityType(activity);
 	}
 	
 	@Override
@@ -59,7 +60,7 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	
 	@Override
 	public String getURLSpecificContent() {
-		return "/resource_external/activity/edit.jsp";
+		return "/edit.jsp";
 	}
 	
 	@Override
@@ -74,6 +75,16 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	
 	@Override
 	public boolean canDeleteTries() {
+		return true;
+	}
+	
+	@Override
+	public String getSpecificResultsPage() {
+		return "/view_results.jsp";
+	}
+	
+	@Override
+	public boolean hasDocuments() {
 		return true;
 	}
 	

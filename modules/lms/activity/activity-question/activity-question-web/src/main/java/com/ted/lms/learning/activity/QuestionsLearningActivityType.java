@@ -6,14 +6,23 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
+import com.ted.lms.learning.activity.question.model.Question;
+import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
+import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
+
+import java.util.HashMap;
+import java.util.List;
+
 import javax.portlet.ActionRequest;
 
 public abstract class QuestionsLearningActivityType extends BaseLearningActivityType {
 	private boolean showCorrectAnswer;
 	private boolean showFeedback;
 	private boolean showCorrectAnswerOnlyOnFinalTry;
+	private List<Question> questions;
 	
 	public QuestionsLearningActivityType(LearningActivity activity) {
 		super(activity);
@@ -57,6 +66,9 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 		questionsContent.put(QuestionConstants.JSON_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY, showCorrectAnswerOnlyOnFinalTry);
 		
 		activity.setExtraContent(extraContent.toJSONString());
+		
+		//Ahora guardamos las preguntas
+		QuestionLocalServiceUtil.saveQuestions(actionRequest, activity.getActId());
 	}
 	
 	
@@ -70,6 +82,45 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 	
 	public boolean getShowCorrectAnswerOnlyOnFinalTry() {
 		return showCorrectAnswerOnlyOnFinalTry;
+	}
+	
+	public List<Question> getQuestions(){
+		if(questions == null) {
+			questions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
+		}
+		return questions;
+	}
+	
+	public void setQuestions(List<Question> questions) {
+		this.questions = questions;
+	}
+	
+	public boolean hasFreeQuestions() {
+		List<Question> questions = getQuestions();
+		
+		return hasFreeQuestions(questions);
+	}
+	
+	public boolean hasFreeQuestions(List<Question> questions) {
+		
+		int i = 0;
+		QuestionTypeFactory questionTypeFactory = null;
+		HashMap<Long, QuestionTypeFactory> questionTypeFactories = new HashMap<>();
+
+		boolean hasFreeQuestion = false;
+		
+		while(!hasFreeQuestion && i < questions.size()) {
+			if(questionTypeFactories.containsKey(questions.get(i).getQuestionTypeId())) {
+				questionTypeFactory = questionTypeFactories.get(questions.get(i).getQuestionTypeId());
+			}else {
+				questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questions.get(i).getQuestionTypeId());
+				questionTypeFactories.put(questions.get(i).getQuestionTypeId(), questionTypeFactory);
+			}
+			hasFreeQuestion = questionTypeFactory.isManualCorrection();
+			i++;
+		}
+		
+		return hasFreeQuestion;
 	}
 	
 	private void initializateActivity() {

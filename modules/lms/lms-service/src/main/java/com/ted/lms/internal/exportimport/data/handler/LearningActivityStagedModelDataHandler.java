@@ -1,5 +1,8 @@
 package com.ted.lms.internal.exportimport.data.handler;
 
+import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
+import com.liferay.document.library.kernel.exception.NoSuchFileException;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -11,10 +14,15 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
+import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.internal.exportimport.creation.strategy.LearningActivityCreationStrategy;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
@@ -26,6 +34,7 @@ import com.ted.lms.service.ModuleLocalService;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -188,21 +197,24 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 	            importedLearningActivity = activityLocalService.addLearningActivity(moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
 	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
-	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
+	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), 
+	            		null, serviceContext);
 	        }
 	        else {
 	            importedLearningActivity = activityLocalService.updateLearningActivity(activity.getActId(), moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
 	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
-	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
+	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), null, null, serviceContext);
 	        }
 	    }
 	    else {     
 	        importedLearningActivity = activityLocalService.addLearningActivity(moduleId, 
             		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
             		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
-            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), serviceContext);
+            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), null, serviceContext);
 	    }
+	    
+	    importLearningActivityAttachments(portletDataContext, activity, importedLearningActivity);
 	    
 	    LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
 		LearningActivityType learningActivityType = learningActivityTypeFactory.getLearningActivityType(activity);
@@ -230,10 +242,77 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 		}
 
 		Map<Long, Long> activityIds =
-			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(
-				LearningActivity.class);
+			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(LearningActivity.class);
 
 		activityIds.put(activityId, existingLearningActivity.getActId());
+	}
+	
+	protected void importLearningActivityAttachments(PortletDataContext portletDataContext, 
+			LearningActivity activity,
+			LearningActivity importedLearningActivity)
+		throws Exception {
+
+		List<Element> dlFileEntryElements =portletDataContext.getReferenceDataElements(activity, DLFileEntry.class);
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setCompanyId(portletDataContext.getCompanyId());
+		serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+
+		for (Element dlFileEntryElement : dlFileEntryElements) {
+			String path = dlFileEntryElement.attributeValue("path");
+
+			FileEntry fileEntry = (FileEntry)portletDataContext.getZipEntryAsObject(path);
+
+			String binPath = dlFileEntryElement.attributeValue("bin-path");
+
+			try (InputStream inputStream = getLearningActivityAttachmentInputStream(binPath, portletDataContext, fileEntry)) {
+
+				if (inputStream == null) {
+					if (log.isWarnEnabled()) {
+						log.warn("Unable to import attachment for file entry " +fileEntry.getFileEntryId());
+					}
+
+					continue;
+				}
+
+				_portletFileRepository.addPortletFileEntry(
+					portletDataContext.getScopeGroupId(),
+					portletDataContext.getUserId(importedLearningActivity.getUserUuid()),
+					LearningActivity.class.getName(), importedLearningActivity.getActId(),
+					LMSPortletKeys.MODULES_ACTIVITIES,
+					importedLearningActivity.getAttachmentsFolderId(), inputStream,
+					fileEntry.getFileName(), fileEntry.getMimeType(), true);
+			} catch (DuplicateFileEntryException dfee) {
+				if (log.isDebugEnabled()) {
+					log.debug(dfee, dfee);
+				}
+			}
+		}
+	}
+	
+	private InputStream getLearningActivityAttachmentInputStream(String binPath, PortletDataContext portletDataContext,
+			FileEntry fileEntry) throws Exception {
+
+		if (Validator.isNull(binPath) &&
+			portletDataContext.isPerformDirectBinaryImport()) {
+
+			try {
+				return FileEntryUtil.getContentStream(fileEntry);
+			}
+			catch (NoSuchFileException nsfe) {
+
+				// LPS-52675
+
+				if (log.isDebugEnabled()) {
+					log.debug(nsfe, nsfe);
+				}
+
+				return null;
+			}
+		}
+
+		return portletDataContext.getZipEntryAsInputStream(binPath);
 	}
 	
 	@Override
@@ -266,8 +345,15 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 		this.learningActivityCreationStrategy = learningActivityCreationStrategy;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setPortletFileRepository(PortletFileRepository portletFileRepository) {
+
+		_portletFileRepository = portletFileRepository;
+	}
+	
 	private LearningActivityCreationStrategy learningActivityCreationStrategy;
 
 	private LearningActivityLocalService activityLocalService;
 	private ModuleLocalService moduleLocalService;
+	private PortletFileRepository _portletFileRepository;
 }

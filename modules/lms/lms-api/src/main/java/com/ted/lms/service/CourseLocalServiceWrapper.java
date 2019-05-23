@@ -109,7 +109,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
-	public long countStudentsFromCourse(long courseId, long companyId) {
+	public int countStudentsFromCourse(long courseId, long companyId) {
 		return _courseLocalService.countStudentsFromCourse(courseId, companyId);
 	}
 
@@ -127,7 +127,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @return
 	*/
 	@Override
-	public long countStudentsFromCourse(long courseId, long companyId,
+	public int countStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
 		String emailAddress, int status, boolean andOperator) {
 		return _courseLocalService.countStudentsFromCourse(courseId, companyId,
@@ -444,6 +444,16 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseLocalService.getPersistedModel(primaryKeyObj);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
+		long courseId, long companyId, String screenName, String firstName,
+		String lastName, String emailAddress, int status, boolean andOperator,
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return _courseLocalService.getStudentsFromCourse(courseId, companyId,
+			screenName, firstName, lastName, emailAddress, status, andOperator,
+			start, end, obc);
 	}
 
 	/**

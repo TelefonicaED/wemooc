@@ -25,7 +25,12 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
+import com.liferay.portal.kernel.util.Digester;
+import com.liferay.portal.kernel.util.DigesterUtil;
+import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.ted.lms.constants.LMSActionKeys;
+import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.base.LearningActivityServiceBaseImpl;
@@ -101,12 +106,13 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 			boolean useStartExecutionDateCourse, int startDateMonth, int startDateDay, int startDateYear,
 			int startDateHour, int startDateMinute, boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, boolean required, int tries, double passPuntuation, Map<Locale, String> feedbackCorrectMap, 
-			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, ServiceContext serviceContext) throws PortalException {
+			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, String[] selectedFileNames, ServiceContext serviceContext) throws PortalException {
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, LMSActionKeys.ADD_ACT);
 		
 		return learningActivityLocalService.addLearningActivity(moduleId, type, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 				startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
-				endDateHour, endDateMinute, required, tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, serviceContext);
+				endDateHour, endDateMinute, required, tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, 
+				selectedFileNames, serviceContext);
 	}
 	
 	@Override
@@ -115,14 +121,15 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 			int startDateDay, int startDateYear, int startDateHour, int startDateMinute,
 			boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
 			int endDateMinute, boolean required, int tries, double passPuntuation, Map<Locale, String> feedbackCorrectMap,
-			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, ServiceContext serviceContext) throws PrincipalException, PortalException {
+			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, String[] selectedFileNames, 
+			long[] removeFileEntryIds, ServiceContext serviceContext) throws PrincipalException, PortalException {
 		
 		learningActivityModelResourcePermission.check(getPermissionChecker(), actId, ActionKeys.UPDATE);
 		
 		return learningActivityLocalService.updateLearningActivity(actId, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 				startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
 				endDateHour, endDateMinute, required, tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, 
-				serviceContext);
+				selectedFileNames, removeFileEntryIds, serviceContext);
 	}
 	
 	@Override
@@ -142,5 +149,11 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 		}
 		
 		return activities;
+	}
+	
+	@Override
+	public String[] getTempFileNames(long groupId) throws PortalException {
+
+		return TempFileEntryUtil.getTempFileNames(groupId, getUserId(),LearningActivityConstants.TEMP_FOLDER_NAME);
 	}
 }

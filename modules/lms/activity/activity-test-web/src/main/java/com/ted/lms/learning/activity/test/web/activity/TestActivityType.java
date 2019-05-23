@@ -19,16 +19,12 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.util.TestPrefsPropsValues;
-import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalService;
 import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
 
 import java.util.HashMap;
@@ -47,7 +43,6 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	private boolean enableOrder;
 	private long questionsPerPage;
 	private boolean preview;
-	private List<Question> questions;
 
 	public TestActivityType(LearningActivity activity) {
 		super(activity);
@@ -114,8 +109,6 @@ public class TestActivityType extends QuestionsLearningActivityType {
 		
 		activity.setExtraContent(extraContent.toJSONString());
 		
-		//Ahora guardamos las preguntas
-		QuestionLocalServiceUtil.saveQuestions(actionRequest, activity.getActId());
 	}
 
 	@Override
@@ -257,41 +250,7 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	public boolean getPreview() {
 		return preview;
 	}
-	
-	public List<Question> getQuestions(){
-		if(questions == null) {
-			questions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
-		}
-		return questions;
-	}
-	
-	public void setQuestions(List<Question> questions) {
-		this.questions = questions;
-	}
-	
-	public boolean hasFreeQuestions() {
-		int i = 0;
-		QuestionTypeFactory questionTypeFactory = null;
-		HashMap<Long, QuestionTypeFactory> questionTypeFactories = new HashMap<>();
-		
-		List<Question> questions = getQuestions();
-		
-		boolean hasFreeQuestion = false;
-		
-		while(!hasFreeQuestion && i < questions.size()) {
-			if(questionTypeFactories.containsKey(questions.get(i).getQuestionTypeId())) {
-				questionTypeFactory = questionTypeFactories.get(questions.get(i).getQuestionTypeId());
-			}else {
-				questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questions.get(i).getQuestionTypeId());
-				questionTypeFactories.put(questions.get(i).getQuestionTypeId(), questionTypeFactory);
-			}
-			hasFreeQuestion = questionTypeFactory.isManualCorrection();
-			i++;
-		}
-		
-		return hasFreeQuestion;
-	}
-	
+
 	private void initializateActivity() {
 		random = TestConstants.DEFAULT_RANDOM;
 		password = TestConstants.DEFAULT_PASSWORD;

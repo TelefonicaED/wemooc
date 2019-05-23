@@ -89,7 +89,7 @@ public interface CourseFinder {
 		boolean andOperator, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator obc);
 
-	public long countStudents(long courseId, long companyId, String screenName,
+	public int countStudents(long courseId, long companyId, String screenName,
 		String firstName, String lastName, String emailAddress, int status,
 		long[] teamIds, boolean andOperator);
 }

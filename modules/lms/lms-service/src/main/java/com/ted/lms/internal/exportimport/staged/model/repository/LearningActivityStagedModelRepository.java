@@ -42,15 +42,17 @@ public class LearningActivityStagedModelRepository
 			serviceContext.setUuid(learningActivity.getUuid());
 		}
 		
-   	 serviceContext.setUserId(userId);
-     serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+   	 	serviceContext.setUserId(userId);
+   	 	serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
 		
-		return learningActivityLocalService.addLearningActivity(learningActivity.getModuleId(), 
+		LearningActivity addedLearningActivity = learningActivityLocalService.addLearningActivity(learningActivity.getModuleId(), 
 				learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), learningActivity.getStartDate(), 
 				learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), learningActivity.getPriority(), 
 				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), learningActivity.getFeedbackNoCorrectMap(), 
-				learningActivity.getRequired(), learningActivity.getCommentsActivated(), serviceContext);
+				learningActivity.getRequired(), learningActivity.getCommentsActivated(), null, serviceContext);
 
+		//TODO Añadir los attachments
+		return addedLearningActivity;
 	}
 
 	@Override
@@ -168,11 +170,15 @@ public class LearningActivityStagedModelRepository
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			learningActivity);
 
-		return  learningActivityLocalService.updateLearningActivity(learningActivity.getActId(), learningActivity.getModuleId(), 
+		LearningActivity updatedLearningActivity = learningActivityLocalService.updateLearningActivity(learningActivity.getActId(), learningActivity.getModuleId(), 
 				learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), learningActivity.getStartDate(), 
 				learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), learningActivity.getPriority(), 
 				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), learningActivity.getFeedbackNoCorrectMap(), 
-				learningActivity.getRequired(), learningActivity.getCommentsActivated(), serviceContext);
+				learningActivity.getRequired(), learningActivity.getCommentsActivated(), null, null, serviceContext);
+		
+		//TODO añadir actualización de attachments
+		
+		return updatedLearningActivity;
 	}
 
 	@Reference

@@ -118,7 +118,7 @@ public class CourseLocalServiceUtil {
 			status, parentCourseId, groupId, params, andOperator);
 	}
 
-	public static long countStudentsFromCourse(long courseId, long companyId) {
+	public static int countStudentsFromCourse(long courseId, long companyId) {
 		return getService().countStudentsFromCourse(courseId, companyId);
 	}
 
@@ -135,7 +135,7 @@ public class CourseLocalServiceUtil {
 	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
 	* @return
 	*/
-	public static long countStudentsFromCourse(long courseId, long companyId,
+	public static int countStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
 		String emailAddress, int status, boolean andOperator) {
 		return getService()
@@ -425,6 +425,16 @@ public class CourseLocalServiceUtil {
 		java.io.Serializable primaryKeyObj)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getPersistedModel(primaryKeyObj);
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
+		long courseId, long companyId, String screenName, String firstName,
+		String lastName, String emailAddress, int status, boolean andOperator,
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return getService()
+				   .getStudentsFromCourse(courseId, companyId, screenName,
+			firstName, lastName, emailAddress, status, andOperator, start, end,
+			obc);
 	}
 
 	/**

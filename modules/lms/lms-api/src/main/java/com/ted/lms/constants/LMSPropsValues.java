@@ -19,6 +19,8 @@ public class LMSPropsValues {
 	
 	public static final boolean LEARNING_ACTIVITY_COMMENTS_ENABLED = GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.LEARNING_ACTIVITY_COMMENTS_ENABLED));
 	public static final boolean LEARNING_ACTIVITY_CHANGE_VISIBILITY = GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.LEARNING_ACTIVITY_CHANGE_VISIBILITY), true);
+	public static final String[] LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS = PropsUtil.getArray(LMSPropsKeys.LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS);
+	public static final long LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE = GetterUtil.getLong(LMSPropsKeys.LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE, 5242880);
 	
 	public static final String[] PREREQUISITES_MODULE = PropsUtil.getArray(LMSPropsKeys.PREREQUISITES_MODULE);
 	public static final String[] PREREQUISITES_LEARNING_ACTIVITY = PropsUtil.getArray(LMSPropsKeys.PREREQUISITES_LEARNING_ACTIVITY);

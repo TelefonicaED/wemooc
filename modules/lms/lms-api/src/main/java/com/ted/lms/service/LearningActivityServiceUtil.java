@@ -53,7 +53,7 @@ public class LearningActivityServiceUtil {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
@@ -63,7 +63,7 @@ public class LearningActivityServiceUtil {
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, required, tries, passPuntuation,
 			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
-			serviceContext);
+			selectedFileNames, serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity deleteLearningActivity(
@@ -83,6 +83,11 @@ public class LearningActivityServiceUtil {
 	*/
 	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
+	}
+
+	public static String[] getTempFileNames(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().getTempFileNames(groupId);
 	}
 
 	public static com.ted.lms.model.LearningActivity moveDownLearningActivity(
@@ -120,7 +125,8 @@ public class LearningActivityServiceUtil {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
+		long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException,
 			com.liferay.portal.kernel.exception.PortalException {
@@ -131,7 +137,7 @@ public class LearningActivityServiceUtil {
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, required, tries, passPuntuation,
 			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
-			serviceContext);
+			selectedFileNames, removeFileEntryIds, serviceContext);
 	}
 
 	public static LearningActivityService getService() {

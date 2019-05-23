@@ -148,11 +148,6 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	}
 	
 	@Override
-	public boolean canBeSeenResults() {
-		return false;
-	}
-	
-	@Override
 	public String getSpecificResultsPage() {
 		return null;
 	}
@@ -169,6 +164,11 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	
 	@Override
 	public boolean canAccessFinished() {
+		return false;
+	}
+	
+	@Override
+	public boolean hasDocuments() {
 		return false;
 	}
 }

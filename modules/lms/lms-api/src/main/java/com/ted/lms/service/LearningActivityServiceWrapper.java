@@ -45,7 +45,7 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _learningActivityService.addLearningActivity(moduleId, type,
@@ -54,7 +54,7 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 			startDateMinute, useEndExecutionDateCourse, endDateMonth,
 			endDateDay, endDateYear, endDateHour, endDateMinute, required,
 			tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-			commentsActivated, serviceContext);
+			commentsActivated, selectedFileNames, serviceContext);
 	}
 
 	@Override
@@ -77,6 +77,12 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 	@Override
 	public String getOSGiServiceIdentifier() {
 		return _learningActivityService.getOSGiServiceIdentifier();
+	}
+
+	@Override
+	public String[] getTempFileNames(long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.getTempFileNames(groupId);
 	}
 
 	@Override
@@ -121,7 +127,8 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
+		long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException,
 			com.liferay.portal.kernel.exception.PortalException {
@@ -131,7 +138,7 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, required, tries, passPuntuation,
 			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
-			serviceContext);
+			selectedFileNames, removeFileEntryIds, serviceContext);
 	}
 
 	@Override

@@ -1,11 +1,19 @@
 package com.ted.lms.learning.activity.resource.external.web.internal.upgrade.v1_0_0;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.DocumentException;
@@ -18,15 +26,21 @@ import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExt
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityLocalService;
 
+import java.io.InputStream;
 import java.util.List;
 
 public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 
 	public UpgradeLearningActivityExtraContent(LearningActivityLocalService learningActivityLocalService, 
-												ReleaseLocalService releaseLocalService, QuestionLocalService questionLocalService) {
+												ReleaseLocalService releaseLocalService, QuestionLocalService questionLocalService,
+												AssetEntryLocalService assetEntryLocalService, DLFileEntryLocalService dlFileEntryLocalService,
+												UserLocalService userLocalService) {
 		this.learningActivityLocalService = learningActivityLocalService;
 		this.releaseLocalService = releaseLocalService;
 		this.questionLocalService = questionLocalService;
+		this.assetEntryLocalService = assetEntryLocalService;
+		this.dlFileEntryLocalService = dlFileEntryLocalService;
+		this.userLocalService = userLocalService;
 	}
 	
 	@Override
@@ -49,6 +63,9 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 			Element questionFeedbackElement = null;
 			Element secondElement = null;
 			Element teamElement = null;
+			DLFileEntry fileEntry = null;
+			AssetEntry entry = null;
+			long defaultUserId = 0;
 			
 			for(LearningActivity learningActivity: listLearningActivities) {
 				if(Validator.isNotNull(learningActivity.getExtraContent())) {
@@ -69,23 +86,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						if(videoControlEnabled != null) {
 							resourceExternalContent.put(ResourceExternalConstants.JSON_VIDEO_CONTROL, Boolean.parseBoolean(videoControlEnabled.getText()));
 						}
-						
-						assetEntry = null;
-						int i = 0;
-						JSONArray additionalFiles = JSONFactoryUtil.createJSONArray();
-						resourceExternalContent.put(ResourceExternalConstants.JSON_ADDITIONAL_FILES, additionalFiles);
-						
-						do {
-							nameDocument = "document";
-							if(i > 0) {
-								nameDocument += (i-1);
-							}
-							assetEntry = rootElement.element(nameDocument);
-							if(assetEntry != null) {
-								additionalFiles.put(Long.parseLong(assetEntry.attributeValue("id")));
-							}
-						}while(assetEntry!= null);
-						
+	
 						correctModeElement = rootElement.element("correctMode");
 						if(correctModeElement != null) {
 							resourceExternalContent.put(ResourceExternalConstants.JSON_CORRECT_MODE, Integer.parseInt(correctModeElement.getText()));
@@ -122,6 +123,37 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 							activityExtraContent.put(LearningActivityConstants.JSON_TEAM, Long.parseLong(teamElement.getText()));
 						}
 						
+						assetEntry = null;
+						int i = 0;
+						
+						//TODO Cambiar para que los documentos se guarden como attachments
+						
+						JSONArray additionalFiles = JSONFactoryUtil.createJSONArray();
+						resourceExternalContent.put(ResourceExternalConstants.JSON_ADDITIONAL_FILES, additionalFiles);
+						
+						do {
+							nameDocument = "document";
+							if(i > 0) {
+								nameDocument += (i-1);
+							}
+							assetEntry = rootElement.element(nameDocument);
+							if(assetEntry != null) {
+								entry = assetEntryLocalService.getAssetEntry(Long.parseLong(assetEntry.attributeValue("id")));
+								fileEntry = dlFileEntryLocalService.getDLFileEntry(entry.getClassPK());
+
+								InputStream inputStream = fileEntry.getContentStream();
+								String mimeType = fileEntry.getMimeType();
+								
+								defaultUserId = userLocalService.getDefaultUserId(learningActivity.getCompanyId());
+
+								learningActivityLocalService.addAttachment(defaultUserId, learningActivity, fileEntry.getFileName(), inputStream, mimeType);
+
+								if (fileEntry != null) {
+									dlFileEntryLocalService.deleteDLFileEntry(fileEntry);
+								}
+							}
+						}while(assetEntry!= null);
+						
 						learningActivity.setExtraContent(activityExtraContent.toJSONString());
 						learningActivityLocalService.updateLearningActivity(learningActivity);
 						
@@ -136,4 +168,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 	private final LearningActivityLocalService learningActivityLocalService;
 	private final QuestionLocalService questionLocalService;
 	private final ReleaseLocalService releaseLocalService;
+	private final AssetEntryLocalService assetEntryLocalService;
+	private final DLFileEntryLocalService dlFileEntryLocalService;
+	private final UserLocalService userLocalService;
 }

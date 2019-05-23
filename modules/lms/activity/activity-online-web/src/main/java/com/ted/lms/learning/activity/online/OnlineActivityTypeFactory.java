@@ -87,8 +87,8 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	}
 	
 	@Override
-	public boolean canBeSeenResults() {
-		return true;
+	public String getSpecificResultsPage() {
+		return "/online/activity/results.jsp";
 	}
 	
 	@Reference(unbind = "-")

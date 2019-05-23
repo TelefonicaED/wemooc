@@ -1,6 +1,9 @@
 package com.ted.lms.learning.activity.resource.external.web.internal.upgrade;
 
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.portal.kernel.service.ReleaseLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.internal.upgrade.v1_0_0.UpgradeLearningActivityExtraContent;
@@ -18,7 +21,7 @@ public class ResourceExternalServiceRegistrator implements UpgradeStepRegistrato
 	@Override
 	public void register(Registry registry) {
 		registry.register("0.0.0", "1.0.0", new UpgradeLearningActivityExtraContent(learningActivityLocalService, releaseLocalService,
-				questionLocalService));
+				questionLocalService, assetEntryLocalService, dlFileEntryLocalService, userLocalService));
 	}
 	
 	@Reference(unbind = "-")
@@ -36,7 +39,25 @@ public class ResourceExternalServiceRegistrator implements UpgradeStepRegistrato
 		this.questionLocalService = questionLocalService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setAssetEntryLocalService(AssetEntryLocalService assetEntryLocalService) {
+		this.assetEntryLocalService = assetEntryLocalService;
+	}
+	
+	@Reference(unbind = "-")
+	protected void setDLFileEntryLocalService(DLFileEntryLocalService dlFileEntryLocalService) {
+		this.dlFileEntryLocalService = dlFileEntryLocalService;
+	}
+	
+	@Reference(unbind = "-")
+	protected void setUserLocalService(UserLocalService userLocalService) {
+		this.userLocalService = userLocalService;
+	}
+	
 	private LearningActivityLocalService learningActivityLocalService;
 	private ReleaseLocalService releaseLocalService;
 	private QuestionLocalService questionLocalService;
+	private AssetEntryLocalService assetEntryLocalService;
+	private DLFileEntryLocalService dlFileEntryLocalService;
+	private UserLocalService userLocalService;
 }

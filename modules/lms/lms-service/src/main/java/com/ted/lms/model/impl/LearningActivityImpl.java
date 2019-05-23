@@ -18,8 +18,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.liferay.document.library.kernel.util.comparator.RepositoryModelTitleComparator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -27,6 +29,8 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -34,6 +38,7 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
@@ -41,6 +46,7 @@ import com.ted.lms.model.Module;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.security.permission.resource.LearningActivityPermission;
 import com.ted.lms.service.ModuleLocalServiceUtil;
+import com.ted.lms.service.util.LearningActivityAttachmentsUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
@@ -235,4 +241,25 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 		
 		return false;			
 	}
+	
+	@Override
+	public List<FileEntry> getAttachmentsFileEntries() throws PortalException {
+		return PortletFileRepositoryUtil.getPortletFileEntries(
+			getGroupId(), getAttachmentsFolderId(),
+			WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, new RepositoryModelTitleComparator<>(true));
+	}
+	
+	@Override
+	public long getAttachmentsFolderId() throws PortalException {
+		if (_attachmentsFolderId > 0) {
+			return _attachmentsFolderId;
+		}
+
+		_attachmentsFolderId = LearningActivityAttachmentsUtil.getFolderId(getGroupId(), getUserId(), getActId());
+
+		return _attachmentsFolderId;
+	}
+	
+	private long _attachmentsFolderId;
 }

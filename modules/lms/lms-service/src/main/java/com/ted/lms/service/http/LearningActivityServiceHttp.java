@@ -230,7 +230,7 @@ public class LearningActivityServiceHttp {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
@@ -244,7 +244,7 @@ public class LearningActivityServiceHttp {
 					useEndExecutionDateCourse, endDateMonth, endDateDay,
 					endDateYear, endDateHour, endDateMinute, required, tries,
 					passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-					commentsActivated, serviceContext);
+					commentsActivated, selectedFileNames, serviceContext);
 
 			Object returnObj = null;
 
@@ -279,7 +279,8 @@ public class LearningActivityServiceHttp {
 		int endDateMinute, boolean required, int tries, double passPuntuation,
 		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
 		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated,
+		boolean commentsActivated, String[] selectedFileNames,
+		long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException,
 			com.liferay.portal.kernel.exception.PortalException {
@@ -294,7 +295,8 @@ public class LearningActivityServiceHttp {
 					startDateMinute, useEndExecutionDateCourse, endDateMonth,
 					endDateDay, endDateYear, endDateHour, endDateMinute,
 					required, tries, passPuntuation, feedbackCorrectMap,
-					feedbackNoCorrectMap, commentsActivated, serviceContext);
+					feedbackNoCorrectMap, commentsActivated, selectedFileNames,
+					removeFileEntryIds, serviceContext);
 
 			Object returnObj = null;
 
@@ -348,6 +350,37 @@ public class LearningActivityServiceHttp {
 		}
 	}
 
+	public static String[] getTempFileNames(HttpPrincipal httpPrincipal,
+		long groupId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
+					"getTempFileNames", _getTempFileNamesParameterTypes8);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (String[])returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(LearningActivityServiceHttp.class);
 	private static final Class<?>[] _updateLearningActivityParameterTypes0 = new Class[] {
 			com.ted.lms.model.LearningActivity.class
@@ -369,7 +402,7 @@ public class LearningActivityServiceHttp {
 			boolean.class, int.class, int.class, int.class, int.class, int.class,
 			boolean.class, int.class, int.class, int.class, int.class, int.class,
 			boolean.class, int.class, double.class, java.util.Map.class,
-			java.util.Map.class, boolean.class,
+			java.util.Map.class, boolean.class, String[].class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateLearningActivityParameterTypes6 = new Class[] {
@@ -377,10 +410,13 @@ public class LearningActivityServiceHttp {
 			int.class, int.class, int.class, int.class, int.class, boolean.class,
 			int.class, int.class, int.class, int.class, int.class, boolean.class,
 			int.class, double.class, java.util.Map.class, java.util.Map.class,
-			boolean.class,
+			boolean.class, String[].class, long[].class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _getActivitiesParameterTypes7 = new Class[] {
+			long.class
+		};
+	private static final Class<?>[] _getTempFileNamesParameterTypes8 = new Class[] {
 			long.class
 		};
 }

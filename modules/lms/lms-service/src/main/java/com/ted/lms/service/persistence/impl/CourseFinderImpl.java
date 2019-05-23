@@ -6,11 +6,13 @@ import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
+import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
@@ -35,6 +37,7 @@ import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.lms.util.LMSUtil;
 
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -851,6 +854,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	public List<User> findStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
 			long[] teamIds,boolean andOperator, int start, int end,OrderByComparator obc){
 		Session session = null;
+		
 		try{
 			
 			/** Para la query es necesario si no es null o vacío que añade los porcentajes, y si es vacío ponerlo a null*/
@@ -864,7 +868,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				log.debug("order: " + obc != null ? obc.toString() : "null");
 			}
 			
-			session = openSession();
+			session = sessionFactory.openSession();
 			
 			String sql = customSQL.get(getClass(), FIND_STUDENTS);
 			
@@ -905,7 +909,6 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				log.debug("emailAddress: " + emailAddress);	
 			}
 			
-			
 			List<User> listUsers = (List<User>) q.list();
 			return listUsers;
 			
@@ -918,7 +921,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	    return new ArrayList<User>();
 	}
 	
-	public long countStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds,
+	public int countStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds,
 			boolean andOperator){
 		Session session = null;
 		try{
@@ -1075,4 +1078,9 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	private static final String PARAM_GROUP_ID = "groupId";
 	private static final String PARAM_STATUS = "status";
 	private static final String PARAM_PARENT_COURSE_ID = "parentCourseId";
+	
+	private SessionFactory sessionFactory = (SessionFactory) PortalBeanLocatorUtil.locate(SESSION_FACTORY);
+	
+	private static final String SESSION_FACTORY = "liferaySessionFactory";
+
 }

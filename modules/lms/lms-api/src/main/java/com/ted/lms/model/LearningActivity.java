@@ -88,4 +88,10 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 	public boolean isLocked(com.liferay.portal.kernel.model.User user,
 		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries()
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public long getAttachmentsFolderId()
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

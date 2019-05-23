@@ -30,5 +30,7 @@ public interface CalificationType {
 	public double getMaxValue();
 	
 	public String getSuffix();
+	
+	public double getResultBase100(ActionRequest actionRequest) throws PortalException;
 
 }
