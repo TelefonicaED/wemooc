@@ -1040,18 +1040,29 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
 	 * @return
 	 */
-	public int countStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, boolean andOperator){
-		return courseFinder.countStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, andOperator);
+	public int countStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
+			LinkedHashMap<String,Object> params, boolean andOperator){
+		return courseFinder.countStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, params, andOperator);
+	}
+	
+	public int countStudentsFromCourse(long courseId, long companyId, String keywords, int status, 
+			LinkedHashMap<String,Object> params){
+		return courseFinder.countStudents(courseId, companyId, keywords, keywords, keywords, keywords, status, null, params, false);
 	}
 	
 	public int countStudentsFromCourse(long courseId, long companyId) {
-		return countStudentsFromCourse(courseId, companyId, null, null, null, null, WorkflowConstants.STATUS_APPROVED, true);
+		return countStudentsFromCourse(courseId, companyId, null, null, null, null, WorkflowConstants.STATUS_APPROVED, null, true);
 	}
 	
-	public List<User> getStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, boolean andOperator, int start,
-			int end, OrderByComparator obc){
-		return courseFinder.findStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, andOperator, start, end, obc);
+	public List<User> getStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
+			LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc){
+		return courseFinder.findStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, params, andOperator, start, end, obc);
 			
+	}
+	
+	public List<User> getStudentsFromCourse(long courseId, long companyId, String keywords, int status, 
+			LinkedHashMap<String,Object> params, int start, int end, OrderByComparator obc){
+		return courseFinder.findStudents(courseId, companyId, keywords, keywords, keywords, keywords, status, null, params, false, start, end, obc);
 	}
 	
 	@Override

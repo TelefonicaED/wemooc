@@ -122,6 +122,14 @@ public class CourseLocalServiceUtil {
 		return getService().countStudentsFromCourse(courseId, companyId);
 	}
 
+	public static int countStudentsFromCourse(long courseId, long companyId,
+		String keywords, int status,
+		java.util.LinkedHashMap<String, Object> params) {
+		return getService()
+				   .countStudentsFromCourse(courseId, companyId, keywords,
+			status, params);
+	}
+
 	/**
 	* Usar este método para contar los estudiantes de un curso
 	*
@@ -137,10 +145,11 @@ public class CourseLocalServiceUtil {
 	*/
 	public static int countStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
-		String emailAddress, int status, boolean andOperator) {
+		String emailAddress, int status,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
 		return getService()
 				   .countStudentsFromCourse(courseId, companyId, screenName,
-			firstName, lastName, emailAddress, status, andOperator);
+			firstName, lastName, emailAddress, status, params, andOperator);
 	}
 
 	/**
@@ -428,13 +437,23 @@ public class CourseLocalServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
+		long courseId, long companyId, String keywords, int status,
+		java.util.LinkedHashMap<String, Object> params, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return getService()
+				   .getStudentsFromCourse(courseId, companyId, keywords,
+			status, params, start, end, obc);
+	}
+
+	public static java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
 		long courseId, long companyId, String screenName, String firstName,
-		String lastName, String emailAddress, int status, boolean andOperator,
+		String lastName, String emailAddress, int status,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
 		return getService()
 				   .getStudentsFromCourse(courseId, companyId, screenName,
-			firstName, lastName, emailAddress, status, andOperator, start, end,
-			obc);
+			firstName, lastName, emailAddress, status, params, andOperator,
+			start, end, obc);
 	}
 
 	/**

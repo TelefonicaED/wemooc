@@ -76,6 +76,10 @@ public interface LearningActivityService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LearningActivity> getActivities(long moduleId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivity> getActivitiesNotTypeId(long moduleId,
+		long typeId);
+
 	/**
 	* Returns the OSGi service identifier.
 	*

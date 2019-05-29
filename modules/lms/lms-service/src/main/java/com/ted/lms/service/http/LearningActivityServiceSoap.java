@@ -248,6 +248,21 @@ public class LearningActivityServiceSoap {
 		}
 	}
 
+	public static com.ted.lms.model.LearningActivitySoap[] getActivitiesNotTypeId(
+		long moduleId, long typeId) throws RemoteException {
+		try {
+			java.util.List<com.ted.lms.model.LearningActivity> returnValue = LearningActivityServiceUtil.getActivitiesNotTypeId(moduleId,
+					typeId);
+
+			return com.ted.lms.model.LearningActivitySoap.toSoapModels(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static String[] getTempFileNames(long groupId)
 		throws RemoteException {
 		try {

@@ -99,6 +99,10 @@ public class LearningActivityLocalServiceImpl
 		return learningActivityPersistence.countByModuleId(moduleId);
 	}
 	
+	public List<LearningActivity> getLearningActivitiesNotTypeId(long moduleId, long typeId){
+		return learningActivityPersistence.findByModuleIdNotTypeId(moduleId, typeId);
+	}
+	
 	public void deleteLearningActivities(long moduleId) {
 		List<LearningActivity> listLearningActivities = learningActivityPersistence.findByModuleId(moduleId);
 		for(LearningActivity learningActivity: listLearningActivities) {

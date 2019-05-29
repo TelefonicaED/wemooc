@@ -21,7 +21,6 @@ import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegist
 import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.util.ResourceExternalPrefsPropsValues;
-import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
 import java.util.Iterator;
@@ -72,7 +71,7 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 		
 		super.setExtraContent(actionRequest);
 		
-		String video = ParamUtil.getString(actionRequest,"video");
+		video = ParamUtil.getString(actionRequest,"video");
 		
 		int maxfile = ResourceExternalPrefsPropsValues.getMaxFiles(themeDisplay.getCompanyId());
 		

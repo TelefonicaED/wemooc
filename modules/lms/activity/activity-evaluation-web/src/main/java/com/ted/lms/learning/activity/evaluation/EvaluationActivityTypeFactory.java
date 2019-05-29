@@ -11,8 +11,6 @@ import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
-import com.ted.lms.service.LearningActivityResultLocalService;
-
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -36,6 +34,10 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	@Override
 	public long getType() {
 		return EvaluationConstants.TYPE;
+	}
+	
+	public EvaluationActivityType getEvaluationActivityType(LearningActivity activity) throws PortalException {
+		return new EvaluationActivityType(activity);
 	}
 	
 	@Override
@@ -64,11 +66,6 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	}
 	
 	@Override
-	public String getURLSpecificContent() {
-		return "/evaluation/activity/edit.jsp";
-	}
-	
-	@Override
 	public String getIconCssClass() {
 		return "activity-evaluation";
 	}
@@ -76,6 +73,11 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	@Override
 	public boolean isScoreConfigurable() {
 		return true;
+	}
+	
+	@Override
+	public String getURLSpecificContent() {
+		return "/edit.jsp";
 	}
 	
 	@Reference(unbind = "-")

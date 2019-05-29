@@ -357,6 +357,10 @@
 			<finder-column name="moduleId" />
 			<finder-column name="priority" comparator="&lt;"/>
 		</finder>
+		<finder name="ModuleIdNotTypeId" return-type="Collection">
+			<finder-column name="moduleId" />
+			<finder-column name="typeId" comparator="!=" />
+		</finder>
 		<!-- References -->
 
 		<reference entity="Company" package-path="com.liferay.portal" />

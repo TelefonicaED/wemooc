@@ -97,10 +97,10 @@ public class TestActivityCorrectionMVCRenderCommand implements MVCRenderCommand 
 				null,  "no-results");
 
 		List<User> users = CourseLocalServiceUtil.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
-				WorkflowConstants.STATUS_APPROVED, andOperator, userSearchContainer.getStart(), userSearchContainer.getEnd(), obc);
+				WorkflowConstants.STATUS_APPROVED, null, andOperator, userSearchContainer.getStart(), userSearchContainer.getEnd(), obc);
 
 		int totalUsers = CourseLocalServiceUtil.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
-				WorkflowConstants.STATUS_APPROVED, andOperator);
+				WorkflowConstants.STATUS_APPROVED, null, andOperator);
 		
 		userSearchContainer.setResults(users);
 		userSearchContainer.setTotal(totalUsers);

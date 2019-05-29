@@ -27,8 +27,12 @@ LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearni
 	<liferay-util:param name="courseId" value="<%=String.valueOf(courseId) %>" />
 </liferay-util:include>
 
-<liferay-editor:editor contents='<%=result != null ? HtmlUtil.escape(result.getComments()) : "" %>' editorName="alloyeditor" name="commentsEditor" 
-	placeholder="comments" onChangeMethod='changeComments'/>
+
+<div class="comments">
+	<label for="<portlet:namespace />commentsEditor"><liferay-ui:message key="comments" /></label>
+	<liferay-editor:editor contents='<%=result != null ? HtmlUtil.escape(result.getComments()) : "" %>' editorName="alloyeditor" name="commentsEditor" 
+		placeholder="write-here-your-comments" onChangeMethod='changeComments'/>
+</div>
 	
 <aui:input name="comments" type="hidden" value='<%=result != null ? HtmlUtil.escape(result.getComments()) : "" %>'/>
 

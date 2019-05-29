@@ -300,11 +300,11 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			List<FileEntry> listDocuments = null;
 			try {
 				listDocuments = activity.getAttachmentsFileEntries();
-				renderRequest.setAttribute("documents", listDocuments);
 			} catch (PortalException e) {
 				e.printStackTrace();
 				listDocuments = new ArrayList<FileEntry>();
 			}
+			renderRequest.setAttribute("documents", listDocuments);
 
 			renderRequest.setAttribute("finishTryURL", finishTryURL);
 			

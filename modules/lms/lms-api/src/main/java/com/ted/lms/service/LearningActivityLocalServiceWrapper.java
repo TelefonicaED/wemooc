@@ -360,6 +360,13 @@ public class LearningActivityLocalServiceWrapper
 	}
 
 	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getLearningActivitiesNotTypeId(
+		long moduleId, long typeId) {
+		return _learningActivityLocalService.getLearningActivitiesNotTypeId(moduleId,
+			typeId);
+	}
+
+	@Override
 	public int getLearningActivitiesOfModuleCount(long moduleId) {
 		return _learningActivityLocalService.getLearningActivitiesOfModuleCount(moduleId);
 	}

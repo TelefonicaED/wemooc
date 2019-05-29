@@ -62,6 +62,10 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 
 	public java.util.Calendar getEndDateCalendar();
 
+	public long getTeamId();
+
+	public LearningActivityTypeFactory getLearningActivityTypeFactory();
+
 	public String getURLView(
 		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay);
 

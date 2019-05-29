@@ -296,6 +296,10 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public int getLearningActivitiesCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivity> getLearningActivitiesNotTypeId(
+		long moduleId, long typeId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getLearningActivitiesOfModuleCount(long moduleId);
 
 	/**

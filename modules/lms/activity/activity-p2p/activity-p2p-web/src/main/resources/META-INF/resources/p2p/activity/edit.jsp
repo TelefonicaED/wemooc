@@ -137,28 +137,30 @@ String timeFormat = DateUtil.isFormatAmPm(locale) ? "am-pm" : "24-hour";
 			</div>
 		</liferay-frontend:fieldset>
 	</div>
-	<%if(P2PPropsValues.P2P_TEAM_ASSIGNATIONS){%>
+	<%
+		if(OnlinePropsValues.P2P_TEAM_ASSIGNATIONS){
+	%>
 		<div class="col-md-6">
 			<aui:field-wrapper label="learning-activity.p2p.select-assignation-type" >
 				<aui:input inlineLabel="right" name="assignationType" type="radio" value="course" label="learning-activity.p2p.course-assignation" 
-					checked='<%= p2pActivityType == null || "course".equals(p2pActivityType.getAssignationType()) %>' 
+					checked='<%=p2pActivityType == null || "course".equals(p2pActivityType.getAssignationType())%>' 
 					helpMessage="learning-activity.p2p.course-assignation.help-message" disabled="<%=!canBeEdited%>"/>
 				<aui:input inlineLabel="right"  name="assignationType" type="radio" value="team" label="learning-activity.p2p.team-assignation"  
-					checked='<%= p2pActivityType != null && "team".equals(p2pActivityType.getAssignationType()) %>' 
+					checked='<%=p2pActivityType != null && "team".equals(p2pActivityType.getAssignationType())%>' 
 					helpMessage="learning-activity.p2p.team-assignation.help-message" disabled="<%=!canBeEdited%>"/>
 			</aui:field-wrapper>
 		</div>
 	<%
-	}
+		}
 	%>
 </div>
 <div class="row">
 	<div class="col-md-4">
-		<aui:input type="checkbox" name="anonimous" label="learning-activity.p2p.anonimous" value="<%=p2pActivityType != null && p2pActivityType.getAnonimous() %>" 
+		<aui:input type="checkbox" name="anonimous" label="learning-activity.p2p.anonimous" value="<%=p2pActivityType != null && p2pActivityType.getAnonimous()%>" 
 			helpMessage="learning-activity.p2p.anonimous.help-message" disabled="<%=!canBeEdited%>"/>
 	</div>
 	<div class="col-md-4">
-		<aui:input type="checkbox" name="result" label="learning-activity.p2p.result" value="<%=p2pActivityType != null && p2pActivityType.getResult() %>" 
+		<aui:input type="checkbox" name="result" label="learning-activity.p2p.result" value="<%=p2pActivityType != null && p2pActivityType.getResult()%>" 
 			helpMessage="learning-activity.p2p.result.help-message" disabled="<%=!canBeEdited%>"/>
 	</div>
 	<div class="col-md-4">	
@@ -166,18 +168,18 @@ String timeFormat = DateUtil.isFormatAmPm(locale) ? "am-pm" : "24-hour";
 			helpMessage="learning-activity.p2p.file-optional.help-message" disabled="<%=!canBeEdited%>" />
 	</div>
 	<div class="col-md-4">	
-		<aui:input type="checkbox" name="emailAnonimous" label="learning-activity.p2p.email-anonimous" value="<%=p2pActivityType != null && p2pActivityType.getEmailAnonimous() %>" 
+		<aui:input type="checkbox" name="emailAnonimous" label="learning-activity.p2p.email-anonimous" value="<%=p2pActivityType != null && p2pActivityType.getEmailAnonimous()%>" 
 			helpMessage="learning-activity.p2p.email-anonimous.help-message" disabled="<%=!canBeEdited%>"/>
 	</div>
 	<div class="col-md-4">
-		<aui:input type="checkbox" name="askForP2PActivities" label="learning-activity.p2p.ask-for-p2p-activities" value="<%=p2pActivityType != null && p2pActivityType.getAskForP2PActivities() %>" 
+		<aui:input type="checkbox" name="askForP2PActivities" label="learning-activity.p2p.ask-for-p2p-activities" value="<%=p2pActivityType != null && p2pActivityType.getAskForP2PActivities()%>" 
 			helpMessage="learning-activity.p2p.ask-for-p2p-activities.help-message" disabled="<%=!canBeEdited%>"/>
 	</div>
 </div>
 <script>
 	function <portlet:namespace />addEvaluationCriteria(){
 		var container = document.getElementById("<portlet:namespace />texts");
-		var numberQuestion = parseInt('<%=P2PPropsValues.NUM_EVALUATION_CRITERIA%>');
+		var numberQuestion = parseInt('<%=OnlinePropsValues.NUM_EVALUATION_CRITERIA%>');
 		
 		if(container){
 			var number=-1;

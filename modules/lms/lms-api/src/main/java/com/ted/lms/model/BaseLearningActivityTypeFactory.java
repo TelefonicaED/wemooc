@@ -102,6 +102,10 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 		return "puntuation-passed";
 	}
 	
+	public String getScoreConfigurableHelpMessageProperty() {
+		return "puntuation-passed.help-message";
+	}
+	
 	@Override
 	public boolean isTriesConfigurable() {
 		return false;

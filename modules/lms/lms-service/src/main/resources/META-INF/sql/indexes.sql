@@ -13,6 +13,7 @@ create index IX_5238B462 on LMS_LearningActivity (groupId, priority);
 create index IX_20DCD39D on LMS_LearningActivity (groupId, required);
 create index IX_52D8FB13 on LMS_LearningActivity (moduleId, priority);
 create index IX_217D1A4E on LMS_LearningActivity (moduleId, required);
+create index IX_5FD18E64 on LMS_LearningActivity (moduleId, typeId);
 create index IX_F69CFF89 on LMS_LearningActivity (typeId);
 create index IX_653F1D54 on LMS_LearningActivity (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_78D6E8D6 on LMS_LearningActivity (uuid_[$COLUMN_LENGTH:75$], groupId);

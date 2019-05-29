@@ -102,26 +102,11 @@
 					</div>
 				</c:if>
 				<c:if test="${learningActivityTypeFactory.isScoreConfigurable() }">
-					<div class="col-md-4">
-						<div class="row">
-							<div class="col-md-6">
-								<aui:input name="passPuntuationToggle" label="${learningActivityTypeFactory.scoreConfigurableProperty }" 
-									type="toggle-switch" value="${activity.passPuntuation > 0 }" />
-							</div>
-							<div class="col-md-6">
-								<aui:input name="passPuntuation" label="" type="text" suffix="%" disabled="${empty activity || activity.passPuntuation == 0 }"
-									value="${not empty activity ? activity.passPuntuation : learningActivityTypeFactory.defaultScore }"/>
-							</div>
+						<div class="col-md-6">
+							<aui:input name="passPuntuation" label="${learningActivityTypeFactory.scoreConfigurableProperty }" type="text" suffix="%" 
+								helpMessage="${learningActivityTypeFactory.scoreConfigurableHelpMessageProperty }" 
+								value="${not empty activity ? activity.passPuntuation : learningActivityTypeFactory.defaultScore }"/>
 						</div>
-						<script>
-							$('#<portlet:namespace />passPuntuationToggle').on(
-								'change',
-								function() {
-									$('#<portlet:namespace />passPuntuation').prop("disabled", !$('#<portlet:namespace />passPuntuation').prop("disabled"));
-								}
-							);
-						</script>
-					</div>
 				</c:if>
 				<c:if test="${not empty learningActivityTypeFactory.getURLSpecificContent() }">
 					<liferay-util:include page="${learningActivityTypeFactory.getURLSpecificContent()}" portletId="${learningActivityTypeFactory.getPortletId()}" >
@@ -342,17 +327,16 @@
 			<h3 class="sheet-subtitle"><liferay-ui:message key="categorization" /></h3>
 			<div class="row">
 				<div class="col-md-6">
+					<liferay-asset:asset-tags-selector
+						className="<%= LearningActivity.class.getName() %>"
+						classPK="${activity.actId }"
+					/>
+				</div>
+				<div class="col-md-6">
 					<liferay-asset:asset-categories-selector
 						className="<%= LearningActivity.class.getName() %>"
 						classPK="${activity.actId }"
 						
-					/>
-				</div>
-			
-				<div class="col-md-6">
-					<liferay-asset:asset-tags-selector
-						className="<%= LearningActivity.class.getName() %>"
-						classPK="${activity.actId }"
 					/>
 				</div>
 			</div>

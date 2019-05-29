@@ -86,10 +86,11 @@ public interface CourseFinder {
 	public java.util.List<com.liferay.portal.kernel.model.User> findStudents(
 		long courseId, long companyId, String screenName, String firstName,
 		String lastName, String emailAddress, int status, long[] teamIds,
-		boolean andOperator, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator obc);
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
+		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc);
 
 	public int countStudents(long courseId, long companyId, String screenName,
 		String firstName, String lastName, String emailAddress, int status,
-		long[] teamIds, boolean andOperator);
+		long[] teamIds, java.util.LinkedHashMap<String, Object> params,
+		boolean andOperator);
 }

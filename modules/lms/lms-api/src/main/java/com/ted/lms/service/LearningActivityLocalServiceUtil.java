@@ -343,6 +343,11 @@ public class LearningActivityLocalServiceUtil {
 		return getService().getLearningActivitiesCount();
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getLearningActivitiesNotTypeId(
+		long moduleId, long typeId) {
+		return getService().getLearningActivitiesNotTypeId(moduleId, typeId);
+	}
+
 	public static int getLearningActivitiesOfModuleCount(long moduleId) {
 		return getService().getLearningActivitiesOfModuleCount(moduleId);
 	}

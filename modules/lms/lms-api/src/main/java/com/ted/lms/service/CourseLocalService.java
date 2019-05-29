@@ -128,6 +128,9 @@ public interface CourseLocalService extends BaseLocalService,
 
 	public int countStudentsFromCourse(long courseId, long companyId);
 
+	public int countStudentsFromCourse(long courseId, long companyId,
+		String keywords, int status, LinkedHashMap<String, Object> params);
+
 	/**
 	* Usar este método para contar los estudiantes de un curso
 	*
@@ -143,7 +146,8 @@ public interface CourseLocalService extends BaseLocalService,
 	*/
 	public int countStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
-		String emailAddress, int status, boolean andOperator);
+		String emailAddress, int status, LinkedHashMap<String, Object> params,
+		boolean andOperator);
 
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
@@ -373,9 +377,14 @@ public interface CourseLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getStudentsFromCourse(long courseId, long companyId,
+		String keywords, int status, LinkedHashMap<String, Object> params,
+		int start, int end, OrderByComparator obc);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<User> getStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
-		String emailAddress, int status, boolean andOperator, int start,
-		int end, OrderByComparator obc);
+		String emailAddress, int status, LinkedHashMap<String, Object> params,
+		boolean andOperator, int start, int end, OrderByComparator obc);
 
 	/**
 	* Método para buscar cursos

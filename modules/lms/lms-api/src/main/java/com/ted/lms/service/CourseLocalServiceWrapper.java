@@ -113,6 +113,14 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		return _courseLocalService.countStudentsFromCourse(courseId, companyId);
 	}
 
+	@Override
+	public int countStudentsFromCourse(long courseId, long companyId,
+		String keywords, int status,
+		java.util.LinkedHashMap<String, Object> params) {
+		return _courseLocalService.countStudentsFromCourse(courseId, companyId,
+			keywords, status, params);
+	}
+
 	/**
 	* Usar este método para contar los estudiantes de un curso
 	*
@@ -129,9 +137,11 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	@Override
 	public int countStudentsFromCourse(long courseId, long companyId,
 		String screenName, String firstName, String lastName,
-		String emailAddress, int status, boolean andOperator) {
+		String emailAddress, int status,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
 		return _courseLocalService.countStudentsFromCourse(courseId, companyId,
-			screenName, firstName, lastName, emailAddress, status, andOperator);
+			screenName, firstName, lastName, emailAddress, status, params,
+			andOperator);
 	}
 
 	/**
@@ -448,12 +458,22 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 
 	@Override
 	public java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
+		long courseId, long companyId, String keywords, int status,
+		java.util.LinkedHashMap<String, Object> params, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return _courseLocalService.getStudentsFromCourse(courseId, companyId,
+			keywords, status, params, start, end, obc);
+	}
+
+	@Override
+	public java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
 		long courseId, long companyId, String screenName, String firstName,
-		String lastName, String emailAddress, int status, boolean andOperator,
+		String lastName, String emailAddress, int status,
+		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
 		return _courseLocalService.getStudentsFromCourse(courseId, companyId,
-			screenName, firstName, lastName, emailAddress, status, andOperator,
-			start, end, obc);
+			screenName, firstName, lastName, emailAddress, status, params,
+			andOperator, start, end, obc);
 	}
 
 	/**

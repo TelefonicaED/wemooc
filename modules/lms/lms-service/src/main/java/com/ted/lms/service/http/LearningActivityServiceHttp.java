@@ -350,12 +350,40 @@ public class LearningActivityServiceHttp {
 		}
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getActivitiesNotTypeId(
+		HttpPrincipal httpPrincipal, long moduleId, long typeId) {
+		try {
+			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
+					"getActivitiesNotTypeId",
+					_getActivitiesNotTypeIdParameterTypes8);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					moduleId, typeId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.util.List<com.ted.lms.model.LearningActivity>)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static String[] getTempFileNames(HttpPrincipal httpPrincipal,
 		long groupId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
-					"getTempFileNames", _getTempFileNamesParameterTypes8);
+					"getTempFileNames", _getTempFileNamesParameterTypes9);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, groupId);
 
@@ -416,7 +444,10 @@ public class LearningActivityServiceHttp {
 	private static final Class<?>[] _getActivitiesParameterTypes7 = new Class[] {
 			long.class
 		};
-	private static final Class<?>[] _getTempFileNamesParameterTypes8 = new Class[] {
+	private static final Class<?>[] _getActivitiesNotTypeIdParameterTypes8 = new Class[] {
+			long.class, long.class
+		};
+	private static final Class<?>[] _getTempFileNamesParameterTypes9 = new Class[] {
 			long.class
 		};
 }

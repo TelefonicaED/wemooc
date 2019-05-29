@@ -7,4 +7,11 @@ public class OnlineConstants {
 	
 	public static final long TYPE = 6;
 	public static final int DEFAULT_TRIES = 1;
+	
+	public static final boolean DEFAULT_INCLUDE_FILE = false;
+	public static final boolean DEFAULT_RICH_TEXT = false;
+	
+	public static final String TRY_FILE_XML = "file";
+	public static final String TRY_TEXT_XML= "text";
+	public static final String TRY_RICH_TEXT_XML = "richText";
 }

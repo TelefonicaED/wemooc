@@ -69,6 +69,12 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 		return _learningActivityService.getActivities(moduleId);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getActivitiesNotTypeId(
+		long moduleId, long typeId) {
+		return _learningActivityService.getActivitiesNotTypeId(moduleId, typeId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

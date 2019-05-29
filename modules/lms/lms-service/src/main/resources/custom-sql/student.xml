@@ -2,12 +2,12 @@
 	<sql id="com.ted.lms.service.persistence.CourseFinder.findStudents">
 		<![CDATA[   			
 			SELECT 
-				DISTINCT u.*
+				DISTINCT User_.*
 			FROM 
-				user_ u
+				User_
 			INNER JOIN 
 				users_groups ug 
-					ON u.userId = ug.userId
+					ON User_.userId = ug.userId
 			INNER JOIN 
 				lms_course co 
 					ON co.groupCreatedId = ug.groupId
@@ -18,7 +18,9 @@
 				usergrouprole urE 
 					ON ug.userId = urE.userId AND urE.groupId = ug.groupId AND urE.roleId = ?
 			[$JOINTEAM$]
+			[$JOIN$]
 			WHERE 
+				[$WHERE$]
 				ur.userId IS NULL AND urE.userId IS NULL AND co.courseId = ?
 				[$WHERESTATUS$]
 				[$WHERESEARCH$]
@@ -27,18 +29,18 @@
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereUserStatus">
 		<![CDATA[   			
-			AND u.status = ?
+			AND User_.status = ?
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.countStudents">
 		<![CDATA[   			
 			SELECT 
-				COUNT(DISTINCT u.userId) AS COUNT_VALUE
+				COUNT(DISTINCT User_.userId) AS COUNT_VALUE
 			FROM 
-				user_ u
+				User_
 			INNER JOIN 
 				users_groups ug 
-					ON u.userId = ug.userId
+					ON User_.userId = ug.userId
 			INNER JOIN 
 				lms_course co 
 					ON co.groupCreatedId = ug.groupId
@@ -49,7 +51,9 @@
 				usergrouprole urE 
 					ON ug.userId = urE.userId AND urE.groupId = ug.groupId AND urE.roleId = ?
 			[$JOINTEAM$]
+			[$JOIN$]
 			WHERE 
+				[$WHERE$]
 				ur.userId IS NULL AND urE.userId IS NULL AND co.courseId = ?
 				[$WHERESTATUS$]
 				[$WHERESEARCH$]
@@ -69,28 +73,28 @@
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereFirstName">
 		<![CDATA[
-			(u.firstName LIKE ?) [$AND_OR_CONNECTOR$]
+			(User_.firstName LIKE ?) [$AND_OR_CONNECTOR$]
 		]]>
 	</sql>
 	
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereLastName">
 		<![CDATA[
-			(u.lastName LIKE ?) [$AND_OR_CONNECTOR$]
+			(User_.lastName LIKE ?) [$AND_OR_CONNECTOR$]
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereScreenName">
 		<![CDATA[
-			(u.screenName LIKE ?) [$AND_OR_CONNECTOR$]
+			(User_.screenName LIKE ?) [$AND_OR_CONNECTOR$]
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereEmailAddress">
 		<![CDATA[
-			(u.emailAddress LIKE ?) [$AND_OR_CONNECTOR$]
+			(User_.emailAddress LIKE ?) [$AND_OR_CONNECTOR$]
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.innerJoinTeam">
 		<![CDATA[
-			INNER JOIN users_teams ON users_teams.userId = u.userId AND users_teams.teamId IN ([$TEAMIDS$])
+			INNER JOIN users_teams ON users_teams.userId = User_.userId AND users_teams.teamId IN ([$TEAMIDS$])
 		]]>
 	</sql>
 </custom-sql>

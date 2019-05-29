@@ -189,7 +189,7 @@ function <portlet:namespace />showPopupGrades(studentId) {
  					
  					<liferay-ui:icon url='<%="javascript:"+renderResponse.getNamespace() + "showPopupActivity("+student.getUserId()+");" %>' message="learning-activity.test.corrections.view-test"/>
  					
- 					<%if(status.equals("passed") || status.equals("not-passed") || hasFreeQuestion){
+ 					<%if(status.equals("status.passed") || status.equals("status.failed") || hasFreeQuestion){
  					%>
 		 				<liferay-ui:icon url='<%="javascript:"+renderResponse.getNamespace() + "showPopupGrades("+student.getUserId()+");" %>' message="learning-activity.test.corrections.edit-result"/>
 			 		<% }

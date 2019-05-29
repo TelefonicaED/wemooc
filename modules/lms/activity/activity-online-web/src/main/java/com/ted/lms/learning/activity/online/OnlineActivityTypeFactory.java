@@ -9,7 +9,6 @@ import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
-import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -24,6 +23,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
+	public static final double DEFAULT_SCORE = 50;
+	
 	@Override
 	public String getClassName() {
 		return OnlineActivityTypeFactory.class.getName();
@@ -36,6 +37,10 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
+		return new OnlineActivityType(activity);
+	}
+	
+	public OnlineActivityType getOnlineActivityType(LearningActivity activity) throws PortalException {
 		return new OnlineActivityType(activity);
 	}
 	
@@ -58,7 +63,7 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public String getURLSpecificContent() {
-		return "/online/activity/edit.jsp";
+		return "/edit.jsp";
 	}
 	
 	@Override
@@ -69,6 +74,11 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	@Override
 	public boolean isScoreConfigurable() {
 		return true;
+	}
+	
+	@Override
+	public double getDefaultScore() {
+		return DEFAULT_SCORE;
 	}
 	
 	@Override
@@ -88,7 +98,12 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public String getSpecificResultsPage() {
-		return "/online/activity/results.jsp";
+		return "/result.jsp";
+	}
+	
+	@Override
+	public boolean hasDocuments() {
+		return true;
 	}
 	
 	@Reference(unbind = "-")

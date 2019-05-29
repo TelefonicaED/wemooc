@@ -47,8 +47,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 			Element publishDateElement = null;
 			Element teamElement = null;
 			Iterator<Element> activitiesElementItr = null;
-			JSONArray activities = null;
-			JSONObject activity = null;
+			JSONObject activities = null;
 			
 			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd'T'HH:mm:sszzz",Locale.US);
 			
@@ -76,16 +75,13 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 						if(activitiesElement!=null){
 							activitiesElementItr = activitiesElement.elementIterator();
 							
-							activities = JSONFactoryUtil.createJSONArray();
+							activities = JSONFactoryUtil.createJSONObject();
 							evaluationContent.put(EvaluationConstants.JSON_ACTIVITIES, activities);
 							
 							while(activitiesElementItr.hasNext()) {
 								Element activityElement =activitiesElementItr.next();
 								if(("activity".equals(activityElement.getName()))&&(activityElement.attribute("id")!=null)&&(activityElement.attribute("id").getValue().length()!=0)){
-									activity = JSONFactoryUtil.createJSONObject();
-									activity.put(EvaluationConstants.JSON_ACT_ID, Long.valueOf(activityElement.attribute("id").getValue()));
-									activity.put(EvaluationConstants.JSON_WEIGHT, Long.valueOf(activityElement.getText()));
-									activities.put(activity);
+									activities.put(activityElement.attribute("id").getValue(), Double.valueOf(activityElement.getText()));
 								}
 							}				
 						}

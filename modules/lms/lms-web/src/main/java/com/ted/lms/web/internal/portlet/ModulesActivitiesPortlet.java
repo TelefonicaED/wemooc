@@ -104,6 +104,7 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 			
 			PortletURL portletURL = PortletURLFactoryUtil.create(renderRequest, result.getPortletId(), layout, PortletRequest.RENDER_PHASE);
 			portletURL.setParameter("mvcRenderCommandName", "/modules/edit_module");
+			portletURL.setParameter("moduleId", "0");
 			portletURL.setPortletMode(PortletMode.VIEW);
 			portletURL.setWindowState(WindowState.NORMAL);
 			

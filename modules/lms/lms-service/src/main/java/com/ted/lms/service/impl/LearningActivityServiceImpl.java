@@ -152,6 +152,25 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 	}
 	
 	@Override
+	public List<LearningActivity> getActivitiesNotTypeId(long moduleId, long typeId){
+		List<LearningActivity> activities = new ArrayList<LearningActivity>();
+		
+		List<LearningActivity> listActivities = learningActivityLocalService.getLearningActivitiesNotTypeId(moduleId, typeId);
+		
+		for(LearningActivity activity: listActivities) {
+			try {
+				if(learningActivityModelResourcePermission.contains(getPermissionChecker(), activity, ActionKeys.VIEW)) {
+					activities.add(activity);
+				}
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return activities;
+	}
+	
+	@Override
 	public String[] getTempFileNames(long groupId) throws PortalException {
 
 		return TempFileEntryUtil.getTempFileNames(groupId, getUserId(),LearningActivityConstants.TEMP_FOLDER_NAME);

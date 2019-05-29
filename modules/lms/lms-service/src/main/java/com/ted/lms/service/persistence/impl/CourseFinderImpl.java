@@ -348,6 +348,95 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		return sb.toString();
 	}
 	
+	protected String replaceJoinAndWhereStudents(String sql, LinkedHashMap<String, Object> params) {
+
+			sql = StringUtil.replace(sql, "[$JOIN$]", getJoinStudents(params));
+			sql = StringUtil.replace(sql, "[$WHERE$]", getWhereStudents(params));
+
+			return sql;
+		}
+	
+	protected String getJoinStudents(LinkedHashMap<String, Object> params) {
+		if ((params == null) || params.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(params.size());
+
+		for (Map.Entry<String, Object> entry : params.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+
+			if (value != null) {
+				sb.append(getJoinStudents(key, value));
+			}
+		}
+
+		return sb.toString();
+	}
+	
+	protected String getJoinStudents(String key, Object value) {
+		String join = StringPool.BLANK;
+		
+		if (value instanceof CustomSQLParam) {
+			CustomSQLParam customSQLParam = (CustomSQLParam)value;
+
+			join = customSQLParam.getSQL();
+		}
+
+		if (Validator.isNotNull(join)) {
+			int pos = join.indexOf("WHERE");
+
+			if (pos != -1) {
+				join = join.substring(0, pos);
+			}
+		}
+
+		return join;
+	}
+	
+	protected String getWhereStudents(LinkedHashMap<String, Object> params) {
+		if ((params == null) || params.isEmpty()) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(params.size());
+
+		for (Map.Entry<String, Object> entry : params.entrySet()) {
+			String key = entry.getKey();
+
+			Object value = entry.getValue();
+
+			if (value != null) {
+				sb.append(getWhereStudents(key, value));
+			}
+		}
+
+		return sb.toString();
+	}
+	
+	protected String getWhereStudents(String key, Object value) {
+		String join = StringPool.BLANK;
+		if (value instanceof CustomSQLParam) {
+			CustomSQLParam customSQLParam = (CustomSQLParam)value;
+
+			join = customSQLParam.getSQL();
+		}
+
+		if (Validator.isNotNull(join)) {
+			int pos = join.indexOf("WHERE");
+
+			if (pos != -1) {
+				join = join.substring(pos + 5).concat(" AND ");
+			}
+			else {
+				join = StringPool.BLANK;
+			}
+		}
+		
+		return join;
+	}
+	
 	protected String getJoin(String key, Object value, long companyId) throws PortalException, SystemException {
 		String join = StringPool.BLANK;
 		
@@ -852,7 +941,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	}
 	
 	public List<User> findStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
-			long[] teamIds,boolean andOperator, int start, int end,OrderByComparator obc){
+			long[] teamIds,LinkedHashMap<String,Object> params, boolean andOperator, int start, int end,OrderByComparator obc){
 		Session session = null;
 		
 		try{
@@ -872,7 +961,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			
 			String sql = customSQL.get(getClass(), FIND_STUDENTS);
 			
-			sql = replaceJoinWhereUser(sql, screenName, firstName, lastName, emailAddress, status, teamIds, andOperator);
+			sql = replaceJoinWhereUser(sql, screenName, firstName, lastName, emailAddress, status, teamIds, params, andOperator);
 			
 			sql = customSQL.replaceAndOperator(sql, andOperator);
 			
@@ -890,8 +979,10 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			//Obtenemos el rol de editor del curso y profesor
 			
 			QueryPos qPos = QueryPos.getInstance(q);
+
 			qPos.add(LMSUtil.getTeacherRoleId(companyId));
 			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			setParametersStudents(params, qPos);
 			qPos.add(courseId);
 
 			if(status != WorkflowConstants.STATUS_ANY){
@@ -921,8 +1012,22 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	    return new ArrayList<User>();
 	}
 	
+	private void setParametersStudents(LinkedHashMap<String, Object> params, QueryPos qPos) {
+		for (Map.Entry<String, Object> entry : params.entrySet()) {
+			Object value = entry.getValue();
+			
+			if (value != null) {
+				if (value instanceof CustomSQLParam) {
+					CustomSQLParam customSQLParam = (CustomSQLParam)value;
+
+					customSQLParam.process(qPos);
+				}
+			}
+		}
+	}
+
 	public int countStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds,
-			boolean andOperator){
+			LinkedHashMap<String,Object> params, boolean andOperator){
 		Session session = null;
 		try{
 			
@@ -937,7 +1042,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			
 			String sql = customSQL.get(getClass(), COUNT_STUDENTS);
 			
-			sql = replaceJoinWhereUser(sql, screenName, firstName, lastName, emailAddress, status, teamIds, andOperator);
+			sql = replaceJoinWhereUser(sql, screenName, firstName, lastName, emailAddress, status, teamIds, params, andOperator);
 			
 			sql = customSQL.replaceAndOperator(sql, andOperator);
 			
@@ -949,6 +1054,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			QueryPos qPos = QueryPos.getInstance(q);
 			qPos.add(LMSUtil.getTeacherRoleId(companyId));
 			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			setParametersStudents(params, qPos);
 			qPos.add(courseId);
 			if(status != WorkflowConstants.STATUS_ANY){
 				qPos.add(status);
@@ -975,7 +1081,10 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	    return 0;
 	}
 	
-	private String replaceJoinWhereUser(String sql, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds, boolean andOperator){
+	private String replaceJoinWhereUser(String sql, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds, LinkedHashMap<String, Object> params, boolean andOperator){
+		
+		sql = replaceJoinAndWhereStudents(sql, params);
+		
 		boolean whereClause = false;
 		if(teamIds != null && teamIds.length > 0){
 			sql = StringUtil.replace(sql, "[$JOINTEAM$]", customSQL.get(getClass(), INNER_JOIN_TEAM));

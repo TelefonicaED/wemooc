@@ -41,6 +41,7 @@ public interface LearningActivityTypeFactory {
 	public boolean isScoreConfigurable();
 	public double getDefaultScore();
 	public String getScoreConfigurableProperty();
+	public String getScoreConfigurableHelpMessageProperty();
 	public boolean isTriesConfigurable();
 	public int getDefaultTries();
 	

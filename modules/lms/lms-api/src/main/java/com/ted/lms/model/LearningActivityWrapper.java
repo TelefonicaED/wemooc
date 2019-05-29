@@ -641,6 +641,11 @@ public class LearningActivityWrapper implements LearningActivity,
 		return _learningActivity.getLastPublishDate();
 	}
 
+	@Override
+	public LearningActivityTypeFactory getLearningActivityTypeFactory() {
+		return _learningActivity.getLearningActivityTypeFactory();
+	}
+
 	/**
 	* Returns the modified date of this learning activity.
 	*
@@ -769,6 +774,11 @@ public class LearningActivityWrapper implements LearningActivity,
 	@Override
 	public Date getStatusDate() {
 		return _learningActivity.getStatusDate();
+	}
+
+	@Override
+	public long getTeamId() {
+		return _learningActivity.getTeamId();
 	}
 
 	/**

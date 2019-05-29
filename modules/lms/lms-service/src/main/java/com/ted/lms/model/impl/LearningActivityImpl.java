@@ -40,9 +40,12 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.ted.lms.constants.LMSActionKeys;
+import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.security.permission.resource.LearningActivityPermission;
 import com.ted.lms.service.ModuleLocalServiceUtil;
@@ -70,7 +73,15 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a learning activity model instance should use the {@link com.ted.lms.model.LearningActivity} interface instead.
 	 */
-	private JSONObject extraContent = null;
+	private JSONObject extraContent;
+	private long teamId;
+	private LearningActivityTypeFactory activityTypeFactory;
+	
+	{
+		extraContent = null;
+		teamId = -1;
+		activityTypeFactory = null;
+	}
 	
 	public LearningActivityImpl() {
 	}
@@ -120,6 +131,27 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 		Calendar endDate = Calendar.getInstance();
 		endDate.setTime(getEndDate());
 		return endDate;
+	}
+	
+	public long getTeamId() {
+		if(teamId == -1) {
+			extraContent = getExtraContentJSON();
+			if(extraContent != null) {
+				teamId = extraContent.getLong(LearningActivityConstants.JSON_TEAM);
+			}else {
+				teamId = 0;
+			}
+		}
+		
+		return teamId;
+	}
+	
+	public LearningActivityTypeFactory getLearningActivityTypeFactory() {
+		if(activityTypeFactory == null) {
+			activityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(getTypeId());
+		}
+		
+		return activityTypeFactory;
 	}
 	
 	@Override
