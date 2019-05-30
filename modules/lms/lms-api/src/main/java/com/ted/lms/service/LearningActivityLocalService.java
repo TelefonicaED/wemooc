@@ -380,6 +380,9 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public LearningActivity updateLearningActivity(
 		LearningActivity learningActivity);
 
+	public LearningActivity updateLearningActivity(LearningActivity activity,
+		ServiceContext serviceContext);
+
 	@Indexable(type = IndexableType.REINDEX)
 	public LearningActivity updateLearningActivity(long actId, long moduleId,
 		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,

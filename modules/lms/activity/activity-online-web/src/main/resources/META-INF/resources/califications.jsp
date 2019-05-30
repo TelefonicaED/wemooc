@@ -56,41 +56,41 @@ function <portlet:namespace />showPopupActivity(studentId) {
 
 </script>
 
-	<aui:form name="searchFm" action="${searchURL }" method="POST">
-		<div class="row">
-			<div class="col-md-6"><aui:input type="text" name="keywords" label="student.search.keywords" value="${keywords}" /></div>
-			<div class="col-md-3">
-				<aui:select label="learning-activity.online.search.status" name="status" >
-					<aui:option selected='${empty status}' value=""><liferay-ui:message key="learning-activity.online.search.status.all" /></aui:option>
-					<aui:option selected='${status == "nocalification"}' value="nocalification"><liferay-ui:message key="learning-activity.online.search.status.no-calification" /></aui:option>
-					<aui:option selected='${status == "passed" }' value="passed"><liferay-ui:message key="learning-activity.online.search.status.passed" /></aui:option>
-					<aui:option selected='${status == "failed" }' value="failed"><liferay-ui:message key="learning-activity.online.search.status.failed" /></aui:option>
-				</aui:select>
-			</div>
+<aui:form name="searchFm" action="${searchURL }" method="POST">
+	<div class="row">
+		<div class="col-md-6"><aui:input type="text" name="keywords" label="student.search.keywords" value="${keywords}" /></div>
+		<div class="col-md-3">
+			<aui:select label="status" name="status" >
+				<aui:option selected='${empty status}' value=""><liferay-ui:message key="status.all" /></aui:option>
+				<aui:option selected='${status == "nocalification"}' value="nocalification"><liferay-ui:message key="status.not-calification" /></aui:option>
+				<aui:option selected='${status == "passed" }' value="passed"><liferay-ui:message key="status.passed" /></aui:option>
+				<aui:option selected='${status == "failed" }' value="failed"><liferay-ui:message key="status.failed" /></aui:option>
+			</aui:select>
 		</div>
-		<aui:button-row><aui:button type="submit" value="search"/></aui:button-row>
-	</aui:form>
+	</div>
+	<aui:button-row><aui:button type="submit" value="search"/></aui:button-row>
+</aui:form>
 
-	<liferay-ui:search-container
-		id="users"
-		searchContainer="${searchContainer}"
-		var="userSearchContainer"
-	>
+<liferay-ui:search-container
+	id="users"
+	searchContainer="${searchContainer}"
+	var="userSearchContainer"
+>
 	
 	<liferay-ui:search-container-row className="com.liferay.portal.kernel.model.User" keyProperty="userId" modelVar="student">
 		<%
-			LearningActivityResult laResult =  LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, student.getUserId());
-			String status="";
-			if(laResult != null){
-				status="status.not-calification";
-				
-				if(laResult.getEndDate()!=null){
-					status="status.failed"	;
-				}
-				if(laResult.isPassed()){
-					status="status.passed"	;
-				}
-			}			
+		LearningActivityResult laResult =  LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, student.getUserId());
+		String status="";
+		if(laResult != null){
+			status="status.not-calification";
+			
+			if(laResult.getEndDate()!=null){
+				status="status.failed"	;
+			}
+			if(laResult.isPassed()){
+				status="status.passed"	;
+			}
+		}			
 		%>
 	
 	

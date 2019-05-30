@@ -3,6 +3,7 @@ package com.ted.lms.learning.activity.evaluation;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -15,6 +16,7 @@ import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 import com.ted.lms.service.LearningActivityServiceUtil;
+import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
 import com.ted.lms.service.ModuleServiceUtil;
 
 import java.util.Date;
@@ -98,8 +100,42 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 		return firedDate;
 	}
 	
+	public void setFiredDate(Date firedDate) {
+		this.firedDate = firedDate;
+		
+		JSONObject extraContent = activity.getExtraContentJSON();
+		
+		JSONObject evaluationContent = extraContent.getJSONObject(EvaluationConstants.JSON_EVALUATION);
+		
+		if(Validator.isNull(evaluationContent)) {
+			evaluationContent = JSONFactoryUtil.createJSONObject();
+			extraContent.put(EvaluationConstants.JSON_EVALUATION, evaluationContent);
+		}
+		
+		evaluationContent.put(EvaluationConstants.JSON_FIRED_DATE, firedDate);
+		
+		activity.setExtraContent(extraContent.toJSONString());
+	}
+	
 	public Date getPublishDate() {
 		return publishDate;
+	}
+	
+	public void setPublishDate(Date publishDate) {
+		this.publishDate = publishDate;
+		
+		JSONObject extraContent = activity.getExtraContentJSON();
+		
+		JSONObject evaluationContent = extraContent.getJSONObject(EvaluationConstants.JSON_EVALUATION);
+		
+		if(Validator.isNull(evaluationContent)) {
+			evaluationContent = JSONFactoryUtil.createJSONObject();
+			extraContent.put(EvaluationConstants.JSON_EVALUATION, evaluationContent);
+		}
+		
+		evaluationContent.put(EvaluationConstants.JSON_PUBLISH_DATE, publishDate);
+		
+		activity.setExtraContent(extraContent.toJSONString());
 	}
 	
 	@Override
@@ -146,6 +182,27 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 		firedDate = null;
 		publishDate = null;
 		activities = JSONFactoryUtil.createJSONObject();
+	}
+	
+	public void evaluateUser(long userId, ServiceContext serviceContext) throws PortalException {
+		double[] values = new double[activities.length()];
+		double[] weights = new double[activities.length()];
+		
+		AtomicInteger cnt = new AtomicInteger(0);
+		
+		activities.keys().forEachRemaining(keyStr ->{
+			LearningActivityResult learningActivityResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(Long.parseLong(keyStr), userId);
+			values[cnt.get()] = learningActivityResult != null ? learningActivityResult.getResult() : 0;
+			weights[cnt.get()]=activities.getDouble(keyStr);	
+			cnt.incrementAndGet();
+		});
+
+		LearningActivityTry  learningActivityTry =  LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(activity.getActId(), userId);
+		if(learningActivityTry==null){
+			learningActivityTry =  LearningActivityTryLocalServiceUtil.addLearningActivityTry(activity.getActId(), userId, serviceContext);
+		}
+		
+		LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningActivityTry, calculateResult(learningActivityTry), serviceContext);				
 	}
 			
 }

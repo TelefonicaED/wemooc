@@ -941,7 +941,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	}
 	
 	public List<User> findStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
-			long[] teamIds,LinkedHashMap<String,Object> params, boolean andOperator, int start, int end,OrderByComparator obc){
+			long[] teamIds,LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc){
 		Session session = null;
 		
 		try{
@@ -954,7 +954,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				log.debug("emailAddress:"+emailAddress);
 				log.debug("start: " + start);
 				log.debug("end: " + end);
-				log.debug("order: " + obc != null ? obc.toString() : "null");
+				log.debug("order: " + (obc != null ? obc.toString() : "null"));
 			}
 			
 			session = sessionFactory.openSession();
@@ -1013,14 +1013,16 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	}
 	
 	private void setParametersStudents(LinkedHashMap<String, Object> params, QueryPos qPos) {
-		for (Map.Entry<String, Object> entry : params.entrySet()) {
-			Object value = entry.getValue();
-			
-			if (value != null) {
-				if (value instanceof CustomSQLParam) {
-					CustomSQLParam customSQLParam = (CustomSQLParam)value;
-
-					customSQLParam.process(qPos);
+		if(params != null) {
+			for (Map.Entry<String, Object> entry : params.entrySet()) {
+				Object value = entry.getValue();
+				
+				if (value != null) {
+					if (value instanceof CustomSQLParam) {
+						CustomSQLParam customSQLParam = (CustomSQLParam)value;
+	
+						customSQLParam.process(qPos);
+					}
 				}
 			}
 		}
@@ -1149,9 +1151,9 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			sql = sql.replace("[$ORDERBY$]", obc.toString());
 		}else{
 			if(LMSPrefsPropsValues.getUsersFirstLastName(companyId)){
-				sql = sql.replace("[$ORDERBY$]", "u.lastName, u.firstName, u.middleName ");
+				sql = sql.replace("[$ORDERBY$]", "User_.lastName, User_.firstName, User_.middleName ");
 			}else{
-				sql = sql.replace("[$ORDERBY$]", "u.firstName, u.middleName, u.lastName ");
+				sql = sql.replace("[$ORDERBY$]", "User_.firstName, User_.middleName, User_.lastName ");
 			}
 		}
 		

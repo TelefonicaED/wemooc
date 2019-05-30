@@ -500,6 +500,14 @@ public class LearningActivityLocalServiceWrapper
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
+		com.ted.lms.model.LearningActivity activity,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return _learningActivityLocalService.updateLearningActivity(activity,
+			serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity updateLearningActivity(
 		long actId, long moduleId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,

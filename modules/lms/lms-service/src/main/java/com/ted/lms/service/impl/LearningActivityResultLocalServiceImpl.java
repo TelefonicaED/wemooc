@@ -60,6 +60,8 @@ public class LearningActivityResultLocalServiceImpl
 	
 	@Override
 	public LearningActivityResult getLearningActivityResult(long actId, long userId) {
+		log.debug("actId: " + actId);
+		log.debug("userId: " + userId);
 		return learningActivityResultPersistence.fetchByActIdUserId(actId, userId);
 	}
 	

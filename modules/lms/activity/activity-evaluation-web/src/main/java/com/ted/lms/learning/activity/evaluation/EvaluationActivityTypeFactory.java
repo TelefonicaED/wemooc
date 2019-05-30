@@ -25,6 +25,7 @@ import org.osgi.service.component.annotations.Reference;
 public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFactory{
 	
 	private static final Log log = LogFactoryUtil.getLog(EvaluationActivityTypeFactory.class);
+	private static final int DEFAULT_TRIES = 1;
 	
 	@Override
 	public String getClassName() {
@@ -78,6 +79,11 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	@Override
 	public String getURLSpecificContent() {
 		return "/edit.jsp";
+	}
+	
+	@Override
+	public int getDefaultTries() {
+		return DEFAULT_TRIES;
 	}
 	
 	@Reference(unbind = "-")

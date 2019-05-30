@@ -462,6 +462,12 @@ public class LearningActivityLocalServiceUtil {
 	}
 
 	public static com.ted.lms.model.LearningActivity updateLearningActivity(
+		com.ted.lms.model.LearningActivity activity,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		return getService().updateLearningActivity(activity, serviceContext);
+	}
+
+	public static com.ted.lms.model.LearningActivity updateLearningActivity(
 		long actId, long moduleId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,

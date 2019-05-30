@@ -264,6 +264,11 @@ public class LearningActivityLocalServiceImpl
 		LearningActivity activity = learningActivityPersistence.fetchByPrimaryKey(actId);
 		
 		activity.setModifiedDate(new Date());
+		activity.setUserId(serviceContext.getUserId());
+		User user = userLocalService.fetchUser(serviceContext.getUserId());
+		if(user != null) {
+			activity.setUserName(user.getFullName());
+		}
 		activity.setModuleId(moduleId);
 		activity.setTitleMap(titleMap);
 		activity.setDescriptionMap(descriptionMap);
@@ -290,6 +295,18 @@ public class LearningActivityLocalServiceImpl
 		
 		return activity;
 		
+	}
+	
+	@Override
+	public LearningActivity updateLearningActivity(LearningActivity activity, ServiceContext serviceContext) {
+		activity.setModifiedDate(new Date());
+		activity.setUserId(serviceContext.getUserId());
+		User user = userLocalService.fetchUser(serviceContext.getUserId());
+		if(user != null) {
+			activity.setUserName(user.getFullName());
+		}
+		
+		return learningActivityPersistence.update(activity);
 	}
 	
 	public void updateAsset(
