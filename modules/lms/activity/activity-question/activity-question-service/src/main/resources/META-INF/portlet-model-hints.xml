@@ -36,7 +36,7 @@
 		<field name="active" type="boolean" />
 		<field name="weight" type="long" />
 		<field name="penalize" type="boolean" />
-		<field name="extraContent" type="String" >
+		<field name="extraContent" type="String">
 			<hint name="max-length">4000</hint>
 		</field>
 	</model>

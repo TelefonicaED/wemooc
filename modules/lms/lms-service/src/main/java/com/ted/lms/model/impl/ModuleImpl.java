@@ -19,6 +19,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -86,6 +87,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 	 */
 	public ModuleImpl() {
 	}
+	
 	
 	public List<LearningActivity> getRequiredLearningActivities(){
 		return LearningActivityLocalServiceUtil.getRequiredLearningActivitiesOfModule(getModuleId());

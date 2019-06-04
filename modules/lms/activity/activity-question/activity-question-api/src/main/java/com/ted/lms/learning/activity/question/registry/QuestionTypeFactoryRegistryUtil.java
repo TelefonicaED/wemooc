@@ -2,6 +2,7 @@ package com.ted.lms.learning.activity.question.registry;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringBundler;
@@ -31,7 +32,11 @@ public class QuestionTypeFactoryRegistryUtil {
 	private static final ServiceTracker<QuestionTypeFactory, QuestionTypeFactory> _serviceTracker;
 
 	public static List<QuestionTypeFactory> getQuestionFactories(long companyId) {
-		return ListUtil.fromMapValues(_filterQuestionFactories(companyId, _questionFactoriesMapByClassName));
+		return ListUtil.fromMapValues(_filterQuestionFactories(companyId, _questionFactoriesMapByClassName, null));
+	}
+	
+	public static List<QuestionTypeFactory> getQuestionFactories(long companyId, long[] questionIdsAllowed) {
+		return ListUtil.fromMapValues(_filterQuestionFactories(companyId, _questionFactoriesMapByClassName, questionIdsAllowed));
 	}
 
 	public static QuestionTypeFactory getQuestionTypeFactoryByClassName(String className) {
@@ -51,7 +56,7 @@ public class QuestionTypeFactoryRegistryUtil {
 		Map<String, QuestionTypeFactory> questionFactories = _questionFactoriesMapByClassName;
 
 		if (companyId > 0) {
-			questionFactories = _filterQuestionFactories(companyId, _questionFactoriesMapByClassName);
+			questionFactories = _filterQuestionFactories(companyId, _questionFactoriesMapByClassName, null);
 		}
 
 		long[] classNameIds = new long[questionFactories.size()];
@@ -98,13 +103,15 @@ public class QuestionTypeFactoryRegistryUtil {
 		}
 	}
 
-	private static Map<String, QuestionTypeFactory> _filterQuestionFactories(long companyId, Map<String, QuestionTypeFactory> questionFactories) {
+	private static Map<String, QuestionTypeFactory> _filterQuestionFactories(long companyId, Map<String, QuestionTypeFactory> questionFactories, long[] questionIdsAllowed) {
 
 		Map<String, QuestionTypeFactory> filteredQuestionFactories = new ConcurrentHashMap<>();
 
 		for (Map.Entry<String, QuestionTypeFactory> entry: questionFactories.entrySet()) {
-			QuestionTypeFactory questionFactory = entry.getValue();
-			filteredQuestionFactories.put(entry.getKey(), questionFactory);
+			if(questionIdsAllowed == null || ArrayUtil.contains(questionIdsAllowed, entry.getValue().getType())) {
+				QuestionTypeFactory questionFactory = entry.getValue();
+				filteredQuestionFactories.put(entry.getKey(), questionFactory);
+			}
 		}
 
 		return filteredQuestionFactories;

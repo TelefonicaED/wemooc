@@ -109,7 +109,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("extraContent", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,actId LONG,text_ TEXT null,questionTypeId LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,actId LONG,text_ TEXT null,questionTypeId LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Question";
 	public static final String ORDER_BY_JPQL = " ORDER BY question.questionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Question.questionId ASC";

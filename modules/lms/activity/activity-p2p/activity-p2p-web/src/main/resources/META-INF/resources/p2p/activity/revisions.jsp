@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.learning.activity.p2p.constants.P2PConstants"%>
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.liferay.portal.kernel.search.Sort"%>
 <%@page import="com.liferay.portal.kernel.search.BaseModelSearchResult"%>
 <%@page import="java.text.DateFormat"%>
@@ -38,7 +40,7 @@ portletURL.setParameter("delta", "10");
 
 LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 
-P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
+P2PActivityTypeFactory p2pActivityTypeFactory = (P2PActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(P2PConstants.TYPE);
 P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
 %>
 

@@ -376,6 +376,9 @@ public interface CourseLocalService extends BaseLocalService,
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String[] getPrerequisiteActivities();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getStudentsFromCourse(long courseId, long companyId,
 		String keywords, int status, LinkedHashMap<String, Object> params,
 		int start, int end, OrderByComparator obc);

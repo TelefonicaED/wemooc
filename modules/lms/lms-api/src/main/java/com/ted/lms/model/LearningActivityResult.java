@@ -54,4 +54,6 @@ public interface LearningActivityResult extends LearningActivityResultModel,
 				return LearningActivityResult.class;
 			}
 		};
+
+	public String getStatusProperties();
 }

@@ -1028,6 +1028,17 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return allowAccessToCompletedCourses;
 	}
 	
+	public String[] getPrerequisiteActivities() {
+		String[] prerequisiteActivities = null;
+		try {
+			CourseServiceConfiguration courseServiceConfiguration = configurationProvider.getSystemConfiguration(CourseServiceConfiguration.class);
+			prerequisiteActivities = courseServiceConfiguration.prerequisitesActivity();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		return prerequisiteActivities;
+	}
+	
 	/**
 	 * Usar este método para contar los estudiantes de un curso
 	 * @param courseId id del curso

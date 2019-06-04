@@ -16,10 +16,9 @@ package com.ted.lms.learning.activity.p2p.model.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.petra.string.StringBundler;
-
 import com.liferay.portal.kernel.model.CacheModel;
 import com.liferay.portal.kernel.util.HashUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 

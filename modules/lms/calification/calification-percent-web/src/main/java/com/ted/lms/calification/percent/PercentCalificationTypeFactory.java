@@ -1,7 +1,6 @@
 package com.ted.lms.calification.percent;
 
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.model.BaseCalificationTypeFactory;

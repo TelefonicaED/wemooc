@@ -11,14 +11,14 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.security.permission.resource.LMSPermission;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import java.util.List;
 
@@ -28,6 +28,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true, 
@@ -52,7 +53,7 @@ public class SurveyActivityViewMVCRenderCommand implements MVCRenderCommand {
 			return null;
 		}else {
 			
-			LearningActivity activity = LearningActivityLocalServiceUtil.fetchLearningActivity(actId);
+			LearningActivity activity = learningActivityLocalService.fetchLearningActivity(actId);
 
 			boolean isTeacher = LMSPermission.contains(themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(), LMSActionKeys.VIEW_RESULTS);
 			if(isTeacher) {
@@ -62,14 +63,14 @@ public class SurveyActivityViewMVCRenderCommand implements MVCRenderCommand {
 				renderRequest.setAttribute("statisticsURL", statisticsURL);
 			}
 			
-			boolean userPassed = LearningActivityResultLocalServiceUtil.hasUserPassed(actId,themeDisplay.getUserId());
+			boolean userPassed = learningActivityResultLocalService.hasUserPassed(actId,themeDisplay.getUserId());
 			
 			if(!userPassed) {
-				List<Question> questions = QuestionLocalServiceUtil.getQuestionsOrder(actId);
+				List<Question> questions = questionLocalService.getQuestionsOrder(actId);
 				//Creamos el try
 				try {
 					ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivityTry.class.getName(), renderRequest);
-					LearningActivityTryLocalServiceUtil.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
+					learningActivityTryLocalService.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
 				} catch (PortalException e) {
 					e.printStackTrace();
 				}
@@ -91,5 +92,13 @@ public class SurveyActivityViewMVCRenderCommand implements MVCRenderCommand {
 		}
 	}
 	
+	@Reference
+	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
+	private LearningActivityTryLocalService learningActivityTryLocalService;
+	@Reference
+	private LearningActivityResultLocalService learningActivityResultLocalService;
+	@Reference
+	private QuestionLocalService questionLocalService;
 	
 }

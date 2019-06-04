@@ -3,6 +3,8 @@ package com.ted.lms.learning.activity.evaluation;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -14,10 +16,10 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.model.Module;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
-import com.ted.lms.service.ModuleServiceUtil;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityService;
+import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.ModuleService;
 
 import java.util.Date;
 import java.util.List;
@@ -27,12 +29,22 @@ import javax.portlet.ActionRequest;
 
 public class EvaluationActivityType extends BaseLearningActivityType {
 	
+	private final ModuleService moduleService;
+	private final LearningActivityService activityService;
+	private final LearningActivityTryLocalService learningActivityTryLocalService;
+	private static final Log log = LogFactoryUtil.getLog(EvaluationActivityType.class);
+	
 	private Date firedDate;
 	private Date publishDate;
 	private JSONObject activities;
 
-	public EvaluationActivityType(LearningActivity activity) {
-		super(activity);
+	public EvaluationActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
+			ModuleService moduleService, LearningActivityService activityService, LearningActivityTryLocalService learningActivityTryLocalService) {
+		super(activity, learningActivityResultLocalService);
+		
+		this.moduleService = moduleService;
+		this.activityService  = activityService;
+		this.learningActivityTryLocalService = learningActivityTryLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -68,7 +80,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 		AtomicInteger cnt = new AtomicInteger(0);
 		
 		activities.keys().forEachRemaining(keyStr ->{
-			LearningActivityResult learningActivityResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(Long.parseLong(keyStr), learningActivityTry.getUserId());
+			LearningActivityResult learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(Long.parseLong(keyStr), learningActivityTry.getUserId());
 			values[cnt.get()] = learningActivityResult != null ? learningActivityResult.getResult() : 0;
 			weights[cnt.get()]=activities.getDouble(keyStr);	
 			cnt.incrementAndGet();
@@ -115,7 +127,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 		evaluationContent.put(EvaluationConstants.JSON_FIRED_DATE, firedDate);
 		
 		activity.setExtraContent(extraContent.toJSONString());
-	}
+	} 
 	
 	public Date getPublishDate() {
 		return publishDate;
@@ -152,7 +164,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 			extraContent.put(EvaluationConstants.JSON_EVALUATION, evaluationContent);
 		}
 
-		List<Module> modules = ModuleServiceUtil.getGroupModules(themeDisplay.getScopeGroupId());
+		List<Module> modules = moduleService.getGroupModules(themeDisplay.getScopeGroupId());
 
 		List<LearningActivity> listActivities = null;
 		activities = JSONFactoryUtil.createJSONObject();
@@ -161,7 +173,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 		double weight = 0;
 		
 		for(Module module: modules) {
-			listActivities = LearningActivityServiceUtil.getActivitiesNotTypeId(module.getModuleId(), EvaluationConstants.TYPE);
+			listActivities = activityService.getActivitiesNotTypeId(module.getModuleId(), EvaluationConstants.TYPE);
 			for(LearningActivity activity: listActivities) {
 				weight = ParamUtil.getDouble(actionRequest, "weight_" + activity.getActId(), 0);
 				if(weight > 0) {
@@ -185,24 +197,33 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 	}
 	
 	public void evaluateUser(long userId, ServiceContext serviceContext) throws PortalException {
+		
+		log.debug("num activities: " + activities.length());
 		double[] values = new double[activities.length()];
 		double[] weights = new double[activities.length()];
 		
 		AtomicInteger cnt = new AtomicInteger(0);
 		
-		activities.keys().forEachRemaining(keyStr ->{
-			LearningActivityResult learningActivityResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(Long.parseLong(keyStr), userId);
-			values[cnt.get()] = learningActivityResult != null ? learningActivityResult.getResult() : 0;
-			weights[cnt.get()]=activities.getDouble(keyStr);	
-			cnt.incrementAndGet();
-		});
-
-		LearningActivityTry  learningActivityTry =  LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(activity.getActId(), userId);
-		if(learningActivityTry==null){
-			learningActivityTry =  LearningActivityTryLocalServiceUtil.addLearningActivityTry(activity.getActId(), userId, serviceContext);
+		if(activities.length() > 0) {
+			
+			log.debug("learningActivityResultLocalService: " + learningActivityResultLocalService);
+			
+			activities.keys().forEachRemaining(keyStr ->{
+				LearningActivityResult learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(Long.parseLong(keyStr), userId);
+				values[cnt.get()] = learningActivityResult != null ? learningActivityResult.getResult() : 0;
+				weights[cnt.get()]=activities.getDouble(keyStr);	
+				cnt.incrementAndGet();
+			});
+	
+			LearningActivityTry  learningActivityTry =  learningActivityTryLocalService.getLastLearningActivityTry(activity.getActId(), userId);
+			if(learningActivityTry==null){
+				learningActivityTry =  learningActivityTryLocalService.addLearningActivityTry(activity.getActId(), userId, serviceContext);
+			}
+			
+			learningActivityTryLocalService.finishLearningActivityTry(learningActivityTry, calculateResult(learningActivityTry), serviceContext);	
+		}else {
+			log.debug("No hay actividades configuradas para la actividad: " + activity.getActId());
 		}
-		
-		LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningActivityTry, calculateResult(learningActivityTry), serviceContext);				
 	}
 			
 }

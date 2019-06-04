@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -25,8 +25,8 @@ public class FillblankQuestionType extends BaseQuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(FillblankQuestionType.class);
 
-	public FillblankQuestionType(Question question) {
-		super(question);
+	public FillblankQuestionType(Question question, AnswerLocalService answerLocalService) {
+		super(question, answerLocalService);
 	}
 	
 	@Override
@@ -46,7 +46,7 @@ public class FillblankQuestionType extends BaseQuestionType{
 	
 	@Override
 	public long correct(Element element) throws PortalException {
-		List<Answer> answers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 		
 		Answer solution = null;
 		if(answers!=null && answers.size()>0)
@@ -82,7 +82,7 @@ public class FillblankQuestionType extends BaseQuestionType{
 	
 	@Override
 	public Element getResults(PortletRequest portletRequest){
-		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> testAnswers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 
 		Answer solution = null;
 		if(testAnswers!=null && testAnswers.size()>0)
@@ -152,7 +152,7 @@ public class FillblankQuestionType extends BaseQuestionType{
 	}
 	
 	public long isCorrect(PortletRequest portletRequest){
-		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> testAnswers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 		
 		Answer solution = null;
 		if(testAnswers!=null && testAnswers.size()>0)

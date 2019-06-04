@@ -1,31 +1,17 @@
 package com.ted.lms.learning.activity.survey.web.internal.portlet.action;
 
-import com.liferay.exportimport.kernel.background.task.BackgroundTaskExecutorNames;
-import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
-import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
-import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
-import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
 import com.ted.lms.model.Course;
-import com.ted.lms.model.LearningActivity;
-import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.security.permission.resource.LMSPermission;
-import com.ted.lms.service.CourseLocalServiceUtil;
-import com.ted.lms.service.CourseResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -37,6 +23,7 @@ import javax.portlet.RenderResponse;
 import javax.portlet.ResourceURL;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true, 
@@ -68,12 +55,12 @@ public class StatisticsViewMVCRenderCommand implements MVCRenderCommand {
 			statisticsReportURL.setParameter("actId", String.valueOf(actId));
 			renderRequest.setAttribute("statisticsReportURL", statisticsReportURL);
 			
-			List<Question> questions = QuestionLocalServiceUtil.getQuestionsOrder(actId);
+			List<Question> questions = questionLocalService.getQuestionsOrder(actId);
 			renderRequest.setAttribute("questions", questions);
-			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 			
-			long participants = LearningActivityResultLocalServiceUtil.countStudentFinished(actId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			long numStudents = CourseLocalServiceUtil.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId());
+			long participants = learningActivityResultLocalService.countStudentFinished(actId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
+			long numStudents = courseLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId());
 			double passPercent =  ((double)participants/(double)numStudents)*100;
 			DecimalFormat df = new DecimalFormat("###.##");
 			String percent  = df.format(passPercent);
@@ -86,5 +73,10 @@ public class StatisticsViewMVCRenderCommand implements MVCRenderCommand {
 		}
 	}
 	
-	
+	@Reference
+	private CourseLocalService courseLocalService;
+	@Reference
+	private LearningActivityResultLocalService learningActivityResultLocalService;
+	@Reference
+	private QuestionLocalService questionLocalService;
 }

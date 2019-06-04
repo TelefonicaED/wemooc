@@ -26,10 +26,9 @@ List<Question> questions = null;
 if(actId > 0){
 	questions = QuestionLocalServiceUtil.getQuestions(actId);
 }
-List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId());
 String questionIdsAllowedString = ParamUtil.getString(request, "questionIdsAllowed", "");
 long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? StringUtil.split(questionIdsAllowedString,",", 0L) : null;
-
+List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId(), questionIdsAllowed);
 %>
 
 <liferay-ui:error exception="<%= MinNumAnswerException.class %>" message="questions.error.min-num-answers" />
@@ -80,19 +79,19 @@ long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? Stri
 	</div>
 	<div class="row" id="${themeDisplay.getPortletDisplay().getNamespace() }new_question_factory" style="display:none">
 		<%for(QuestionTypeFactory questionTypeFactory: questionTypeFactories){ %>
-			<c:if test="<%=questionIdsAllowed == null || ArrayUtil.contains(questionIdsAllowed, questionTypeFactory.getType()) %>">
-				<div class="col-md-4">
-					<aui:button value="<%=questionTypeFactory.getTitle(themeDisplay.getLocale()) %>" name="questionType" 
-						onClick='<%=renderResponse.getNamespace() + "addQuestion('" + questionTypeFactory.getURLAddQuestion(liferayPortletResponse) + "');" %>'/>
-				</div>
-			</c:if>
+			<div class="col-md-4">
+				<aui:button value="<%=questionTypeFactory.getTitle(themeDisplay.getLocale()) %>" name="questionType" 
+					onClick='<%=renderResponse.getNamespace() + "addQuestion('" + questionTypeFactory.getURLAddQuestion(liferayPortletResponse) + "');" %>'/>
+			</div>
 		<%} %>
 	</div>
 </aui:fieldset>
 
 <script>
 function <portlet:namespace />addQuestion(questionUrl){
-	$('#<portlet:namespace />new_question_factory').toggle("hide");
+	<%if(questionTypeFactories.size() > 1){%>
+		$('#<portlet:namespace />new_question_factory').toggle("hide");
+	<%}%>
 	AUI().use('aui-node', 'aui-base', 'aui-io-deprecated',
 		function(A) {
 			var parent = A.one('#<portlet:namespace />questions');
@@ -136,7 +135,11 @@ $('#<portlet:namespace />newQuestion').on(
 	'click',
 	function() {
 		console.log("new question factory: " + $('#<portlet:namespace />new_question_factory'));
+		<%if(questionTypeFactories.size() > 1){%>
 		$('#<portlet:namespace />new_question_factory').toggle("hide");
+		<%}else if(questionTypeFactories.size() > 0){%>
+			<portlet:namespace />addQuestion('<%=questionTypeFactories.get(0).getURLAddQuestion(liferayPortletResponse)%>');
+		<%}%>
 	}
 );
 

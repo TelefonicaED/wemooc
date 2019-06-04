@@ -36,4 +36,8 @@ public class P2PPrefsPropsValues {
 	public static int getNumEvaluationCriteria(long companyId) {
 		return PrefsPropsUtil.getInteger(companyId, P2PPropsKeys.NUM_EVALUATION_CRITERIA, P2PPropsValues.NUM_EVALUATION_CRITERIA);
 	}
+	
+	public static boolean getP2PTeamAssignations(long companyId) {
+		return PrefsPropsUtil.getBoolean(companyId, P2PPropsKeys.P2P_TEAM_ASSIGNATIONS, P2PPropsValues.P2P_TEAM_ASSIGNATIONS);
+	}
 }

@@ -1,7 +1,5 @@
 package com.ted.lms.learning.activity.resource.internal.web.activity;
 
-import com.liferay.asset.kernel.model.AssetEntry;
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -12,17 +10,15 @@ import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.util.LearningActivityUtil;
 
 import javax.portlet.ActionRequest;
-import org.osgi.service.component.annotations.Reference;
 
 public class ResourceInternalActivityType extends BaseLearningActivityType{
 	
 	private long assetEntryId;
 	
-	public ResourceInternalActivityType(LearningActivity activity) {
-		super(activity);
+	public ResourceInternalActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
+		super(activity, learningActivityResultLocalService);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		

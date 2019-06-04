@@ -12,20 +12,16 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.p2p.constants.P2PConstants;
-import com.ted.lms.learning.activity.p2p.exception.P2PActivityInProgressException;
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService;
-import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService;
-import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil;
 import com.ted.lms.learning.activity.p2p.util.P2PPrefsPropsValues;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.LearningActivityResultLocalService;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +30,8 @@ import javax.portlet.ActionRequest;
 public class P2PActivityType extends BaseLearningActivityType {
 	
 	private static final Log log = LogFactoryUtil.getLog(P2PActivityType.class);
+	private final P2PActivityLocalService p2pActivityLocalService;
+	private final P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
 	private String assignationType;
 	private boolean anonimous;
 	private boolean emailAnonimous;
@@ -44,8 +42,13 @@ public class P2PActivityType extends BaseLearningActivityType {
 	private Date uploadDate;
 	private JSONArray evaluationCriteria;
 
-	public P2PActivityType(LearningActivity activity) {
-		super(activity);
+	public P2PActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, 
+			P2PActivityLocalService p2pActivityLocalService, P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService) {
+		
+		super(activity, learningActivityResultLocalService);
+		
+		this.p2pActivityLocalService = p2pActivityLocalService;
+		this.p2pActivityCorrectionsLocalService = p2pActivityCorrectionsLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -86,7 +89,7 @@ public class P2PActivityType extends BaseLearningActivityType {
 		
 		JSONObject p2pContent = extraContent.getJSONObject(P2PConstants.JSON_P2P);
 		
-		if(!P2PActivityLocalServiceUtil.hasP2PActivity(activity.getActId())){
+		if(!p2pActivityLocalService.hasP2PActivity(activity.getActId())){
 			log.debug("Actualizamos el extracontent de las p2p");
 			
 			if(Validator.isNull(p2pContent)) {
@@ -153,19 +156,19 @@ public class P2PActivityType extends BaseLearningActivityType {
 		JSONObject extraContent = activity.getExtraContentJSON();
 		JSONObject p2pContent = extraContent.getJSONObject(P2PConstants.JSON_P2P);
 		
-		P2PActivity p2pActivity = P2PActivityLocalServiceUtil.getP2PActivity(activity.getActId(), learningActivityTry.getUserId());
+		P2PActivity p2pActivity = p2pActivityLocalService.getP2PActivity(activity.getActId(), learningActivityTry.getUserId());
 		
 		if(Validator.isNotNull(p2pActivity)) {
 			
 			int numValidations = p2pContent.getInt(P2PConstants.JSON_NUM_VALIDATIONS);
-			List<P2PActivityCorrections> listP2PActivityCorrections =P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByUser(activity.getActId(), learningActivityTry.getUserId());
+			List<P2PActivityCorrections> listP2PActivityCorrections =p2pActivityCorrectionsLocalService.getCorrectionsDoneByUser(activity.getActId(), learningActivityTry.getUserId());
 			
 			if (p2pContent.getBoolean(P2PConstants.JSON_RESULT, false)) {
 				
 				//PARA EL USUARIO QUE CORRIGE			
 				if(numValidations <= listP2PActivityCorrections.size()) {
 					
-					List<P2PActivityCorrections> listP2PActivityCorrectionsAboutMe = P2PActivityCorrectionsLocalServiceUtil.getCorrectionsDoneByP2PActivityId(p2pActivity.getP2pActivityId());
+					List<P2PActivityCorrections> listP2PActivityCorrectionsAboutMe = p2pActivityCorrectionsLocalService.getCorrectionsDoneByP2PActivityId(p2pActivity.getP2pActivityId());
 					
 					//Si ya ha corregido todas la tareas que debe correguir, le ponemos el 50% mas la media que ha recibido de sus correctores.
 					if(numValidations <= listP2PActivityCorrectionsAboutMe.size()){

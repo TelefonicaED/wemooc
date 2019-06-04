@@ -8,10 +8,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
-import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -20,14 +17,11 @@ import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.constants.LMSActionKeys;
-import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.model.QuestionType;
-import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
-import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.activity.TestActivityType;
 import com.ted.lms.learning.activity.test.web.activity.TestActivityTypeFactory;
+import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
 import com.ted.lms.model.CalificationType;
 import com.ted.lms.model.CalificationTypeFactory;
@@ -36,12 +30,13 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.security.permission.resource.LearningActivityPermission;
-import com.ted.lms.service.CourseLocalServiceUtil;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,6 +53,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true, 
@@ -84,14 +80,14 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 			return null;
 		}else {
 			
-			LearningActivity activity = LearningActivityLocalServiceUtil.fetchLearningActivity(actId);
-			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+			LearningActivity activity = learningActivityLocalService.fetchLearningActivity(actId);
+			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 			
 			renderRequest.setAttribute("activity", activity);
 			renderRequest.setAttribute("actId", actId);
 			
 			boolean improving = false;
-			LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, themeDisplay.getUserId());
+			LearningActivityResult result = learningActivityResultLocalService.getLearningActivityResult(actId, themeDisplay.getUserId());
 			renderRequest.setAttribute("learningActivityResult", result);
 			
 			boolean isLocked = true;
@@ -102,7 +98,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 			}
 			
 			if(result != null){
-				int done =  LearningActivityTryLocalServiceUtil.getLearningActivityTriesCount(actId,themeDisplay.getUserId());
+				int done =  learningActivityTryLocalService.getLearningActivityTriesCount(actId,themeDisplay.getUserId());
 				
 				if(result.getResult() < 100 && !isLocked && result.isPassed() && (done < activity.getTries() || activity.getTries() == 0)){
 					improving = true;
@@ -128,7 +124,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 			
 			renderRequest.setAttribute("isTeacher", isTeacher);
 			
-			TestActivityTypeFactory testActivityTypeFactory = new TestActivityTypeFactory();
+			TestActivityTypeFactory testActivityTypeFactory = (TestActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(TestConstants.TYPE);
 			TestActivityType testActivityType = testActivityTypeFactory.getTestActivityType(activity); 
 			
 			
@@ -138,7 +134,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 			//resultados
 			if(Validator.isNotNull(mvcRender) && mvcRender.equals("results") || (!improve && result != null && result.isPassed() && !hasPermissionAccessCourseFinished)) {
 				
-				LearningActivityTry learningActivityTry = LearningActivityTryLocalServiceUtil.getLastLearningActivityTryFinished(actId, themeDisplay.getUserId());
+				LearningActivityTry learningActivityTry = learningActivityTryLocalService.getLastLearningActivityTryFinished(actId, themeDisplay.getUserId());
 				return doRenderResults(renderRequest, renderResponse, hasPermissionAccessCourseFinished, learningActivityTry, testActivityType, course, isLocked, null);
 				
 			}else {
@@ -150,7 +146,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 						|| LMSPermission.contains(themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(), LMSActionKeys.ACCESSLOCK)
 						|| improving || hasPermissionAccessCourseFinished) {
 					
-					LearningActivityTry learningTry = LearningActivityTryLocalServiceUtil.getLearningActivityTryNotFinishedByActUser(actId,themeDisplay.getUserId());
+					LearningActivityTry learningTry = learningActivityTryLocalService.getLearningActivityTryNotFinishedByActUser(actId,themeDisplay.getUserId());
 					
 					if(!improve && !started && learningTry == null && ((activity.getTries() > 0 && !canUserDoNewTry) || testActivityType.getPreview())) {
 						
@@ -169,7 +165,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 								//Comprobar si tenemos un try sin fecha de fin, para continuar en ese try.
 								if(learningTry == null && !hasPermissionAccessCourseFinished){
 									ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivityTry.class.getName(), renderRequest);
-									learningTry =LearningActivityTryLocalServiceUtil.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
+									learningTry =learningActivityTryLocalService.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
 									
 								}
 								if(!hasPermissionAccessCourseFinished){
@@ -215,7 +211,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 											
 											Date endDate = new Date(learningTry.getStartDate().getTime()+activityTimestamp);
 											ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivityTry.class.getName(), renderRequest);
-											LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningTry, 0, endDate, serviceContext);
+											learningActivityTryLocalService.finishLearningActivityTry(learningTry, 0, endDate, serviceContext);
 										}
 									} catch (IOException e) {
 										e.printStackTrace();
@@ -268,7 +264,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 			boolean improve, long activityTimestamp, long timestamp, boolean canUserDoNewTry) {
 		ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
-		List<Question> questions = QuestionLocalServiceUtil.getQuestionsOrder(activity.getActId());
+		List<Question> questions = questionLocalService.getQuestionsOrder(activity.getActId());
 		
 		long random = 0;
 		if(!hasPermissionAccessCourseFinished){
@@ -371,12 +367,12 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 	private String doRenderPreview(RenderRequest renderRequest, RenderResponse renderResponse, LearningActivity activity, boolean canUserDoNewTry) {
 		ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
-		int tries =  LearningActivityTryLocalServiceUtil.getLearningActivityTriesCount(activity.getActId(),themeDisplay.getUserId());
+		int tries =  learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(),themeDisplay.getUserId());
 		
 		Object[] argumentsTries =  new Object[]{tries,activity.getTries()};
 		Object[] argumentsPassPuntuation =  new Object[]{activity.getPassPuntuation()};
 		
-		boolean hasQuestions = QuestionLocalServiceUtil.getQuestionsCount(activity.getActId()) > 0;
+		boolean hasQuestions = questionLocalService.getQuestionsCount(activity.getActId()) > 0;
 		
 		PortletURL correctURL = renderResponse.createRenderURL();
 		correctURL.setParameter("actId", String.valueOf(activity.getActId()));
@@ -408,9 +404,9 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 		
 		if(!hasPermissionAccessCourseFinished){
 			tries = testActivityType.getLearningActivity().getTries();
-			userTries = LearningActivityTryLocalServiceUtil.getLearningActivityTriesCount(activity.getActId(),themeDisplay.getUserId());
+			userTries = learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(),themeDisplay.getUserId());
 		
-			LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearningActivityResult(activity.getActId(),themeDisplay.getUserId());
+			LearningActivityResult result = learningActivityResultLocalService.getLearningActivityResult(activity.getActId(),themeDisplay.getUserId());
 			score = result.getResult();
 			scoreTry = learningActivityTry.getResult();
 			tryResultData = learningActivityTry.getTryResultData();
@@ -427,7 +423,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 		CalificationType calificationType = calificationTypeFactory.getCalificationType(course);
 		
 		if(!comesFromCorrection) {
-			userPassed=LearningActivityResultLocalServiceUtil.hasUserPassed(activity.getActId(),themeDisplay.getUserId());
+			userPassed=learningActivityResultLocalService.hasUserPassed(activity.getActId(),themeDisplay.getUserId());
 		}else if(!hasPermissionAccessCourseFinished){
 			userPassed=activity.getPassPuntuation()<=scoreTry;
 			if(showFeedback){
@@ -448,7 +444,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 						while(nodeItr.hasNext()) {
 							Element element = nodeItr.next();				
 							 if("question".equals(element.getName())) {
-								 question=QuestionLocalServiceUtil.fetchQuestion(Long.valueOf(element.attributeValue("id")));
+								 question=questionLocalService.fetchQuestion(Long.valueOf(element.attributeValue("id")));
 								 if(question != null){
 									 questions.add(question); 
 								 }		        	 
@@ -474,7 +470,7 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 		}
 		
 		if(tries==0 || userTries < tries || LearningActivityPermission.contains(themeDisplay.getPermissionChecker(), activity, LMSActionKeys.UPDATE)) {
-			if(!LearningActivityResultLocalServiceUtil.hasUserPassed(activity.getActId(),themeDisplay.getUserId())){
+			if(!learningActivityResultLocalService.hasUserPassed(activity.getActId(),themeDisplay.getUserId())){
 				PortletURL tryTestURL = renderResponse.createRenderURL();
 				tryTestURL.setParameter("actId", String.valueOf(activity.getActId()));
 				renderRequest.setAttribute("tryTestURL", tryTestURL);
@@ -502,4 +498,15 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 		
 		return "/results.jsp";
 	}
+	
+	@Reference
+	private CourseLocalService courseLocalService;
+	@Reference
+	private LearningActivityResultLocalService learningActivityResultLocalService;
+	@Reference
+	private LearningActivityTryLocalService learningActivityTryLocalService;
+	@Reference
+	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
+	private QuestionLocalService questionLocalService;
 }

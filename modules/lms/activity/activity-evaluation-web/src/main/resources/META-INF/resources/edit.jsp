@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.ted.lms.service.LearningActivityServiceUtil"%>
 <%@page import="com.ted.lms.service.ModuleServiceUtil"%>
@@ -32,7 +33,7 @@ JSONObject activities = null;
 Date firedDate = null;
 
 if(actId > 0){
-	evaluationActivityTypeFactory = new EvaluationActivityTypeFactory();
+	evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
 	learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(learningActivity);
 	activities = evaluationActivityType.getActivities();

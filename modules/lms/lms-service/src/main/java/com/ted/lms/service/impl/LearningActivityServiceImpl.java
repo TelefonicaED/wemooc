@@ -152,6 +152,25 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 	}
 	
 	@Override
+	public List<LearningActivity> getActivitiesExcluded(long moduleId, long actId){
+		List<LearningActivity> activities = new ArrayList<LearningActivity>();
+		
+		List<LearningActivity> listActivities = learningActivityLocalService.getLearningActivities(moduleId);
+		
+		for(LearningActivity activity: listActivities) {
+			try {
+				if(activity.getActId() != actId && learningActivityModelResourcePermission.contains(getPermissionChecker(), activity, ActionKeys.VIEW)) {
+					activities.add(activity);
+				}
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return activities;
+	}
+	
+	@Override
 	public List<LearningActivity> getActivitiesNotTypeId(long moduleId, long typeId){
 		List<LearningActivity> activities = new ArrayList<LearningActivity>();
 		

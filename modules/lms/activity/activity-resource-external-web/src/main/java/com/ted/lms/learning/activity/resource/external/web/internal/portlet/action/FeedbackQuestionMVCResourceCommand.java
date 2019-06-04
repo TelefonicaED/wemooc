@@ -6,15 +6,16 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalPortletKeys;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import javax.portlet.ResourceRequest;
 import javax.portlet.ResourceResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	property = {
@@ -33,8 +34,8 @@ public class FeedbackQuestionMVCResourceCommand extends BaseMVCResourceCommand {
 		long actId = ParamUtil.getLong(resourceRequest, "actId");
 		long questionId = ParamUtil.getLong(resourceRequest, "questionId");
 		
-		Question question = QuestionLocalServiceUtil.getQuestion(questionId);
-		LearningActivityTry activityTry = LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(actId, themeDisplay.getUserId());
+		Question question = questionLocalService.getQuestion(questionId);
+		LearningActivityTry activityTry = learningActivityTryLocalService.getLastLearningActivityTry(actId, themeDisplay.getUserId());
 		
 		resourceRequest.setAttribute("question", question);
 		resourceRequest.setAttribute("tryResultData", activityTry.getTryResultData());
@@ -42,4 +43,9 @@ public class FeedbackQuestionMVCResourceCommand extends BaseMVCResourceCommand {
 		
 		include(resourceRequest, resourceResponse,"/question.jsp");
 	}
+	
+	@Reference
+	private QuestionLocalService questionLocalService;
+	@Reference
+	private LearningActivityTryLocalService learningActivityTryLocalService;
 }

@@ -57,4 +57,10 @@ public interface CourseServiceConfiguration {
 		name = "allow-access-to-completed-courses", required = false
 	)
 	public boolean allowAccessToCompletedCourses();
+	
+	@Meta.AD(
+		description = "specifcy-prerequisite-activities",
+		name = "prerequisite-activities", required = false
+	)
+	public String[] prerequisitesActivity();
 }

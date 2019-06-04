@@ -4,6 +4,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.ted.lms.learning.activity.question.model.Question;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import javax.portlet.ActionRequest;
 
@@ -11,8 +12,8 @@ public class SurveyQuestionType extends OptionsQuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(SurveyQuestionType.class);
 
-	public SurveyQuestionType(Question question) {
-		super(question);
+	public SurveyQuestionType(Question question, AnswerLocalService answerLocalService) {
+		super(question, answerLocalService);
 	}
 
 	@Override

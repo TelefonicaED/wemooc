@@ -17,7 +17,7 @@ import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
-import com.ted.lms.service.CourseLocalServiceUtil;
+import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 
 import javax.portlet.PortletException;
@@ -53,7 +53,7 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					LearningActivity.class.getName(), actId, themeDisplay.getUserId(), themeDisplay.getUser().getFullName(), null);
 			
 			LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
-			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(activity.getGroupId());
+			Course course = courseLocalService.getCourseByGroupCreatedId(activity.getGroupId());
 			
 			PortalUtil.clearRequestParameters(renderRequest);
 			
@@ -103,11 +103,9 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 		}
 	}
 	
-	@Reference(unbind = "-")
-	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
-		this.learningActivityLocalService = learningActivityLocalService;
-	}
-	
+	@Reference
 	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
+	private CourseLocalService courseLocalService;
 
 }

@@ -330,6 +330,11 @@ public class LearningActivityResultWrapper implements LearningActivityResult,
 		return _learningActivityResult.getStartDate();
 	}
 
+	@Override
+	public String getStatusProperties() {
+		return _learningActivityResult.getStatusProperties();
+	}
+
 	/**
 	* Returns the user ID of this learning activity result.
 	*

@@ -9,6 +9,8 @@ import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -37,11 +39,11 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new OnlineActivityType(activity);
+		return new OnlineActivityType(activity, learningActivityResultLocalService);
 	}
 	
 	public OnlineActivityType getOnlineActivityType(LearningActivity activity) throws PortalException {
-		return new OnlineActivityType(activity);
+		return new OnlineActivityType(activity, learningActivityResultLocalService);
 	}
 	
 	@Override
@@ -113,4 +115,10 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
+	private LearningActivityResultLocalService learningActivityResultLocalService;
 }

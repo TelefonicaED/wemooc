@@ -5,6 +5,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -22,13 +23,16 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.learning.activity.evaluation.EvaluationActivityType;
 import com.ted.lms.learning.activity.evaluation.EvaluationActivityTypeFactory;
+import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationPortletKeys;
 import com.ted.lms.learning.activity.evaluation.web.internal.util.EvaluationActivitySQL;
 import com.ted.lms.model.CalificationType;
 import com.ted.lms.model.CalificationTypeFactory;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
@@ -81,6 +85,40 @@ public class EvaluationActivityViewMVCRenderCommand implements MVCRenderCommand 
 		
 		long actId = ParamUtil.getLong(renderRequest, "actId", 0);
 		
+		try {
+			
+			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+			
+			CalificationTypeFactory calificationTypeFactory = CalificationTypeFactoryRegistryUtil.getCalificationTypeFactoryByType(course.getCalificationType());
+			CalificationType calificationType = calificationTypeFactory.getCalificationType(course);
+			
+			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
+			EvaluationActivityTypeFactory evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
+			EvaluationActivityType evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(activity);
+			
+			LearningActivityResult activityResult = learningActivityResultLocalService.getLearningActivityResult(actId, themeDisplay.getUserId());
+			
+			String result = null;
+			String status = null;
+			if(activityResult != null && evaluationActivityType.getPublishDate() != null) {
+				result = calificationType.translate(themeDisplay.getLocale(), activityResult.getResult()) + calificationType.getSuffix();
+				status = activityResult.getStatusProperties();
+			}else {
+				result = LanguageUtil.get(themeDisplay.getLocale(), "calification.pending");
+				status = "learning-activity.evaluation.status.not-published";
+			}
+			
+			renderRequest.setAttribute("result", result);
+			renderRequest.setAttribute("status", status);
+			renderRequest.setAttribute("evaluationActivityType", evaluationActivityType);
+			renderRequest.setAttribute("resultUser", activityResult != null);
+			
+			
+		}catch (PortalException e) {
+			e.printStackTrace();
+			return "/error.jsp";
+		}
+		
 		return "/view.jsp";
 	}
 	
@@ -98,7 +136,7 @@ public class EvaluationActivityViewMVCRenderCommand implements MVCRenderCommand 
 			renderRequest.setAttribute("calificationType", calificationType);
 			
 			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
-			EvaluationActivityTypeFactory evaluationActivityTypeFactory = new EvaluationActivityTypeFactory();
+			EvaluationActivityTypeFactory evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
 			EvaluationActivityType evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(activity);
 		
 			if(evaluationActivityType.getFiredDate() == null && evaluationActivityType.getActivities().length() > 0) {

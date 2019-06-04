@@ -7,3 +7,4 @@ Export-Package: com.ted.lms.web.internal.portlet.constants
 -plugin.jsp: com.liferay.ant.bnd.jsp.JspAnalyzerPlugin
 -sources: true
 -metatype: *
+Web-ContextPath: /lms-web

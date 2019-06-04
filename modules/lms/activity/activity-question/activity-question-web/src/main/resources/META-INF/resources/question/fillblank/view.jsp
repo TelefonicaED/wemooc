@@ -15,6 +15,7 @@
 <%@page import="com.ted.lms.learning.activity.question.FillblankQuestionTypeFactory"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
 <%@ include file="/init.jsp" %>
 
 <%
@@ -31,7 +32,8 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-FillblankQuestionType fillblankQuestionType = new FillblankQuestionType(question);
+FillblankQuestionTypeFactory fillblankQuestionTypeFactory = (FillblankQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(FillblankQuestionTypeFactory.TYPE);
+FillblankQuestionType fillblankQuestionType = fillblankQuestionTypeFactory.getFillblankQuestionType(question);
 
 //Cogemos las respuestas a los blancos (separadas por coma) de la pregunta a partir del xml de learningactivityresult
 String[] userAnswers = fillblankQuestionType.getAnswersSelected(documentTryResultData);

@@ -19,13 +19,13 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.util.TestPrefsPropsValues;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,9 +43,12 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	private boolean enableOrder;
 	private long questionsPerPage;
 	private boolean preview;
+	private LearningActivityTryLocalService learningActivityTryLocalService;
 
-	public TestActivityType(LearningActivity activity) {
-		super(activity);
+	public TestActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
+			QuestionLocalService questionLocalService, LearningActivityTryLocalService learningActivityTryLocalService) {
+		super(activity, learningActivityResultLocalService, questionLocalService);
+		this.learningActivityTryLocalService = learningActivityTryLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -123,7 +126,7 @@ public class TestActivityType extends QuestionsLearningActivityType {
 			
 			score = learningActivityTry.getResult();
 			log.debug("score del try: " + score);
-			List<Question> listQuestions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
+			List<Question> listQuestions = questionLocalService.getQuestions(activity.getActId());
 					
 			if(listQuestions != null && listQuestions.size() > 0){
 				log.debug("tiene preguntas: " + listQuestions.size());
@@ -196,15 +199,15 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	public boolean hasTries(long userId) {
 		
 		//Si ya ha pasado el test, no puede hacer más intentos.
-		if(LearningActivityResultLocalServiceUtil.hasUserPassed(activity.getActId(), userId) && getImprove()) {
+		if(learningActivityResultLocalService.hasUserPassed(activity.getActId(), userId) && getImprove()) {
 			return false;	
 		} else if(activity.getTries() == 0) {
 			return true;
 		}
 		
 		//Mirar si los intentos que tiene son menores de los intentos posibles
-		int userTries = LearningActivityTryLocalServiceUtil.getLearningActivityTriesCount(activity.getActId(), userId);
-		int numTriesOpened = LearningActivityTryLocalServiceUtil.getNumTriesOpened(activity.getActId(), userId);
+		int userTries = learningActivityTryLocalService.getLearningActivityTriesCount(activity.getActId(), userId);
+		int numTriesOpened = learningActivityTryLocalService.getNumTriesOpened(activity.getActId(), userId);
 			
 		//Si tiene menos intentos de los que se puede hacer
 		return (userTries-numTriesOpened) < activity.getTries();

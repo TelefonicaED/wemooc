@@ -2,7 +2,7 @@ package com.ted.lms.learning.activity.test.web.internal.portlet;
 
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
 import com.ted.lms.model.CalificationType;
 import com.ted.lms.model.CalificationTypeFactory;
@@ -79,7 +79,7 @@ public class TestPortlet extends MVCPortlet {
 
 
 		for (long questionId : questionIds) {
-			Question question = QuestionLocalServiceUtil.fetchQuestion(questionId);
+			Question question = questionLocalService.fetchQuestion(questionId);
 			QuestionType qt = question.getQuestionType();
 			if(qt.isCorrect(actionRequest)>0) {
 				correctanswers++;
@@ -89,7 +89,7 @@ public class TestPortlet extends MVCPortlet {
 			resultadosXML.add(qt.getResults(actionRequest));								
 		}
 
-		List<Question> questions=QuestionLocalServiceUtil.getQuestions(actId);
+		List<Question> questions=questionLocalService.getQuestions(actId);
 		long score = (correctanswers-penalizedAnswers)*100/questions.size();
 		if(score < 0)score = 0;
 		
@@ -186,7 +186,13 @@ public class TestPortlet extends MVCPortlet {
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
+		this.questionLocalService = questionLocalService;
+	}
+	
 	private CourseLocalService courseLocalService;
 	private LearningActivityTryLocalService learningActivityTryLocalService;
 	private LearningActivityResultLocalService learningActivityResultLocalService;
+	private QuestionLocalService questionLocalService;
 }

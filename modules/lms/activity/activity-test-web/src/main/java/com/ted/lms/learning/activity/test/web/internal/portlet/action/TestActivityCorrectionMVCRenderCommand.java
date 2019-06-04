@@ -20,14 +20,16 @@ import com.liferay.portal.kernel.util.comparator.UserLastNameComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.ted.lms.learning.activity.test.web.activity.TestActivityType;
 import com.ted.lms.learning.activity.test.web.activity.TestActivityTypeFactory;
+import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
 import com.ted.lms.model.CalificationType;
 import com.ted.lms.model.CalificationTypeFactory;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
-import com.ted.lms.service.CourseLocalServiceUtil;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.util.List;
@@ -38,6 +40,7 @@ import javax.portlet.RenderResponse;
 import javax.portlet.WindowStateException;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true, 
@@ -56,7 +59,7 @@ public class TestActivityCorrectionMVCRenderCommand implements MVCRenderCommand 
 
 		ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
-		Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+		Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		
 		ParamUtil.print(renderRequest);
 
@@ -96,18 +99,19 @@ public class TestActivityCorrectionMVCRenderCommand implements MVCRenderCommand 
 				ParamUtil.getInteger(renderRequest, SearchContainer.DEFAULT_DELTA_PARAM,SearchContainer.DEFAULT_DELTA), portletURL, 
 				null,  "no-results");
 
-		List<User> users = CourseLocalServiceUtil.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
+		List<User> users = courseLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
 				WorkflowConstants.STATUS_APPROVED, null, andOperator, userSearchContainer.getStart(), userSearchContainer.getEnd(), obc);
 
-		int totalUsers = CourseLocalServiceUtil.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
+		int totalUsers = courseLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
 				WorkflowConstants.STATUS_APPROVED, null, andOperator);
 		
 		userSearchContainer.setResults(users);
 		userSearchContainer.setTotal(totalUsers);
 		
 		try {
-			LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-			TestActivityType testActivityType = new TestActivityType(activity);
+			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
+			TestActivityTypeFactory testActivityTypeFactory = (TestActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(TestConstants.TYPE);
+			TestActivityType testActivityType = testActivityTypeFactory.getTestActivityType(activity);
 			
 			renderRequest.setAttribute("testActivityType", testActivityType);
 		} catch (PortalException e) {
@@ -140,10 +144,15 @@ public class TestActivityCorrectionMVCRenderCommand implements MVCRenderCommand 
 		renderRequest.setAttribute("calificationType", calificationType);
 		renderRequest.setAttribute("actId", actId);
 		renderRequest.setAttribute("backURL", backURL);
-		renderRequest.setAttribute("testActivityTypeFactory", new TestActivityTypeFactory());
+		renderRequest.setAttribute("testActivityTypeFactory", (TestActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(TestConstants.TYPE));
 		renderRequest.setAttribute("courseId", course.getCourseId());
 		renderRequest.setAttribute("showPopupGradesURL", showPopupGradesURL);
 	
 		return "/corrections.jsp";
 	}
+	
+	@Reference
+	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
+	private CourseLocalService courseLocalService;
 }

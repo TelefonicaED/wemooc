@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,8 +23,8 @@ public class DragAndDropQuestionType extends BaseQuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(DragAndDropQuestionType.class);
 
-	public DragAndDropQuestionType(Question question) {
-		super(question);
+	public DragAndDropQuestionType(Question question, AnswerLocalService answerLocalService) {
+		super(question, answerLocalService);
 	}
 	
 	@Override
@@ -45,7 +45,7 @@ public class DragAndDropQuestionType extends BaseQuestionType{
 	@Override
 	public long correct(Element element) throws PortalException {
 		List<Answer> answers = new ArrayList<Answer>();
-		answers.addAll(AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId()));
+		answers.addAll(answerLocalService.getAnswersByQuestionId(question.getQuestionId()));
 
 		//me quedo solo con un array con la solucion
 		for(ListIterator<Answer> itr = answers.listIterator(); itr.hasNext();){
@@ -95,7 +95,7 @@ public class DragAndDropQuestionType extends BaseQuestionType{
 	@Override
 	public Element getResults(PortletRequest portletRequest){
 		List<Answer> testAnswers = new ArrayList<Answer>();
-		testAnswers.addAll(AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId()));
+		testAnswers.addAll(answerLocalService.getAnswersByQuestionId(question.getQuestionId()));
 
 		//me quedo solo con un array con la solucion
 		for(ListIterator<Answer> itr = testAnswers.listIterator(); itr.hasNext();){
@@ -126,7 +126,7 @@ public class DragAndDropQuestionType extends BaseQuestionType{
 	
 	public long isCorrect(PortletRequest portletRequest){
 		List<Answer> answers = new ArrayList<Answer>();
-		answers.addAll(AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId()));
+		answers.addAll(answerLocalService.getAnswersByQuestionId(question.getQuestionId()));
 
 		//me quedo solo con un array con la solucion
 		for(ListIterator<Answer> itr = answers.listIterator(); itr.hasNext();){
@@ -160,7 +160,7 @@ public class DragAndDropQuestionType extends BaseQuestionType{
 							try {
 								long id = Long.valueOf(elementElement.attributeValue("id"));
 								if(id != -1)
-									answerSelected.add(AnswerLocalServiceUtil.getAnswer(id));
+									answerSelected.add(answerLocalService.getAnswer(id));
 								else answerSelected.add(null);
 							} catch (NumberFormatException e) {
 								e.printStackTrace();

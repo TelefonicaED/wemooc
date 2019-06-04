@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.learning.activity.p2p.util.P2PPrefsPropsValues"%>
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.liferay.portal.kernel.util.DateUtil"%>
 <%@page import="java.text.Format"%>
 <%@page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil"%>
@@ -8,7 +10,6 @@
 <%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%@page import="com.liferay.portal.kernel.json.JSONFactoryUtil"%>
 <%@page import="com.liferay.portal.kernel.json.JSONArray"%>
-<%@page import="com.ted.lms.learning.activity.p2p.web.constants.P2PPropsValues"%>
 <%@page import="com.ted.lms.learning.activity.p2p.web.activity.P2PActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.p2p.web.activity.P2PActivityType"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
@@ -28,7 +29,7 @@ P2PActivityType p2pActivityType = null;
 LearningActivity learningActivity = null;
 
 if(actId > 0){
-	P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
+	P2PActivityTypeFactory p2pActivityTypeFactory = (P2PActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(P2PConstants.TYPE);
 	learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(learningActivity);
 }
@@ -138,7 +139,7 @@ String timeFormat = DateUtil.isFormatAmPm(locale) ? "am-pm" : "24-hour";
 		</liferay-frontend:fieldset>
 	</div>
 	<%
-		if(OnlinePropsValues.P2P_TEAM_ASSIGNATIONS){
+		if(P2PPrefsPropsValues.getP2PTeamAssignations(themeDisplay.getCompanyId())){
 	%>
 		<div class="col-md-6">
 			<aui:field-wrapper label="learning-activity.p2p.select-assignation-type" >
@@ -179,7 +180,7 @@ String timeFormat = DateUtil.isFormatAmPm(locale) ? "am-pm" : "24-hour";
 <script>
 	function <portlet:namespace />addEvaluationCriteria(){
 		var container = document.getElementById("<portlet:namespace />texts");
-		var numberQuestion = parseInt('<%=OnlinePropsValues.NUM_EVALUATION_CRITERIA%>');
+		var numberQuestion = parseInt('<%=P2PPrefsPropsValues.getNumEvaluationCriteria(themeDisplay.getCompanyId())%>');
 		
 		if(container){
 			var number=-1;

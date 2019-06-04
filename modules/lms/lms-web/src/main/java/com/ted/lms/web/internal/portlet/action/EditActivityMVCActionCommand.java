@@ -43,6 +43,7 @@ import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
@@ -384,7 +385,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		learningActivityService.updateLearningActivity(activity);
 		
 		//Guardamos los prerequisitos
-		String[] classNamePrerequisites = LMSPrefsPropsValues.getPrerequisitesOfLearningActivity(themeDisplay.getCompanyId());
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities();
 		PrerequisiteFactory prerequisiteFactory = null;
 		Prerequisite prerequisite = null;
 		long activityClassNameId = PortalUtil.getClassNameId(LearningActivity.class);
@@ -421,9 +422,15 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		this.trashEntryService = trashEntryService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setCourseLocalService(CourseLocalService courseLocalService) {
+		this.courseLocalService = courseLocalService;
+	}
+	
 	private LearningActivityService learningActivityService;
 	private ModuleLocalService moduleLocalService;
 	private TrashEntryService trashEntryService;
+	private CourseLocalService courseLocalService;
 
 	
 	private class UpdateLearningActivityCallable implements Callable<LearningActivity> {

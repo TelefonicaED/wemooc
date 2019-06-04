@@ -11,6 +11,11 @@ import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityService;
+import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.ModuleService;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -38,12 +43,12 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	}
 	
 	public EvaluationActivityType getEvaluationActivityType(LearningActivity activity) throws PortalException {
-		return new EvaluationActivityType(activity);
+		return new EvaluationActivityType(activity, learningActivityResultLocalService, moduleService, activityService, learningActivityTryLocalService);
 	}
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new EvaluationActivityType(activity);
+		return new EvaluationActivityType(activity, learningActivityResultLocalService, moduleService, activityService, learningActivityTryLocalService);
 	}
 	
 	@Override
@@ -93,5 +98,29 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setModuleService(ModuleService moduleService) {
+		this.moduleService = moduleService;
+	}
+	protected ModuleService moduleService;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityService(LearningActivityService activityService) {
+		this.activityService = activityService;
+	}
+	private LearningActivityService activityService;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityTryLocalService(LearningActivityTryLocalService learningActivityTryLocalService) {
+		this.learningActivityTryLocalService = learningActivityTryLocalService;
+	}
+	private LearningActivityTryLocalService learningActivityTryLocalService;
 	
 }

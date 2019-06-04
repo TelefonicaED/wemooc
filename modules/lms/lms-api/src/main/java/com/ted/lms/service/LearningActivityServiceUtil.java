@@ -76,6 +76,11 @@ public class LearningActivityServiceUtil {
 		return getService().getActivities(moduleId);
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getActivitiesExcluded(
+		long moduleId, long actId) {
+		return getService().getActivitiesExcluded(moduleId, actId);
+	}
+
 	public static java.util.List<com.ted.lms.model.LearningActivity> getActivitiesNotTypeId(
 		long moduleId, long typeId) {
 		return getService().getActivitiesNotTypeId(moduleId, typeId);

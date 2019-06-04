@@ -1,3 +1,6 @@
+<%@page import="com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants"%>
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
+<%@page import="com.ted.lms.learning.activity.resource.external.ResourceExternalActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.resource.external.ResourceExternalActivityType"%>
 <%@page import="com.ted.lms.learning.activity.QuestionsLearningActivityType"%>
 <%@page import="com.liferay.portal.kernel.xml.Element"%>
@@ -36,7 +39,7 @@ CalificationType calificationType = calificationTypeFactory.getCalificationType(
 LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, studentId);%>
 
 <p><span><liferay-ui:message key="learning-activity.corrections.done-by" /></span> <%=student.getFullName()%></p>
-<p><span><liferay-ui:message key="learning-activity.corrections.result"/></span> <%=calificationType.translate(themeDisplay.getLocale(), result.getResult()) %></p>
+<p><span><liferay-ui:message key="learning-activity.corrections.result"/></span> <%=calificationType.translate(themeDisplay.getLocale(), result.getResult()) + calificationType.getSuffix() %></p>
 <p><span><liferay-ui:message key="learning-activity.corrections.status"/></span> <%=result.isPassed() ? LanguageUtil.get(request, "status.passed") : LanguageUtil.get(request, "status.failed") %></p>
 
 
@@ -44,7 +47,8 @@ LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearni
 
 	<%List<LearningActivityTry> triesList = LearningActivityTryLocalServiceUtil.getLearningActivityTries(actId, studentId);
 	LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-	ResourceExternalActivityType resourceExternalActivityType = new ResourceExternalActivityType(activity);
+	ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
+	ResourceExternalActivityType resourceExternalActivityType = resourceExternalActivityTypeFactory.getResourceExternalActivityType(activity);
 	
 	SimpleDateFormat sdf=new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	sdf.setTimeZone(timeZone);
@@ -66,7 +70,7 @@ LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearni
 	
 		<liferay-ui:panel id="<%=Long.toString(larntry.getLatId()) %>" title="<%=title %>" collapsible="true" extended="true" defaultState="collapsed">
 		
-			<p><span><liferay-ui:message key="learning-activity.corrections.result"/></span> <%=calificationType.translate(themeDisplay.getLocale(), larntry.getResult()) %></p>
+			<p><span><liferay-ui:message key="learning-activity.corrections.result"/></span> <%=calificationType.translate(themeDisplay.getLocale(), larntry.getResult()) + calificationType.getSuffix() %></p>
 			<p><span><liferay-ui:message key="learning-activity.corrections.status"/></span> <%=userPassed ? LanguageUtil.get(request, "status.passed") : LanguageUtil.get(request, "status.failed") %></p>
 		
 			<%

@@ -34,4 +34,17 @@ public class LearningActivityResultImpl extends LearningActivityResultBaseImpl {
 	 */
 	public LearningActivityResultImpl() {
 	}
+	
+	public String getStatusProperties() {
+		String status = "status.not-attempted";
+		if(getStartDate() != null && getEndDate() == null) {
+			status = "status.incomplete";
+		}else if(getEndDate() != null && isPassed()) {
+			status = "status.passed";
+		}else if(getEndDate() != null && !isPassed()) {
+			status = "status.failed";
+		}
+		
+		return status;
+	}
 }

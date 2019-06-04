@@ -24,8 +24,12 @@ import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.ModuleLocalService;
+import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.lms.web.internal.ModulesItemSelectorHelper;
 import com.ted.lms.web.internal.servlet.taglib.ui.FormNavigatorConstants;
+import com.ted.prerequisite.model.Prerequisite;
+import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,6 +101,19 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 			e.printStackTrace();
 		}
 		
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities();
+		
+		PrerequisiteFactory prerequisiteFactory = null;
+		
+		List<PrerequisiteFactory> listPrerequisiteFactory = new ArrayList<PrerequisiteFactory>();
+		
+		for(String classNamePrerequisite: classNamePrerequisites){
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
+			if(prerequisiteFactory != null) {
+				listPrerequisiteFactory.add(prerequisiteFactory);
+			}
+		}
+		
 		renderRequest.setAttribute("module", module);
 		renderRequest.setAttribute("cmd", cmd);
 		renderRequest.setAttribute("moduleId", moduleId);
@@ -107,6 +124,7 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("activity", activity);
 		renderRequest.setAttribute("type", type);
 		renderRequest.setAttribute("attachmentsFileEntries", attachmentsFileEntries);
+		renderRequest.setAttribute("listPrerequisiteFactory", listPrerequisiteFactory);
 		
 		return "/activities/edit_activity.jsp";
 	}

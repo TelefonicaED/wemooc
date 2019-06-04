@@ -4,9 +4,9 @@ import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
-import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
-import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.util.AudioProcessorUtil;
 import com.liferay.document.library.kernel.util.DLProcessorRegistryUtil;
 import com.liferay.document.library.kernel.util.DLUtil;
@@ -31,15 +31,17 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityType;
 import com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityTypeFactory;
+import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalConstants;
 import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalPortletKeys;
 import com.ted.lms.learning.activity.resource.internal.web.util.EPUBProcessorUtil;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.CourseLocalServiceUtil;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -47,6 +49,7 @@ import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true, 
@@ -67,20 +70,20 @@ public class ResourceInternalActivityViewMVCRenderCommand implements MVCRenderCo
 			renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
 		}
 
-		LearningActivity activity = LearningActivityLocalServiceUtil.fetchLearningActivity(actId);
+		LearningActivity activity = learningActivityLocalService.fetchLearningActivity(actId);
 		renderRequest.setAttribute("activity", activity);
 
 		renderRequest.setAttribute("actId", actId);
 
 		// Creamos el try si corresponde
-		Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+		Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 		try {
-			if (!LearningActivityResultLocalServiceUtil.hasUserPassed(actId, themeDisplay.getUserId())
+			if (!learningActivityResultLocalService.hasUserPassed(actId, themeDisplay.getUserId())
 					&& !course.hasPermissionAccessCourseFinished(themeDisplay.getUserId())) {
 				ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivityTry.class.getName(),renderRequest);
-				LearningActivityTry learningActivityTry = LearningActivityTryLocalServiceUtil
+				LearningActivityTry learningActivityTry = learningActivityTryLocalService
 						.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
-				learningActivityTry = LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningActivityTry,100, serviceContext);
+				learningActivityTry = learningActivityTryLocalService.finishLearningActivityTry(learningActivityTry,100, serviceContext);
 			}
 		} catch (PortalException e) {
 			e.printStackTrace();
@@ -90,18 +93,18 @@ public class ResourceInternalActivityViewMVCRenderCommand implements MVCRenderCo
 			renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
 		}
 
-		ResourceInternalActivityTypeFactory resourceInternalActivityTypeFactory = new ResourceInternalActivityTypeFactory();
+		ResourceInternalActivityTypeFactory resourceInternalActivityTypeFactory = (ResourceInternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceInternalConstants.TYPE);
 		ResourceInternalActivityType resourceInternalActivityType = resourceInternalActivityTypeFactory.getResourceInternalType(activity);
 
 		try {
 
-			AssetEntry assetEntry = AssetEntryLocalServiceUtil.getAssetEntry(resourceInternalActivityType.getAssetEntryId());
+			AssetEntry assetEntry = assetEntryLocalService.getAssetEntry(resourceInternalActivityType.getAssetEntryId());
 			
 			if (assetEntry.getClassName().equals(DLFileEntry.class.getName())) {
 				HttpServletRequest request = PortalUtil.getHttpServletRequest(renderRequest);
 				String randomNamespace = PortalUtil.generateRandomKey(request, "portlet_resource_internal_view_file_entry_preview") + StringPool.UNDERLINE;
 
-				FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(assetEntry.getClassPK());
+				FileEntry fileEntry = dlAppLocalService.getFileEntry(assetEntry.getClassPK());
 				FileVersion fileVersion = fileEntry.getFileVersion();
 				
 				boolean emptyPreview = false;
@@ -269,4 +272,18 @@ public class ResourceInternalActivityViewMVCRenderCommand implements MVCRenderCo
 
 		return "/view.jsp";
 	}
+	
+	@Reference
+	private CourseLocalService courseLocalService;
+	@Reference
+	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
+	private LearningActivityResultLocalService learningActivityResultLocalService;
+	@Reference
+	private LearningActivityTryLocalService learningActivityTryLocalService;
+	@Reference
+	private AssetEntryLocalService assetEntryLocalService;
+	@Reference
+	private DLAppLocalService dlAppLocalService;
+	
 }

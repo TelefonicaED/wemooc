@@ -122,7 +122,7 @@ function <portlet:namespace />showPopupGrades(studentId) {
 			String status="status.not-attempted";
 			if(laResult != null){
 				status="status.incomplete";
-				result = calificationType.translate(themeDisplay.getLocale(), laResult.getResult());
+				result = calificationType.translate(themeDisplay.getLocale(), laResult.getResult()) + calificationType.getSuffix();
 				
 				if(laResult.getEndDate()!=null){
 					status="status.failed"	;

@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.learning.activity.question.MultioptionsQuestionTypeFactory"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="java.util.Date"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
@@ -12,6 +13,7 @@
 <%@page import="com.liferay.portal.kernel.xml.Document"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
 <%@ include file="/init.jsp" %>
 
 <%boolean canUserDoNewTry = ParamUtil.getBoolean(request,"canUserDoNewTry");
@@ -29,20 +31,17 @@ if(Validator.isNotNull(tryResultData)){
 
 String html = "", answersFeedBack="", feedMessage = "", cssclass="", selected="";
 
-MultioptionsQuestionType multioptionsQuestionType = new MultioptionsQuestionType(question);
+MultioptionsQuestionTypeFactory multioptionsQuestionTypeFactory = (MultioptionsQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(MultioptionsQuestionTypeFactory.TYPE);
+MultioptionsQuestionType multioptionsQuestionType = multioptionsQuestionTypeFactory.getMultioptionsQuestionType(question);
 
 String timestamp="";
 boolean isCombo = false;
 String onclick = "";
 
-boolean enableOrder = QuestionPrefsPropsValues.getOptionsEditFormat(themeDisplay.getCompanyId());
-
-if(enableOrder){
-	if(multioptionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL){
-		cssclass="in-line ";
-	}else if(multioptionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_COMBO){
-		isCombo = true;
-	}
+if(multioptionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL){
+	cssclass="in-line ";
+}else if(multioptionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_COMBO){
+	isCombo = true;
 }
 
 List<Answer> answersSelected=multioptionsQuestionType.getAnswersSelected(documentTryResultData, questionId);

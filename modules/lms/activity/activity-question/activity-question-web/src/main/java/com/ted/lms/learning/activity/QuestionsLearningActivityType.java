@@ -9,9 +9,10 @@ import com.ted.lms.learning.activity.question.constants.QuestionConstants;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,13 +20,18 @@ import java.util.List;
 import javax.portlet.ActionRequest;
 
 public abstract class QuestionsLearningActivityType extends BaseLearningActivityType {
+	
 	private boolean showCorrectAnswer;
 	private boolean showFeedback;
 	private boolean showCorrectAnswerOnlyOnFinalTry;
 	private List<Question> questions;
+	protected final QuestionLocalService questionLocalService;
 	
-	public QuestionsLearningActivityType(LearningActivity activity) {
-		super(activity);
+	public QuestionsLearningActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, 
+			QuestionLocalService questionLocalService) {
+		super(activity, learningActivityResultLocalService);
+		System.out.println("questionstype questionLocalService: " + questionLocalService);
+		this.questionLocalService = questionLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -68,7 +74,7 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 		activity.setExtraContent(extraContent.toJSONString());
 		
 		//Ahora guardamos las preguntas
-		QuestionLocalServiceUtil.saveQuestions(actionRequest, activity.getActId());
+		questionLocalService.saveQuestions(actionRequest, activity.getActId());
 	}
 	
 	
@@ -86,7 +92,7 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 	
 	public List<Question> getQuestions(){
 		if(questions == null) {
-			questions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
+			questions = questionLocalService.getQuestions(activity.getActId());
 		}
 		return questions;
 	}

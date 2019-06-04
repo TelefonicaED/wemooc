@@ -16,8 +16,6 @@ package com.ted.lms.learning.activity.p2p.service.persistence.impl;
 
 import aQute.bnd.annotation.ProviderType;
 
-import com.liferay.petra.string.StringBundler;
-
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -35,6 +33,7 @@ import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
@@ -179,6 +178,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public List<P2PActivity> findByUuid(String uuid, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -202,7 +203,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
-					if (!Objects.equals(uuid, p2pActivity.getUuid())) {
+					if (!uuid.equals(p2pActivity.getUuid())) {
 						list = null;
 
 						break;
@@ -226,10 +227,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -410,6 +408,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public P2PActivity[] findByUuid_PrevAndNext(long p2pActivityId,
 		String uuid, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+		uuid = Objects.toString(uuid, "");
+
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
 
 		Session session = null;
@@ -455,10 +455,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 		boolean bindUuid = false;
 
-		if (uuid == null) {
-			query.append(_FINDER_COLUMN_UUID_UUID_1);
-		}
-		else if (uuid.equals("")) {
+		if (uuid.isEmpty()) {
 			query.append(_FINDER_COLUMN_UUID_UUID_3);
 		}
 		else {
@@ -578,6 +575,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByUuid(String uuid) {
+		uuid = Objects.toString(uuid, "");
+
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
 
 		Object[] finderArgs = new Object[] { uuid };
@@ -591,10 +590,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_UUID_3);
 			}
 			else {
@@ -708,6 +704,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity fetchByUUID_G(String uuid, long groupId,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		Object[] finderArgs = new Object[] { uuid, groupId };
 
 		Object result = null;
@@ -733,10 +731,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -820,6 +815,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByUUID_G(String uuid, long groupId) {
+		uuid = Objects.toString(uuid, "");
+
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_G;
 
 		Object[] finderArgs = new Object[] { uuid, groupId };
@@ -833,10 +830,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_G_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_G_UUID_3);
 			}
 			else {
@@ -978,6 +972,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public List<P2PActivity> findByUuid_C(String uuid, long companyId,
 		int start, int end, OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+		uuid = Objects.toString(uuid, "");
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
@@ -1005,7 +1001,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
-					if (!Objects.equals(uuid, p2pActivity.getUuid()) ||
+					if (!uuid.equals(p2pActivity.getUuid()) ||
 							(companyId != p2pActivity.getCompanyId())) {
 						list = null;
 
@@ -1030,10 +1026,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {
@@ -1233,6 +1226,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		String uuid, long companyId,
 		OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+		uuid = Objects.toString(uuid, "");
+
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
 
 		Session session = null;
@@ -1278,10 +1273,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 		boolean bindUuid = false;
 
-		if (uuid == null) {
-			query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-		}
-		else if (uuid.equals("")) {
+		if (uuid.isEmpty()) {
 			query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 		}
 		else {
@@ -1407,6 +1399,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByUuid_C(String uuid, long companyId) {
+		uuid = Objects.toString(uuid, "");
+
 		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_C;
 
 		Object[] finderArgs = new Object[] { uuid, companyId };
@@ -1420,10 +1414,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			boolean bindUuid = false;
 
-			if (uuid == null) {
-				query.append(_FINDER_COLUMN_UUID_C_UUID_1);
-			}
-			else if (uuid.equals("")) {
+			if (uuid.isEmpty()) {
 				query.append(_FINDER_COLUMN_UUID_C_UUID_3);
 			}
 			else {

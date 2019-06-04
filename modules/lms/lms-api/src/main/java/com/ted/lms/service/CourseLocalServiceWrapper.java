@@ -457,6 +457,11 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
+	public String[] getPrerequisiteActivities() {
+		return _courseLocalService.getPrerequisiteActivities();
+	}
+
+	@Override
 	public java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
 		long courseId, long companyId, String keywords, int status,
 		java.util.LinkedHashMap<String, Object> params, int start, int end,

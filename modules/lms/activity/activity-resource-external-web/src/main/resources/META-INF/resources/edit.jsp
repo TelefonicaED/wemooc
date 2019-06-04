@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.QuestionTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.question.model.QuestionType"%>
 <%@page import="java.util.List"%>
@@ -25,7 +26,7 @@ LearningActivity learningActivity = null;
 ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = null;
 
 if(actId > 0){
-	resourceExternalActivityTypeFactory = new ResourceExternalActivityTypeFactory();
+	resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
 	learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	resourceExternalActivityType = resourceExternalActivityTypeFactory.getResourceExternalActivityType(learningActivity);
 }

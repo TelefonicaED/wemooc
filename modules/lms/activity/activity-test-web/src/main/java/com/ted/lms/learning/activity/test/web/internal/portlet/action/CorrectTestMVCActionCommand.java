@@ -15,22 +15,24 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.activity.TestActivityType;
+import com.ted.lms.learning.activity.test.web.activity.TestActivityTypeFactory;
+import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
 import com.ted.lms.learning.activity.test.web.util.CommonUtil;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
-
-import java.util.ServiceConfigurationError;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true,
@@ -62,7 +64,7 @@ public class CorrectTestMVCActionCommand extends BaseMVCActionCommand {
 			
 			log.debug("isPartial: " + isPartial);
 	
-			LearningActivityTry larntry=LearningActivityTryLocalServiceUtil.getLearningActivityTry(latId);
+			LearningActivityTry larntry = learningActivityTryLocalService.getLearningActivityTry(latId);
 	
 			//Comprobar que el usuario tenga intentos posibles.
 			if (larntry.getEndDate() == null){
@@ -76,20 +78,21 @@ public class CorrectTestMVCActionCommand extends BaseMVCActionCommand {
 				long[] questionIds = ParamUtil.getLongValues(actionRequest, "question");
 	
 				for (long questionId : questionIds) {
-					Question question = QuestionLocalServiceUtil.fetchQuestion(questionId);
+					Question question = questionLocalService.fetchQuestion(questionId);
 					QuestionType qt = question.getQuestionType();
 					resultadosXML.add(qt.getResults(actionRequest));								
 				}
 	
-				LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-				TestActivityType lat = new TestActivityType(activity);
+				LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
+				TestActivityTypeFactory testActivityTypeFactory = (TestActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(TestConstants.TYPE);
+				TestActivityType lat = testActivityTypeFactory.getTestActivityType(activity);
 				
 				if(log.isDebugEnabled())
 					log.debug(String.format("\n\tisPartial: %s\n\tcorrectanswers: %s\n\tpenalizedAnswers: %s\n\tquestionIds.length: %s", isPartial, correctanswers, penalizedAnswers, questionIds.length));
 				// penalizedAnswers tiene valor negativo, por eso se suma a correctanswers
 				
 				
-				LearningActivityResult learningActivityResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, themeDisplay.getUserId());
+				LearningActivityResult learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(actId, themeDisplay.getUserId());
 				
 				double oldResult=-1;
 				if(learningActivityResult != null) {
@@ -108,9 +111,9 @@ public class CorrectTestMVCActionCommand extends BaseMVCActionCommand {
 				ServiceContext serviceContext = ServiceContextFactory.getInstance(actionRequest);
 				
 				if (!isPartial) {
-					LearningActivityTryLocalServiceUtil.finishLearningActivityTry(larntry, score, serviceContext);
+					learningActivityTryLocalService.finishLearningActivityTry(larntry, score, serviceContext);
 				}else {
-					LearningActivityTryLocalServiceUtil.updateLearningActivityTry(larntry, 0, serviceContext);
+					learningActivityTryLocalService.updateLearningActivityTry(larntry, 0, serviceContext);
 				}
 
 				actionRequest.setAttribute("larntry", larntry);
@@ -134,4 +137,12 @@ public class CorrectTestMVCActionCommand extends BaseMVCActionCommand {
 	
 	private static final Log log = LogFactoryUtil.getLog(CorrectTestMVCActionCommand.class);
 	
+	@Reference
+	private LearningActivityTryLocalService learningActivityTryLocalService;
+	@Reference
+	private LearningActivityResultLocalService learningActivityResultLocalService;
+	@Reference
+	private QuestionLocalService questionLocalService;
+	@Reference
+	private LearningActivityLocalService learningActivityLocalService;
 }

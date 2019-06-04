@@ -1,6 +1,5 @@
 package com.ted.lms.learning.activity.resource.internal.web.activity;
 
-import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -52,11 +51,11 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceInternalActivityType(activity);
+		return new ResourceInternalActivityType(activity, learningActivityResultLocalService);
 	}
 	
 	public ResourceInternalActivityType getResourceInternalType(LearningActivity activity) {
-		return new ResourceInternalActivityType(activity);
+		return new ResourceInternalActivityType(activity, learningActivityResultLocalService);
 	}
 	
 	@Override
@@ -112,5 +111,11 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
 	
 }

@@ -70,6 +70,12 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 	}
 
 	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getActivitiesExcluded(
+		long moduleId, long actId) {
+		return _learningActivityService.getActivitiesExcluded(moduleId, actId);
+	}
+
+	@Override
 	public java.util.List<com.ted.lms.model.LearningActivity> getActivitiesNotTypeId(
 		long moduleId, long typeId) {
 		return _learningActivityService.getActivitiesNotTypeId(moduleId, typeId);

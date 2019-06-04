@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.learning.activity.question.SurveyQuestionTypeFactory"%>
 <%@page import="java.util.List"%>
 <%@page import="com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.constants.OptionConstants"%>
@@ -12,6 +13,7 @@
 <%@page import="com.liferay.portal.kernel.xml.Document"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
 <%@ include file="/init.jsp" %>
 
 <%boolean canUserDoNewTry = ParamUtil.getBoolean(request,"canUserDoNewTry");
@@ -27,21 +29,19 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-SurveyQuestionType surveyQuestionType = new SurveyQuestionType(question);
+SurveyQuestionTypeFactory surveyQuestionTypeFactory = (SurveyQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(SurveyQuestionTypeFactory.TYPE);
+SurveyQuestionType surveyQuestionType = surveyQuestionTypeFactory.getSurveyQuestionType(question);
 
 String html = "", answersFeedBack="", feedMessage = "", cssclass="", selected="";
 String timestamp="";
 boolean isCombo = false;
 
-boolean enableOrder = QuestionPrefsPropsValues.getOptionsEditFormat(themeDisplay.getCompanyId());
-
-if(enableOrder){
-	if(surveyQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL){
-		cssclass="in-line ";
-	}else if(surveyQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_COMBO){
-		isCombo = true;
-	}
+if(surveyQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL){
+	cssclass="in-line ";
+}else if(surveyQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_COMBO){
+	isCombo = true;
 }
+
 List<Answer> answersSelected=surveyQuestionType.getAnswersSelected(documentTryResultData, questionId);
 List<Answer> testAnswers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
 boolean correctAnswered = false;

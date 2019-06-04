@@ -3,12 +3,15 @@ package com.ted.lms.learning.activity.resource.external;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalPortletKeys;
 import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.service.LearningActivityResultLocalService;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -33,12 +36,12 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	}
 	
 	public ResourceExternalActivityType getResourceExternalActivityType(LearningActivity activity) {
-		return new ResourceExternalActivityType(activity);
+		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService);
 	}
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceExternalActivityType(activity);
+		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService);
 	}
 	
 	@Override
@@ -95,4 +98,16 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	
+	@Reference(unbind = "-")
+	protected void QuestionLocalService(QuestionLocalService questionLocalService) {
+		this.questionLocalService = questionLocalService;
+	}
+	protected QuestionLocalService questionLocalService;
 }

@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.ted.lms.learning.activity.online.web.constants.OnlineConstants"%>
 <%@page import="com.ted.lms.learning.activity.online.OnlineActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.online.OnlineActivityType"%>
@@ -14,7 +15,7 @@ LearningActivity learningActivity = null;
 OnlineActivityTypeFactory onlineActivityTypeFactory = null;
 
 if(actId > 0){
-	onlineActivityTypeFactory = new OnlineActivityTypeFactory();
+	onlineActivityTypeFactory = (OnlineActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(OnlineConstants.TYPE);
 	learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	onlineActivityType = onlineActivityTypeFactory.getOnlineActivityType(learningActivity);
 }

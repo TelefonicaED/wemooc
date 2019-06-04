@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.learning.activity.p2p.constants.P2PConstants"%>
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="java.text.DateFormat"%>
 <%@page import="com.liferay.portal.kernel.util.FastDateFormatFactoryUtil"%>
 <%@page import="java.text.Format"%>
@@ -48,7 +50,7 @@ long userId=ParamUtil.getLong(request,"userId",0);
 
 LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 
-P2PActivityTypeFactory p2pActivityTypeFactory = new P2PActivityTypeFactory();
+P2PActivityTypeFactory p2pActivityTypeFactory = (P2PActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(P2PConstants.TYPE);
 P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
 
 if(actId!=0){%>

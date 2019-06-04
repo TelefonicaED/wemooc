@@ -10,6 +10,8 @@ import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.online.web.constants.OnlineConstants;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.service.LearningActivityResultLocalService;
+
 import javax.portlet.ActionRequest;
 
 public class OnlineActivityType extends BaseLearningActivityType {
@@ -18,8 +20,8 @@ public class OnlineActivityType extends BaseLearningActivityType {
 	private boolean includeFile;
 	private boolean richText;
 
-	public OnlineActivityType(LearningActivity activity) {
-		super(activity);
+	public OnlineActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService) {
+		super(activity, learningActivityResultLocalService);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -46,6 +48,9 @@ public class OnlineActivityType extends BaseLearningActivityType {
 
 		includeFile = ParamUtil.getBoolean(actionRequest, "includeFile", OnlineConstants.DEFAULT_INCLUDE_FILE);
 		richText = ParamUtil.getBoolean(actionRequest, "richText", OnlineConstants.DEFAULT_RICH_TEXT);
+		
+		log.debug("includeFile: " + includeFile);
+		log.debug("richText: " + richText);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		

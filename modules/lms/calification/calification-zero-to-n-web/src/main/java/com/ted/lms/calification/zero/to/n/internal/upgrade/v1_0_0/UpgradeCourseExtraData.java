@@ -16,8 +16,8 @@ import java.util.List;
 
 public class UpgradeCourseExtraData extends UpgradeProcess {
 
-	public UpgradeCourseExtraData(CourseLocalService courseServiceUtil, ReleaseLocalService releaseLocalService) {
-		this.courseLocalService = courseServiceUtil;
+	public UpgradeCourseExtraData(CourseLocalService courseLocalService, ReleaseLocalService releaseLocalService) {
+		this.courseLocalService = courseLocalService;
 		this.releaseLocalService = releaseLocalService;
 	}
 	

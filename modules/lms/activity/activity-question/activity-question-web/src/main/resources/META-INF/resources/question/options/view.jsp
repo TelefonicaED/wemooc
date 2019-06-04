@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.learning.activity.question.OptionsQuestionTypeFactory"%>
 <%@page import="java.util.Date"%>
 <%@page import="com.ted.lms.service.LearningActivityTryLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
@@ -14,6 +15,7 @@
 <%@page import="com.liferay.portal.kernel.xml.Document"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
 <%@ include file="/init.jsp" %>
 
 <%boolean canUserDoNewTry = ParamUtil.getBoolean(request,"canUserDoNewTry");
@@ -29,21 +31,19 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-OptionsQuestionType optionsQuestionType = new OptionsQuestionType(question);
+OptionsQuestionTypeFactory optionsQuestionTypeFactory = (OptionsQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(OptionsQuestionTypeFactory.TYPE);
+OptionsQuestionType optionsQuestionType = optionsQuestionTypeFactory.getOptionsQuestionType(question);
 
 String html = "", answersFeedBack="", feedMessage = "", cssclass="", selected="";
 String timestamp="";
 boolean isCombo = false;
 
-boolean enableOrder = QuestionPrefsPropsValues.getOptionsEditFormat(themeDisplay.getCompanyId());
-
-if(enableOrder){
-	if(optionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL){
-		cssclass="in-line ";
-	}else if(optionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_COMBO){
-		isCombo = true;
-	}
+if(optionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL){
+	cssclass="in-line ";
+}else if(optionsQuestionType.getFormatType() == OptionConstants.OPTION_FORMAT_TYPE_COMBO){
+	isCombo = true;
 }
+
 List<Answer> answersSelected=optionsQuestionType.getAnswersSelected(documentTryResultData, questionId);
 List<Answer> testAnswers= AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
 boolean correctAnswered = false;

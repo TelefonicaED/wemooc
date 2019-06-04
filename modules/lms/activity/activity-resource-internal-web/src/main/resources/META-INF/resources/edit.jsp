@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalConstants"%>
+<%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityType"%>
 <%@page import="com.ted.lms.learning.activity.resource.internal.web.activity.ResourceInternalActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.resource.internal.web.internal.display.context.InputResourceInternalDisplayContext"%>
@@ -22,7 +24,7 @@
 boolean canBeEdited = ParamUtil.getBoolean(request, "canBeEdited", true);
 long assetEntryId = ParamUtil.getLong(request, "assetEntryId", 0);
 
-ResourceInternalActivityTypeFactory resourceInternalActivityTypeFactory = new ResourceInternalActivityTypeFactory();
+ResourceInternalActivityTypeFactory resourceInternalActivityTypeFactory = (ResourceInternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceInternalConstants.TYPE);
 
 InputResourceInternalDisplayContext inputAssetLinksDisplayContext = new InputResourceInternalDisplayContext(request);
 

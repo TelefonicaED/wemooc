@@ -40,6 +40,7 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
@@ -107,7 +108,7 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 				saveActivityURL.setParameter("actId", String.valueOf(actId));
 				renderRequest.setAttribute("saveActivityURL", saveActivityURL);
 				
-				OnlineActivityTypeFactory onlineActivityTypeFactory = new OnlineActivityTypeFactory();
+				OnlineActivityTypeFactory onlineActivityTypeFactory = (OnlineActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(OnlineConstants.TYPE);
 				OnlineActivityType onlineActivityType = onlineActivityTypeFactory.getOnlineActivityType(activity);
 				
 				renderRequest.setAttribute("onlineActivityType", onlineActivityType);
@@ -248,7 +249,7 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 		
 		try {
 			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
-			OnlineActivityTypeFactory onlineActivityTypeFactory = new OnlineActivityTypeFactory();
+			OnlineActivityTypeFactory onlineActivityTypeFactory = (OnlineActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(OnlineConstants.TYPE);
 			OnlineActivityType onlineActivityType = onlineActivityTypeFactory.getOnlineActivityType(activity);
 			
 			PortletURL showPopupActivityURL = renderResponse.createRenderURL();

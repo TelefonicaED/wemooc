@@ -18,8 +18,8 @@ import com.liferay.portal.kernel.portlet.PortletLayoutFinder.Result;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
-import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -117,14 +117,14 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 		return urlNewModule;
 	}
 	
-	protected static Layout setTargetLayout(RenderRequest request, long groupId, long plid)throws Exception {
+	protected Layout setTargetLayout(RenderRequest request, long groupId, long plid)throws Exception {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
 
 		PermissionChecker permissionChecker = themeDisplay.getPermissionChecker();
 
-		Group group = GroupLocalServiceUtil.getGroup(groupId);
-		Layout layout = LayoutLocalServiceUtil.getLayout(plid);
+		Group group = groupLocalService.getGroup(groupId);
+		Layout layout = layoutLocalService.getLayout(plid);
 
 		if ((groupId == layout.getGroupId()) || (group.getParentGroupId() == layout.getGroupId()) ||
 			(layout.isPrivateLayout() && !SitesUtil.isUserGroupLayoutSetViewable(permissionChecker, layout.getGroup()))) {
@@ -177,6 +177,20 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 	}
 	
 	private CourseLocalService courseLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setGroupLocalService(GroupLocalService groupLocalService) {
+		this.groupLocalService = groupLocalService;
+	}
+	
+	private GroupLocalService groupLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setLayoutLocalService(LayoutLocalService layoutLocalService) {
+		this.layoutLocalService = layoutLocalService;
+	}
+	
+	private LayoutLocalService layoutLocalService;
 	
 	@Reference
 	private TrashHelper trashHelper;

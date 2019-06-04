@@ -350,12 +350,40 @@ public class LearningActivityServiceHttp {
 		}
 	}
 
+	public static java.util.List<com.ted.lms.model.LearningActivity> getActivitiesExcluded(
+		HttpPrincipal httpPrincipal, long moduleId, long actId) {
+		try {
+			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
+					"getActivitiesExcluded",
+					_getActivitiesExcludedParameterTypes8);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					moduleId, actId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+
+			return (java.util.List<com.ted.lms.model.LearningActivity>)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static java.util.List<com.ted.lms.model.LearningActivity> getActivitiesNotTypeId(
 		HttpPrincipal httpPrincipal, long moduleId, long typeId) {
 		try {
 			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
 					"getActivitiesNotTypeId",
-					_getActivitiesNotTypeIdParameterTypes8);
+					_getActivitiesNotTypeIdParameterTypes9);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					moduleId, typeId);
@@ -383,7 +411,7 @@ public class LearningActivityServiceHttp {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
-					"getTempFileNames", _getTempFileNamesParameterTypes9);
+					"getTempFileNames", _getTempFileNamesParameterTypes10);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey, groupId);
 
@@ -444,10 +472,13 @@ public class LearningActivityServiceHttp {
 	private static final Class<?>[] _getActivitiesParameterTypes7 = new Class[] {
 			long.class
 		};
-	private static final Class<?>[] _getActivitiesNotTypeIdParameterTypes8 = new Class[] {
+	private static final Class<?>[] _getActivitiesExcludedParameterTypes8 = new Class[] {
 			long.class, long.class
 		};
-	private static final Class<?>[] _getTempFileNamesParameterTypes9 = new Class[] {
+	private static final Class<?>[] _getActivitiesNotTypeIdParameterTypes9 = new Class[] {
+			long.class, long.class
+		};
+	private static final Class<?>[] _getTempFileNamesParameterTypes10 = new Class[] {
 			long.class
 		};
 }

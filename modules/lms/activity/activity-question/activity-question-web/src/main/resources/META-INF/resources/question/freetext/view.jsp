@@ -11,6 +11,7 @@
 <%@page import="com.liferay.portal.kernel.xml.Document"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
 <%@ include file="/init.jsp" %>
 
 <%boolean canUserDoNewTry = ParamUtil.getBoolean(request,"canUserDoNewTry");
@@ -26,7 +27,8 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-FreetextQuestionType freetextQuestionType = new FreetextQuestionType(question);
+FreetextQuestionTypeFactory freetextQuestionTypeFactory = (FreetextQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(FreetextQuestionTypeFactory.TYPE);
+FreetextQuestionType freetextQuestionType = freetextQuestionTypeFactory.getFreetextQuestionType(question);
 
 String answersFeedBack= "", cssclass = "";
 String feedMessage = LanguageUtil.get(themeDisplay.getLocale(),"learning-activity.question.answer-in-blank") ;

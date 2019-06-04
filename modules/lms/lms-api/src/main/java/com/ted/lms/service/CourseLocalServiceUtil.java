@@ -436,6 +436,10 @@ public class CourseLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static String[] getPrerequisiteActivities() {
+		return getService().getPrerequisiteActivities();
+	}
+
 	public static java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
 		long courseId, long companyId, String keywords, int status,
 		java.util.LinkedHashMap<String, Object> params, int start, int end,

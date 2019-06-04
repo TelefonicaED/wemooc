@@ -24,7 +24,7 @@ import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.ResourceExternalActivityType;
 import com.ted.lms.learning.activity.resource.external.ResourceExternalActivityTypeFactory;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
@@ -36,14 +36,12 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
-import com.ted.lms.service.CourseLocalServiceUtil;
-import com.ted.lms.service.LearningActivityLocalServiceUtil;
+import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 import com.ted.lms.service.LearningActivityTryLocalService;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -107,9 +105,9 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			saveQuestionURL.setParameter("actId", String.valueOf(actId));
 			renderRequest.setAttribute("saveQuestionURL", saveQuestionURL);
 			
-			LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
+			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
 			
-			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 			
 			boolean hasPermissionAccessCourseFinished = course.hasPermissionAccessCourseFinished(themeDisplay.getUserId());
 			boolean isTeacher = LMSPermission.contains(themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(), LMSActionKeys.VIEW_RESULTS);
@@ -125,7 +123,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			renderRequest.setAttribute("hasPermissionAccessCourseFinished", hasPermissionAccessCourseFinished);
 			renderRequest.setAttribute("isTeacher", isTeacher);
 			
-			ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = new ResourceExternalActivityTypeFactory();
+			ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
 			ResourceExternalActivityType resourceExternalActivityType = resourceExternalActivityTypeFactory.getResourceExternalActivityType(activity);
 			
 			//Comprobamos si es necesario ver un porcetanje del video para aprobar
@@ -142,7 +140,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			if (!isDefaultScore){
 				
 				if(!hasPermissionAccessCourseFinished){
-					lastLearningActivityTry =LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(actId,themeDisplay.getUserId());
+					lastLearningActivityTry =learningActivityTryLocalService.getLastLearningActivityTry(actId,themeDisplay.getUserId());
 				}
 				if (lastLearningActivityTry != null){
 					//Poner posición del video.
@@ -177,7 +175,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			renderRequest.setAttribute("plays", plays);
 			
 			//Comprobamos si el usuario ha pasado el curso y lo enviamos para recargar los portlets al terminar
-			boolean userPassed = LearningActivityResultLocalServiceUtil.hasUserPassed(actId,themeDisplay.getUserId());
+			boolean userPassed = learningActivityResultLocalService.hasUserPassed(actId,themeDisplay.getUserId());
 			renderRequest.setAttribute("userPassed", userPassed);
 			
 			//Tratamos el video si tiene
@@ -252,7 +250,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 				renderRequest.setAttribute("mimeType", "video/" + mimeType);
 				renderRequest.setAttribute("video", videoCode);
 				
-				List<Question> listQuestions = QuestionLocalServiceUtil.getQuestions(actId);
+				List<Question> listQuestions = questionLocalService.getQuestions(actId);
 				renderRequest.setAttribute("listQuestions", listQuestions);
 				
 				JSONObject questionPositions = resourceExternalActivityType.getQuestionPositions();
@@ -283,16 +281,16 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			
 			if(!hasPermissionAccessCourseFinished) {
 	
-				LearningActivityTry learningTry = LearningActivityTryLocalServiceUtil.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
+				LearningActivityTry learningTry = learningActivityTryLocalService.addLearningActivityTry(actId, themeDisplay.getUserId(), serviceContext);
 				if (lastLearningActivityTry != null){
 					learningTry.setTryResultData(lastLearningActivityTry.getTryResultData());
-					LearningActivityTryLocalServiceUtil.updateLearningActivityTry(learningTry);	
+					learningActivityTryLocalService.updateLearningActivityTry(learningTry);	
 				}
 				finishTryURL.setParameter("latId", String.valueOf(learningTry.getLatId()));
 				renderRequest.setAttribute("latId", learningTry.getLatId());
 				//Si no hace falta nota para aprobar ya lo aprobamos
 				if(isDefaultScore){
-					LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningTry, 100, serviceContext);
+					learningActivityTryLocalService.finishLearningActivityTry(learningTry, 100, serviceContext);
 				}
 			}
 			
@@ -330,11 +328,11 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			
 			try {
 			
-				LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
-				ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = new ResourceExternalActivityTypeFactory();
+				LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
+				ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
 				ResourceExternalActivityType resourceExternalActivityType = resourceExternalActivityTypeFactory.getResourceExternalActivityType(activity);
 				
-				LearningActivityTry activityTry = LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(actId, themeDisplay.getUserId());
+				LearningActivityTry activityTry = learningActivityTryLocalService.getLastLearningActivityTry(actId, themeDisplay.getUserId());
 				
 				log.debug("***updateCorrect*** " + activityTry + " - " + score + " - " + position + " - " + plays);
 				
@@ -397,7 +395,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 				
 				ServiceContext serviceContext = ServiceContextFactory.getInstance(resourceRequest);
 				
-				activityTry = LearningActivityTryLocalServiceUtil.finishLearningActivityTry(activityTry, result, serviceContext);
+				activityTry = learningActivityTryLocalService.finishLearningActivityTry(activityTry, result, serviceContext);
 				
 				int correctMode = resourceExternalActivityType.getCorrectMode();
 				log.debug("CORRECT MODE "+correctMode);
@@ -405,7 +403,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 				if(correctMode == ResourceExternalConstants.CORRECT_QUESTIONS){
 					log.debug("--correctQUESTIONS!" );
 					String feedback = "<span class=\"result-activity\">"+ LanguageUtil.get(themeDisplay.getLocale(), "evaluationtaskactivity.result.youresult") +" <strong>"+result+"</strong></span>";
-					List<Question> questions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
+					List<Question> questions = questionLocalService.getQuestions(activity.getActId());
 
 					QuestionTypeFactory questionTypeFactory = null;
 					QuestionType questionType = null;
@@ -440,7 +438,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 			long actId = ParamUtil.getLong(resourceRequest, "actId");
 			
 			try {
-				LearningActivityTry lat = LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(actId, themeDisplay.getUserId());
+				LearningActivityTry lat = learningActivityTryLocalService.getLastLearningActivityTry(actId, themeDisplay.getUserId());
 				
 				//Añadimos la respuesta al data del try
 				String tryResultData = lat.getTryResultData();
@@ -460,7 +458,7 @@ public class ResourceExternalPortlet extends MVCPortlet {
 					resultXMLDoc=SAXReaderUtil.createDocument(resultXML);
 				}
 				
-				Question question = QuestionLocalServiceUtil.fetchQuestion(questionId);
+				Question question = questionLocalService.fetchQuestion(questionId);
 				QuestionType qt = question.getQuestionType();
 				Element resultsElement = qt.getResults(resourceRequest);
 				//Borramos la repuesta anterior si existe
@@ -480,10 +478,10 @@ public class ResourceExternalPortlet extends MVCPortlet {
 				lat.setTryResultData(resultXMLDoc.formattedString());
 				
 				ServiceContext serviceContext = ServiceContextFactory.getInstance(resourceRequest);
-				LearningActivityTryLocalServiceUtil.updateLearningActivityTry(lat, lat.getResult(), serviceContext);
+				learningActivityTryLocalService.updateLearningActivityTry(lat, lat.getResult(), serviceContext);
 				
-				LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(ParamUtil.getLong(resourceRequest, "actId"));
-				ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = new ResourceExternalActivityTypeFactory();
+				LearningActivity activity = learningActivityLocalService.getLearningActivity(ParamUtil.getLong(resourceRequest, "actId"));
+				ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
 				ResourceExternalActivityType resourceExternalActivityType = resourceExternalActivityTypeFactory.getResourceExternalActivityType(activity);
 				
 				oreturned.put("questionFeedback", resourceExternalActivityType.getQuestionFeedback());
@@ -579,8 +577,20 @@ public class ResourceExternalPortlet extends MVCPortlet {
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
+		this.learningActivityLocalService = learningActivityLocalService;
+	}
+	
+	@Reference(unbind = "-")
+	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
+		this.questionLocalService = questionLocalService;
+	}
+	
 	private CourseLocalService courseLocalService;
 	private LearningActivityTryLocalService learningActivityTryLocalService;
 	private LearningActivityResultLocalService learningActivityResultLocalService;
+	private LearningActivityLocalService learningActivityLocalService;
+	private QuestionLocalService questionLocalService;
 	
 }

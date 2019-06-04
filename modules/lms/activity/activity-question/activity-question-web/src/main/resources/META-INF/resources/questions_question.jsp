@@ -18,12 +18,12 @@
 <%@ include file="init.jsp" %>
 <%
 
-List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId());
 long questionType = ParamUtil.getLong(request, "questionType");
 long questionId = ParamUtil.getLong(request, "questionId");
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion");
 String questionIdsAllowedString = ParamUtil.getString(request, "questionIdsAllowed");
 long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? StringUtil.split(questionIdsAllowedString,",", 0L) : null;
+List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId(), questionIdsAllowed);
 String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
 
 Question question = null;
@@ -92,12 +92,10 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 <div class='question-editing <%=(question != null) ? "hide":"" %>' id='<%=namespace + "questionEdit" + iteratorQuestion %>'>
 	<div class="row">
 		<%for(QuestionTypeFactory questionTypeFactoryIterator: questionTypeFactories){ %>
-			<c:if test="<%=questionIdsAllowed == null || ArrayUtil.contains(questionIdsAllowed, questionTypeFactoryIterator.getType()) %>">
-				<div class="col-md-4">
-					<aui:input label="<%=questionTypeFactoryIterator.getTitle(themeDisplay.getLocale()) %>" type="radio" value="<%=questionTypeFactoryIterator.getType() %>"
-						checked="<%=questionType == questionTypeFactoryIterator.getType() %>" name='<%="question_type_read_only_" + iteratorQuestion %>' disabled="true"/>
-				</div>
-			</c:if>
+			<div class="col-md-4">
+				<aui:input label="<%=questionTypeFactoryIterator.getTitle(themeDisplay.getLocale()) %>" type="radio" value="<%=questionTypeFactoryIterator.getType() %>"
+					checked="<%=questionType == questionTypeFactoryIterator.getType() %>" name='<%="question_type_read_only_" + iteratorQuestion %>' disabled="true"/>
+			</div>
 		<%} %>
 	</div>
 	

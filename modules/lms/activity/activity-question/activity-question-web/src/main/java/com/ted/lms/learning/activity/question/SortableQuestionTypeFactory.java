@@ -8,6 +8,7 @@ import com.ted.lms.learning.activity.question.model.BaseQuestionTypeFactory;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.web.internal.constants.QuestionConstants;
 
 import java.util.Locale;
@@ -28,7 +29,11 @@ public class SortableQuestionTypeFactory extends BaseQuestionTypeFactory{
 	
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
-		return new SortableQuestionType(question);
+		return new SortableQuestionType(question, answerLocalService);
+	}
+	
+	public SortableQuestionType getSortableQuestionType(Question question) throws PortalException {
+		return new SortableQuestionType(question, answerLocalService);
 	}
 
 	@Override
@@ -95,5 +100,11 @@ public class SortableQuestionTypeFactory extends BaseQuestionTypeFactory{
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
+		this.answerLocalService = answerLocalService;
+	}
+	protected AnswerLocalService answerLocalService;
 
 }

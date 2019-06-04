@@ -35,9 +35,7 @@ import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * @author José Manuel Navarro
- */
+
 public class InputResourceInternalDisplayContext {
 
 	public InputResourceInternalDisplayContext(HttpServletRequest request) {

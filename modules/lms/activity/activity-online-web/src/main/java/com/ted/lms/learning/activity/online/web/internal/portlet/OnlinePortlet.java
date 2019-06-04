@@ -14,11 +14,12 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityTryLocalService;
-import com.ted.lms.service.ModuleLocalServiceUtil;
+import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.util.LMSUtil;
 
 import java.io.File;
@@ -39,9 +40,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ResourceConstants;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
@@ -106,7 +105,7 @@ public class OnlinePortlet extends MVCPortlet {
 		
 			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
 			
-			OnlineActivityTypeFactory onlineActivityTypeFactory = new OnlineActivityTypeFactory();
+			OnlineActivityTypeFactory onlineActivityTypeFactory = (OnlineActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(OnlineConstants.TYPE);
 			OnlineActivityType onlineActivityType = onlineActivityTypeFactory.getOnlineActivityType(activity);
 			
 			boolean isSetTextoEnr =  onlineActivityType.getRichText();
@@ -292,7 +291,7 @@ public class OnlinePortlet extends MVCPortlet {
 		serviceContext.setAddGroupPermissions(true);
 
 		long repositoryId = DLFolderConstants.getDataRepositoryId(groupId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
-		Folder moduleFolder = ModuleLocalServiceUtil.addModuleFolder(userId, repositoryId);
+		Folder moduleFolder = moduleLocalService.addModuleFolder(userId, repositoryId);
 
 		if(Validator.isNotNull(moduleFolder)) {
 			onlineFolder = dlAppLocalService.addFolder(userId, repositoryId, moduleFolder.getFolderId(), folderName, folderName, serviceContext);
@@ -391,6 +390,11 @@ public class OnlinePortlet extends MVCPortlet {
 		this.courseLocalService = courseLocalService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setModuleLocalService(ModuleLocalService moduleLocalService) {
+		this.moduleLocalService = moduleLocalService;
+	}
+	
 	private LearningActivityResultLocalService learningActivityResultLocalService;
 	private LearningActivityLocalService learningActivityLocalService;
 	private LearningActivityTryLocalService learningActivityTryLocalService;
@@ -398,4 +402,5 @@ public class OnlinePortlet extends MVCPortlet {
 	private DLFileEntryLocalService dlFileEntryLocalService;
 	private ResourcePermissionLocalService resourcePermissionLocalService;
 	private CourseLocalService courseLocalService;
+	private ModuleLocalService moduleLocalService;
 }

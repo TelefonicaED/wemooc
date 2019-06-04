@@ -214,7 +214,7 @@ Liferay.provide(
 		String result= "";
 		String status="status.not-calification";
 		if(laResult != null){
-			result = calificationType.translate(themeDisplay.getLocale(), laResult.getResult());
+			result = calificationType.translate(themeDisplay.getLocale(), laResult.getResult()) + calificationType.getSuffix();
 			
 			if(laResult.getEndDate()!=null){
 				status="status.failed"	;

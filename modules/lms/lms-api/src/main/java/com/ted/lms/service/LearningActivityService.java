@@ -77,6 +77,10 @@ public interface LearningActivityService extends BaseService {
 	public List<LearningActivity> getActivities(long moduleId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivity> getActivitiesExcluded(long moduleId,
+		long actId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LearningActivity> getActivitiesNotTypeId(long moduleId,
 		long typeId);
 

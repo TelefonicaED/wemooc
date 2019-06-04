@@ -7,6 +7,7 @@ import com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -27,7 +28,11 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	
 	@Override
 	public QuestionType getQuestionType(Question question) throws PortalException {
-		return new SurveyQuestionType(question);
+		return new SurveyQuestionType(question, answerLocalService);
+	}
+	
+	public SurveyQuestionType getSurveyQuestionType(Question question) throws PortalException {
+		return new SurveyQuestionType(question, answerLocalService);
 	}
 
 	@Override
@@ -89,5 +94,8 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory{
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference
+	private AnswerLocalService answerLocalService;
 
 }

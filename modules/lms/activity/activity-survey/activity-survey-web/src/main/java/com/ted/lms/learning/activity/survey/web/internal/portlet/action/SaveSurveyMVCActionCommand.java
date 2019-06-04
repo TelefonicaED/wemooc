@@ -16,12 +16,12 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
-import com.ted.lms.learning.activity.survey.service.SurveyResultLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
+import com.ted.lms.learning.activity.survey.service.SurveyResultLocalService;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyConstants;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.LearningActivityTryLocalServiceUtil;
+import com.ted.lms.service.LearningActivityTryLocalService;
 
 import java.util.Iterator;
 
@@ -29,6 +29,7 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true,
@@ -48,7 +49,7 @@ public class SaveSurveyMVCActionCommand extends BaseMVCActionCommand {
 		long actId=ParamUtil.getLong(actionRequest,"actId",0 );
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
-		LearningActivityTry learningActivityTry = LearningActivityTryLocalServiceUtil.getLastLearningActivityTry(actId, themeDisplay.getUserId());
+		LearningActivityTry learningActivityTry = learningActivityTryLocalService.getLastLearningActivityTry(actId, themeDisplay.getUserId());
 
 		//Comprobar si el usuario se dejo alguna encuesta abierta
 		if (learningActivityTry.getEndDate() == null ) {
@@ -59,7 +60,7 @@ public class SaveSurveyMVCActionCommand extends BaseMVCActionCommand {
 			long[] questionIds = ParamUtil.getLongValues(actionRequest, "question");
 			
 			for (long questionId : questionIds) {
-				Question question = QuestionLocalServiceUtil.fetchQuestion(questionId);
+				Question question = questionLocalService.fetchQuestion(questionId);
 				QuestionType qt = question.getQuestionType();
 				
 				resultadosXML.add(qt.getResults(actionRequest));								
@@ -90,7 +91,7 @@ public class SaveSurveyMVCActionCommand extends BaseMVCActionCommand {
 		        			 }
 		        			 
 		        			 //Añadimos las repuestas a la tabla de encuesta
-		        			 SurveyResultLocalServiceUtil.addSurveyResult(actId, learningActivityTry.getLatId(), themeDisplay.getUserId(), questionId, answerId, textAnswer);
+		        			 surveyResultLocalService.addSurveyResult(actId, learningActivityTry.getLatId(), themeDisplay.getUserId(), questionId, answerId, textAnswer);
 		        		 }
 		        	 }
 		         }
@@ -100,8 +101,15 @@ public class SaveSurveyMVCActionCommand extends BaseMVCActionCommand {
 			
 			//Guardar los resultados
 			learningActivityTry.setTryResultData(resultadosXMLDoc.formattedString());
-			LearningActivityTryLocalServiceUtil.finishLearningActivityTry(learningActivityTry, SurveyConstants.DEFAULT_SCORE_FINISH, serviceContext);
+			learningActivityTryLocalService.finishLearningActivityTry(learningActivityTry, SurveyConstants.DEFAULT_SCORE_FINISH, serviceContext);
 		}
 	}
+	
+	@Reference
+	private SurveyResultLocalService surveyResultLocalService;
+	@Reference
+	private QuestionLocalService questionLocalService;
+	@Reference
+	private LearningActivityTryLocalService learningActivityTryLocalService;
 
 }

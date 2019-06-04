@@ -19,14 +19,14 @@
 	</liferay-util:include> 
 	
 	<c:if test="${!hasFreeQuestions }">
-		<p><liferay-ui:message key="learning-activity.test.your-result" arguments="${calificationType.translate(locale, scoreTry) }" /></p>
+		<p><liferay-ui:message key="learning-activity.test.your-result" arguments="${calificationType.translate(locale, scoreTry) + calificationType.suffix }" /></p>
 	</c:if>
 	<c:choose>
 		<c:when test="${userPassed }">
 			<p><liferay-ui:message key="learning-activity.test.your-result-pass" /></p>
 		</c:when>
 		<c:when test="${!hasFreeQuestions }">
-			<p><liferay-ui:message key="learning-activity.test.your-result-dont-pass"  arguments="${calificationType.translate(locale, activity.passPuntuation) }" /></p>
+			<p><liferay-ui:message key="learning-activity.test.your-result-dont-pass"  arguments="${calificationType.translate(locale, activity.passPuntuation) + calificationType.suffix }" /></p>
 		</c:when>
 	</c:choose>
 	<c:if test="${tries > 0 && userTries >=tries }">

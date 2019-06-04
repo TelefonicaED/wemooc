@@ -3,6 +3,7 @@ package com.ted.lms.learning.activity.evaluation.web.internal.portlet;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.learning.activity.evaluation.EvaluationActivityType;
 import com.ted.lms.learning.activity.evaluation.EvaluationActivityTypeFactory;
+import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationPortletKeys;
 import com.ted.lms.model.CalificationType;
 import com.ted.lms.model.CalificationTypeFactory;
@@ -11,6 +12,7 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
@@ -75,7 +77,7 @@ public class EvaluationPortlet extends MVCPortlet {
 		
 		try {
 			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
-			EvaluationActivityTypeFactory evaluationActivityTypeFactory = new EvaluationActivityTypeFactory();
+			EvaluationActivityTypeFactory evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
 			EvaluationActivityType evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(activity);
 			
 			evaluationActivityType.setFiredDate(new Date());
@@ -110,7 +112,7 @@ public class EvaluationPortlet extends MVCPortlet {
 		try {
 			
 			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
-			EvaluationActivityTypeFactory evaluationActivityTypeFactory = new EvaluationActivityTypeFactory();
+			EvaluationActivityTypeFactory evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
 			EvaluationActivityType evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(activity);
 			
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(actionRequest);
@@ -127,7 +129,7 @@ public class EvaluationPortlet extends MVCPortlet {
 		
 		try {
 			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
-			EvaluationActivityTypeFactory evaluationActivityTypeFactory = new EvaluationActivityTypeFactory();
+			EvaluationActivityTypeFactory evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
 			EvaluationActivityType evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(activity);
 			
 			evaluationActivityType.setPublishDate(new Date());

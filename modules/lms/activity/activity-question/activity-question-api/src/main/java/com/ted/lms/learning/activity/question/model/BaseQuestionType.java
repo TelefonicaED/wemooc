@@ -11,7 +11,7 @@ import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.exception.MinNumAnswerException;
 import com.ted.lms.learning.activity.question.exception.MinNumCorrectAnswerException;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +24,14 @@ public abstract class BaseQuestionType implements QuestionType{
 	
 	protected static final long CORRECT = 100;
 	protected static final long INCORRECT = 0;
+	protected final AnswerLocalService answerLocalService;
 	
 	protected Question question;
 	private QuestionTypeFactory questionTypeFactory;
 	
-	public BaseQuestionType(Question question) {
+	public BaseQuestionType(Question question, AnswerLocalService answerLocalService) {
 		this.question = question;
+		this.answerLocalService = answerLocalService;
 	}
 	
 	@Override
@@ -39,7 +41,7 @@ public abstract class BaseQuestionType implements QuestionType{
 	@Override
 	public void saveAnswers(ActionRequest actionRequest, String iteratorQuestion) throws PortalException {
 		//Obtengo un array con los ids de las respuestas que ya contenia la pregunta
-		List<Answer> existingAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> existingAnswers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 		List<Long> existingAnswersIds = new ArrayList<Long>();
 		
 		log.debug("*************************************************************************************************************");
@@ -89,12 +91,12 @@ public abstract class BaseQuestionType implements QuestionType{
 					if(answerId == 0){
 						//creo respuesta
 						serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), actionRequest);
-						AnswerLocalServiceUtil.addAnswer(question.getQuestionId(), question.getActId(), answerText, feedbackCorrect, 
+						answerLocalService.addAnswer(question.getQuestionId(), question.getActId(), answerText, feedbackCorrect, 
 								feedbackIncorrect, correct, serviceContext);
 					}else {
 						editingAnswersIds.add(answerId);//almaceno en array para posterior borrado de las que no esten
 						//actualizo respuesta
-						AnswerLocalServiceUtil.updateAnswer(answerId, answerText, feedbackCorrect, feedbackIncorrect, correct);
+						answerLocalService.updateAnswer(answerId, answerText, feedbackCorrect, feedbackIncorrect, correct);
 					}
 				}
 			}
@@ -119,10 +121,10 @@ public abstract class BaseQuestionType implements QuestionType{
 		for(Long existingAnswerId:existingAnswersIds){
 			if(editingAnswersIds != null && editingAnswersIds.size()>0){
 				if(!editingAnswersIds.contains(existingAnswerId)){
-					AnswerLocalServiceUtil.deleteAnswer(existingAnswerId);
+					answerLocalService.deleteAnswer(existingAnswerId);
 				}
 			}else {
-				AnswerLocalServiceUtil.deleteAnswer(existingAnswerId);
+				answerLocalService.deleteAnswer(existingAnswerId);
 			}
 		}
 		

@@ -1,0 +1,4 @@
+Bundle-Name: prerequisite-activity-web
+Bundle-SymbolicName: com.ted.prerequisite.activity.web
+Bundle-Version: 1.0.0
+Export-Package: com.ted.prerequisite.activity.internal.constants

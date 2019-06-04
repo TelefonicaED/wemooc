@@ -30,5 +30,5 @@ create table qu_Question (
 	active_ BOOLEAN,
 	weight LONG,
 	penalize BOOLEAN,
-	extraContent VARCHAR(75) null
+	extraContent STRING null
 );

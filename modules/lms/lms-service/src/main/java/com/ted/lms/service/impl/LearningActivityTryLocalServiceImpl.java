@@ -17,6 +17,7 @@ package com.ted.lms.service.impl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -95,6 +96,11 @@ public class LearningActivityTryLocalServiceImpl
 	}
 	
 	public LearningActivityTry addLearningActivityTry(long actId, long userId, ServiceContext serviceContext) throws PortalException {
+		
+		if(serviceContext == null) {
+			serviceContext = ServiceContextThreadLocal.getServiceContext();
+		}
+		
 		LearningActivity learningActivity = learningActivityPersistence.fetchByPrimaryKey(actId);
 		
 		if(Validator.isNull(learningActivity)) {
@@ -134,6 +140,10 @@ public class LearningActivityTryLocalServiceImpl
 	
 	public LearningActivityTry updateLearningActivityTry(LearningActivityTry learningActivityTry, double result, ServiceContext serviceContext) throws PortalException {
 		
+		if(serviceContext == null) {
+			serviceContext = ServiceContextThreadLocal.getServiceContext();
+		}
+		
 		learningActivityTry.setResult(result);
 		
 		//Actualizamos los campos de auditoria
@@ -161,6 +171,10 @@ public class LearningActivityTryLocalServiceImpl
 	}
 	
 	public LearningActivityTry finishLearningActivityTry(LearningActivityTry learningActivityTry, double result, Date endDate, ServiceContext serviceContext) throws PortalException {
+		
+		if(serviceContext == null) {
+			serviceContext = ServiceContextThreadLocal.getServiceContext();
+		}
 		
 		learningActivityTry.setResult(result);
 		learningActivityTry.setEndDate(endDate);

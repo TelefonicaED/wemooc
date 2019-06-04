@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.learning.activity.question.DragAndDropQuestionTypeFactory"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.Collections"%>
 <%@page import="java.util.ArrayList"%>
@@ -18,6 +19,7 @@
 <%@page import="com.liferay.portal.kernel.xml.Document"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
 <%@ include file="/init.jsp" %>
 
 <%boolean canUserDoNewTry = ParamUtil.getBoolean(request,"canUserDoNewTry");
@@ -33,7 +35,8 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-DragAndDropQuestionType dragAndDropQuestionType = new DragAndDropQuestionType(question);
+DragAndDropQuestionTypeFactory dragAndDropQuestionTypeFactory = (DragAndDropQuestionTypeFactory) QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(DragAndDropQuestionTypeFactory.TYPE);
+DragAndDropQuestionType dragAndDropQuestionType = dragAndDropQuestionTypeFactory.getDragAndDropQuestionType(question);
 
 String html = "", leftCol="", rightCol = "", feedMessage="", feedsol="";
 

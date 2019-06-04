@@ -10,7 +10,7 @@ import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,8 +22,8 @@ public class SortableQuestionType extends BaseQuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(SortableQuestionType.class);
 
-	public SortableQuestionType(Question question) {
-		super(question);
+	public SortableQuestionType(Question question, AnswerLocalService answerLocalService) {
+		super(question, answerLocalService);
 	}
 	
 	@Override
@@ -56,7 +56,7 @@ public class SortableQuestionType extends BaseQuestionType{
 			answersId.add(Long.parseLong(elementAnswer.attributeValue("id")));
 		}
 		
-		List<Answer> answers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 		
 		if(!isCorrect(answersId, answers)){
 			return INCORRECT;
@@ -115,7 +115,7 @@ public class SortableQuestionType extends BaseQuestionType{
 			answersId.add(id);
 		}
 
-		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> testAnswers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 		
 		if(!isCorrect(answersId, testAnswers)){
 			return INCORRECT;
@@ -136,7 +136,7 @@ public class SortableQuestionType extends BaseQuestionType{
 		        		 Element elementElement = elementItr.next();
 		        		 if("answer".equals(elementElement.getName())) {
 		        			 try {
-								answerSelected.add(AnswerLocalServiceUtil.getAnswer(Long.valueOf(elementElement.attributeValue("id"))));
+								answerSelected.add(answerLocalService.getAnswer(Long.valueOf(elementElement.attributeValue("id"))));
 							} catch (NumberFormatException e) {
 								e.printStackTrace();
 							} catch (PortalException e) {

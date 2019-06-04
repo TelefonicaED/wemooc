@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.learning.activity.question.SortableQuestionTypeFactory"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
 <%@page import="com.ted.lms.service.LearningActivityLocalServiceUtil"%>
 <%@page import="java.util.Collections"%>
@@ -11,6 +12,8 @@
 <%@page import="com.liferay.portal.kernel.xml.Document"%>
 <%@page import="com.liferay.portal.kernel.util.ParamUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
+<%@page import="com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil" %>
+
 <%@ include file="/init.jsp" %>
 
 <%boolean canUserDoNewTry = ParamUtil.getBoolean(request,"canUserDoNewTry");
@@ -26,7 +29,8 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-SortableQuestionType sortableQuestionType = new SortableQuestionType(question);
+SortableQuestionTypeFactory sortableQuestionTypeFactory = (SortableQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(SortableQuestionTypeFactory.TYPE);
+SortableQuestionType sortableQuestionType = sortableQuestionTypeFactory.getSortableQuestionType(question);
 
 String html = "";
 

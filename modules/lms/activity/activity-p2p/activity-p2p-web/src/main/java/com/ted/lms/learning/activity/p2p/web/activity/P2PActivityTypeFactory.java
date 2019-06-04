@@ -42,11 +42,11 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new P2PActivityType(activity);
+		return new P2PActivityType(activity, learningActivityResultLocalService, p2pActivityLocalService, p2pActivityCorrectionsLocalService);
 	}
 	
 	public P2PActivityType getP2PActivityType(LearningActivity activity) {
-		return new P2PActivityType(activity);
+		return new P2PActivityType(activity, learningActivityResultLocalService, p2pActivityLocalService, p2pActivityCorrectionsLocalService);
 	}
 	
 	@Override
@@ -111,4 +111,23 @@ public class P2PActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setP2PActivityLocalService(P2PActivityLocalService p2pActivityLocalService) {
+		this.p2pActivityLocalService = p2pActivityLocalService;
+	}
+	protected P2PActivityLocalService p2pActivityLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setP2PActivityCorrectionsLocalService(P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService) {
+		this.p2pActivityCorrectionsLocalService = p2pActivityCorrectionsLocalService;
+	}
+	protected P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	
 }

@@ -18,11 +18,13 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
-import com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.util.ResourceExternalPrefsPropsValues;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
+import com.ted.lms.service.LearningActivityResultLocalService;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,8 +40,9 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 	private boolean questionFeedback;
 	private JSONObject questionPositions;
 
-	public ResourceExternalActivityType(LearningActivity activity) {
-		super(activity);
+	public ResourceExternalActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
+			QuestionLocalService questionLocalService) {
+		super(activity, learningActivityResultLocalService, questionLocalService);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -104,7 +107,7 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 		}
 		
 		//Guardamos los segundos de las preguntas
-		List<Question> listQuestions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
+		List<Question> listQuestions = questionLocalService.getQuestions(activity.getActId());
 		
 		JSONObject questionPositions = JSONFactoryUtil.createJSONObject();
 		resourceExternalContent.put(ResourceExternalConstants.JSON_QUESTION_POSITIONS, questionPositions);
@@ -150,7 +153,7 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 			if(correctMode == ResourceExternalConstants.CORRECT_QUESTIONS){
 				if(Validator.isNotNull(resourceExternalContent.getString(ResourceExternalConstants.JSON_VIDEO))){
 					
-					List<Question> listQuestions = QuestionLocalServiceUtil.getQuestions(activity.getActId());
+					List<Question> listQuestions = questionLocalService.getQuestions(activity.getActId());
 					JSONObject questionPositions = resourceExternalContent.getJSONObject(ResourceExternalConstants.JSON_QUESTION_POSITIONS);
 					
 					if(Validator.isNotNull(listQuestions) && Validator.isNotNull(questionPositions)){

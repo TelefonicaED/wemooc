@@ -3,12 +3,16 @@ package com.ted.lms.learning.activity.test.web.activity;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
 import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
+
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -34,11 +38,12 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new TestActivityType(activity);
+		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, learningActivityTryLocalService);
 	}
 	
 	public TestActivityType getTestActivityType(LearningActivity activity) {
-		return new TestActivityType(activity);
+		System.out.println("testfactory questionLocalService: " + questionLocalService);
+		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, learningActivityTryLocalService);
 	}
 	
 	@Override
@@ -117,4 +122,22 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	}
 
 	protected ResourceBundleLoader resourceBundleLoader;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityResultLocalService(LearningActivityResultLocalService learningActivityResultLocalService) {
+		this.learningActivityResultLocalService = learningActivityResultLocalService;
+	}
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
+		this.questionLocalService = questionLocalService;
+	}
+	protected QuestionLocalService questionLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityTryLocalService(LearningActivityTryLocalService learningActivityTryLocalService) {
+		this.learningActivityTryLocalService = learningActivityTryLocalService;
+	}
+	protected LearningActivityTryLocalService learningActivityTryLocalService;
 }

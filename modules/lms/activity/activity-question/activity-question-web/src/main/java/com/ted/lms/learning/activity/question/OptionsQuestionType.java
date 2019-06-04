@@ -15,7 +15,7 @@ import com.ted.lms.learning.activity.question.constants.QuestionConstants;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.BaseQuestionType;
 import com.ted.lms.learning.activity.question.model.Question;
-import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +28,8 @@ public class OptionsQuestionType extends BaseQuestionType{
 	private int formatType;
 	private boolean partialCorrection;
 
-	public OptionsQuestionType(Question question) {
-		super(question);
+	public OptionsQuestionType(Question question, AnswerLocalService answerLocalService) {
+		super(question, answerLocalService);
 		
 		JSONObject extraContent = question.getExtraContentJSON();
 		
@@ -174,7 +174,7 @@ public class OptionsQuestionType extends BaseQuestionType{
 						Element elementElement = elementItr.next();
 						if("answer".equals(elementElement.getName())) {
 							try {
-								answerSelected.add(AnswerLocalServiceUtil.getAnswer(Long.valueOf(elementElement.attributeValue("id"))));
+								answerSelected.add(answerLocalService.getAnswer(Long.valueOf(elementElement.attributeValue("id"))));
 							} catch (NumberFormatException e) {
 								e.printStackTrace();
 							} catch (PortalException e) {
@@ -195,7 +195,7 @@ public class OptionsQuestionType extends BaseQuestionType{
 	private long correct(List<Long> arrayAnswersId){
 		long retVal = 0;
 		
-		List<Answer> testAnswers = AnswerLocalServiceUtil.getAnswersByQuestionId(question.getQuestionId());
+		List<Answer> testAnswers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
 		
 		int correctAnswers=0, correctAnswered=0, incorrectAnswered=0;
 		for(Answer answer:testAnswers){

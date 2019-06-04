@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.learning.activity.question.util.QuestionPrefsPropsValues"%>
 <%@page import="com.ted.lms.learning.activity.question.OptionsQuestionType"%>
 <%@page import="com.ted.lms.learning.activity.question.constants.OptionConstants"%>
 <%@page import="com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil"%>
@@ -16,24 +17,30 @@
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion", 0);
 long questionId = ParamUtil.getLong(request, "questionId");
 
-int formatType = OptionConstants.DEFAULT_FORMAT_TYPE;
+boolean enableOrder = QuestionPrefsPropsValues.getOptionsEditFormat(themeDisplay.getCompanyId());
 
-System.out.println("questionId: " + questionId);
+if(enableOrder){
 
-if(questionId > 0){
-	Question question = QuestionLocalServiceUtil.getQuestion(questionId);
-	System.out.println("questionId: " + question.getQuestionTypeId());
-	OptionsQuestionType optionsQuestionType = new OptionsQuestionType(question);
-	System.out.println("question: " + question.getExtraContent());
-	formatType = optionsQuestionType.getFormatType();
-	System.out.println("optionsQuestionType: " + optionsQuestionType.getFormatType());
-}
+	int formatType = OptionConstants.DEFAULT_FORMAT_TYPE;
+	
+	System.out.println("questionId: " + questionId);
+	
+	if(questionId > 0){
+		Question question = QuestionLocalServiceUtil.getQuestion(questionId);
+		System.out.println("questionId: " + question.getQuestionTypeId());
+		OptionsQuestionTypeFactory optionsQuestionTypeFactory = new OptionsQuestionTypeFactory();
+		OptionsQuestionType optionsQuestionType = optionsQuestionTypeFactory.getOptionsQuestionType(question);
+		System.out.println("question: " + question.getExtraContent());
+		formatType = optionsQuestionType.getFormatType();
+		System.out.println("optionsQuestionType: " + optionsQuestionType.getFormatType());
+	}
+	
+	String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());%>
+	
+	<aui:select name="<%=namespace + iteratorQuestion + "_formatType"%>" useNamespace="false" label="question.options.format-type">
+		<aui:option label="question.options.format-type.vertical" value="<%=OptionConstants.OPTION_FORMAT_TYPE_VERTICAL %>" selected="<%=formatType == OptionConstants.OPTION_FORMAT_TYPE_VERTICAL %>" />
+		<aui:option label="question.options.format-type.horizontal" value="<%=OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL %>" selected="<%=formatType == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL %>" />
+		<aui:option label="question.options.format-type.combo" value="<%=OptionConstants.OPTION_FORMAT_TYPE_COMBO %>" selected="<%=formatType == OptionConstants.OPTION_FORMAT_TYPE_COMBO %>" />
+	</aui:select>
 
-String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
-%>
-
-<aui:select name="<%=namespace + iteratorQuestion + "_formatType"%>" useNamespace="false" label="question.options.format-type">
-	<aui:option label="question.options.format-type.vertical" value="<%=OptionConstants.OPTION_FORMAT_TYPE_VERTICAL %>" selected="<%=formatType == OptionConstants.OPTION_FORMAT_TYPE_VERTICAL %>" />
-	<aui:option label="question.options.format-type.horizontal" value="<%=OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL %>" selected="<%=formatType == OptionConstants.OPTION_FORMAT_TYPE_HORIZONTAL %>" />
-	<aui:option label="question.options.format-type.combo" value="<%=OptionConstants.OPTION_FORMAT_TYPE_COMBO %>" selected="<%=formatType == OptionConstants.OPTION_FORMAT_TYPE_COMBO %>" />
-</aui:select>
+<%}%>

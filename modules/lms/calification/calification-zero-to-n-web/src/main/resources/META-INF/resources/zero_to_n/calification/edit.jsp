@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.calification.zero.to.n.constants.ZeroToNConstants"%>
+<%@page import="com.ted.lms.registry.CalificationTypeFactoryRegistryUtil"%>
 <%@page import="com.ted.lms.calification.zero.to.n.ZeroToNCalificationTypeFactory"%>
 <%@page import="com.ted.lms.calification.zero.to.n.ZeroToNCalificationType"%>
 <%@page import="com.ted.lms.model.Course"%>
@@ -12,7 +14,8 @@ long courseId = ParamUtil.getLong(request, "courseId", 0);
 if(courseId > 0){
 	Course course = CourseLocalServiceUtil.fetchCourse(courseId);
 	if(course != null){
-		ZeroToNCalificationType zeroToNCalificationType = new ZeroToNCalificationType(course);
+		ZeroToNCalificationTypeFactory calificationTypeFactory = (ZeroToNCalificationTypeFactory)CalificationTypeFactoryRegistryUtil.getCalificationTypeFactoryByType(ZeroToNCalificationTypeFactory.TYPE);
+		ZeroToNCalificationType zeroToNCalificationType = calificationTypeFactory.getCalificationType(course);
 		maxValue = zeroToNCalificationType.getMaxValue();
 	}
 }%>
