@@ -3,7 +3,7 @@
 
 <service-builder package-path="com.ted.lms">
 	<namespace>LMS</namespace>
-	<entity local-service="true" name="Course" remote-service="true" uuid="true">
+	<entity local-service="true" name="Course" remote-service="true" uuid="true" trash-enabled="true">
 
 		<!-- PK fields -->
 
@@ -92,7 +92,58 @@
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
 		<reference entity="ExpandoValue" package-path="com.liferay.portlet.expando" />
 		<reference entity="Resource" package-path="com.liferay.portal" />
+		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
+		<reference entity="DLFolder" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
+	
+	<entity name="CourseType"  local-service="true" remote-service="true" >
+		<!-- PK fields -->
+		<column name="courseTypeId" type="long" primary="true"/>
+		
+		<!-- Group instance -->
+
+		<column name="groupId" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Description fields  -->
+		<column name="name" type="String" localized="true"/>
+		<column name="description" type="String" localized="true"/>
+		<column name="iconId" type="long"></column>
+		
+		<finder name="CompanyId" return-type="Collection">
+			<finder-column name="companyId"/>
+		</finder>
+		<finder name="CourseTypeId" return-type="CourseType">
+			<finder-column name="courseTypeId"/>
+		</finder>
+		
+		<reference entity="Company" package-path="com.liferay.portal" />
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+		<reference entity="Image" package-path="com.liferay.portal" />
+	</entity>
+	
+	<entity name="CourseTypeRelation"  local-service="true" remote-service="false" >
+
+		<column name="courseTypeId" type="long" primary="true"/>
+		<column name="classNameId" type="long" primary="true"/>
+		<column name="classPK" type="long" primary="true"/>
+		
+		<finder name="CourseTypeIdClassNameId" return-type="Collection">
+			<finder-column name="courseTypeId"/>
+			<finder-column name="classNameId"/>
+		</finder>
+		
+		<reference entity="LayoutSetPrototype" package-path="com.liferay.portal" />
+	</entity>
+	
 	<entity local-service="true" name="CourseResult" remote-service="false">
 
 		<!-- PK fields -->
@@ -152,6 +203,11 @@
 		<reference entity="Group" package-path="com.liferay.portal" />
 		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
+	
+	<entity local-service="true" name="Student" remote-service="false" data-source="false">
+		<reference entity="Group" package-path="com.liferay.portal" />
+	</entity>
+	
 	<entity local-service="true" name="Module" remote-service="true" trash-enabled="true" uuid="true">
 
 		<!-- PK fields -->
@@ -230,6 +286,7 @@
 		<reference entity="Resource" package-path="com.liferay.portal" />
 		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />
 		<reference entity="AssetLink" package-path="com.liferay.portlet.asset" />
+		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
 	<entity local-service="true" name="ModuleResult" remote-service="false">
 
@@ -360,6 +417,10 @@
 		<finder name="ModuleIdNotTypeId" return-type="Collection">
 			<finder-column name="moduleId" />
 			<finder-column name="typeId" comparator="!=" />
+		</finder>
+		<finder name="GroupIdModuleId" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="moduleId" />
 		</finder>
 		<!-- References -->
 

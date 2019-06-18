@@ -45,7 +45,7 @@ public class LearningActivityStagedModelRepository
    	 	serviceContext.setUserId(userId);
    	 	serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
 		
-		LearningActivity addedLearningActivity = learningActivityLocalService.addLearningActivity(learningActivity.getModuleId(), 
+		LearningActivity addedLearningActivity = learningActivityLocalService.addLearningActivity(userId, learningActivity.getGroupId(), learningActivity.getModuleId(), 
 				learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), learningActivity.getStartDate(), 
 				learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), learningActivity.getPriority(), 
 				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), learningActivity.getFeedbackNoCorrectMap(), 
@@ -170,11 +170,11 @@ public class LearningActivityStagedModelRepository
 		ServiceContext serviceContext = portletDataContext.createServiceContext(
 			learningActivity);
 
-		LearningActivity updatedLearningActivity = learningActivityLocalService.updateLearningActivity(learningActivity.getActId(), learningActivity.getModuleId(), 
-				learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), learningActivity.getStartDate(), 
-				learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), learningActivity.getPriority(), 
-				learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), learningActivity.getFeedbackNoCorrectMap(), 
-				learningActivity.getRequired(), learningActivity.getCommentsActivated(), null, null, serviceContext);
+		LearningActivity updatedLearningActivity = learningActivityLocalService.updateLearningActivity(serviceContext.getUserId(), learningActivity.getActId(), 
+				learningActivity.getModuleId(), learningActivity.getTitleMap(), learningActivity.getDescriptionMap(), learningActivity.getTypeId(), 
+				learningActivity.getStartDate(), learningActivity.getEndDate(), learningActivity.getTries(), learningActivity.getPassPuntuation(), 
+				learningActivity.getPriority(), learningActivity.getExtraContent(), learningActivity.getFeedbackCorrectMap(), 
+				learningActivity.getFeedbackNoCorrectMap(), learningActivity.getRequired(), learningActivity.getCommentsActivated(), null, null, serviceContext);
 		
 		//TODO añadir actualización de attachments
 		

@@ -1,6 +1,5 @@
 package com.ted.lms.learning.activity.evaluation.web.internal.upgrade.v1_0_0;
 
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Release;
@@ -76,7 +75,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 							activitiesElementItr = activitiesElement.elementIterator();
 							
 							activities = JSONFactoryUtil.createJSONObject();
-							evaluationContent.put(EvaluationConstants.JSON_ACTIVITIES, activities);
+							evaluationContent.put(LearningActivityConstants.JSON_ACTIVITIES, activities);
 							
 							while(activitiesElementItr.hasNext()) {
 								Element activityElement =activitiesElementItr.next();

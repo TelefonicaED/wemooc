@@ -65,7 +65,7 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
             LMSConstants.RESOURCE_NAME);
 	
 	@Override
-	public Module addModule(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean startDate, int startDateMonth, 
+	public Module addModule(long groupId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean startDate, int startDateMonth, 
 			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean endDate, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, ServiceContext serviceContext) throws PortalException {
@@ -75,7 +75,7 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 			LMSActionKeys.ADD_MODULE);
 
 		return moduleLocalService.addModule(
-			getUserId(), titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
+			getUserId(), groupId, titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
 			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
 			allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId, serviceContext);
 	}
@@ -102,17 +102,17 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 	}
 	
 	@Override
-	public Module moveDownModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+	public Module moveDownModule(long moduleId) throws PortalException{
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.UPDATE);
 		
-		return moduleLocalService.moveDownModule(moduleId, serviceContext);
+		return moduleLocalService.moveDownModule(getUserId(), moduleId);
 	}
 	
 	@Override
-	public Module moveUpModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+	public Module moveUpModule(long moduleId) throws PortalException{
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.UPDATE);
 		
-		return moduleLocalService.moveUpModule(moduleId, serviceContext);
+		return moduleLocalService.moveUpModule(getUserId(), moduleId);
 	}
 	
 	@Override

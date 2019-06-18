@@ -36,9 +36,10 @@ public class PrerequisiteRelationLocalServiceWrapper
 
 	@Override
 	public com.ted.prerequisite.model.PrerequisiteRelation addPrerequisiteRelation(
-		long classNamePrerequisiteId, long classNameId, long classPK) {
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		String extraData) {
 		return _prerequisiteRelationLocalService.addPrerequisiteRelation(classNamePrerequisiteId,
-			classNameId, classPK);
+			classNameId, classPK, extraData);
 	}
 
 	/**
@@ -257,6 +258,13 @@ public class PrerequisiteRelationLocalServiceWrapper
 		int start, int end) {
 		return _prerequisiteRelationLocalService.getPrerequisiteRelations(start,
 			end);
+	}
+
+	@Override
+	public java.util.List<com.ted.prerequisite.model.PrerequisiteRelation> getPrerequisiteRelations(
+		long classNameId, long classPK) {
+		return _prerequisiteRelationLocalService.getPrerequisiteRelations(classNameId,
+			classPK);
 	}
 
 	/**

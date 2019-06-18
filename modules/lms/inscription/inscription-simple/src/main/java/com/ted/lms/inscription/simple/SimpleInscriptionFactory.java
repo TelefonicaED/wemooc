@@ -7,7 +7,7 @@ import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.model.BaseInscriptionTypeFactory;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.InscriptionTypeFactory;
-import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.StudentLocalService;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,7 +36,7 @@ public class SimpleInscriptionFactory extends BaseInscriptionTypeFactory{
 	
 	@Override
 	public SimpleInscription getInscriptionType(Course course, ServiceContext serviceContext) throws PortalException {	
-		return new SimpleInscription(course, serviceContext, courseLocalService);
+		return new SimpleInscription(course, serviceContext, studentLocalService);
 	}
 	
 	@Override
@@ -56,10 +56,10 @@ public class SimpleInscriptionFactory extends BaseInscriptionTypeFactory{
 	protected ResourceBundleLoader resourceBundleLoader;
 	
 	@Reference(unbind = "-")
-	protected void setCourseLocalService(CourseLocalService courseLocalService) {
-		this.courseLocalService = courseLocalService;
+	protected void setStudentLocalService(StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
 	}
 	
-	protected CourseLocalService courseLocalService;
+	protected StudentLocalService studentLocalService;
 
 }

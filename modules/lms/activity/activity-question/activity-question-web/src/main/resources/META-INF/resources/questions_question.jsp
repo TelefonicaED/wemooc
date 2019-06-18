@@ -32,6 +32,7 @@ if(questionId > 0){
 	questionType = question.getQuestionTypeId();
 }
 QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionType);
+
 %>
 
 <aui:input  type="hidden" name='<%=namespace + "questionId_" + iteratorQuestion %>' id='<%=namespace + "questionId_" + iteratorQuestion%>' value="<%=questionId%>" useNamespace="false" />
@@ -42,6 +43,8 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
     <aui:input name='<%=namespace + "penalize_" + iteratorQuestion %>' id='<%=namespace + "penalize_" + iteratorQuestion %>' type="hidden" 
     	value="<%=question!=null?question.isPenalize():false%>" useNamespace="false" />
 </c:if>
+
+<aui:model-context bean="<%= question %>" model="<%= Question.class %>" />
 
 <label><liferay-ui:message key="num-question" arguments="<%=iteratorQuestion %>"/></label>
 
@@ -149,8 +152,8 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 	</div>
 </div>
 
-<script>
+<aui:script>
 	function <portlet:namespace />changeQuestion<%=iteratorQuestion%>(val){
-		$('#<%=namespace%>question_title_<%=iteratorQuestion%>').val(val);
+		$('#<%=namespace%>question_title_<%=iteratorQuestion%>').val(window.<portlet:namespace />questionTitle<%=iteratorQuestion%>.getHTML());
 	}
-</script>
+</aui:script>

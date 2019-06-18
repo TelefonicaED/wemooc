@@ -17,4 +17,6 @@ public class LMSConstants {
 	public static final String CHANGE_VISIBILITY = "change_visibility";
 	
 	public static final String[] DEFAULT_LEARNING_ACTIVITY_DOCUMENTS_EXTENSIONS = {".gif",".jpeg",".jpg",".png",".txt",".doc",".docx"};
+	
+	public static final long DEFAULT_IMAGE_MAX_SIZE = 5242880;
 }

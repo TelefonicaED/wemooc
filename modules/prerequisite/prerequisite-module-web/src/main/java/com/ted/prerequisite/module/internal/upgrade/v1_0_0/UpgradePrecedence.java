@@ -55,7 +55,7 @@ public class UpgradePrecedence extends UpgradeProcess{
 				long moduleId = rs.getLong("moduleId");
 				long precedence = rs.getLong("precedence");
 
-				prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), PortalUtil.getClassNameId(Module.class), moduleId);
+				prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), PortalUtil.getClassNameId(Module.class), moduleId, "");
 				
 				extraData = prerequisiteRelation.getExtraDataJSON();
 				extraData.put(ModulePrerequisiteConstants.JSON_MODULE_ID, precedence);

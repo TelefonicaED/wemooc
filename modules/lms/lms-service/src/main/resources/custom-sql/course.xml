@@ -11,7 +11,7 @@
 			[$JOIN$]
 			WHERE
 				[$WHERE$]
-				(Lms_Course.companyId = ?)
+				(Lms_Course.companyId = ?) AND Lms_Course.`status` != ?
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.countC">
@@ -26,7 +26,7 @@
 			[$JOIN$]
 			WHERE
 				[$WHERE$]
-				(Lms_Course.companyId = ? || ? = 0) 
+				(Lms_Course.companyId = ?) AND Lms_Course.`status` != ?
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.getDistinctCourseGroups">
@@ -38,7 +38,7 @@
 			INNER JOIN 
 				Lms_course c 
 					ON g.groupId = c.groupId
-			WHERE g.companyId = ?
+			WHERE g.companyId = ? AND c.`status` != ?
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereTitleDescription">
@@ -54,7 +54,7 @@
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereStatus">
 		WHERE
-			(Lms_Course.status = ?)
+			(Lms_Course.`status` IN ([$STATUS$]))
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseFinder.whereParentCourseId">
 		WHERE

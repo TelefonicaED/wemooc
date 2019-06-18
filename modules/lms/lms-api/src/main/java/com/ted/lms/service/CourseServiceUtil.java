@@ -55,29 +55,50 @@ public class CourseServiceUtil {
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param ImageSelector imagen selector
 	* @param serviceContext contexto de la creación del curso
+	* @throws Exception
 	*/
-	public static com.ted.lms.model.Course addCourse(
+	public static com.ted.lms.model.Course addCourse(long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
 		java.util.Map<java.util.Locale, String> friendlyURLMap,
-		long layoutSetPrototypeId, long parentCourseId,
+		long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
+		throws Exception {
 		return getService()
-				   .addCourse(titleMap, descriptionMap, summaryMap, indexer,
-			friendlyURLMap, layoutSetPrototypeId, parentCourseId,
-			smallImageSelector, serviceContext);
+				   .addCourse(groupId, titleMap, descriptionMap, summaryMap,
+			indexer, friendlyURLMap, layoutSetPrototypeId, parentCourseId,
+			courseTypeId, smallImageSelector, serviceContext);
 	}
 
 	public static int countCourses(long companyId, String title,
-		String description, String language, int status, long parentCourseId,
+		String description, String language, int[] status, long parentCourseId,
 		long groupId, java.util.LinkedHashMap<String, Object> params,
 		boolean andOperator) {
 		return getService()
 				   .countCourses(companyId, title, description, language,
 			status, parentCourseId, groupId, params, andOperator);
+	}
+
+	public static void deleteCourse(long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().deleteCourse(courseId);
+	}
+
+	public static long executeCopyCourse(long courseId, long courseParentId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		long layoutSetPrototypeId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, boolean copyForum,
+		boolean copyDocuments,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .executeCopyCourse(courseId, courseParentId, titleMap,
+			layoutSetPrototypeId, registrationStartDate, registrationEndDate,
+			executionStartDate, executionEndDate, copyForum, copyDocuments,
+			serviceContext);
 	}
 
 	/**
@@ -89,12 +110,22 @@ public class CourseServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static com.ted.lms.model.Course moveEntryToTrash(long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveEntryToTrash(courseId);
+	}
+
+	public static void restoreEntryFromTrash(long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().restoreEntryFromTrash(courseId);
+	}
+
 	/**
 	* M�todo para buscar cursos
 	*/
 	public static java.util.List<com.ted.lms.model.Course> searchCourses(
 		long companyId, String title, String description, String language,
-		int status, long parentCourseId, long groupId,
+		int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {

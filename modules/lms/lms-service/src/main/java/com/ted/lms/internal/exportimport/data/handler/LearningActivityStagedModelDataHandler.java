@@ -194,21 +194,21 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 	            serviceContext.setUserId(userId);
 	            serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
 	            
-	            importedLearningActivity = activityLocalService.addLearningActivity(moduleId, 
+	            importedLearningActivity = activityLocalService.addLearningActivity(userId, activity.getGroupId(), moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
 	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
 	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), 
 	            		null, serviceContext);
 	        }
 	        else {
-	            importedLearningActivity = activityLocalService.updateLearningActivity(activity.getActId(), moduleId, 
+	            importedLearningActivity = activityLocalService.updateLearningActivity(userId, activity.getActId(), moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
 	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
 	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), null, null, serviceContext);
 	        }
 	    }
 	    else {     
-	        importedLearningActivity = activityLocalService.addLearningActivity(moduleId, 
+	        importedLearningActivity = activityLocalService.addLearningActivity(userId, activity.getGroupId(), moduleId, 
             		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
             		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
             		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), null, serviceContext);

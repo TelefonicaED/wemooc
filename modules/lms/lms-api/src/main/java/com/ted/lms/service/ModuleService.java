@@ -58,7 +58,7 @@ public interface ModuleService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ModuleServiceUtil} to access the module remote service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public Module addModule(Map<Locale, String> titleMap,
+	public Module addModule(long groupId, Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, boolean startDate,
 		int startDateMonth, int startDateDay, int startDateYear,
 		int startDateHour, int startDateMinute, boolean endDate,
@@ -79,13 +79,11 @@ public interface ModuleService extends BaseService {
 	*/
 	public String getOSGiServiceIdentifier();
 
-	public Module moveDownModule(long moduleId, ServiceContext serviceContext)
-		throws PortalException;
+	public Module moveDownModule(long moduleId) throws PortalException;
 
 	public Module moveModuleToTrash(long moduleId) throws PortalException;
 
-	public Module moveUpModule(long moduleId, ServiceContext serviceContext)
-		throws PortalException;
+	public Module moveUpModule(long moduleId) throws PortalException;
 
 	public Module updateModule(long moduleId, Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, boolean startDate,

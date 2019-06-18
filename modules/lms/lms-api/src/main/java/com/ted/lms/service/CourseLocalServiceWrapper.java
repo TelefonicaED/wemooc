@@ -62,19 +62,22 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param smallImageImageSelector imagen seleccionada para el curso
 	* @param serviceContext contexto de la creación del curso
+	* @throws Exception
 	*/
 	@Override
-	public com.ted.lms.model.Course addCourse(
+	public com.ted.lms.model.Course addCourse(long userId, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
 		java.util.Map<java.util.Locale, String> friendlyURLMap,
-		long layoutSetPrototypeId, long parentCourseId,
+		long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _courseLocalService.addCourse(titleMap, descriptionMap,
-			summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
-			parentCourseId, smallImageSelector, serviceContext);
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return _courseLocalService.addCourse(userId, groupId, titleMap,
+			descriptionMap, summaryMap, indexer, friendlyURLMap,
+			layoutSetPrototypeId, parentCourseId, courseTypeId,
+			smallImageSelector, serviceContext);
 	}
 
 	@Override
@@ -86,12 +89,27 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 			entryId, imageSelector);
 	}
 
+	@Override
+	public com.ted.lms.model.Course copyCourse(long userId, long courseId,
+		long courseParentId, String title, long layoutSetPrototypeId,
+		java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, boolean copyForum,
+		boolean copyDocuments,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return _courseLocalService.copyCourse(userId, courseId, courseParentId,
+			title, layoutSetPrototypeId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			copyForum, copyDocuments, serviceContext);
+	}
+
 	/**
 	* Método para buscar cursos
 	*/
 	@Override
 	public int countCourses(long companyId, String freeText, String language,
-		int status, long parentCourseId, long groupId,
+		int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params) {
 		return _courseLocalService.countCourses(companyId, freeText, language,
 			status, parentCourseId, groupId, params);
@@ -102,46 +120,10 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	*/
 	@Override
 	public int countCourses(long companyId, String title, String description,
-		String language, int status, long parentCourseId, long groupId,
+		String language, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
 		return _courseLocalService.countCourses(companyId, title, description,
 			language, status, parentCourseId, groupId, params, andOperator);
-	}
-
-	@Override
-	public int countStudentsFromCourse(long courseId, long companyId) {
-		return _courseLocalService.countStudentsFromCourse(courseId, companyId);
-	}
-
-	@Override
-	public int countStudentsFromCourse(long courseId, long companyId,
-		String keywords, int status,
-		java.util.LinkedHashMap<String, Object> params) {
-		return _courseLocalService.countStudentsFromCourse(courseId, companyId,
-			keywords, status, params);
-	}
-
-	/**
-	* Usar este método para contar los estudiantes de un curso
-	*
-	* @param courseId id del curso
-	* @param companyId id de company
-	* @param screenName nombre de usuario
-	* @param firstName nombre
-	* @param lastName apellido
-	* @param emailAddress direccion de correo
-	* @param status estado del usuario (WorkflowConstants)
-	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
-	* @return
-	*/
-	@Override
-	public int countStudentsFromCourse(long courseId, long companyId,
-		String screenName, String firstName, String lastName,
-		String emailAddress, int status,
-		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
-		return _courseLocalService.countStudentsFromCourse(courseId, companyId,
-			screenName, firstName, lastName, emailAddress, status, params,
-			andOperator);
 	}
 
 	/**
@@ -160,10 +142,12 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	*
 	* @param course the course
 	* @return the course that was removed
+	* @throws PortalException
 	*/
 	@Override
 	public com.ted.lms.model.Course deleteCourse(
-		com.ted.lms.model.Course course) {
+		com.ted.lms.model.Course course)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseLocalService.deleteCourse(course);
 	}
 
@@ -280,14 +264,18 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
-	public com.ted.lms.model.CourseResult enrollStudent(
-		com.ted.lms.model.Course course, long userId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.ted.lms.exception.InscriptionException {
-		return _courseLocalService.enrollStudent(course, userId,
-			serviceContext, permissionChecker);
+	public long executeCopyCourse(long courseId, long courseParentId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		long layoutSetPrototypeId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, boolean copyForum,
+		boolean copyDocuments,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.executeCopyCourse(courseId, courseParentId,
+			titleMap, layoutSetPrototypeId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			copyForum, copyDocuments, serviceContext);
 	}
 
 	@Override
@@ -320,8 +308,8 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
-	public boolean getAllowAccessToCompletedCourses() {
-		return _courseLocalService.getAllowAccessToCompletedCourses();
+	public boolean getAllowAccessToCompletedCourses(long companyId) {
+		return _courseLocalService.getAllowAccessToCompletedCourses(companyId);
 	}
 
 	@Override
@@ -457,28 +445,38 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
-	public String[] getPrerequisiteActivities() {
-		return _courseLocalService.getPrerequisiteActivities();
+	public String[] getPrerequisiteActivities(long companyId) {
+		return _courseLocalService.getPrerequisiteActivities(companyId);
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
-		long courseId, long companyId, String keywords, int status,
-		java.util.LinkedHashMap<String, Object> params, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator obc) {
-		return _courseLocalService.getStudentsFromCourse(courseId, companyId,
-			keywords, status, params, start, end, obc);
+	public String[] getPrerequisiteCourses(long companyId) {
+		return _courseLocalService.getPrerequisiteCourses(companyId);
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
-		long courseId, long companyId, String screenName, String firstName,
-		String lastName, String emailAddress, int status,
-		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
-		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
-		return _courseLocalService.getStudentsFromCourse(courseId, companyId,
-			screenName, firstName, lastName, emailAddress, status, params,
-			andOperator, start, end, obc);
+	public String[] getPrerequisiteModules(long companyId) {
+		return _courseLocalService.getPrerequisiteModules(companyId);
+	}
+
+	@Override
+	public com.ted.lms.model.Course moveEntryToTrash(long userId,
+		com.ted.lms.model.Course course)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.moveEntryToTrash(userId, course);
+	}
+
+	@Override
+	public com.ted.lms.model.Course moveEntryToTrash(long userId, long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.moveEntryToTrash(userId, courseId);
+	}
+
+	@Override
+	public com.ted.lms.model.Course restoreEntryFromTrash(long userId,
+		long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.restoreEntryFromTrash(userId, courseId);
 	}
 
 	/**
@@ -486,7 +484,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	*/
 	@Override
 	public java.util.List<com.ted.lms.model.Course> searchCourses(
-		long companyId, String freeText, String language, int status,
+		long companyId, String freeText, String language, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
@@ -500,22 +498,13 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	@Override
 	public java.util.List<com.ted.lms.model.Course> searchCourses(
 		long companyId, String title, String description, String language,
-		int status, long parentCourseId, long groupId,
+		int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
 		return _courseLocalService.searchCourses(companyId, title, description,
 			language, status, parentCourseId, groupId, params, andOperator,
 			start, end, obc);
-	}
-
-	@Override
-	public boolean unsubscribeStudent(com.ted.lms.model.Course course,
-		long userId,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _courseLocalService.unsubscribeStudent(course, userId,
-			permissionChecker);
 	}
 
 	/**
@@ -566,10 +555,10 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @param status estado del curso
 	* @param serviceContext contexto de la modificación del curso
 	* @return curso modificado
-	* @throws NoSuchCourseException
+	* @throws PortalException
 	*/
 	@Override
-	public com.ted.lms.model.Course updateCourse(long courseId,
+	public com.ted.lms.model.Course updateCourse(long userId, long courseId,
 		boolean welcome,
 		java.util.Map<java.util.Locale, String> welcomeSubjectMap,
 		java.util.Map<java.util.Locale, String> welcomeMsgMap, boolean goodbye,
@@ -578,13 +567,11 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		boolean deniedInscription,
 		java.util.Map<java.util.Locale, String> deniedInscriptionSubjectMap,
 		java.util.Map<java.util.Locale, String> deniedInscriptionMsgMap,
-		int status,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.ted.lms.exception.NoSuchCourseException {
-		return _courseLocalService.updateCourse(courseId, welcome,
+		int status) throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.updateCourse(userId, courseId, welcome,
 			welcomeSubjectMap, welcomeMsgMap, goodbye, goodbyeSubjectMap,
 			goodbyeMsgMap, deniedInscription, deniedInscriptionSubjectMap,
-			deniedInscriptionMsgMap, status, serviceContext);
+			deniedInscriptionMsgMap, status);
 	}
 
 	/**
@@ -607,14 +594,14 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @throws PortalException
 	*/
 	@Override
-	public com.ted.lms.model.Course updateCourse(long courseId,
+	public com.ted.lms.model.Course updateCourse(long userId, long courseId,
 		java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, int typeSite, long inscriptionType,
 		long courseEvalId, long calificationType, int maxUsers, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _courseLocalService.updateCourse(courseId,
+		return _courseLocalService.updateCourse(userId, courseId,
 			registrationStartDate, registrationEndDate, executionStartDate,
 			executionEndDate, typeSite, inscriptionType, courseEvalId,
 			calificationType, maxUsers, status, serviceContext);
@@ -655,7 +642,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @return curso modificado
 	*/
 	@Override
-	public com.ted.lms.model.Course updateCourse(long courseId,
+	public com.ted.lms.model.Course updateCourse(long userId, long courseId,
 		int registrationStartMonth, int registrationStartDay,
 		int registrationStartYear, int registrationStartHour,
 		int registrationStartMinute, int registrationEndMonth,
@@ -669,7 +656,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		int maxUsers, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _courseLocalService.updateCourse(courseId,
+		return _courseLocalService.updateCourse(userId, courseId,
 			registrationStartMonth, registrationStartDay,
 			registrationStartYear, registrationStartHour,
 			registrationStartMinute, registrationEndMonth, registrationEndDay,
@@ -692,11 +679,13 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @throws PortalException
 	*/
 	@Override
-	public com.ted.lms.model.Course updateCourse(long courseId, int status,
+	public com.ted.lms.model.Course updateCourse(long userId, long courseId,
+		int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException,
 			com.liferay.portal.kernel.exception.PortalException {
-		return _courseLocalService.updateCourse(courseId, status, serviceContext);
+		return _courseLocalService.updateCourse(userId, courseId, status,
+			serviceContext);
 	}
 
 	/**
@@ -714,7 +703,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	* @throws PortalException
 	*/
 	@Override
-	public com.ted.lms.model.Course updateCourse(long courseId,
+	public com.ted.lms.model.Course updateCourse(long userId, long courseId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
@@ -723,7 +712,7 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws Exception {
-		return _courseLocalService.updateCourse(courseId, titleMap,
+		return _courseLocalService.updateCourse(userId, courseId, titleMap,
 			descriptionMap, summaryMap, indexer, friendlyURLMap,
 			layoutSetPrototypeId, smallImageSelector, serviceContext);
 	}
@@ -747,6 +736,15 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		_courseLocalService.updateSmallImage(courseId, smallImageSelector,
+			serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.Course updateStatus(long userId, long courseId,
+		int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.updateStatus(userId, courseId, status,
 			serviceContext);
 	}
 

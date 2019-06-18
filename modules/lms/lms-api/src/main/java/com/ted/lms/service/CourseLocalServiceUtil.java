@@ -71,19 +71,21 @@ public class CourseLocalServiceUtil {
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param smallImageImageSelector imagen seleccionada para el curso
 	* @param serviceContext contexto de la creación del curso
+	* @throws Exception
 	*/
-	public static com.ted.lms.model.Course addCourse(
+	public static com.ted.lms.model.Course addCourse(long userId, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
 		java.util.Map<java.util.Locale, String> friendlyURLMap,
-		long layoutSetPrototypeId, long parentCourseId,
+		long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
 		return getService()
-				   .addCourse(titleMap, descriptionMap, summaryMap, indexer,
-			friendlyURLMap, layoutSetPrototypeId, parentCourseId,
-			smallImageSelector, serviceContext);
+				   .addCourse(userId, groupId, titleMap, descriptionMap,
+			summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+			parentCourseId, courseTypeId, smallImageSelector, serviceContext);
 	}
 
 	public static long addOriginalImageFileEntry(long userId, long groupId,
@@ -95,11 +97,26 @@ public class CourseLocalServiceUtil {
 			imageSelector);
 	}
 
+	public static com.ted.lms.model.Course copyCourse(long userId,
+		long courseId, long courseParentId, String title,
+		long layoutSetPrototypeId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, boolean copyForum,
+		boolean copyDocuments,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return getService()
+				   .copyCourse(userId, courseId, courseParentId, title,
+			layoutSetPrototypeId, registrationStartDate, registrationEndDate,
+			executionStartDate, executionEndDate, copyForum, copyDocuments,
+			serviceContext);
+	}
+
 	/**
 	* Método para buscar cursos
 	*/
 	public static int countCourses(long companyId, String freeText,
-		String language, int status, long parentCourseId, long groupId,
+		String language, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params) {
 		return getService()
 				   .countCourses(companyId, freeText, language, status,
@@ -110,46 +127,12 @@ public class CourseLocalServiceUtil {
 	* Método para buscar cursos
 	*/
 	public static int countCourses(long companyId, String title,
-		String description, String language, int status, long parentCourseId,
+		String description, String language, int[] status, long parentCourseId,
 		long groupId, java.util.LinkedHashMap<String, Object> params,
 		boolean andOperator) {
 		return getService()
 				   .countCourses(companyId, title, description, language,
 			status, parentCourseId, groupId, params, andOperator);
-	}
-
-	public static int countStudentsFromCourse(long courseId, long companyId) {
-		return getService().countStudentsFromCourse(courseId, companyId);
-	}
-
-	public static int countStudentsFromCourse(long courseId, long companyId,
-		String keywords, int status,
-		java.util.LinkedHashMap<String, Object> params) {
-		return getService()
-				   .countStudentsFromCourse(courseId, companyId, keywords,
-			status, params);
-	}
-
-	/**
-	* Usar este método para contar los estudiantes de un curso
-	*
-	* @param courseId id del curso
-	* @param companyId id de company
-	* @param screenName nombre de usuario
-	* @param firstName nombre
-	* @param lastName apellido
-	* @param emailAddress direccion de correo
-	* @param status estado del usuario (WorkflowConstants)
-	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
-	* @return
-	*/
-	public static int countStudentsFromCourse(long courseId, long companyId,
-		String screenName, String firstName, String lastName,
-		String emailAddress, int status,
-		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
-		return getService()
-				   .countStudentsFromCourse(courseId, companyId, screenName,
-			firstName, lastName, emailAddress, status, params, andOperator);
 	}
 
 	/**
@@ -167,9 +150,11 @@ public class CourseLocalServiceUtil {
 	*
 	* @param course the course
 	* @return the course that was removed
+	* @throws PortalException
 	*/
 	public static com.ted.lms.model.Course deleteCourse(
-		com.ted.lms.model.Course course) {
+		com.ted.lms.model.Course course)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().deleteCourse(course);
 	}
 
@@ -276,15 +261,19 @@ public class CourseLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static com.ted.lms.model.CourseResult enrollStudent(
-		com.ted.lms.model.Course course, long userId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
-		throws com.liferay.portal.kernel.exception.PortalException,
-			com.ted.lms.exception.InscriptionException {
+	public static long executeCopyCourse(long courseId, long courseParentId,
+		java.util.Map<java.util.Locale, String> titleMap,
+		long layoutSetPrototypeId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, boolean copyForum,
+		boolean copyDocuments,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .enrollStudent(course, userId, serviceContext,
-			permissionChecker);
+				   .executeCopyCourse(courseId, courseParentId, titleMap,
+			layoutSetPrototypeId, registrationStartDate, registrationEndDate,
+			executionStartDate, executionEndDate, copyForum, copyDocuments,
+			serviceContext);
 	}
 
 	public static com.liferay.portal.kernel.repository.model.Folder fetchAttachmentsFolder(
@@ -312,8 +301,8 @@ public class CourseLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
-	public static boolean getAllowAccessToCompletedCourses() {
-		return getService().getAllowAccessToCompletedCourses();
+	public static boolean getAllowAccessToCompletedCourses(long companyId) {
+		return getService().getAllowAccessToCompletedCourses(companyId);
 	}
 
 	public static java.util.List<com.ted.lms.model.Course> getChildsRegistredUser(
@@ -436,35 +425,41 @@ public class CourseLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
-	public static String[] getPrerequisiteActivities() {
-		return getService().getPrerequisiteActivities();
+	public static String[] getPrerequisiteActivities(long companyId) {
+		return getService().getPrerequisiteActivities(companyId);
 	}
 
-	public static java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
-		long courseId, long companyId, String keywords, int status,
-		java.util.LinkedHashMap<String, Object> params, int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator obc) {
-		return getService()
-				   .getStudentsFromCourse(courseId, companyId, keywords,
-			status, params, start, end, obc);
+	public static String[] getPrerequisiteCourses(long companyId) {
+		return getService().getPrerequisiteCourses(companyId);
 	}
 
-	public static java.util.List<com.liferay.portal.kernel.model.User> getStudentsFromCourse(
-		long courseId, long companyId, String screenName, String firstName,
-		String lastName, String emailAddress, int status,
-		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
-		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc) {
-		return getService()
-				   .getStudentsFromCourse(courseId, companyId, screenName,
-			firstName, lastName, emailAddress, status, params, andOperator,
-			start, end, obc);
+	public static String[] getPrerequisiteModules(long companyId) {
+		return getService().getPrerequisiteModules(companyId);
+	}
+
+	public static com.ted.lms.model.Course moveEntryToTrash(long userId,
+		com.ted.lms.model.Course course)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveEntryToTrash(userId, course);
+	}
+
+	public static com.ted.lms.model.Course moveEntryToTrash(long userId,
+		long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveEntryToTrash(userId, courseId);
+	}
+
+	public static com.ted.lms.model.Course restoreEntryFromTrash(long userId,
+		long courseId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().restoreEntryFromTrash(userId, courseId);
 	}
 
 	/**
 	* Método para buscar cursos
 	*/
 	public static java.util.List<com.ted.lms.model.Course> searchCourses(
-		long companyId, String freeText, String language, int status,
+		long companyId, String freeText, String language, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
@@ -478,7 +473,7 @@ public class CourseLocalServiceUtil {
 	*/
 	public static java.util.List<com.ted.lms.model.Course> searchCourses(
 		long companyId, String title, String description, String language,
-		int status, long parentCourseId, long groupId,
+		int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
@@ -486,13 +481,6 @@ public class CourseLocalServiceUtil {
 				   .searchCourses(companyId, title, description, language,
 			status, parentCourseId, groupId, params, andOperator, start, end,
 			obc);
-	}
-
-	public static boolean unsubscribeStudent(com.ted.lms.model.Course course,
-		long userId,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().unsubscribeStudent(course, userId, permissionChecker);
 	}
 
 	/**
@@ -542,10 +530,10 @@ public class CourseLocalServiceUtil {
 	* @param status estado del curso
 	* @param serviceContext contexto de la modificación del curso
 	* @return curso modificado
-	* @throws NoSuchCourseException
+	* @throws PortalException
 	*/
-	public static com.ted.lms.model.Course updateCourse(long courseId,
-		boolean welcome,
+	public static com.ted.lms.model.Course updateCourse(long userId,
+		long courseId, boolean welcome,
 		java.util.Map<java.util.Locale, String> welcomeSubjectMap,
 		java.util.Map<java.util.Locale, String> welcomeMsgMap, boolean goodbye,
 		java.util.Map<java.util.Locale, String> goodbyeSubjectMap,
@@ -553,14 +541,12 @@ public class CourseLocalServiceUtil {
 		boolean deniedInscription,
 		java.util.Map<java.util.Locale, String> deniedInscriptionSubjectMap,
 		java.util.Map<java.util.Locale, String> deniedInscriptionMsgMap,
-		int status,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.ted.lms.exception.NoSuchCourseException {
+		int status) throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateCourse(courseId, welcome, welcomeSubjectMap,
+				   .updateCourse(userId, courseId, welcome, welcomeSubjectMap,
 			welcomeMsgMap, goodbye, goodbyeSubjectMap, goodbyeMsgMap,
 			deniedInscription, deniedInscriptionSubjectMap,
-			deniedInscriptionMsgMap, status, serviceContext);
+			deniedInscriptionMsgMap, status);
 	}
 
 	/**
@@ -582,15 +568,15 @@ public class CourseLocalServiceUtil {
 	* @return curso modificado
 	* @throws PortalException
 	*/
-	public static com.ted.lms.model.Course updateCourse(long courseId,
-		java.util.Date registrationStartDate,
+	public static com.ted.lms.model.Course updateCourse(long userId,
+		long courseId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, int typeSite, long inscriptionType,
 		long courseEvalId, long calificationType, int maxUsers, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateCourse(courseId, registrationStartDate,
+				   .updateCourse(userId, courseId, registrationStartDate,
 			registrationEndDate, executionStartDate, executionEndDate,
 			typeSite, inscriptionType, courseEvalId, calificationType,
 			maxUsers, status, serviceContext);
@@ -630,8 +616,8 @@ public class CourseLocalServiceUtil {
 	* @throws Exception
 	* @return curso modificado
 	*/
-	public static com.ted.lms.model.Course updateCourse(long courseId,
-		int registrationStartMonth, int registrationStartDay,
+	public static com.ted.lms.model.Course updateCourse(long userId,
+		long courseId, int registrationStartMonth, int registrationStartDay,
 		int registrationStartYear, int registrationStartHour,
 		int registrationStartMinute, int registrationEndMonth,
 		int registrationEndDay, int registrationEndYear,
@@ -645,7 +631,7 @@ public class CourseLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .updateCourse(courseId, registrationStartMonth,
+				   .updateCourse(userId, courseId, registrationStartMonth,
 			registrationStartDay, registrationStartYear, registrationStartHour,
 			registrationStartMinute, registrationEndMonth, registrationEndDay,
 			registrationEndYear, registrationEndHour, registrationEndMinute,
@@ -666,12 +652,13 @@ public class CourseLocalServiceUtil {
 	* @throws PrincipalException
 	* @throws PortalException
 	*/
-	public static com.ted.lms.model.Course updateCourse(long courseId,
-		int status,
+	public static com.ted.lms.model.Course updateCourse(long userId,
+		long courseId, int status,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.security.auth.PrincipalException,
 			com.liferay.portal.kernel.exception.PortalException {
-		return getService().updateCourse(courseId, status, serviceContext);
+		return getService()
+				   .updateCourse(userId, courseId, status, serviceContext);
 	}
 
 	/**
@@ -688,8 +675,8 @@ public class CourseLocalServiceUtil {
 	* @return curso modificado
 	* @throws PortalException
 	*/
-	public static com.ted.lms.model.Course updateCourse(long courseId,
-		java.util.Map<java.util.Locale, String> titleMap,
+	public static com.ted.lms.model.Course updateCourse(long userId,
+		long courseId, java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
 		java.util.Map<java.util.Locale, String> friendlyURLMap,
@@ -698,7 +685,7 @@ public class CourseLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws Exception {
 		return getService()
-				   .updateCourse(courseId, titleMap, descriptionMap,
+				   .updateCourse(userId, courseId, titleMap, descriptionMap,
 			summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
 			smallImageSelector, serviceContext);
 	}
@@ -721,6 +708,14 @@ public class CourseLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		getService()
 			.updateSmallImage(courseId, smallImageSelector, serviceContext);
+	}
+
+	public static com.ted.lms.model.Course updateStatus(long userId,
+		long courseId, int status,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateStatus(userId, courseId, status, serviceContext);
 	}
 
 	public static CourseLocalService getService() {

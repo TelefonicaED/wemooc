@@ -14,12 +14,12 @@
 
 package com.ted.lms.learning.activity.question.model.impl;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
@@ -38,6 +38,8 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public class QuestionImpl extends QuestionBaseImpl {
+	
+	private static final Log log = LogFactoryUtil.getLog(QuestionImpl.class);
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *

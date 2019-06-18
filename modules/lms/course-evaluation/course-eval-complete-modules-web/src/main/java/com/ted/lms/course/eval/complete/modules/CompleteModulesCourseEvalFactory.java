@@ -31,8 +31,8 @@ public class CompleteModulesCourseEvalFactory extends BaseCourseEvalFactory{
 	public static final long TYPE = 0;
 	
 	@Override
-	public CourseEval getCourseEval(Course course, ServiceContext serviceContext) throws PortalException {	
-		return new CompleteModulesCourseEval(course, serviceContext, courseResultLocalService,
+	public CourseEval getCourseEval(Course course) throws PortalException {	
+		return new CompleteModulesCourseEval(course, courseResultLocalService,
 				learningActivityResultLocalService, learningActivityTryLocalService,
 				learningActivityLocalService, moduleResultLocalService,
 				moduleLocalService);

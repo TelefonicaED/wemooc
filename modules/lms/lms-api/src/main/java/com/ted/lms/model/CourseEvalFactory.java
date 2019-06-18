@@ -1,7 +1,6 @@
 package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 
 import java.util.Locale;
@@ -18,7 +17,7 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface CourseEvalFactory {
 
-	public CourseEval getCourseEval(Course course, ServiceContext serviceContext) throws PortalException;
+	public CourseEval getCourseEval(Course course) throws PortalException;
 
 	public String getClassName();
 

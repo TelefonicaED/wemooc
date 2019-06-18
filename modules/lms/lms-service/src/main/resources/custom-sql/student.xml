@@ -97,4 +97,9 @@
 			INNER JOIN users_teams ON users_teams.userId = User_.userId AND users_teams.teamId IN ([$TEAMIDS$])
 		]]>
 	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseFinder.innerFinished">
+		<![CDATA[
+			INNER JOIN lms_courseresult ON lms_courseresult.userId = User_.userId AND lms_courseresult.courseId = co.courseId AND lms_courseresult.passedDate IS NOT NULL
+		]]>
+	</sql>
 </custom-sql>

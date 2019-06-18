@@ -56,7 +56,7 @@ import com.ted.lms.service.ModuleServiceUtil;
 @ProviderType
 public class ModuleServiceHttp {
 	public static com.ted.lms.model.Module addModule(
-		HttpPrincipal httpPrincipal,
+		HttpPrincipal httpPrincipal, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean startDate, int startDateMonth, int startDateDay,
@@ -72,7 +72,7 @@ public class ModuleServiceHttp {
 			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
 					"addModule", _addModuleParameterTypes0);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
 					titleMap, descriptionMap, startDate, startDateMonth,
 					startDateDay, startDateYear, startDateHour,
 					startDateMinute, endDate, endDateMonth, endDateDay,
@@ -181,15 +181,13 @@ public class ModuleServiceHttp {
 	}
 
 	public static com.ted.lms.model.Module moveDownModule(
-		HttpPrincipal httpPrincipal, long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		HttpPrincipal httpPrincipal, long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
 					"moveDownModule", _moveDownModuleParameterTypes3);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
-					moduleId, serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, moduleId);
 
 			Object returnObj = null;
 
@@ -214,15 +212,13 @@ public class ModuleServiceHttp {
 	}
 
 	public static com.ted.lms.model.Module moveUpModule(
-		HttpPrincipal httpPrincipal, long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		HttpPrincipal httpPrincipal, long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(ModuleServiceUtil.class,
 					"moveUpModule", _moveUpModuleParameterTypes4);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
-					moduleId, serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, moduleId);
 
 			Object returnObj = null;
 
@@ -331,9 +327,10 @@ public class ModuleServiceHttp {
 
 	private static Log _log = LogFactoryUtil.getLog(ModuleServiceHttp.class);
 	private static final Class<?>[] _addModuleParameterTypes0 = new Class[] {
-			java.util.Map.class, java.util.Map.class, boolean.class, int.class,
-			int.class, int.class, int.class, int.class, boolean.class, int.class,
+			long.class, java.util.Map.class, java.util.Map.class, boolean.class,
+			int.class, int.class, int.class, int.class, int.class, boolean.class,
 			int.class, int.class, int.class, int.class, int.class, int.class,
+			int.class,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector.class,
 			long.class, com.liferay.portal.kernel.service.ServiceContext.class
 		};
@@ -349,10 +346,10 @@ public class ModuleServiceHttp {
 			com.ted.lms.model.Module.class
 		};
 	private static final Class<?>[] _moveDownModuleParameterTypes3 = new Class[] {
-			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+			long.class
 		};
 	private static final Class<?>[] _moveUpModuleParameterTypes4 = new Class[] {
-			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+			long.class
 		};
 	private static final Class<?>[] _moveModuleToTrashParameterTypes5 = new Class[] {
 			long.class

@@ -2,9 +2,11 @@ package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.asset.kernel.exception.AssetCategoryException;
 import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
+import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
@@ -42,18 +44,19 @@ import com.ted.lms.model.CourseEval;
 import com.ted.lms.model.CourseEvalFactory;
 import com.ted.lms.model.InscriptionType;
 import com.ted.lms.model.InscriptionTypeFactory;
-import com.ted.lms.model.ModuleEval;
-import com.ted.lms.model.ModuleEvalFactory;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
 import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil;
-import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.CourseService;
 import com.ted.lms.web.constants.LMSPortletConstants;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 import com.ted.lms.web.internal.util.CourseImageSelectorHelper;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -91,6 +94,15 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 				Callable<Course> updateCourseCallable = new UpdateCourseCallable(actionRequest);
 
 				course = TransactionInvokerUtil.invoke(_transactionConfig, updateCourseCallable);
+			}else if(cmd.equals(Constants.EXPIRE)) {
+				closeCourse(actionRequest);
+			}else if(cmd.equals(Constants.APPROVE)) {
+				openCourse(actionRequest);
+			}else if (cmd.equals(Constants.DELETE)) {
+				deleteCourse(actionRequest, false);
+			}
+			else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
+				deleteCourse(actionRequest, true);
 			}
 
 			String redirect = ParamUtil.getString(actionRequest, "redirect");
@@ -156,6 +168,48 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
+	}
+	
+	protected void deleteCourse(ActionRequest actionRequest, boolean moveToTrash) throws Exception {
+
+		long courseId = ParamUtil.getLong(actionRequest, "courseId");
+		
+		List<TrashedModel> trashedModels = new ArrayList<>();
+
+		if (moveToTrash) {
+			Course course = courseService.moveEntryToTrash(courseId);
+
+			trashedModels.add(course);
+		} else {
+			courseService.deleteCourse(courseId);
+		}
+
+		if (moveToTrash && !trashedModels.isEmpty()) {
+			Map<String, Object> data = new HashMap<>();
+
+			data.put("trashedModels", trashedModels);
+
+			addDeleteSuccessData(actionRequest, data);
+		}
+	}
+	
+	protected void closeCourse(ActionRequest actionRequest) throws PortalException {
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		long courseId = ParamUtil.getLong(actionRequest, "courseId");
+		
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
+		
+		courseLocalService.updateStatus(themeDisplay.getUserId(), courseId, WorkflowConstants.STATUS_INACTIVE, serviceContext);
+	}
+	
+	protected void openCourse(ActionRequest actionRequest) throws PortalException {
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		long courseId = ParamUtil.getLong(actionRequest, "courseId");
+		
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
+		
+		courseLocalService.updateStatus(themeDisplay.getUserId(), courseId, WorkflowConstants.STATUS_APPROVED, serviceContext);
 	}
 	
 	protected String getSaveAndContinueRedirect(ActionRequest actionRequest, Course course, String redirect) throws Exception {
@@ -255,10 +309,10 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		Course course = null;
 
 		if (courseId <= 0) {
-
+			long courseTypeId = ParamUtil.getLong(actionRequest, "courseTypeId", 0);
 			// Añadir módulo
-			course = courseService.addCourse(titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, courseParentId, 
-					smallImageImageSelector, serviceContext);
+			course = courseService.addCourse(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, courseParentId, 
+					courseTypeId, smallImageImageSelector, serviceContext);
 		} else {
 			// Actualizamos el módulo
 			course = courseService.updateCourse(courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, 
@@ -337,7 +391,7 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		//Actualizamos el extracontent del curso
 		//Guardamos los campos personalizados del método de evaluación
 		CourseEvalFactory courseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactoryByType(courseEvalId);
-		CourseEval courseEval = courseEvalFactory.getCourseEval(course, serviceContext);
+		CourseEval courseEval = courseEvalFactory.getCourseEval(course);
 		courseEval.setExtraContent(actionRequest);
 		
 		//Guardamos los campos personalizados del tipo de calificación

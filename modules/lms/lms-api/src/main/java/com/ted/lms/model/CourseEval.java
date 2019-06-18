@@ -2,6 +2,9 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+
+import java.util.Map;
+
 import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;
 
@@ -34,9 +37,12 @@ public interface CourseEval {
 	
 	public void onOpenCourse();
 	public void onCloseCourse();
+	public void onDeleteCourse();
 	
 	public CourseEvalFactory getCourseEvalFactory();
 	
 	public String getClassName();
+	
+	public void copyCourse(Course oldCourse, Map<Long,Long> modulesRelation, Map<Long, Long> activitiesRelation);
 
 }

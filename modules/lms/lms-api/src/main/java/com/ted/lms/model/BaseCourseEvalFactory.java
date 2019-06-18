@@ -3,22 +3,12 @@ package com.ted.lms.model;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.ted.lms.constants.LMSPortletKeys;
-import com.ted.lms.service.CourseResultLocalService;
-import com.ted.lms.service.LearningActivityLocalService;
-import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.service.LearningActivityTryLocalService;
-import com.ted.lms.service.ModuleLocalService;
-import com.ted.lms.service.ModuleResultLocalService;
-
 import java.util.Locale;
 
 import javax.portlet.PortletResponse;
-
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * Base para la factoría de los métodos de evaluación del curso
@@ -28,7 +18,7 @@ import org.osgi.service.component.annotations.Reference;
 public abstract class BaseCourseEvalFactory implements CourseEvalFactory {
 
 	@Override
-	public CourseEval getCourseEval(Course course, ServiceContext serviceContext) throws PortalException {	
+	public CourseEval getCourseEval(Course course) throws PortalException {	
 		return null;
 	}
 

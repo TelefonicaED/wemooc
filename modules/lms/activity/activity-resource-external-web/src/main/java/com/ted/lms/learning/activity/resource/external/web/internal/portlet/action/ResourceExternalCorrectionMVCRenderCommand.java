@@ -30,6 +30,7 @@ import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.StudentLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.util.List;
@@ -99,10 +100,10 @@ public class ResourceExternalCorrectionMVCRenderCommand implements MVCRenderComm
 				ParamUtil.getInteger(renderRequest, SearchContainer.DEFAULT_DELTA_PARAM,SearchContainer.DEFAULT_DELTA), portletURL, 
 				null,  "no-results");
 
-		List<User> users = courseLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
+		List<User> users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
 				WorkflowConstants.STATUS_APPROVED, null, andOperator, userSearchContainer.getStart(), userSearchContainer.getEnd(), obc);
 
-		int totalUsers = courseLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
+		int totalUsers = studentLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
 				WorkflowConstants.STATUS_APPROVED, null, andOperator);
 		
 		userSearchContainer.setResults(users);
@@ -156,4 +157,6 @@ public class ResourceExternalCorrectionMVCRenderCommand implements MVCRenderComm
 	private CourseLocalService courseLocalService;
 	@Reference
 	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
+	private StudentLocalService studentLocalService;
 }

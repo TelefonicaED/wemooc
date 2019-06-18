@@ -35,4 +35,6 @@ public interface PrerequisiteFactory {
 	public String getURLSpecificContent();
 	
 	public String getPortletId();
+	
+	public void copyPrerequisite(long classNameId, long oldClassPK, long newClassPK, Object...params);
 }

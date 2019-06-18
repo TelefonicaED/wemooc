@@ -101,7 +101,7 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 			e.printStackTrace();
 		}
 		
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities();
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities(themeDisplay.getCompanyId());
 		
 		PrerequisiteFactory prerequisiteFactory = null;
 		

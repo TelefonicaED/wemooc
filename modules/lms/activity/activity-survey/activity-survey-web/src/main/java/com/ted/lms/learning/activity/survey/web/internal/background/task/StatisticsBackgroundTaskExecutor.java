@@ -38,11 +38,11 @@ public class StatisticsBackgroundTaskExecutor extends BaseBackgroundTaskExecutor
 		long actId = (long)taskContextMap.get("actId");
 		Locale locale = (Locale)taskContextMap.get("locale");
 		long userId = MapUtil.getLong(taskContextMap, "userId");
-
+		
 		File statisticsFile = SurveyResultLocalServiceUtil.exportStatisticsAsFile(SurveyPortletKeys.SURVEY, actId, locale);
-
+		
 		BackgroundTaskManagerUtil.addBackgroundTaskAttachment(
-			userId, backgroundTask.getBackgroundTaskId(), statisticsFile.getName(), statisticsFile);
+				userId, backgroundTask.getBackgroundTaskId(), statisticsFile.getName(), statisticsFile);
 
 		return BackgroundTaskResult.SUCCESS;
 	}

@@ -6,14 +6,15 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xml.Element;
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
-import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.prerequisite.activity.internal.constants.ActivityPrerequisiteConstants;
 import com.ted.prerequisite.model.BasePrerequisite;
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
+
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
@@ -54,7 +55,7 @@ public class ActivityPrerequisite extends BasePrerequisite{
 		long actId = ParamUtil.getLong(request, "prerequisiteActId", 0);
 		
 		if(actId > 0 && prerequisiteRelation == null) {
-			prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), classNameId, classPK);
+			prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), classNameId, classPK, "");
 		}
 		
 		if(actId > 0) {
@@ -72,6 +73,20 @@ public class ActivityPrerequisite extends BasePrerequisite{
 	@Override
 	public String doImportStagedModel(PortletDataContext portletDataContext, Element element) {
 		return "";
+	}
+	
+	@Override
+	public void updatePrerequisiteCopied(long classNameId, Object ... params) {
+		if(classNameId == PortalUtil.getClassNameId(LearningActivity.class) && params != null && params.length > 0 && params[0] instanceof Map<?,?>) {
+			Map<Long,Long> activitiesRelation = (Map<Long,Long>)params[0];
+			
+			JSONObject extraData = prerequisiteRelation.getExtraDataJSON();
+			extraData.put(ActivityPrerequisiteConstants.JSON_ACT_ID, activitiesRelation.get(extraData.getLong(ActivityPrerequisiteConstants.JSON_ACT_ID)));
+			
+			prerequisiteRelation.setExtraData(extraData.toJSONString());
+			
+			prerequisiteRelation = prerequisiteRelationLocalService.updatePrerequisiteRelation(prerequisiteRelation);
+		}
 	}
 	
 	private LearningActivityResultLocalService learningActivityResultLocalService;

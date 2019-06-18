@@ -11,5 +11,8 @@ Export-Package: \
 	com.ted.lms.registry,\
 	com.ted.lms.security.permission.resource,\
 	com.ted.lms.util,\
-	com.ted.lms.configuration
+	com.ted.lms.configuration,\
+	com.ted.lms.copy.content.processor,\
+	com.ted.lms.copy.permission
 -includeresource: META-INF/service.xml=../lms-service/service.xml
+-metatype: *

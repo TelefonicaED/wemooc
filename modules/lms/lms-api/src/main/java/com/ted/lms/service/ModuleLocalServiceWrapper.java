@@ -33,7 +33,7 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	}
 
 	@Override
-	public com.ted.lms.model.Module addModule(long userId,
+	public com.ted.lms.model.Module addModule(long userId, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
@@ -45,16 +45,16 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 		long moduleEvalId,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleLocalService.addModule(userId, titleMap, descriptionMap,
-			useStartExecutionDateCourse, startDateMonth, startDateDay,
-			startDateYear, startDateHour, startDateMinute,
+		return _moduleLocalService.addModule(userId, groupId, titleMap,
+			descriptionMap, useStartExecutionDateCourse, startDateMonth,
+			startDateDay, startDateYear, startDateHour, startDateMinute,
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, allowedHours, allowedMinutes,
 			smallImageImageSelector, moduleEvalId, serviceContext);
 	}
 
 	@Override
-	public com.ted.lms.model.Module addModule(long userId,
+	public com.ted.lms.model.Module addModule(long userId, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Date startDate, java.util.Date endDate, long allowedTime,
@@ -62,9 +62,10 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 		long moduleEvalId, String moduleExtraData,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleLocalService.addModule(userId, titleMap, descriptionMap,
-			startDate, endDate, allowedTime, smallImageImageSelector,
-			moduleEvalId, moduleExtraData, serviceContext);
+		return _moduleLocalService.addModule(userId, groupId, titleMap,
+			descriptionMap, startDate, endDate, allowedTime,
+			smallImageImageSelector, moduleEvalId, moduleExtraData,
+			serviceContext);
 	}
 
 	/**
@@ -91,6 +92,16 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _moduleLocalService.addOriginalImageFileEntry(userId, groupId,
 			entryId, imageSelector);
+	}
+
+	@Override
+	public com.ted.lms.model.Module copyModule(long userId,
+		com.ted.lms.model.Module oldModule, long groupId,
+		java.util.Map<Long, Long> activitiesRelation,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return _moduleLocalService.copyModule(userId, oldModule, groupId,
+			activitiesRelation, serviceContext);
 	}
 
 	/**
@@ -397,10 +408,9 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	}
 
 	@Override
-	public com.ted.lms.model.Module moveDownModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public com.ted.lms.model.Module moveDownModule(long userId, long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleLocalService.moveDownModule(moduleId, serviceContext);
+		return _moduleLocalService.moveDownModule(userId, moduleId);
 	}
 
 	@Override
@@ -417,10 +427,9 @@ public class ModuleLocalServiceWrapper implements ModuleLocalService,
 	}
 
 	@Override
-	public com.ted.lms.model.Module moveUpModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public com.ted.lms.model.Module moveUpModule(long userId, long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleLocalService.moveUpModule(moduleId, serviceContext);
+		return _moduleLocalService.moveUpModule(userId, moduleId);
 	}
 
 	@Override

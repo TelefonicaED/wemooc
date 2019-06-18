@@ -58,6 +58,26 @@ create table LMS_CourseResult (
 	extraData TEXT null
 );
 
+create table LMS_CourseType (
+	courseTypeId LONG not null primary key,
+	groupId LONG,
+	companyId LONG,
+	userId LONG,
+	userName VARCHAR(75) null,
+	createDate DATE null,
+	modifiedDate DATE null,
+	name STRING null,
+	description STRING null,
+	iconId LONG
+);
+
+create table LMS_CourseTypeRelation (
+	courseTypeId LONG not null,
+	classNameId LONG not null,
+	classPK LONG not null,
+	primary key (courseTypeId, classNameId, classPK)
+);
+
 create table LMS_LearningActivity (
 	uuid_ VARCHAR(75) null,
 	actId LONG not null primary key,

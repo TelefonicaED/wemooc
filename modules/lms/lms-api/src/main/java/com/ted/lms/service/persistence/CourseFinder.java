@@ -23,26 +23,26 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface CourseFinder {
 	public java.util.List<com.ted.lms.model.Course> findByKeywords(
-		long companyId, String freeText, String languageId, int status,
+		long companyId, String freeText, String languageId, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc);
 
 	public java.util.List<com.ted.lms.model.Course> filterByKeywords(
-		long companyId, String freeText, String languageId, int status,
+		long companyId, String freeText, String languageId, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc);
 
 	public java.util.List<com.ted.lms.model.Course> filterByC(long companyId,
-		String title, String description, String languageId, int status,
+		String title, String description, String languageId, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc);
 
 	public java.util.List<com.ted.lms.model.Course> findByC(long companyId,
-		String title, String description, String languageId, int status,
+		String title, String description, String languageId, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end,
@@ -52,7 +52,7 @@ public interface CourseFinder {
 		long companyId);
 
 	public java.util.List<com.ted.lms.model.Course> doFindByC(long companyId,
-		String title, String description, String languageId, int status,
+		String title, String description, String languageId, int[] status,
 		long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		int start, int end,
@@ -60,23 +60,23 @@ public interface CourseFinder {
 		boolean inlineSQLHelper);
 
 	public int countByKeywords(long companyId, String freeText,
-		String languageId, int status, long parentCourseId, long groupId,
+		String languageId, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean inlineSQLHelper);
 
 	public int filterCountByKeywords(long companyId, String freeText,
-		String languageId, int status, long parentCourseId, long groupId,
+		String languageId, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean inlineSQLHelper);
 
 	public int countByC(long companyId, String title, String description,
-		String languageId, int status, long parentCourseId, long groupId,
+		String languageId, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator);
 
 	public int filterCountByC(long companyId, String title, String description,
-		String languageId, int status, long parentCourseId, long groupId,
+		String languageId, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator);
 
 	public int doCountByC(long companyId, String title, String description,
-		String languageId, int status, long parentCourseId, long groupId,
+		String languageId, int[] status, long parentCourseId, long groupId,
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
 		boolean inlineSQLHelper);
 

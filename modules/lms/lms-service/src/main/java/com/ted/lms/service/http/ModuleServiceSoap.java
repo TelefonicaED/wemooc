@@ -69,7 +69,7 @@ import java.util.Map;
  */
 @ProviderType
 public class ModuleServiceSoap {
-	public static com.ted.lms.model.ModuleSoap addModule(
+	public static com.ted.lms.model.ModuleSoap addModule(long groupId,
 		String[] titleMapLanguageIds, String[] titleMapValues,
 		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
 		boolean startDate, int startDateMonth, int startDateDay,
@@ -87,12 +87,13 @@ public class ModuleServiceSoap {
 			Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(descriptionMapLanguageIds,
 					descriptionMapValues);
 
-			com.ted.lms.model.Module returnValue = ModuleServiceUtil.addModule(titleMap,
-					descriptionMap, startDate, startDateMonth, startDateDay,
-					startDateYear, startDateHour, startDateMinute, endDate,
-					endDateMonth, endDateDay, endDateYear, endDateHour,
-					endDateMinute, allowedHours, allowedMinutes,
-					smallImageImageSelector, moduleEvalId, serviceContext);
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.addModule(groupId,
+					titleMap, descriptionMap, startDate, startDateMonth,
+					startDateDay, startDateYear, startDateHour,
+					startDateMinute, endDate, endDateMonth, endDateDay,
+					endDateYear, endDateHour, endDateMinute, allowedHours,
+					allowedMinutes, smallImageImageSelector, moduleEvalId,
+					serviceContext);
 
 			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
 		}
@@ -153,12 +154,10 @@ public class ModuleServiceSoap {
 		}
 	}
 
-	public static com.ted.lms.model.ModuleSoap moveDownModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static com.ted.lms.model.ModuleSoap moveDownModule(long moduleId)
 		throws RemoteException {
 		try {
-			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveDownModule(moduleId,
-					serviceContext);
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveDownModule(moduleId);
 
 			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
 		}
@@ -169,12 +168,10 @@ public class ModuleServiceSoap {
 		}
 	}
 
-	public static com.ted.lms.model.ModuleSoap moveUpModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static com.ted.lms.model.ModuleSoap moveUpModule(long moduleId)
 		throws RemoteException {
 		try {
-			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveUpModule(moduleId,
-					serviceContext);
+			com.ted.lms.model.Module returnValue = ModuleServiceUtil.moveUpModule(moduleId);
 
 			return com.ted.lms.model.ModuleSoap.toSoapModel(returnValue);
 		}

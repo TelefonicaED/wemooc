@@ -43,11 +43,13 @@ public class QuestionLocalServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.learning.activity.question.service.impl.QuestionLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.ted.lms.learning.activity.question.model.Question addQuestion(
-		long actId, String questionText, long questionType, boolean penalize,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		long userId, long groupId, long actId, String questionText,
+		long questionType, boolean penalize,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addQuestion(actId, questionText, questionType, penalize,
-			serviceContext);
+				   .addQuestion(userId, groupId, actId, questionText,
+			questionType, penalize, serviceContext);
 	}
 
 	/**
@@ -59,6 +61,23 @@ public class QuestionLocalServiceUtil {
 	public static com.ted.lms.learning.activity.question.model.Question addQuestion(
 		com.ted.lms.learning.activity.question.model.Question question) {
 		return getService().addQuestion(question);
+	}
+
+	public static com.ted.lms.learning.activity.question.model.Question copyQuestion(
+		long userId, long groupId, long actId,
+		com.ted.lms.learning.activity.question.model.Question oldQuestion,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return getService()
+				   .copyQuestion(userId, groupId, actId, oldQuestion,
+			serviceContext);
+	}
+
+	public static void copyQuestionImages(
+		com.ted.lms.learning.activity.question.model.Question oldQuestion,
+		com.ted.lms.learning.activity.question.model.Question newQuestion)
+		throws Exception {
+		getService().copyQuestionImages(oldQuestion, newQuestion);
 	}
 
 	/**
@@ -331,8 +350,10 @@ public class QuestionLocalServiceUtil {
 	}
 
 	public static com.ted.lms.learning.activity.question.model.Question updateQuestion(
-		long questionId, String questionText, boolean penalize) {
-		return getService().updateQuestion(questionId, questionText, penalize);
+		long userId, long questionId, String questionText, boolean penalize)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .updateQuestion(userId, questionId, questionText, penalize);
 	}
 
 	/**

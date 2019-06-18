@@ -4,6 +4,8 @@
 <hibernate-mapping auto-import="false" default-lazy="false">
 	<import class="com.ted.lms.model.Course" />
 	<import class="com.ted.lms.model.CourseResult" />
+	<import class="com.ted.lms.model.CourseType" />
+	<import class="com.ted.lms.model.CourseTypeRelation" />
 	<import class="com.ted.lms.model.LearningActivity" />
 	<import class="com.ted.lms.model.LearningActivityResult" />
 	<import class="com.ted.lms.model.LearningActivityTry" />
@@ -70,6 +72,27 @@
 		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="allowStartDate" type="org.hibernate.type.TimestampType" />
 		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="allowEndDate" type="org.hibernate.type.TimestampType" />
 		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="extraData" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+	</class>
+	<class name="com.ted.lms.model.impl.CourseTypeImpl" table="LMS_CourseType">
+		<id access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="courseTypeId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="userName" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="createDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="name" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="description" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="iconId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+	</class>
+	<class name="com.ted.lms.model.impl.CourseTypeRelationImpl" table="LMS_CourseTypeRelation">
+		<composite-id class="com.ted.lms.service.persistence.CourseTypeRelationPK" name="primaryKey">
+			<key-property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="courseTypeId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+			<key-property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="classNameId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+			<key-property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="classPK" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		</composite-id>
 	</class>
 	<class name="com.ted.lms.model.impl.LearningActivityImpl" table="LMS_LearningActivity">
 		<id access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="actId" type="long">

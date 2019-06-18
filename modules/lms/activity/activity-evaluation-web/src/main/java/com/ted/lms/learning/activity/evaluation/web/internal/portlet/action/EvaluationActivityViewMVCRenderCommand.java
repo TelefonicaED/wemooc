@@ -1,7 +1,5 @@
 package com.ted.lms.learning.activity.evaluation.web.internal.portlet.action;
 
-import com.liferay.document.library.kernel.service.DLAppLocalService;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -9,7 +7,6 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.portlet.LiferayPortletURL;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -38,6 +35,7 @@ import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.StudentLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.util.LinkedHashMap;
@@ -211,10 +209,10 @@ public class EvaluationActivityViewMVCRenderCommand implements MVCRenderCommand 
 				obc = new UserFirstNameComparator(true);
 			}
 			
-			List<User> users = courseLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, 
+			List<User> users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, 
 					params, searchContainer.getStart(), searchContainer.getEnd(), obc);
 			
-			int total = courseLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, params);
+			int total = studentLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, params);
 			
 			searchContainer.setResults(users);
 			searchContainer.setTotal(total);
@@ -246,8 +244,8 @@ public class EvaluationActivityViewMVCRenderCommand implements MVCRenderCommand 
 	}
 	
 	@Reference(unbind = "-")
-	protected void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
-		this.dlAppLocalService = dlAppLocalService;
+	protected void setStudentLocalService(StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
 	}
 	
 	@Reference(unbind = "-")
@@ -258,6 +256,6 @@ public class EvaluationActivityViewMVCRenderCommand implements MVCRenderCommand 
 	private LearningActivityLocalService learningActivityLocalService;
 	private LearningActivityResultLocalService learningActivityResultLocalService;
 	private LearningActivityTryLocalService learningActivityTryLocalService;
-	private DLAppLocalService dlAppLocalService; 
+	private StudentLocalService studentLocalService; 
 	private CourseLocalService courseLocalService;
 }

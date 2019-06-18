@@ -12,6 +12,7 @@ import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.StudentLocalService;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -60,7 +61,7 @@ public class StatisticsViewMVCRenderCommand implements MVCRenderCommand {
 			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 			
 			long participants = learningActivityResultLocalService.countStudentFinished(actId, themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-			long numStudents = courseLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId());
+			long numStudents = studentLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId());
 			double passPercent =  ((double)participants/(double)numStudents)*100;
 			DecimalFormat df = new DecimalFormat("###.##");
 			String percent  = df.format(passPercent);
@@ -73,6 +74,8 @@ public class StatisticsViewMVCRenderCommand implements MVCRenderCommand {
 		}
 	}
 	
+	@Reference
+	private StudentLocalService studentLocalService;
 	@Reference
 	private CourseLocalService courseLocalService;
 	@Reference

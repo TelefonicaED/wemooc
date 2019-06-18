@@ -21,6 +21,9 @@ import com.liferay.asset.kernel.service.persistence.AssetEntryPersistence;
 import com.liferay.asset.kernel.service.persistence.AssetLinkPersistence;
 import com.liferay.asset.kernel.service.persistence.AssetTagPersistence;
 
+import com.liferay.document.library.kernel.service.persistence.DLFileEntryPersistence;
+import com.liferay.document.library.kernel.service.persistence.DLFolderPersistence;
+
 import com.liferay.expando.kernel.service.persistence.ExpandoRowPersistence;
 import com.liferay.expando.kernel.service.persistence.ExpandoValuePersistence;
 
@@ -79,6 +82,8 @@ import com.ted.lms.service.persistence.CourseFinder;
 import com.ted.lms.service.persistence.CoursePersistence;
 import com.ted.lms.service.persistence.CourseResultFinder;
 import com.ted.lms.service.persistence.CourseResultPersistence;
+import com.ted.lms.service.persistence.CourseTypePersistence;
+import com.ted.lms.service.persistence.CourseTypeRelationPersistence;
 import com.ted.lms.service.persistence.LearningActivityPersistence;
 import com.ted.lms.service.persistence.LearningActivityResultFinder;
 import com.ted.lms.service.persistence.LearningActivityResultPersistence;
@@ -158,10 +163,11 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 *
 	 * @param course the course
 	 * @return the course that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	@Override
-	public Course deleteCourse(Course course) {
+	public Course deleteCourse(Course course) throws PortalException {
 		return coursePersistence.remove(course);
 	}
 
@@ -618,6 +624,82 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
+	 * Returns the course type local service.
+	 *
+	 * @return the course type local service
+	 */
+	public com.ted.lms.service.CourseTypeLocalService getCourseTypeLocalService() {
+		return courseTypeLocalService;
+	}
+
+	/**
+	 * Sets the course type local service.
+	 *
+	 * @param courseTypeLocalService the course type local service
+	 */
+	public void setCourseTypeLocalService(
+		com.ted.lms.service.CourseTypeLocalService courseTypeLocalService) {
+		this.courseTypeLocalService = courseTypeLocalService;
+	}
+
+	/**
+	 * Returns the course type persistence.
+	 *
+	 * @return the course type persistence
+	 */
+	public CourseTypePersistence getCourseTypePersistence() {
+		return courseTypePersistence;
+	}
+
+	/**
+	 * Sets the course type persistence.
+	 *
+	 * @param courseTypePersistence the course type persistence
+	 */
+	public void setCourseTypePersistence(
+		CourseTypePersistence courseTypePersistence) {
+		this.courseTypePersistence = courseTypePersistence;
+	}
+
+	/**
+	 * Returns the course type relation local service.
+	 *
+	 * @return the course type relation local service
+	 */
+	public com.ted.lms.service.CourseTypeRelationLocalService getCourseTypeRelationLocalService() {
+		return courseTypeRelationLocalService;
+	}
+
+	/**
+	 * Sets the course type relation local service.
+	 *
+	 * @param courseTypeRelationLocalService the course type relation local service
+	 */
+	public void setCourseTypeRelationLocalService(
+		com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService) {
+		this.courseTypeRelationLocalService = courseTypeRelationLocalService;
+	}
+
+	/**
+	 * Returns the course type relation persistence.
+	 *
+	 * @return the course type relation persistence
+	 */
+	public CourseTypeRelationPersistence getCourseTypeRelationPersistence() {
+		return courseTypeRelationPersistence;
+	}
+
+	/**
+	 * Sets the course type relation persistence.
+	 *
+	 * @param courseTypeRelationPersistence the course type relation persistence
+	 */
+	public void setCourseTypeRelationPersistence(
+		CourseTypeRelationPersistence courseTypeRelationPersistence) {
+		this.courseTypeRelationPersistence = courseTypeRelationPersistence;
+	}
+
+	/**
 	 * Returns the learning activity local service.
 	 *
 	 * @return the learning activity local service
@@ -841,6 +923,25 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	 */
 	public void setModuleResultFinder(ModuleResultFinder moduleResultFinder) {
 		this.moduleResultFinder = moduleResultFinder;
+	}
+
+	/**
+	 * Returns the student local service.
+	 *
+	 * @return the student local service
+	 */
+	public com.ted.lms.service.StudentLocalService getStudentLocalService() {
+		return studentLocalService;
+	}
+
+	/**
+	 * Sets the student local service.
+	 *
+	 * @param studentLocalService the student local service
+	 */
+	public void setStudentLocalService(
+		com.ted.lms.service.StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
 	}
 
 	/**
@@ -1314,6 +1415,81 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	}
 
 	/**
+	 * Returns the document library file entry local service.
+	 *
+	 * @return the document library file entry local service
+	 */
+	public com.liferay.document.library.kernel.service.DLFileEntryLocalService getDLFileEntryLocalService() {
+		return dlFileEntryLocalService;
+	}
+
+	/**
+	 * Sets the document library file entry local service.
+	 *
+	 * @param dlFileEntryLocalService the document library file entry local service
+	 */
+	public void setDLFileEntryLocalService(
+		com.liferay.document.library.kernel.service.DLFileEntryLocalService dlFileEntryLocalService) {
+		this.dlFileEntryLocalService = dlFileEntryLocalService;
+	}
+
+	/**
+	 * Returns the document library file entry persistence.
+	 *
+	 * @return the document library file entry persistence
+	 */
+	public DLFileEntryPersistence getDLFileEntryPersistence() {
+		return dlFileEntryPersistence;
+	}
+
+	/**
+	 * Sets the document library file entry persistence.
+	 *
+	 * @param dlFileEntryPersistence the document library file entry persistence
+	 */
+	public void setDLFileEntryPersistence(
+		DLFileEntryPersistence dlFileEntryPersistence) {
+		this.dlFileEntryPersistence = dlFileEntryPersistence;
+	}
+
+	/**
+	 * Returns the document library folder local service.
+	 *
+	 * @return the document library folder local service
+	 */
+	public com.liferay.document.library.kernel.service.DLFolderLocalService getDLFolderLocalService() {
+		return dlFolderLocalService;
+	}
+
+	/**
+	 * Sets the document library folder local service.
+	 *
+	 * @param dlFolderLocalService the document library folder local service
+	 */
+	public void setDLFolderLocalService(
+		com.liferay.document.library.kernel.service.DLFolderLocalService dlFolderLocalService) {
+		this.dlFolderLocalService = dlFolderLocalService;
+	}
+
+	/**
+	 * Returns the document library folder persistence.
+	 *
+	 * @return the document library folder persistence
+	 */
+	public DLFolderPersistence getDLFolderPersistence() {
+		return dlFolderPersistence;
+	}
+
+	/**
+	 * Sets the document library folder persistence.
+	 *
+	 * @param dlFolderPersistence the document library folder persistence
+	 */
+	public void setDLFolderPersistence(DLFolderPersistence dlFolderPersistence) {
+		this.dlFolderPersistence = dlFolderPersistence;
+	}
+
+	/**
 	 * Returns the expando row local service.
 	 *
 	 * @return the expando row local service
@@ -1491,6 +1667,14 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected CourseResultPersistence courseResultPersistence;
 	@BeanReference(type = CourseResultFinder.class)
 	protected CourseResultFinder courseResultFinder;
+	@BeanReference(type = com.ted.lms.service.CourseTypeLocalService.class)
+	protected com.ted.lms.service.CourseTypeLocalService courseTypeLocalService;
+	@BeanReference(type = CourseTypePersistence.class)
+	protected CourseTypePersistence courseTypePersistence;
+	@BeanReference(type = com.ted.lms.service.CourseTypeRelationLocalService.class)
+	protected com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService;
+	@BeanReference(type = CourseTypeRelationPersistence.class)
+	protected CourseTypeRelationPersistence courseTypeRelationPersistence;
 	@BeanReference(type = com.ted.lms.service.LearningActivityLocalService.class)
 	protected com.ted.lms.service.LearningActivityLocalService learningActivityLocalService;
 	@BeanReference(type = LearningActivityPersistence.class)
@@ -1515,6 +1699,8 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected ModuleResultPersistence moduleResultPersistence;
 	@BeanReference(type = ModuleResultFinder.class)
 	protected ModuleResultFinder moduleResultFinder;
+	@BeanReference(type = com.ted.lms.service.StudentLocalService.class)
+	protected com.ted.lms.service.StudentLocalService studentLocalService;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
 	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
@@ -1565,6 +1751,14 @@ public abstract class CourseLocalServiceBaseImpl extends BaseLocalServiceImpl
 	protected AssetTagPersistence assetTagPersistence;
 	@ServiceReference(type = com.liferay.document.library.kernel.service.DLAppLocalService.class)
 	protected com.liferay.document.library.kernel.service.DLAppLocalService dlAppLocalService;
+	@ServiceReference(type = com.liferay.document.library.kernel.service.DLFileEntryLocalService.class)
+	protected com.liferay.document.library.kernel.service.DLFileEntryLocalService dlFileEntryLocalService;
+	@ServiceReference(type = DLFileEntryPersistence.class)
+	protected DLFileEntryPersistence dlFileEntryPersistence;
+	@ServiceReference(type = com.liferay.document.library.kernel.service.DLFolderLocalService.class)
+	protected com.liferay.document.library.kernel.service.DLFolderLocalService dlFolderLocalService;
+	@ServiceReference(type = DLFolderPersistence.class)
+	protected DLFolderPersistence dlFolderPersistence;
 	@ServiceReference(type = com.liferay.expando.kernel.service.ExpandoRowLocalService.class)
 	protected com.liferay.expando.kernel.service.ExpandoRowLocalService expandoRowLocalService;
 	@ServiceReference(type = ExpandoRowPersistence.class)

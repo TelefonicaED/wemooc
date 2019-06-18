@@ -14,6 +14,11 @@
 	<bean class="com.ted.lms.service.impl.CourseResultLocalServiceImpl" id="com.ted.lms.service.CourseResultLocalService" />
 	<bean class="com.ted.lms.service.persistence.impl.CourseResultPersistenceImpl" id="com.ted.lms.service.persistence.CourseResultPersistence" parent="basePersistence" />
 	<bean class="com.ted.lms.service.persistence.impl.CourseResultFinderImpl" id="com.ted.lms.service.persistence.CourseResultFinder" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.CourseTypeLocalServiceImpl" id="com.ted.lms.service.CourseTypeLocalService" />
+	<bean class="com.ted.lms.service.impl.CourseTypeServiceImpl" id="com.ted.lms.service.CourseTypeService" />
+	<bean class="com.ted.lms.service.persistence.impl.CourseTypePersistenceImpl" id="com.ted.lms.service.persistence.CourseTypePersistence" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.CourseTypeRelationLocalServiceImpl" id="com.ted.lms.service.CourseTypeRelationLocalService" />
+	<bean class="com.ted.lms.service.persistence.impl.CourseTypeRelationPersistenceImpl" id="com.ted.lms.service.persistence.CourseTypeRelationPersistence" parent="basePersistence" />
 	<bean class="com.ted.lms.service.impl.LearningActivityLocalServiceImpl" id="com.ted.lms.service.LearningActivityLocalService" />
 	<bean class="com.ted.lms.service.impl.LearningActivityServiceImpl" id="com.ted.lms.service.LearningActivityService" />
 	<bean class="com.ted.lms.service.persistence.impl.LearningActivityPersistenceImpl" id="com.ted.lms.service.persistence.LearningActivityPersistence" parent="basePersistence" />
@@ -28,4 +33,5 @@
 	<bean class="com.ted.lms.service.impl.ModuleResultLocalServiceImpl" id="com.ted.lms.service.ModuleResultLocalService" />
 	<bean class="com.ted.lms.service.persistence.impl.ModuleResultPersistenceImpl" id="com.ted.lms.service.persistence.ModuleResultPersistence" parent="basePersistence" />
 	<bean class="com.ted.lms.service.persistence.impl.ModuleResultFinderImpl" id="com.ted.lms.service.persistence.ModuleResultFinder" parent="basePersistence" />
+	<bean class="com.ted.lms.service.impl.StudentLocalServiceImpl" id="com.ted.lms.service.StudentLocalService" />
 </beans>

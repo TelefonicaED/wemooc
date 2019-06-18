@@ -14,15 +14,15 @@
 
 package com.ted.lms.learning.activity.question.service.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.service.base.AnswerLocalServiceBaseImpl;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * The implementation of the answer local service.
@@ -49,20 +49,18 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		return answerPersistence.findByQuestionId(questionId);
 	}
 	
-	public Answer addAnswer(long questionId, long actId, String answerText, String feedbackCorrect, 
-			String feedbackIncorrect, boolean correct, ServiceContext serviceContext) {
+	public Answer addAnswer(long userId, long groupId, long questionId, long actId, String answerText, String feedbackCorrect, 
+			String feedbackIncorrect, boolean correct, ServiceContext serviceContext) throws PortalException {
+		User user = userLocalService.getUser(userId);
+		
 		Answer answer = answerPersistence.create(counterLocalService.increment(Answer.class.getName()));
 		
+		answer.setUuid(serviceContext.getUuid());
 		answer.setQuestionId(questionId);
-		answer.setGroupId(serviceContext.getScopeGroupId());
-		answer.setCompanyId(serviceContext.getCompanyId());
-		answer.setUserId(serviceContext.getUserId());
-		User user = userLocalService.fetchUser(serviceContext.getUserId());
-		if(user != null) {
-			answer.setUserName(user.getFullName());
-		}
-		answer.setCreateDate(new Date());
-		answer.setModifiedDate(answer.getCreateDate());
+		answer.setGroupId(groupId);
+		answer.setUserId(userId);
+		answer.setUserName(user.getFullName());
+		answer.setCompanyId(user.getCompanyId());
 		
 		answer.setActId(actId);
 		answer.setAnswer(answerText);
@@ -70,20 +68,41 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		answer.setFeedbackIncorrect(feedbackIncorrect);
 		answer.setCorrect(correct);
 		
-		return answerPersistence.update(answer);
+		return answerPersistence.update(answer, serviceContext);
 	}
 	
 
-	public Answer updateAnswer(long answerId, String answerText, String feedbackCorrect,
-			String feedbackIncorrect, boolean correct) {
+	public Answer updateAnswer(long userId, long answerId, String answerText, String feedbackCorrect,
+			String feedbackIncorrect, boolean correct) throws PortalException {
+		
+		User user = userLocalService.getUser(userId);
 		
 		Answer answer = answerPersistence.fetchByPrimaryKey(answerId);
 		answer.setAnswer(answerText);
 		answer.setFeedbackCorrect(feedbackCorrect);
 		answer.setFeedbackIncorrect(feedbackIncorrect);
 		answer.setCorrect(correct);
-		answer.setModifiedDate(new Date());
+		answer.setUserId(userId);
+		answer.setUserName(user.getFullName());
 		
 		return answerPersistence.update(answer);
 	}
+	
+	public Answer copyAnswer(long userId, long groupId, long questionId, long actId, Answer oldAnswer, ServiceContext serviceContext) throws Exception {
+		serviceContext.setUuid(oldAnswer.getUuid());
+		Answer newAnswer = addAnswer(userId, groupId, questionId, actId, oldAnswer.getAnswer(), oldAnswer.getFeedbackCorrect(),
+				oldAnswer.getFeedbackIncorrect(), oldAnswer.isCorrect(), serviceContext);
+		
+		copyAnswerImages(oldAnswer, newAnswer);
+		
+		return answerPersistence.update(newAnswer);
+	}
+	
+	public void copyAnswerImages(Answer oldAnswer, Answer newAnswer) throws Exception {
+		newAnswer.setAnswer(dlReferencesCopyContentProcessor.replaceExportDLReferences(newAnswer.getAnswer(), oldAnswer.getGroupId(), newAnswer.getGroupId(), newAnswer.getUserId()));
+	}
+
+	
+	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
 }

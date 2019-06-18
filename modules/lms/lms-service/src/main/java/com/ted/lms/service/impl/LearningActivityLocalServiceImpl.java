@@ -16,6 +16,7 @@ package com.ted.lms.service.impl;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
+import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -39,17 +40,26 @@ import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.trash.exception.TrashEntryException;
 import com.liferay.trash.service.TrashEntryLocalService;
+import com.ted.lms.constants.CourseConstants;
+import com.ted.lms.constants.CourseParams;
 import com.ted.lms.constants.LMSActivityKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LearningActivityConstants;
+import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
+import com.ted.lms.copy.permission.ResourceCopy;
 import com.ted.lms.exception.LearningActivityEndDateException;
 import com.ted.lms.exception.LearningActivityStartDateException;
 import com.ted.lms.exception.NoSuchNextLearningActivityException;
 import com.ted.lms.exception.NoSuchPreviousLearningActivityException;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.LearningActivityType;
+import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.base.LearningActivityLocalServiceBaseImpl;
 import com.ted.lms.util.LMSPrefsPropsValues;
+import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -83,6 +93,10 @@ public class LearningActivityLocalServiceImpl
 	 * Never reference this class directly. Always use {@link com.ted.lms.service.LearningActivityLocalServiceUtil} to access the learning activity local service.
 	 */
 	
+	public List<LearningActivity> getLearningActivitiesWithoutModule(long groupId){
+		return learningActivityPersistence.findByGroupIdModuleId(groupId, CourseConstants.DEFAULT_MODULE_EMPTY);
+	}
+	
 	public List<LearningActivity> getLearningActivities(long moduleId){
 		return learningActivityPersistence.findByModuleId(moduleId);
 	}
@@ -111,14 +125,14 @@ public class LearningActivityLocalServiceImpl
 	}
 	
 	@Override
-	public LearningActivity addLearningActivity(long moduleId, long type, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+	public LearningActivity addLearningActivity(long userId, long groupId, long moduleId, long type, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			boolean useStartExecutionDateCourse, int startDateMonth, int startDateDay, int startDateYear,
 			int startDateHour, int startDateMinute, boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, boolean required, int tries, double passPuntuation,
 			Map<Locale, String> feedbackCorrectMap, Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, 
 			String[] selectedFileNames, ServiceContext serviceContext) throws PortalException {
 		
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = userLocalService.getUser(userId);
 		
 		Date startDate = null;
 		
@@ -138,44 +152,44 @@ public class LearningActivityLocalServiceImpl
 					LearningActivityEndDateException.class);
 		}
 		
-		return learningActivityLocalService.addLearningActivity(moduleId, type, titleMap, descriptionMap, startDate, endDate, required, tries, 
+		return addLearningActivity(userId, groupId, moduleId, type, titleMap, descriptionMap, startDate, endDate, required, tries, 
 				passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, selectedFileNames, serviceContext);
 		
 	}
 	
 	@Override
-	public LearningActivity addLearningActivity(long moduleId, long type, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+	public LearningActivity addLearningActivity(long userId, long groupId, long moduleId, long type, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Date startDate, Date endDate, boolean required, int tries, double passPuntuation, Map<Locale, String> feedbackCorrectMap, 
 			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, String[] selectedFileNames, ServiceContext serviceContext) throws PortalException {
 		
-		return learningActivityLocalService.addLearningActivity(moduleId, titleMap, descriptionMap, type, startDate, endDate, 
+		return addLearningActivity(userId, groupId, moduleId, titleMap, descriptionMap, type, startDate, endDate, 
 				tries, passPuntuation, 0, null, feedbackCorrectMap, feedbackNoCorrectMap, required, commentsActivated, selectedFileNames, serviceContext);
 		
 	}
 	
 	@Override
 	@Indexable(type = IndexableType.REINDEX)
-	public LearningActivity addLearningActivity(long moduleId, Map<Locale, String> titleMap,
+	public LearningActivity addLearningActivity(long userId, long groupId, long moduleId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, long typeId, Date startDate, Date endDate, int tries, double passPuntuation, long priority,
 			String extraContent, Map<Locale, String> feedbackCorrectMap, Map<Locale, String> feedbackNoCorrectMap, boolean required, boolean commentsActivated,
 			String[] selectedFileNames, ServiceContext serviceContext) throws PortalException {
 		
+		User user = userLocalService.getUser(userId);
+		
 		long actId = counterLocalService.increment(LearningActivity.class.getName());
 		
 		LearningActivity activity = learningActivityPersistence.create(actId);
-		activity.setGroupId(serviceContext.getScopeGroupId());
-		activity.setCompanyId(serviceContext.getCompanyId());
-		activity.setUserId(serviceContext.getUserId());
-		User user = userLocalService.fetchUser(serviceContext.getUserId());
-		if(user != null) {
-			activity.setUserName(user.getFullName());
-			activity.setStatusByUserName(user.getFullName());
-		}
-		activity.setCreateDate(new Date());
-		activity.setModifiedDate(activity.getCreateDate());
+		activity.setUuid(serviceContext.getUuid());
+		activity.setGroupId(groupId);
+		activity.setCompanyId(user.getCompanyId());
+		activity.setUserId(userId);
+		activity.setUserName(user.getFullName());
+		activity.setStatusByUserName(user.getFullName());
+		
 		activity.setModuleId(moduleId);
 		activity.setTitleMap(titleMap);
 		activity.setDescriptionMap(descriptionMap);
+		
 		activity.setTypeId(typeId);
 		activity.setStartDate(startDate);
 		activity.setEndDate(endDate);
@@ -189,25 +203,25 @@ public class LearningActivityLocalServiceImpl
 		activity.setRequired(required);
 		activity.setCommentsActivated(commentsActivated);
 		activity.setStatus(WorkflowConstants.STATUS_APPROVED);
-		activity.setStatusByUserId(serviceContext.getUserId());
+		activity.setStatusByUserId(userId);
 		activity.setStatusDate(activity.getCreateDate());
 		
 		activity = learningActivityPersistence.update(activity);
 	
-		resourceLocalService.addResources(activity.getCompanyId(), activity.getGroupId(), activity.getUserId(),  LearningActivity.class.getName(), 
+		resourceLocalService.addResources(activity.getCompanyId(), groupId, userId,  LearningActivity.class.getName(), 
 				activity.getActId(), false, true, false);
 		
-		updateAsset(serviceContext.getUserId(), activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
+		updateAsset(userId, activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
 				serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority());
 		
-		addLearningActivityAttachments(serviceContext.getUserId(), activity, selectedFileNames);
+		addLearningActivityAttachments(userId, activity, selectedFileNames);
 		
 		return activity;
 		
 	}
 	
 	@Override
-	public LearningActivity updateLearningActivity(long actId, Map<Locale, String> titleMap,
+	public LearningActivity updateLearningActivity(long userId, long actId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, boolean useStartExecutionDateCourse, int startDateMonth,
 			int startDateDay, int startDateYear, int startDateHour, int startDateMinute,
 			boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
@@ -215,7 +229,7 @@ public class LearningActivityLocalServiceImpl
 			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, String[] selectedFileNames, long[] removeFileEntryIds, 
 			ServiceContext serviceContext) throws PortalException {
 		
-		User user = userLocalService.getUser(serviceContext.getUserId());
+		User user = userLocalService.getUser(userId);
 		
 		Date startDate = null;
 		
@@ -235,20 +249,20 @@ public class LearningActivityLocalServiceImpl
 					LearningActivityEndDateException.class);
 		}
 		
-		return updateLearningActivity(actId, titleMap, descriptionMap, startDate, endDate, tries, passPuntuation, 
+		return updateLearningActivity(userId, actId, titleMap, descriptionMap, startDate, endDate, tries, passPuntuation, 
 				feedbackCorrectMap, feedbackNoCorrectMap, required, commentsActivated, selectedFileNames, removeFileEntryIds, 
 				serviceContext);
 	}
 	
 	@Override
-	public LearningActivity updateLearningActivity(long actId, Map<Locale, String> titleMap,
+	public LearningActivity updateLearningActivity(long userId, long actId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, Date startDate, Date endDate, int tries, double passPuntuation,
 			Map<Locale, String> feedbackCorrectMap, Map<Locale, String> feedbackNoCorrectMap, boolean required, boolean commentsActivated,
 			String[] selectedFileNames, long[] removeFileEntryIds, ServiceContext serviceContext) throws PortalException {
 		
 		LearningActivity activity = learningActivityPersistence.findByPrimaryKey(actId);
 		
-		return updateLearningActivity(actId, activity.getModuleId(), titleMap, descriptionMap, activity.getTypeId(), 
+		return updateLearningActivity(userId, actId, activity.getModuleId(), titleMap, descriptionMap, activity.getTypeId(), 
 				startDate, endDate, tries, passPuntuation, activity.getPriority(), activity.getExtraContent(), feedbackCorrectMap, feedbackNoCorrectMap, 
 				required, commentsActivated, selectedFileNames, removeFileEntryIds, serviceContext);
 		
@@ -256,19 +270,18 @@ public class LearningActivityLocalServiceImpl
 	
 	@Override
 	@Indexable(type = IndexableType.REINDEX)
-	public LearningActivity updateLearningActivity(long actId, long moduleId, Map<Locale, String> titleMap,
+	public LearningActivity updateLearningActivity(long userId, long actId, long moduleId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, long typeId, Date startDate, Date endDate, int tries, double passPuntuation, long priority,
 			String extraContent, Map<Locale, String> feedbackCorrectMap, Map<Locale, String> feedbackNoCorrectMap, boolean required, boolean commentsActivated,
 			String[] selectedFileNames, long[] removeFileEntryIds, ServiceContext serviceContext) throws PortalException {
 		
+		User user = userLocalService.getUser(userId);
+		
 		LearningActivity activity = learningActivityPersistence.fetchByPrimaryKey(actId);
 		
-		activity.setModifiedDate(new Date());
-		activity.setUserId(serviceContext.getUserId());
-		User user = userLocalService.fetchUser(serviceContext.getUserId());
-		if(user != null) {
-			activity.setUserName(user.getFullName());
-		}
+		activity.setUserId(userId);
+		activity.setUserName(user.getFullName());
+		
 		activity.setModuleId(moduleId);
 		activity.setTitleMap(titleMap);
 		activity.setDescriptionMap(descriptionMap);
@@ -286,10 +299,10 @@ public class LearningActivityLocalServiceImpl
 		
 		activity = learningActivityPersistence.update(activity);
 		
-		updateAsset(serviceContext.getUserId(), activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
+		updateAsset(userId, activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
 				serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority());
 		
-		addLearningActivityAttachments(serviceContext.getUserId(), activity, selectedFileNames);
+		addLearningActivityAttachments(userId, activity, selectedFileNames);
 
 		removeLearningActivityAttachments(removeFileEntryIds);
 		
@@ -298,13 +311,12 @@ public class LearningActivityLocalServiceImpl
 	}
 	
 	@Override
-	public LearningActivity updateLearningActivity(LearningActivity activity, ServiceContext serviceContext) {
-		activity.setModifiedDate(new Date());
-		activity.setUserId(serviceContext.getUserId());
-		User user = userLocalService.fetchUser(serviceContext.getUserId());
-		if(user != null) {
-			activity.setUserName(user.getFullName());
-		}
+	public LearningActivity updateLearningActivity(long userId, LearningActivity activity) {
+
+		User user = userLocalService.fetchUser(userId);
+		
+		activity.setUserId(userId);
+		activity.setUserName(user.getFullName());
 		
 		return learningActivityPersistence.update(activity);
 	}
@@ -337,21 +349,24 @@ public class LearningActivityLocalServiceImpl
 	}
 	
 	@Override
-	public LearningActivity moveDownLearningActivity(long actId , ServiceContext serviceContext) throws PortalException{
+	public LearningActivity moveDownLearningActivity(long userId, long actId) throws PortalException{
 		
 		LearningActivity activity = learningActivityPersistence.fetchByPrimaryKey(actId);
-		
 		LearningActivity nextActivity = getNextLearningActivity(activity);
 		
 		if(nextActivity!=null) {
-			Date now = new Date();
+			User user = userLocalService.getUser(userId);
+			
 			//Se actualiza el orden
 			long priority = activity.getPriority();
-			activity.setPriority(nextActivity.getPriority());
-			nextActivity.setPriority(priority);
 			
-			activity.setModifiedDate(serviceContext.getModifiedDate(now));
-			nextActivity.setModifiedDate(serviceContext.getModifiedDate(now));
+			activity.setPriority(nextActivity.getPriority());
+			activity.setUserId(userId);
+			activity.setUserName(user.getFullName());
+			
+			nextActivity.setPriority(priority);
+			nextActivity.setUserId(userId);
+			nextActivity.setUserName(user.getFullName());
 			
 			learningActivityPersistence.update(activity);			
 			learningActivityPersistence.update(nextActivity);
@@ -361,20 +376,24 @@ public class LearningActivityLocalServiceImpl
 	}
 	
 	@Override
-	public LearningActivity moveUpLearningActivity(long actId , ServiceContext serviceContext) throws PortalException{
+	public LearningActivity moveUpLearningActivity(long userId, long actId) throws PortalException{
 		
 		LearningActivity activity = learningActivityPersistence.fetchByPrimaryKey(actId);
 		
 		LearningActivity previousActivity = getPreviousLearningActivity(activity);
 		
 		if(previousActivity!=null) {
-			Date now = new Date();
-			long priority=activity.getPriority();
-			activity.setPriority(previousActivity.getPriority());
-			previousActivity.setPriority(priority);
+			User user = userLocalService.getUser(userId);
 			
-			activity.setModifiedDate(serviceContext.getModifiedDate(now));
-			previousActivity.setModifiedDate(serviceContext.getModifiedDate(now));
+			long priority=activity.getPriority();
+			
+			activity.setPriority(previousActivity.getPriority());
+			activity.setUserId(userId);
+			activity.setUserName(user.getFullName());
+			
+			previousActivity.setPriority(priority);
+			previousActivity.setUserId(userId);
+			previousActivity.setUserName(user.getFullName());
 			
 			learningActivityPersistence.update(activity);			
 			learningActivityPersistence.update(previousActivity);
@@ -526,6 +545,69 @@ public class LearningActivityLocalServiceImpl
 		return activity;
 	}
 	
+	public LearningActivity copyActivity(long userId, LearningActivity oldActivity, Module newModule, ServiceContext serviceContext) throws Exception {
+		
+		AssetEntry oldAssetEntry = oldActivity.getAssetEntry();
+		
+		serviceContext.setAssetCategoryIds(oldAssetEntry.getCategoryIds());
+		serviceContext.setAssetEntryVisible(oldAssetEntry.isVisible());
+		serviceContext.setAssetPriority(oldAssetEntry.getPriority());
+		serviceContext.setAssetTagNames(oldAssetEntry.getTagNames());
+		
+		//Primer paso, creamos el curso
+		LearningActivity newActivity = addLearningActivity(userId, newModule.getGroupId(), newModule.getModuleId(), oldActivity.getTypeId(), oldActivity.getTitleMap(), 
+				oldActivity.getDescriptionMap(), oldActivity.getStartDate(), oldActivity.getEndDate(), oldActivity.isRequired(), oldActivity.getTries(), 
+				oldActivity.getPassPuntuation(), oldActivity.getFeedbackCorrectMap(), oldActivity.getFeedbackNoCorrectMap(), 
+				oldActivity.getCommentsActivated(), null, serviceContext);
+		
+		//Ahora copiamos los ficheros asociados y las imágenes
+		
+		copyActivityImages(oldActivity, newActivity);
+		copyAttachmentsFileEntries(oldActivity, newActivity);
+		
+		LearningActivityTypeFactory activityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(newActivity.getTypeId());
+		LearningActivityType activityType = activityTypeFactory.getLearningActivityType(newActivity);
+		log.debug("extraContent antes: " + newActivity.getExtraContent());
+		activityType.copyActivity(oldActivity, serviceContext);
+		log.debug("extraContent antes: " + newActivity.getExtraContent());
+		
+		newActivity = learningActivityPersistence.update(newActivity);
+		
+		resourceCopy.copyModelResourcePermissions(newActivity.getCompanyId(), LearningActivity.class.getName(), oldActivity.getActId(), newActivity.getActId());
+		
+		//Copiamos los expandos
+		ExpandoBridgeUtil.copyExpandoBridgeAttributes(oldActivity.getExpandoBridge(), newActivity.getExpandoBridge());
+		
+		//Duplicamos los prerequisitos
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities(newActivity.getCompanyId());
+		PrerequisiteFactory prerequisiteFactory = null;
+		
+		long activityClassNameId = PortalUtil.getClassNameId(LearningActivity.class);
+		
+		for(String classNamePrerequisite: classNamePrerequisites){
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
+			if(prerequisiteFactory != null) {
+				prerequisiteFactory.copyPrerequisite(activityClassNameId, oldActivity.getActId(), newActivity.getActId());
+			}
+		}
+		
+		return newActivity;
+		
+	}
+	
+	protected void copyActivityImages(LearningActivity oldActivity, LearningActivity newActivity) throws Exception {
+		newActivity.setDescription(dlReferencesCopyContentProcessor.replaceExportDLReferences(newActivity.getDescription(), oldActivity.getGroupId(), 
+				newActivity.getGroupId(), newActivity.getUserId()));
+	}
+	
+	protected void copyAttachmentsFileEntries(LearningActivity oldActivity, LearningActivity newActivity) throws Exception {
+		List<FileEntry> oldAttachmentsFileEntries = oldActivity.getAttachmentsFileEntries();
+		
+		for(FileEntry fileEntry: oldAttachmentsFileEntries) {
+			addAttachment(newActivity.getUserId(), newActivity, fileEntry.getFileName(), fileEntry.getContentStream(), fileEntry.getMimeType());
+		}
+	}
+	
 	@Override
 	public FileEntry addAttachment(
 			long userId, LearningActivity activity, String fileName,
@@ -593,6 +675,7 @@ public class LearningActivityLocalServiceImpl
 		}
 	}
 	
+	
 	@ServiceReference(type = CommentManager.class)
 	protected CommentManager commentManager;
 	
@@ -601,5 +684,11 @@ public class LearningActivityLocalServiceImpl
 	
 	@BeanReference(type = PortletFileRepository.class)
 	protected PortletFileRepository portletFileRepository;
+
+	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
+	
+	@ServiceReference(type = ResourceCopy.class)
+	protected ResourceCopy resourceCopy;
 	
 }

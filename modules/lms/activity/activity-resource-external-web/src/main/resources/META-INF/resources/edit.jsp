@@ -23,10 +23,9 @@
 boolean canBeEdited = ParamUtil.getBoolean(request, "canBeEdited", true);
 ResourceExternalActivityType resourceExternalActivityType = null;
 LearningActivity learningActivity = null;
-ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = null;
+ResourceExternalActivityTypeFactory resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
 
 if(actId > 0){
-	resourceExternalActivityTypeFactory = (ResourceExternalActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(ResourceExternalConstants.TYPE);
 	learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	resourceExternalActivityType = resourceExternalActivityTypeFactory.getResourceExternalActivityType(learningActivity);
 }
@@ -44,7 +43,7 @@ if(actId > 0){
 		</div>
 	</div>
 </div>
-<div class="col-md-6">
+<div class="col-md-12">
 	<div class="row">
 		<div class="col-md-8">
 			<aui:input type="radio" name="correctMode" value="<%=ResourceExternalConstants.CORRECT_VIDEO %>" label="learning-activity.resource-external.correct-video" 
@@ -71,11 +70,11 @@ if(actId > 0){
 </div>
 <div class="col-md-12">
 	<aui:input type="toggle-switch"  label="learning-activity.resource-external.use-question-video" name="questionVideo" 
-		value="<%= resourceExternalActivityType.getQuestions() != null && resourceExternalActivityType.getQuestions().size() > 0%>" 
+		value="<%=resourceExternalActivityType != null && resourceExternalActivityType.getQuestions() != null && resourceExternalActivityType.getQuestions().size() > 0%>" 
 		onChange="javascript:${renderResponse.namespace}showQuestionsVideo();"/>
 </div>
-<div id="${renderResponse.namespace }questionsVideo" class='<%=resourceExternalActivityType.getQuestions() != null && resourceExternalActivityType.getQuestions().size() > 0 ? "" : "hide" %>'>
-	<div class="col-md-12 activity-test-questions" >
+<div id="${renderResponse.namespace }questionsVideo" style='<%=resourceExternalActivityType != null && resourceExternalActivityType.getQuestions() != null && resourceExternalActivityType.getQuestions().size() > 0 ? "" : "display:none" %>' class="col-md-12 ">
+	<div class="activity-test-questions" >
 		<liferay-util:include page="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS_JSP %>" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" >
 			<liferay-util:param name="actId" value="<%=String.valueOf(actId)%>" />
 			<liferay-util:param name="canBeEdited" value="<%=String.valueOf(canBeEdited)%>" />
@@ -139,8 +138,8 @@ if(actId > 0){
 		JSONObject questionPositions = resourceExternalActivityType.getQuestionPositions();
 		List<Question> listQuestions = resourceExternalActivityType.getQuestions();
 		for(Question question: listQuestions){
-			if(questionPositions.has(ResourceExternalConstants.JSON_SECOND + question.getQuestionId())){
-				timeQuestions.put(question.getQuestionId(), questionPositions.getInt(ResourceExternalConstants.JSON_SECOND + question.getQuestionId()));
+			if(questionPositions.has(String.valueOf(question.getQuestionId()))){
+				timeQuestions.put(question.getQuestionId(), questionPositions.getInt(String.valueOf(question.getQuestionId())));
 			}
 		}
 		%>
@@ -281,7 +280,7 @@ if(actId > 0){
 			</div>
 			<%int second = 0;
 			for(Question question: listQuestions){
-				second = questionPositions.getInt(ResourceExternalConstants.JSON_SECOND + question.getQuestionId(), 0);
+				second = questionPositions.getInt(String.valueOf(question.getQuestionId()), 0);
 				%>
 				<div class="row results-row">
 					<div class="col-md-8"><span id="${renderResponse.getNamespace()}question_<%=question.getQuestionId()%>"><%=question.getText() %></div>

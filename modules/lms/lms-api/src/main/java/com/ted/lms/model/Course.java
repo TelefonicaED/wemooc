@@ -120,4 +120,6 @@ public interface Course extends CourseModel, PersistedModel {
 
 	public boolean hasPermissionAccessCourseFinished(long userId)
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public long getCourseTypeId();
 }

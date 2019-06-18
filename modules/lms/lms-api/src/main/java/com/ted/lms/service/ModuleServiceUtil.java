@@ -42,7 +42,7 @@ public class ModuleServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.ModuleServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.ted.lms.model.Module addModule(
+	public static com.ted.lms.model.Module addModule(long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean startDate, int startDateMonth, int startDateDay,
@@ -55,7 +55,7 @@ public class ModuleServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addModule(titleMap, descriptionMap, startDate,
+				   .addModule(groupId, titleMap, descriptionMap, startDate,
 			startDateMonth, startDateDay, startDateYear, startDateHour,
 			startDateMinute, endDate, endDateMonth, endDateDay, endDateYear,
 			endDateHour, endDateMinute, allowedHours, allowedMinutes,
@@ -81,10 +81,9 @@ public class ModuleServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
-	public static com.ted.lms.model.Module moveDownModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static com.ted.lms.model.Module moveDownModule(long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveDownModule(moduleId, serviceContext);
+		return getService().moveDownModule(moduleId);
 	}
 
 	public static com.ted.lms.model.Module moveModuleToTrash(long moduleId)
@@ -92,10 +91,9 @@ public class ModuleServiceUtil {
 		return getService().moveModuleToTrash(moduleId);
 	}
 
-	public static com.ted.lms.model.Module moveUpModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static com.ted.lms.model.Module moveUpModule(long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveUpModule(moduleId, serviceContext);
+		return getService().moveUpModule(moduleId);
 	}
 
 	public static com.ted.lms.model.Module updateModule(long moduleId,

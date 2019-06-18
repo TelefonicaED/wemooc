@@ -259,8 +259,8 @@ public class ResourceExternalPortlet extends MVCPortlet {
 				Hashtable<Long, Integer> timeQuestions = new Hashtable<Long, Integer>();
 				Element element = null;
 				for(Question question: listQuestions){
-					if(questionPositions.has("second_" + question.getQuestionId())) {
-						timeQuestions.put(question.getQuestionId(), questionPositions.getInt("second_" + question.getQuestionId()));
+					if(questionPositions.has(String.valueOf(question.getQuestionId()))) {
+						timeQuestions.put(question.getQuestionId(), questionPositions.getInt(String.valueOf(question.getQuestionId())));
 					}
 				}
 				

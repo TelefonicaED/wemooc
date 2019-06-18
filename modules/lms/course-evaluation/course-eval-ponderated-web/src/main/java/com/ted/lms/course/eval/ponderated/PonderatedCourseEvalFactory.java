@@ -31,8 +31,8 @@ public class PonderatedCourseEvalFactory extends BaseCourseEvalFactory{
 	public static final long TYPE = 3;
 	
 	@Override
-	public CourseEval getCourseEval(Course course, ServiceContext serviceContext) throws PortalException {	
-		return new PonderatedCourseEval(course, serviceContext, courseResultLocalService,
+	public CourseEval getCourseEval(Course course) throws PortalException {	
+		return new PonderatedCourseEval(course, courseResultLocalService,
 				learningActivityResultLocalService, learningActivityTryLocalService, learningActivityLocalService);
 	}
 

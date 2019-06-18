@@ -56,6 +56,8 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 
 	public com.liferay.portal.kernel.json.JSONObject getExtraContentJSON();
 
+	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry();
+
 	public void addExtraContentJSON(String key, Object value);
 
 	public java.util.Calendar getStartDateCalendar();

@@ -68,9 +68,7 @@ public class PonderatedAdminPortlet extends MVCPortlet {
 				renderRequest.setAttribute(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, Boolean.FALSE);
 			}else {
 				
-				ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), renderRequest);
-				
-				PonderatedCourseEval ponderatedCourseEval = new PonderatedCourseEval(course, serviceContext, courseResultLocalService,
+				PonderatedCourseEval ponderatedCourseEval = new PonderatedCourseEval(course, courseResultLocalService,
 						learningActivityResultLocalService, learningActivityTryLocalService, learningActivityLocalService);
 				
 				List<Long> required = ponderatedCourseEval.getRequiredActivities();

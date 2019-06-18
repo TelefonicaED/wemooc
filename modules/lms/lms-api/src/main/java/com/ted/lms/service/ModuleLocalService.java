@@ -69,8 +69,8 @@ public interface ModuleLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ModuleLocalServiceUtil} to access the module local service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public Module addModule(long userId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap,
+	public Module addModule(long userId, long groupId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
 		int startDateDay, int startDateYear, int startDateHour,
 		int startDateMinute, boolean useEndExecutionDateCourse,
@@ -80,10 +80,11 @@ public interface ModuleLocalService extends BaseLocalService,
 		ServiceContext serviceContext) throws PortalException;
 
 	@Indexable(type = IndexableType.REINDEX)
-	public Module addModule(long userId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, Date startDate, Date endDate,
-		long allowedTime, ImageSelector smallImageImageSelector,
-		long moduleEvalId, String moduleExtraData, ServiceContext serviceContext)
+	public Module addModule(long userId, long groupId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		Date startDate, Date endDate, long allowedTime,
+		ImageSelector smallImageImageSelector, long moduleEvalId,
+		String moduleExtraData, ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -99,6 +100,10 @@ public interface ModuleLocalService extends BaseLocalService,
 
 	public long addOriginalImageFileEntry(long userId, long groupId,
 		long entryId, ImageSelector imageSelector) throws PortalException;
+
+	public Module copyModule(long userId, Module oldModule, long groupId,
+		Map<Long, Long> activitiesRelation, ServiceContext serviceContext)
+		throws Exception;
 
 	/**
 	* Creates a new module with the primary key. Does not add the module to the database.
@@ -320,7 +325,7 @@ public interface ModuleLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Module getPreviousModule(Module module) throws PortalException;
 
-	public Module moveDownModule(long moduleId, ServiceContext serviceContext)
+	public Module moveDownModule(long userId, long moduleId)
 		throws PortalException;
 
 	public Module moveModuleToTrash(long userId, long moduleId)
@@ -330,7 +335,7 @@ public interface ModuleLocalService extends BaseLocalService,
 	public Module moveModuleToTrash(long userId, Module module)
 		throws PortalException;
 
-	public Module moveUpModule(long moduleId, ServiceContext serviceContext)
+	public Module moveUpModule(long userId, long moduleId)
 		throws PortalException;
 
 	public void updateAsset(long userId, Module module,

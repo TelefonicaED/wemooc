@@ -86,12 +86,9 @@ public class LearningActivityServiceSoap {
 	}
 
 	public static com.ted.lms.model.LearningActivitySoap moveDownLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws RemoteException {
+		long actId) throws RemoteException {
 		try {
-			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveDownLearningActivity(actId,
-					serviceContext);
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveDownLearningActivity(actId);
 
 			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
 		}
@@ -103,12 +100,9 @@ public class LearningActivityServiceSoap {
 	}
 
 	public static com.ted.lms.model.LearningActivitySoap moveUpLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws RemoteException {
+		long actId) throws RemoteException {
 		try {
-			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveUpLearningActivity(actId,
-					serviceContext);
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.moveUpLearningActivity(actId);
 
 			return com.ted.lms.model.LearningActivitySoap.toSoapModel(returnValue);
 		}
@@ -148,7 +142,7 @@ public class LearningActivityServiceSoap {
 	}
 
 	public static com.ted.lms.model.LearningActivitySoap addLearningActivity(
-		long moduleId, long type, String[] titleMapLanguageIds,
+		long groupId, long moduleId, long type, String[] titleMapLanguageIds,
 		String[] titleMapValues, String[] descriptionMapLanguageIds,
 		String[] descriptionMapValues, boolean useStartExecutionDateCourse,
 		int startDateMonth, int startDateDay, int startDateYear,
@@ -173,8 +167,8 @@ public class LearningActivityServiceSoap {
 			Map<Locale, String> feedbackNoCorrectMap = LocalizationUtil.getLocalizationMap(feedbackNoCorrectMapLanguageIds,
 					feedbackNoCorrectMapValues);
 
-			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.addLearningActivity(moduleId,
-					type, titleMap, descriptionMap,
+			com.ted.lms.model.LearningActivity returnValue = LearningActivityServiceUtil.addLearningActivity(groupId,
+					moduleId, type, titleMap, descriptionMap,
 					useStartExecutionDateCourse, startDateMonth, startDateDay,
 					startDateYear, startDateHour, startDateMinute,
 					useEndExecutionDateCourse, endDateMonth, endDateDay,

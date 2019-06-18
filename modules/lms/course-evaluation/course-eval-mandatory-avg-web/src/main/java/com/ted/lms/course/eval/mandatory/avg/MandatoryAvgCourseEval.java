@@ -3,7 +3,6 @@ package com.ted.lms.course.eval.mandatory.avg;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.ted.lms.model.BaseCourseEval;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
@@ -21,10 +20,10 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 
 	private static final Log log = LogFactoryUtil.getLog(MandatoryAvgCourseEval.class);
 	
-	public MandatoryAvgCourseEval(Course course, ServiceContext serviceContext, CourseResultLocalService courseResultLocalService,
+	public MandatoryAvgCourseEval(Course course, CourseResultLocalService courseResultLocalService,
 			LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityTryLocalService learningActivityTryLocalService,
 			LearningActivityLocalService learningActivityLocalService) {
-		super(course, serviceContext);
+		super(course);
 		this.courseResultLocalService = courseResultLocalService;
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
 		this.learningActivityTryLocalService = learningActivityTryLocalService;

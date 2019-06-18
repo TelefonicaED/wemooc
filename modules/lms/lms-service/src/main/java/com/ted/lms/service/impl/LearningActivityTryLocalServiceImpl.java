@@ -107,6 +107,13 @@ public class LearningActivityTryLocalServiceImpl
 			throw new NoSuchLearningActivityException();
 		}
 		
+		//Cuando es scheduler no hay contexto
+		if(serviceContext == null) {
+			serviceContext = new ServiceContext();
+			serviceContext.setCompanyId(learningActivity.getCompanyId());
+			serviceContext.setUserId(userLocalService.getDefaultUserId(learningActivity.getCompanyId()));
+		}
+		
 		LearningActivityTry learningActivityTry = learningActivityTryPersistence.create(counterLocalService.increment(LearningActivityTry.class.getName()));
 		
 		learningActivityTry.setGroupId(learningActivity.getGroupId());
@@ -174,6 +181,10 @@ public class LearningActivityTryLocalServiceImpl
 		
 		if(serviceContext == null) {
 			serviceContext = ServiceContextThreadLocal.getServiceContext();
+			if(serviceContext == null) {
+				serviceContext = new ServiceContext();
+				serviceContext.setUserId(userLocalService.getDefaultUserId(learningActivityTry.getCompanyId()));
+			}
 		}
 		
 		learningActivityTry.setResult(result);

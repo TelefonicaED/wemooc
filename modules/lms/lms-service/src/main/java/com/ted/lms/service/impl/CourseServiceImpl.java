@@ -32,6 +32,7 @@ import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.base.CourseServiceBaseImpl;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -83,18 +84,19 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	 * @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	 * @param ImageSelector imagen selector
 	 * @param serviceContext contexto de la creaciÃ³n del curso
+	 * @throws Exception 
 	 */
 	@Override
-	public Course addCourse(Map<Locale,String> titleMap, Map<Locale,String> descriptionMap,  Map<Locale,String> summaryMap, boolean indexer, 
-			Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, long parentCourseId, ImageSelector smallImageSelector, 
-			ServiceContext serviceContext) throws PortalException {
+	public Course addCourse(long groupId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap,  Map<Locale,String> summaryMap, boolean indexer, 
+			Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, long parentCourseId, long courseTypeId, ImageSelector smallImageSelector, 
+			ServiceContext serviceContext) throws Exception {
 		
 		portletResourcePermission.check(
 				getPermissionChecker(), serviceContext.getScopeGroupId(),
 				LMSActionKeys.ADD_COURSE);
 		
-		return courseLocalService.addCourse(titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
-				parentCourseId, smallImageSelector, serviceContext);
+		return courseLocalService.addCourse(getUserId(), groupId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+				parentCourseId, courseTypeId, smallImageSelector, serviceContext);
 		
 	}
 	
@@ -117,7 +119,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 		
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		
-		return courseLocalService.updateCourse(courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+		return courseLocalService.updateCourse(getUserId(), courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
 				smallImageImageSelector, serviceContext);
 	}
 	
@@ -163,7 +165,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 		
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		
-		return courseLocalService.updateCourse(courseId, registrationStartMonth, registrationStartDay, registrationStartYear, registrationStartHour, 
+		return courseLocalService.updateCourse(getUserId(), courseId, registrationStartMonth, registrationStartDay, registrationStartYear, registrationStartHour, 
 				registrationStartMinute, registrationEndMonth, registrationEndDay, registrationEndYear, registrationEndHour, registrationEndMinute, 
 				executionStartMonth, executionStartDay, executionStartYear, executionStartHour, executionStartMinute, executionEndMonth, executionEndDay, 
 				executionEndYear, executionEndHour, executionEndMinute, typeSite, inscriptionType, courseEvalId, calificationType, 
@@ -192,8 +194,8 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 		
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		
-		return courseLocalService.updateCourse(courseId, welcome, welcomeSubjectMap, welcomeMsgMap, goodbye, goodbyeSubjectMap, goodbyeMsgMap, 
-				deniedInscription, deniedInscriptionSubjectMap, deniedInscriptionMsgMap, status, serviceContext);
+		return courseLocalService.updateCourse(getUserId(), courseId, welcome, welcomeSubjectMap, welcomeMsgMap, goodbye, goodbyeSubjectMap, goodbyeMsgMap, 
+				deniedInscription, deniedInscriptionSubjectMap, deniedInscriptionMsgMap, status);
 		
 	}
 	
@@ -209,7 +211,28 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	public Course updateCourse(long courseId, int status, ServiceContext serviceContext) throws PrincipalException, PortalException {
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		
-		return courseLocalService.updateCourse(courseId, status, serviceContext);
+		return courseLocalService.updateCourse(getUserId(), courseId, status, serviceContext);
+	}
+	
+	@Override
+	public void deleteCourse(long courseId) throws PortalException {
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.DELETE);
+
+		courseLocalService.deleteCourse(courseId);
+	}
+	
+	@Override
+	public Course moveEntryToTrash(long courseId) throws PortalException {
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.DELETE);
+
+		return courseLocalService.moveEntryToTrash(getUserId(), courseId);
+	}
+
+	@Override
+	public void restoreEntryFromTrash(long courseId) throws PortalException {
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.DELETE);
+
+		courseLocalService.restoreEntryFromTrash(getUserId(), courseId);
 	}
 	
 	public void updateSmallImage(long courseId, String imageString, String imageTitle, String imageMimeType, ServiceContext serviceContext) throws PrincipalException, PortalException {
@@ -228,16 +251,29 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	}
 	
 	/**
-	 * Método para buscar cursos
+	 * Mï¿½todo para buscar cursos
 	 */
-	public List<Course> searchCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, 
+	public List<Course> searchCourses(long companyId, String title, String description, String language, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end,
 			OrderByComparator<Course> obc){
 		return courseFinder.filterByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator, start, end, obc);
 	}
 	
-	public int countCourses(long companyId, String title, String description, String language, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
+	public int countCourses(long companyId, String title, String description, String language, int[] status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
 			boolean andOperator){
 		return courseFinder.filterCountByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator);
+	}
+
+	public long executeCopyCourse(long courseId, long courseParentId, Map<Locale, String> titleMap, long layoutSetPrototypeId, 
+			Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate,
+			boolean copyForum, boolean copyDocuments, ServiceContext serviceContext) throws PortalException {
+		
+		portletResourcePermission.check(
+				getPermissionChecker(), serviceContext.getScopeGroupId(),
+				LMSActionKeys.ADD_COURSE);
+		
+		return courseLocalService.executeCopyCourse(courseId, courseParentId, titleMap, layoutSetPrototypeId, 
+				registrationStartDate, registrationEndDate, executionStartDate, executionEndDate, 
+				copyForum, copyDocuments, serviceContext);
 	}
 }

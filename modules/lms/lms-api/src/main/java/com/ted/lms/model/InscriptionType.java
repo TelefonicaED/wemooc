@@ -4,6 +4,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.ted.lms.exception.InscriptionException;
 
+import java.util.Map;
+
 import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;
 
@@ -24,5 +26,4 @@ public interface InscriptionType {
 	public InscriptionTypeFactory getInscriptionTypeFactory();
 	
 	public String getClassName();
-
 }

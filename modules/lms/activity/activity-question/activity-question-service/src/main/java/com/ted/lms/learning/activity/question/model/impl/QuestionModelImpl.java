@@ -82,7 +82,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "actId", Types.BIGINT },
-			{ "text_", Types.CLOB },
+			{ "text_", Types.VARCHAR },
 			{ "questionTypeId", Types.BIGINT },
 			{ "active_", Types.BOOLEAN },
 			{ "weight", Types.BIGINT },
@@ -101,7 +101,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("text_", Types.CLOB);
+		TABLE_COLUMNS_MAP.put("text_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("questionTypeId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("weight", Types.BIGINT);

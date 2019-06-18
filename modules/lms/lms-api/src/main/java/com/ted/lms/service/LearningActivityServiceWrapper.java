@@ -35,7 +35,7 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 
 	@Override
 	public com.ted.lms.model.LearningActivity addLearningActivity(
-		long moduleId, long type,
+		long groupId, long moduleId, long type,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
@@ -48,8 +48,8 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityService.addLearningActivity(moduleId, type,
-			titleMap, descriptionMap, useStartExecutionDateCourse,
+		return _learningActivityService.addLearningActivity(groupId, moduleId,
+			type, titleMap, descriptionMap, useStartExecutionDateCourse,
 			startDateMonth, startDateDay, startDateYear, startDateHour,
 			startDateMinute, useEndExecutionDateCourse, endDateMonth,
 			endDateDay, endDateYear, endDateHour, endDateMinute, required,
@@ -99,11 +99,8 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 
 	@Override
 	public com.ted.lms.model.LearningActivity moveDownLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityService.moveDownLearningActivity(actId,
-			serviceContext);
+		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+		return _learningActivityService.moveDownLearningActivity(actId);
 	}
 
 	@Override
@@ -113,12 +110,9 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 	}
 
 	@Override
-	public com.ted.lms.model.LearningActivity moveUpLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public com.ted.lms.model.LearningActivity moveUpLearningActivity(long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityService.moveUpLearningActivity(actId,
-			serviceContext);
+		return _learningActivityService.moveUpLearningActivity(actId);
 	}
 
 	@Override

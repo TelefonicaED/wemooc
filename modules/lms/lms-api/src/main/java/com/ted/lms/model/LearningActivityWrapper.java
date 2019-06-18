@@ -301,6 +301,11 @@ public class LearningActivityWrapper implements LearningActivity,
 	}
 
 	@Override
+	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry() {
+		return _learningActivity.getAssetEntry();
+	}
+
+	@Override
 	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries()
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _learningActivity.getAttachmentsFileEntries();

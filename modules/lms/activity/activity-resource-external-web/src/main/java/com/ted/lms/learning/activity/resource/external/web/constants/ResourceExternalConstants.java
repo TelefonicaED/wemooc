@@ -8,7 +8,6 @@ public class ResourceExternalConstants {
 	public static final String JSON_VIDEO_CONTROL = "videoControl";
 	public static final String JSON_ADDITIONAL_FILES = "additionalFiles";
 	public static final String JSON_QUESTION_POSITIONS = "questionPositions";
-	public static final String JSON_SECOND = "second_";
 	public static final String JSON_CORRECT_MODE = "correctMode";
 	public static final String JSON_FINAL_FEEDBACK = "finalFeedback";
 	public static final String JSON_QUESTION_FEEDBACK = "questionFeedback";

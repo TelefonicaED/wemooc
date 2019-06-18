@@ -31,8 +31,8 @@ public class MandatoryAvgCourseEvalFactory extends BaseCourseEvalFactory{
 	public static final long TYPE = 2;
 	
 	@Override
-	public CourseEval getCourseEval(Course course, ServiceContext serviceContext) throws PortalException {	
-		return new MandatoryAvgCourseEval(course, serviceContext, courseResultLocalService, learningActivityResultLocalService, 
+	public CourseEval getCourseEval(Course course) throws PortalException {	
+		return new MandatoryAvgCourseEval(course, courseResultLocalService, learningActivityResultLocalService, 
 				learningActivityTryLocalService, learningActivityLocalService);
 	}
 

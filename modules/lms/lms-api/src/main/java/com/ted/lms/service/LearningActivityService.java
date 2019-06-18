@@ -58,8 +58,9 @@ public interface LearningActivityService extends BaseService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link LearningActivityServiceUtil} to access the learning activity remote service. Add custom service methods to {@link com.ted.lms.service.impl.LearningActivityServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public LearningActivity addLearningActivity(long moduleId, long type,
-		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+	public LearningActivity addLearningActivity(long groupId, long moduleId,
+		long type, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
 		int startDateDay, int startDateYear, int startDateHour,
 		int startDateMinute, boolean useEndExecutionDateCourse,
@@ -94,14 +95,14 @@ public interface LearningActivityService extends BaseService {
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public String[] getTempFileNames(long groupId) throws PortalException;
 
-	public LearningActivity moveDownLearningActivity(long actId,
-		ServiceContext serviceContext) throws PortalException;
+	public LearningActivity moveDownLearningActivity(long actId)
+		throws PortalException;
 
 	public LearningActivity moveLearningActivityToTrash(long actId)
 		throws PortalException;
 
-	public LearningActivity moveUpLearningActivity(long actId,
-		ServiceContext serviceContext) throws PortalException;
+	public LearningActivity moveUpLearningActivity(long actId)
+		throws PortalException;
 
 	public LearningActivity updateLearningActivity(LearningActivity activity)
 		throws PortalException;

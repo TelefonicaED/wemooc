@@ -14,10 +14,12 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseEval;
 import com.ted.lms.model.CourseEvalFactory;
@@ -29,6 +31,7 @@ import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.registry.PostconditionRegistryUtil;
 import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -131,7 +134,7 @@ public class CourseResultLocalServiceImpl
 			
 			CourseEvalFactory courseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactoryByType(course.getCourseEvalId());
 			try {
-				CourseEval courseEval = courseEvalFactory.getCourseEval(course, serviceContext);
+				CourseEval courseEval = courseEvalFactory.getCourseEval(course);
 				courseResult = courseEval.updateCourseResult(courseResult);
 			} catch (PortalException e) {
 				// TODO Auto-generated catch block

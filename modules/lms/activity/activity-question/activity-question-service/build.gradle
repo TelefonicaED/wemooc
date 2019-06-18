@@ -6,6 +6,10 @@ dependencies {
 	compileOnly group: "javax.portlet", name: "portlet-api"
 	compileOnly group: "javax.servlet", name: "javax.servlet-api"
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
+	compileOnly group: "com.liferay", name: "com.liferay.petra.xml"
+	compileOnly group: "com.liferay", name: "com.liferay.upload.api"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.function"
+	compileOnly project(":modules:lms:lms-api")
 }
 
 buildService {

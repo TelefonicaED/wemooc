@@ -18,5 +18,7 @@ public class LMSPortletKeys {
 			"com_ted_lms_web_portlet_InscriptionPortlet";
 	public static final String CALIFICATION = 
 			"com_ted_lms_web_portlet_CalificationPortlet";
+	public static final String COURSE_TYPE =
+			"com_ted_lms_web_portlet_CourseTypeAdminPortlet";
 	
 }

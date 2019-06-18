@@ -38,6 +38,7 @@ import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.Module;
 
 import java.io.InputStream;
 import java.io.Serializable;
@@ -83,8 +84,9 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public LearningActivity addLearningActivity(
 		LearningActivity learningActivity);
 
-	public LearningActivity addLearningActivity(long moduleId, long type,
-		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+	public LearningActivity addLearningActivity(long userId, long groupId,
+		long moduleId, long type, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
 		int startDateDay, int startDateYear, int startDateHour,
 		int startDateMinute, boolean useEndExecutionDateCourse,
@@ -95,23 +97,28 @@ public interface LearningActivityLocalService extends BaseLocalService,
 		String[] selectedFileNames, ServiceContext serviceContext)
 		throws PortalException;
 
-	public LearningActivity addLearningActivity(long moduleId, long type,
-		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-		Date startDate, Date endDate, boolean required, int tries,
-		double passPuntuation, Map<Locale, String> feedbackCorrectMap,
+	public LearningActivity addLearningActivity(long userId, long groupId,
+		long moduleId, long type, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, Date startDate, Date endDate,
+		boolean required, int tries, double passPuntuation,
+		Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated,
 		String[] selectedFileNames, ServiceContext serviceContext)
 		throws PortalException;
 
 	@Indexable(type = IndexableType.REINDEX)
-	public LearningActivity addLearningActivity(long moduleId,
-		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-		long typeId, Date startDate, Date endDate, int tries,
-		double passPuntuation, long priority, String extraContent,
-		Map<Locale, String> feedbackCorrectMap,
+	public LearningActivity addLearningActivity(long userId, long groupId,
+		long moduleId, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, long typeId, Date startDate,
+		Date endDate, int tries, double passPuntuation, long priority,
+		String extraContent, Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackNoCorrectMap, boolean required,
 		boolean commentsActivated, String[] selectedFileNames,
 		ServiceContext serviceContext) throws PortalException;
+
+	public LearningActivity copyActivity(long userId,
+		LearningActivity oldActivity, Module newModule,
+		ServiceContext serviceContext) throws Exception;
 
 	/**
 	* Creates a new learning activity with the primary key. Does not add the learning activity to the database.
@@ -302,6 +309,10 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getLearningActivitiesOfModuleCount(long moduleId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<LearningActivity> getLearningActivitiesWithoutModule(
+		long groupId);
+
 	/**
 	* Returns the learning activity with the primary key.
 	*
@@ -353,8 +364,8 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public List<LearningActivity> getRequiredLearningActivitiesOfModule(
 		long moduleId);
 
-	public LearningActivity moveDownLearningActivity(long actId,
-		ServiceContext serviceContext) throws PortalException;
+	public LearningActivity moveDownLearningActivity(long userId, long actId)
+		throws PortalException;
 
 	@Indexable(type = IndexableType.REINDEX)
 	public LearningActivity moveLearningActivityToTrash(long userId,
@@ -363,8 +374,8 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public LearningActivity moveLearningActivityToTrash(long userId, long actId)
 		throws PortalException;
 
-	public LearningActivity moveUpLearningActivity(long actId,
-		ServiceContext serviceContext) throws PortalException;
+	public LearningActivity moveUpLearningActivity(long userId, long actId)
+		throws PortalException;
 
 	public void updateAsset(long userId, LearningActivity activity,
 		long[] assetCategoryIds, String[] assetTagNames,
@@ -380,21 +391,21 @@ public interface LearningActivityLocalService extends BaseLocalService,
 	public LearningActivity updateLearningActivity(
 		LearningActivity learningActivity);
 
-	public LearningActivity updateLearningActivity(LearningActivity activity,
-		ServiceContext serviceContext);
+	public LearningActivity updateLearningActivity(long userId,
+		LearningActivity activity);
 
 	@Indexable(type = IndexableType.REINDEX)
-	public LearningActivity updateLearningActivity(long actId, long moduleId,
-		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-		long typeId, Date startDate, Date endDate, int tries,
-		double passPuntuation, long priority, String extraContent,
-		Map<Locale, String> feedbackCorrectMap,
+	public LearningActivity updateLearningActivity(long userId, long actId,
+		long moduleId, Map<Locale, String> titleMap,
+		Map<Locale, String> descriptionMap, long typeId, Date startDate,
+		Date endDate, int tries, double passPuntuation, long priority,
+		String extraContent, Map<Locale, String> feedbackCorrectMap,
 		Map<Locale, String> feedbackNoCorrectMap, boolean required,
 		boolean commentsActivated, String[] selectedFileNames,
 		long[] removeFileEntryIds, ServiceContext serviceContext)
 		throws PortalException;
 
-	public LearningActivity updateLearningActivity(long actId,
+	public LearningActivity updateLearningActivity(long userId, long actId,
 		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
 		int startDateDay, int startDateYear, int startDateHour,
@@ -406,7 +417,7 @@ public interface LearningActivityLocalService extends BaseLocalService,
 		String[] selectedFileNames, long[] removeFileEntryIds,
 		ServiceContext serviceContext) throws PortalException;
 
-	public LearningActivity updateLearningActivity(long actId,
+	public LearningActivity updateLearningActivity(long userId, long actId,
 		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 		Date startDate, Date endDate, int tries, double passPuntuation,
 		Map<Locale, String> feedbackCorrectMap,

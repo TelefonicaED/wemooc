@@ -88,16 +88,14 @@ public class LearningActivityServiceHttp {
 	}
 
 	public static com.ted.lms.model.LearningActivity moveDownLearningActivity(
-		HttpPrincipal httpPrincipal, long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		HttpPrincipal httpPrincipal, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
 					"moveDownLearningActivity",
 					_moveDownLearningActivityParameterTypes1);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, actId,
-					serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, actId);
 
 			Object returnObj = null;
 
@@ -122,16 +120,14 @@ public class LearningActivityServiceHttp {
 	}
 
 	public static com.ted.lms.model.LearningActivity moveUpLearningActivity(
-		HttpPrincipal httpPrincipal, long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		HttpPrincipal httpPrincipal, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
 					"moveUpLearningActivity",
 					_moveUpLearningActivityParameterTypes2);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey, actId,
-					serviceContext);
+			MethodHandler methodHandler = new MethodHandler(methodKey, actId);
 
 			Object returnObj = null;
 
@@ -220,7 +216,7 @@ public class LearningActivityServiceHttp {
 	}
 
 	public static com.ted.lms.model.LearningActivity addLearningActivity(
-		HttpPrincipal httpPrincipal, long moduleId, long type,
+		HttpPrincipal httpPrincipal, long groupId, long moduleId, long type,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
@@ -237,7 +233,7 @@ public class LearningActivityServiceHttp {
 			MethodKey methodKey = new MethodKey(LearningActivityServiceUtil.class,
 					"addLearningActivity", _addLearningActivityParameterTypes5);
 
-			MethodHandler methodHandler = new MethodHandler(methodKey,
+			MethodHandler methodHandler = new MethodHandler(methodKey, groupId,
 					moduleId, type, titleMap, descriptionMap,
 					useStartExecutionDateCourse, startDateMonth, startDateDay,
 					startDateYear, startDateHour, startDateMinute,
@@ -442,10 +438,10 @@ public class LearningActivityServiceHttp {
 			com.ted.lms.model.LearningActivity.class
 		};
 	private static final Class<?>[] _moveDownLearningActivityParameterTypes1 = new Class[] {
-			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+			long.class
 		};
 	private static final Class<?>[] _moveUpLearningActivityParameterTypes2 = new Class[] {
-			long.class, com.liferay.portal.kernel.service.ServiceContext.class
+			long.class
 		};
 	private static final Class<?>[] _moveLearningActivityToTrashParameterTypes3 = new Class[] {
 			long.class
@@ -454,11 +450,12 @@ public class LearningActivityServiceHttp {
 			long.class
 		};
 	private static final Class<?>[] _addLearningActivityParameterTypes5 = new Class[] {
-			long.class, long.class, java.util.Map.class, java.util.Map.class,
-			boolean.class, int.class, int.class, int.class, int.class, int.class,
-			boolean.class, int.class, int.class, int.class, int.class, int.class,
-			boolean.class, int.class, double.class, java.util.Map.class,
-			java.util.Map.class, boolean.class, String[].class,
+			long.class, long.class, long.class, java.util.Map.class,
+			java.util.Map.class, boolean.class, int.class, int.class, int.class,
+			int.class, int.class, boolean.class, int.class, int.class, int.class,
+			int.class, int.class, boolean.class, int.class, double.class,
+			java.util.Map.class, java.util.Map.class, boolean.class,
+			String[].class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 	private static final Class<?>[] _updateLearningActivityParameterTypes6 = new Class[] {

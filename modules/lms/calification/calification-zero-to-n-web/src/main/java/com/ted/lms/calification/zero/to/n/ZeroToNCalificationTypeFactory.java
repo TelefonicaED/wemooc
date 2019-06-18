@@ -38,6 +38,10 @@ public class ZeroToNCalificationTypeFactory extends BaseCalificationTypeFactory{
 	public long getType() {
 		return TYPE;
 	}
+
+	public ZeroToNCalificationType getZeroToNCalificationType(Course course) {	
+		return new ZeroToNCalificationType(course);
+	}
 	
 	@Override
 	public CalificationType getCalificationType(Course course) {	

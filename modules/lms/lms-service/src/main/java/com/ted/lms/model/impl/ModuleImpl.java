@@ -14,12 +14,13 @@
 
 package com.ted.lms.model.impl;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSON;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -37,6 +38,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ImageLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -45,6 +47,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portlet.asset.model.impl.AssetEntryImpl;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.LearningActivity;
@@ -80,6 +83,10 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public class ModuleImpl extends ModuleBaseImpl {
+	
+	private AssetEntry assetEntry;
+	
+	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -143,8 +150,8 @@ public class ModuleImpl extends ModuleBaseImpl {
 	
 	@Override
 	public long getImagesFolderId() {
-		if (_imagesFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			return _imagesFolderId;
+		if (imagesFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			return imagesFolderId;
 		}
 
 		Repository repository =
@@ -161,7 +168,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 				DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 				String.valueOf(getModuleId()));
 
-			_imagesFolderId = folder.getFolderId();
+			imagesFolderId = folder.getFolderId();
 		}
 		catch (Exception e) {
 			if (log.isDebugEnabled()) {
@@ -169,7 +176,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 			}
 		}
 
-		return _imagesFolderId;
+		return imagesFolderId;
 	}
 	
 	@Override
@@ -193,7 +200,7 @@ public class ModuleImpl extends ModuleBaseImpl {
 	
 	@Override
 	public void setImagesFolderId(long imagesFolderId) {
-		_imagesFolderId = imagesFolderId;
+		this.imagesFolderId = imagesFolderId;
 	}
 	
 	@Override
@@ -316,7 +323,50 @@ public class ModuleImpl extends ModuleBaseImpl {
 		return DateUtil.getSimpleDateFormatPattern(locale, timeZone).format(getEndDate());
 	}
 	
-	private long _imagesFolderId;
+	public AssetEntry getAssetEntry() {
+		if (assetEntry == NULL_ASSET_ENTRY) {
+			return null;
+		}
+
+		if (assetEntry == null) {
+			AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(PortalUtil.getClassNameId(Module.class), getModuleId());
+
+			if (assetEntry == null) {
+				this.assetEntry = NULL_ASSET_ENTRY;
+			}
+			else {
+				this.assetEntry = assetEntry;
+			}
+		}
+
+		return assetEntry;
+	}
+	
+	@Override
+	public Folder addImagesFolder() throws PortalException {
+		if (imagesFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+			return PortletFileRepositoryUtil.getPortletFolder(imagesFolderId);
+		}
+
+		ServiceContext serviceContext = new ServiceContext();
+
+		serviceContext.setAddGroupPermissions(true);
+		serviceContext.setAddGuestPermissions(true);
+
+		Repository repository = PortletFileRepositoryUtil.addPortletRepository(
+			getGroupId(), LMSConstants.SERVICE_NAME, serviceContext);
+
+		Folder folder = PortletFileRepositoryUtil.addPortletFolder(
+			getUserId(), repository.getRepositoryId(),
+			DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			String.valueOf(getModuleId()), serviceContext);
+
+		imagesFolderId = folder.getFolderId();
+
+		return folder;
+	}
+	
+	private long imagesFolderId;
 	
 	private static final Log log = LogFactoryUtil.getLog(ModuleImpl.class);
 }

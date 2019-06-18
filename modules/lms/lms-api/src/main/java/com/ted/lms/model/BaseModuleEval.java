@@ -8,6 +8,7 @@ import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.lms.service.ModuleResultLocalServiceUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 
@@ -69,6 +70,11 @@ public abstract class BaseModuleEval implements ModuleEval {
 
 	@Override
 	public void setExtraContent(ActionRequest actionRequest) throws PortalException{
+		
+	}
+	
+	@Override
+	public void copyModule(Module oldModule, Map<Long,Long> modulesRelation, Map<Long, Long> activitiesRelation) {
 		
 	}
 	

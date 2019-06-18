@@ -101,4 +101,9 @@ public interface Module extends ModuleModel, PersistedModel {
 
 	public String getEndDateFormat(java.util.Locale locale,
 		java.util.TimeZone timeZone);
+
+	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry();
+
+	public com.liferay.portal.kernel.repository.model.Folder addImagesFolder()
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

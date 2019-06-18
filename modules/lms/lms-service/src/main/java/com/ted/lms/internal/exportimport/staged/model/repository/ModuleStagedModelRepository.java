@@ -42,7 +42,7 @@ public class ModuleStagedModelRepository
 			serviceContext.setUuid(module.getUuid());
 		}
 
-		Module newModule = moduleLocalService.addModule(userId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
+		Module newModule = moduleLocalService.addModule(userId, module.getGroupId(), module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
 				module.getAllowedTime(), null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
 		newModule = moduleLocalService.updateOrder(newModule, module.getOrder());	
 		

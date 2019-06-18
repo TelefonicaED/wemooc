@@ -43,10 +43,11 @@ public class PrerequisiteRelationLocalServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.prerequisite.service.impl.PrerequisiteRelationLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.ted.prerequisite.model.PrerequisiteRelation addPrerequisiteRelation(
-		long classNamePrerequisiteId, long classNameId, long classPK) {
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		String extraData) {
 		return getService()
 				   .addPrerequisiteRelation(classNamePrerequisiteId,
-			classNameId, classPK);
+			classNameId, classPK, extraData);
 	}
 
 	/**
@@ -244,6 +245,11 @@ public class PrerequisiteRelationLocalServiceUtil {
 	public static java.util.List<com.ted.prerequisite.model.PrerequisiteRelation> getPrerequisiteRelations(
 		int start, int end) {
 		return getService().getPrerequisiteRelations(start, end);
+	}
+
+	public static java.util.List<com.ted.prerequisite.model.PrerequisiteRelation> getPrerequisiteRelations(
+		long classNameId, long classPK) {
+		return getService().getPrerequisiteRelations(classNameId, classPK);
 	}
 
 	/**

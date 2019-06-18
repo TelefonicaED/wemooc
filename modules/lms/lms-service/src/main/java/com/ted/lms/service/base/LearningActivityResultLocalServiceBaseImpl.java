@@ -57,6 +57,8 @@ import com.ted.lms.service.persistence.CourseFinder;
 import com.ted.lms.service.persistence.CoursePersistence;
 import com.ted.lms.service.persistence.CourseResultFinder;
 import com.ted.lms.service.persistence.CourseResultPersistence;
+import com.ted.lms.service.persistence.CourseTypePersistence;
+import com.ted.lms.service.persistence.CourseTypeRelationPersistence;
 import com.ted.lms.service.persistence.LearningActivityPersistence;
 import com.ted.lms.service.persistence.LearningActivityResultFinder;
 import com.ted.lms.service.persistence.LearningActivityResultPersistence;
@@ -561,6 +563,82 @@ public abstract class LearningActivityResultLocalServiceBaseImpl
 	}
 
 	/**
+	 * Returns the course type local service.
+	 *
+	 * @return the course type local service
+	 */
+	public com.ted.lms.service.CourseTypeLocalService getCourseTypeLocalService() {
+		return courseTypeLocalService;
+	}
+
+	/**
+	 * Sets the course type local service.
+	 *
+	 * @param courseTypeLocalService the course type local service
+	 */
+	public void setCourseTypeLocalService(
+		com.ted.lms.service.CourseTypeLocalService courseTypeLocalService) {
+		this.courseTypeLocalService = courseTypeLocalService;
+	}
+
+	/**
+	 * Returns the course type persistence.
+	 *
+	 * @return the course type persistence
+	 */
+	public CourseTypePersistence getCourseTypePersistence() {
+		return courseTypePersistence;
+	}
+
+	/**
+	 * Sets the course type persistence.
+	 *
+	 * @param courseTypePersistence the course type persistence
+	 */
+	public void setCourseTypePersistence(
+		CourseTypePersistence courseTypePersistence) {
+		this.courseTypePersistence = courseTypePersistence;
+	}
+
+	/**
+	 * Returns the course type relation local service.
+	 *
+	 * @return the course type relation local service
+	 */
+	public com.ted.lms.service.CourseTypeRelationLocalService getCourseTypeRelationLocalService() {
+		return courseTypeRelationLocalService;
+	}
+
+	/**
+	 * Sets the course type relation local service.
+	 *
+	 * @param courseTypeRelationLocalService the course type relation local service
+	 */
+	public void setCourseTypeRelationLocalService(
+		com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService) {
+		this.courseTypeRelationLocalService = courseTypeRelationLocalService;
+	}
+
+	/**
+	 * Returns the course type relation persistence.
+	 *
+	 * @return the course type relation persistence
+	 */
+	public CourseTypeRelationPersistence getCourseTypeRelationPersistence() {
+		return courseTypeRelationPersistence;
+	}
+
+	/**
+	 * Sets the course type relation persistence.
+	 *
+	 * @param courseTypeRelationPersistence the course type relation persistence
+	 */
+	public void setCourseTypeRelationPersistence(
+		CourseTypeRelationPersistence courseTypeRelationPersistence) {
+		this.courseTypeRelationPersistence = courseTypeRelationPersistence;
+	}
+
+	/**
 	 * Returns the learning activity local service.
 	 *
 	 * @return the learning activity local service
@@ -784,6 +862,25 @@ public abstract class LearningActivityResultLocalServiceBaseImpl
 	 */
 	public void setModuleResultFinder(ModuleResultFinder moduleResultFinder) {
 		this.moduleResultFinder = moduleResultFinder;
+	}
+
+	/**
+	 * Returns the student local service.
+	 *
+	 * @return the student local service
+	 */
+	public com.ted.lms.service.StudentLocalService getStudentLocalService() {
+		return studentLocalService;
+	}
+
+	/**
+	 * Sets the student local service.
+	 *
+	 * @param studentLocalService the student local service
+	 */
+	public void setStudentLocalService(
+		com.ted.lms.service.StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
 	}
 
 	/**
@@ -1037,6 +1134,14 @@ public abstract class LearningActivityResultLocalServiceBaseImpl
 	protected CourseResultPersistence courseResultPersistence;
 	@BeanReference(type = CourseResultFinder.class)
 	protected CourseResultFinder courseResultFinder;
+	@BeanReference(type = com.ted.lms.service.CourseTypeLocalService.class)
+	protected com.ted.lms.service.CourseTypeLocalService courseTypeLocalService;
+	@BeanReference(type = CourseTypePersistence.class)
+	protected CourseTypePersistence courseTypePersistence;
+	@BeanReference(type = com.ted.lms.service.CourseTypeRelationLocalService.class)
+	protected com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService;
+	@BeanReference(type = CourseTypeRelationPersistence.class)
+	protected CourseTypeRelationPersistence courseTypeRelationPersistence;
 	@BeanReference(type = com.ted.lms.service.LearningActivityLocalService.class)
 	protected com.ted.lms.service.LearningActivityLocalService learningActivityLocalService;
 	@BeanReference(type = LearningActivityPersistence.class)
@@ -1061,6 +1166,8 @@ public abstract class LearningActivityResultLocalServiceBaseImpl
 	protected ModuleResultPersistence moduleResultPersistence;
 	@BeanReference(type = ModuleResultFinder.class)
 	protected ModuleResultFinder moduleResultFinder;
+	@BeanReference(type = com.ted.lms.service.StudentLocalService.class)
+	protected com.ted.lms.service.StudentLocalService studentLocalService;
 	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
 	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
 	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)

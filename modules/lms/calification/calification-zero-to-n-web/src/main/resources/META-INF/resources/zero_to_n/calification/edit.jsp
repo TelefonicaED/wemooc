@@ -15,7 +15,7 @@ if(courseId > 0){
 	Course course = CourseLocalServiceUtil.fetchCourse(courseId);
 	if(course != null){
 		ZeroToNCalificationTypeFactory calificationTypeFactory = (ZeroToNCalificationTypeFactory)CalificationTypeFactoryRegistryUtil.getCalificationTypeFactoryByType(ZeroToNCalificationTypeFactory.TYPE);
-		ZeroToNCalificationType zeroToNCalificationType = calificationTypeFactory.getCalificationType(course);
+		ZeroToNCalificationType zeroToNCalificationType = calificationTypeFactory.getZeroToNCalificationType(course);
 		maxValue = zeroToNCalificationType.getMaxValue();
 	}
 }%>

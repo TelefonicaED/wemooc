@@ -82,9 +82,9 @@ public interface CourseAdminPortletInstanceConfiguration {
 	public String courseExpandoValues();
 	
 	@Meta.AD(
-		name = "course-template-values", required = false
+		name = "course-templates", required = false
 	)
-	public String courseTemplateValues();
+	public String[] courseTemplates();
 	
 	@Meta.AD(
 		name = "course-action-permissions", required = false

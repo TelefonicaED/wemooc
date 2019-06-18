@@ -25,6 +25,7 @@ import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.security.permission.resource.ModulePermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.CourseLocalServiceUtil;
+import com.ted.lms.service.CourseTypeLocalServiceUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -85,12 +86,17 @@ public class CoursesManagementToolbarDisplayContext {
 			
 
 			CreationMenu creationMenu = new CreationMenu();
+			
+			//Dependiendo si hay tipos de curso o no, mandamos a una ventana u otra
+			int countCourseTypes = CourseTypeLocalServiceUtil.countCourseTypes(themeDisplay.getCompanyId());
+			
+			String mvcRenderCommand = countCourseTypes > 0 ? "/courses/add_course" : "/courses/edit_course";
 
 			creationMenu.addDropdownItem(
 				dropdownItem -> {
 					dropdownItem.setHref(
 						liferayPortletResponse.createRenderURL(),
-						"mvcRenderCommandName", "/courses/edit_course", "redirect",
+						"mvcRenderCommandName", mvcRenderCommand, "redirect",
 						currentURLObj.toString());
 					dropdownItem.setLabel(
 						LanguageUtil.get(request, "add-course"));

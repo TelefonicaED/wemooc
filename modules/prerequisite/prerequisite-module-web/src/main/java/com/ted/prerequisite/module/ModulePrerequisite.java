@@ -6,12 +6,15 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xml.Element;
+import com.ted.lms.model.Module;
 import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.prerequisite.model.BasePrerequisite;
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.module.internal.constants.ModulePrerequisiteConstants;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
+
+import java.util.Map;
 
 import javax.portlet.PortletRequest;
 
@@ -53,7 +56,7 @@ public class ModulePrerequisite extends BasePrerequisite{
 		
 		if(moduleId > 0 && prerequisiteRelation == null) {
 			System.out.println("prerequisiteRelationLocalService: " + prerequisiteRelationLocalService);
-			prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), classNameId, classPK);
+			prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), classNameId, classPK, "");
 		}
 		
 		if(moduleId > 0) {
@@ -71,6 +74,20 @@ public class ModulePrerequisite extends BasePrerequisite{
 	@Override
 	public String doImportStagedModel(PortletDataContext portletDataContext, Element element) {
 		return "";
+	}
+	
+	@Override
+	public void updatePrerequisiteCopied(long classNameId, Object ... params) {
+		if(classNameId == PortalUtil.getClassNameId(Module.class) && params != null && params.length > 0 && params[0] instanceof Map<?,?>) {
+			Map<Long,Long> modulesRelation = (Map<Long,Long>)params[0];
+			
+			JSONObject extraData = prerequisiteRelation.getExtraDataJSON();
+			extraData.put(ModulePrerequisiteConstants.JSON_MODULE_ID, modulesRelation.get(extraData.getLong(ModulePrerequisiteConstants.JSON_MODULE_ID)));
+			
+			prerequisiteRelation.setExtraData(extraData.toJSONString());
+			
+			prerequisiteRelation = prerequisiteRelationLocalService.updatePrerequisiteRelation(prerequisiteRelation);
+		}
 	}
 	
 	private ModuleResultLocalService moduleResultLocalService;

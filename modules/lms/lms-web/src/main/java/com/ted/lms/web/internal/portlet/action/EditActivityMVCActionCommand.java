@@ -225,15 +225,15 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 	}
 	
 	protected void moveLearningActivity(ActionRequest actionRequest) throws Exception {
+		
 		long actId = ParamUtil.getLong(actionRequest, "actId");
 		
 		int moved = ParamUtil.getInteger(actionRequest, Constants.ACTION);
-		
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivity.class.getName(), actionRequest);
+
 		if(moved == -1) {
-			learningActivityService.moveUpLearningActivity(actId, serviceContext);
+			learningActivityService.moveUpLearningActivity(actId);
 		}else if(moved == 1) {
-			learningActivityService.moveDownLearningActivity(actId, serviceContext);
+			learningActivityService.moveDownLearningActivity(actId);
 		}
 	}
 	
@@ -364,7 +364,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		if (actId <= 0) {
 
 			// Añadir módulo
-			activity = learningActivityService.addLearningActivity(moduleId, type, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
+			activity = learningActivityService.addLearningActivity(themeDisplay.getScopeGroupId(), moduleId, type, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 					startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
 					endDateHour, endDateMinute, required, tries, score, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, selectedFileNames,
 					serviceContext);
@@ -385,7 +385,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		learningActivityService.updateLearningActivity(activity);
 		
 		//Guardamos los prerequisitos
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities();
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities(themeDisplay.getCompanyId());
 		PrerequisiteFactory prerequisiteFactory = null;
 		Prerequisite prerequisite = null;
 		long activityClassNameId = PortalUtil.getClassNameId(LearningActivity.class);

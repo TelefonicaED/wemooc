@@ -6,6 +6,7 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -18,6 +19,7 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.util.ResourceExternalPrefsPropsValues;
@@ -41,8 +43,8 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 	private JSONObject questionPositions;
 
 	public ResourceExternalActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
-			QuestionLocalService questionLocalService) {
-		super(activity, learningActivityResultLocalService, questionLocalService);
+			QuestionLocalService questionLocalService, AnswerLocalService answerLocalService) {
+		super(activity, learningActivityResultLocalService, questionLocalService, answerLocalService);
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -118,7 +120,7 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 				second = ParamUtil.getInteger(actionRequest, "second_" + question.getQuestionId(), 0);
 				
 				if(second > 0){
-					questionPositions.put(ResourceExternalConstants.JSON_SECOND + question.getQuestionId(), second);
+					questionPositions.put(String.valueOf(question.getQuestionId()), second);
 				}
 			}
 		}
@@ -181,7 +183,7 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 							
 							for(Question question: listQuestions){
 								try{
-									questionSecond = questionPositions.getInt(ResourceExternalConstants.JSON_SECOND + question.getQuestionId(), 0);
+									questionSecond = questionPositions.getInt(String.valueOf(question.getQuestionId()), 0);
 		
 									if(questionSecond > 0){
 										log.debug("esta pregunta tiene segundo: " + questionSecond);
@@ -238,6 +240,14 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 				}
 			}else if(correctMode == ResourceExternalConstants.CORRECT_VIDEO && isDefaultScore){
 				score = 100;
+			}else {
+				try {
+					Document documentTry = SAXReaderUtil.read(learningActivityTry.getTryResultData());
+					Element rootTry = documentTry.getRootElement();
+					score = rootTry.element("score") != null ? Long.parseLong(rootTry.element("score").getText()) :  learningActivityTry.getResult();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		log.debug("score: " + score);
@@ -275,5 +285,27 @@ public class ResourceExternalActivityType extends QuestionsLearningActivityType 
 		finalFeedback = ResourceExternalConstants.DEFAULT_FINAL_FEEDBACK;
 		questionFeedback = ResourceExternalConstants.DEFAULT_QUESTION_FEEDBACK;
 		questionPositions = null;
+	}
+	
+	@Override
+	public void copyActivity(LearningActivity oldActivity, ServiceContext serviceContext) throws Exception {
+		super.copyActivity(oldActivity, serviceContext);
+		
+		JSONObject extraContent = activity.getExtraContentJSON();
+		JSONObject resourceExternal = extraContent.getJSONObject(ResourceExternalConstants.JSON_RESOURCE_EXTERNAL);
+		
+		if(resourceExternal != null) {
+			
+			//Ahora actualizamos los ids de las preguntas
+			JSONObject oldQuestionPositions = resourceExternal.getJSONObject(ResourceExternalConstants.JSON_QUESTION_POSITIONS);
+			JSONObject newQuestionPositions = JSONFactoryUtil.createJSONObject();
+			
+			oldQuestionPositions.keys().forEachRemaining(key -> {
+				newQuestionPositions.put(String.valueOf(questionsRelation.get(Long.parseLong(key))), oldQuestionPositions.get(key));
+			});
+			resourceExternal.put(ResourceExternalConstants.JSON_QUESTION_POSITIONS, newQuestionPositions);
+		}
+		
+		activity.setExtraContent(extraContent.toJSONString());
 	}
 }

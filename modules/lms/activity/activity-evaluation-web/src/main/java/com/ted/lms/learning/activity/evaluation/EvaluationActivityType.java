@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
@@ -61,7 +62,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 					publishDate = new Date();
 					publishDate.setTime(evaluation.getLong(EvaluationConstants.JSON_PUBLISH_DATE));
 				}
-				activities = evaluation.getJSONObject(EvaluationConstants.JSON_ACTIVITIES);
+				activities = evaluation.getJSONObject(LearningActivityConstants.JSON_ACTIVITIES);
 			}else {
 				initializateActivity();
 			}
@@ -168,7 +169,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 
 		List<LearningActivity> listActivities = null;
 		activities = JSONFactoryUtil.createJSONObject();
-		evaluationContent.put(EvaluationConstants.JSON_ACTIVITIES, activities);
+		evaluationContent.put(LearningActivityConstants.JSON_ACTIVITIES, activities);
 
 		double weight = 0;
 		

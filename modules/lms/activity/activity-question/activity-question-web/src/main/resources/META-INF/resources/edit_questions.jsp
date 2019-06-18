@@ -198,8 +198,4 @@ function <portlet:namespace />deleteAnswer(iteratorQuestion,iteratorAnswer){
 	$('#<portlet:namespace />' + iteratorQuestion + "_div_answer_" + iteratorAnswer).remove();
 }
 
-
-
 </script>
-
-

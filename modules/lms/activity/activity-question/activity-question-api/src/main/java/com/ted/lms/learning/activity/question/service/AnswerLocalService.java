@@ -74,9 +74,17 @@ public interface AnswerLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Answer addAnswer(Answer answer);
 
-	public Answer addAnswer(long questionId, long actId, String answerText,
-		String feedbackCorrect, String feedbackIncorrect, boolean correct,
-		ServiceContext serviceContext);
+	public Answer addAnswer(long userId, long groupId, long questionId,
+		long actId, String answerText, String feedbackCorrect,
+		String feedbackIncorrect, boolean correct, ServiceContext serviceContext)
+		throws PortalException;
+
+	public Answer copyAnswer(long userId, long groupId, long questionId,
+		long actId, Answer oldAnswer, ServiceContext serviceContext)
+		throws Exception;
+
+	public void copyAnswerImages(Answer oldAnswer, Answer newAnswer)
+		throws Exception;
 
 	/**
 	* Creates a new answer with the primary key. Does not add the answer to the database.
@@ -294,6 +302,7 @@ public interface AnswerLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Answer updateAnswer(Answer answer);
 
-	public Answer updateAnswer(long answerId, String answerText,
-		String feedbackCorrect, String feedbackIncorrect, boolean correct);
+	public Answer updateAnswer(long userId, long answerId, String answerText,
+		String feedbackCorrect, String feedbackIncorrect, boolean correct)
+		throws PortalException;
 }

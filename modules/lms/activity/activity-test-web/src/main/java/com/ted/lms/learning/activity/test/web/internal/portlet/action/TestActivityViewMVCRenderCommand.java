@@ -153,10 +153,10 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 						return doRenderPreview(renderRequest, renderResponse, activity, canUserDoNewTry);
 					}else {
 						String navigateParam = ParamUtil.getString(renderRequest, "navigate");
-						String passwordParam = ParamUtil.getString(renderRequest, "password",StringPool.BLANK).trim();
+						String passwordParam = ParamUtil.getString(renderRequest, "password",null);
 						String password = testActivityType.getPassword();
 						
-						if(Validator.isNotNull(navigateParam) || Validator.isNull(password) || passwordParam.equals(password)){
+						if(Validator.isNotNull(navigateParam) || Validator.isNull(password) || (passwordParam != null && passwordParam.equals(password))){
 							
 							long activityTimestamp=0;
 							long timestamp=0;			
@@ -230,10 +230,11 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 							
 						//Muestro introducir la contraseña
 						}else {
-							if(!passwordParam.equals(password)) {
+							if(passwordParam != null &&  !passwordParam.trim().equals(password)) {
 								SessionErrors.add(renderRequest, "password-incorrect");
 							}
 							PortletURL passwordURL = renderResponse.createRenderURL();
+							passwordURL.setParameter("mvcRenderCommandName", "/activities/test/view_activity");
 							if(improve) {
 								passwordURL.setParameter("improve", "true");		
 							}

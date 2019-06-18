@@ -5,8 +5,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.exception.MinNumAnswerException;
 import com.ted.lms.learning.activity.question.exception.MinNumCorrectAnswerException;
@@ -69,6 +71,8 @@ public abstract class BaseQuestionType implements QuestionType{
 			long answerId = 0;
 			ServiceContext serviceContext = null;
 			
+			ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			
 			for(String iteratorAnswer:iteratorAnswersIds){
 				
 				log.debug("iteratorAnswer: " + iteratorAnswer);
@@ -91,12 +95,12 @@ public abstract class BaseQuestionType implements QuestionType{
 					if(answerId == 0){
 						//creo respuesta
 						serviceContext = ServiceContextFactory.getInstance(Answer.class.getName(), actionRequest);
-						answerLocalService.addAnswer(question.getQuestionId(), question.getActId(), answerText, feedbackCorrect, 
-								feedbackIncorrect, correct, serviceContext);
+						answerLocalService.addAnswer(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(), question.getQuestionId(), 
+								question.getActId(), answerText, feedbackCorrect, feedbackIncorrect, correct, serviceContext);
 					}else {
 						editingAnswersIds.add(answerId);//almaceno en array para posterior borrado de las que no esten
 						//actualizo respuesta
-						answerLocalService.updateAnswer(answerId, answerText, feedbackCorrect, feedbackIncorrect, correct);
+						answerLocalService.updateAnswer(themeDisplay.getUserId(), answerId, answerText, feedbackCorrect, feedbackIncorrect, correct);
 					}
 				}
 			}

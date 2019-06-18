@@ -6987,6 +6987,941 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 	private static final String _FINDER_COLUMN_MODULEIDNOTTYPEID_MODULEID_2 = "learningActivity.moduleId = ? AND ";
 	private static final String _FINDER_COLUMN_MODULEIDNOTTYPEID_TYPEID_2 = "learningActivity.typeId != ?";
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDMODULEID =
+		new FinderPath(LearningActivityModelImpl.ENTITY_CACHE_ENABLED,
+			LearningActivityModelImpl.FINDER_CACHE_ENABLED,
+			LearningActivityImpl.class, FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByGroupIdModuleId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				
+			Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDMODULEID =
+		new FinderPath(LearningActivityModelImpl.ENTITY_CACHE_ENABLED,
+			LearningActivityModelImpl.FINDER_CACHE_ENABLED,
+			LearningActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByGroupIdModuleId",
+			new String[] { Long.class.getName(), Long.class.getName() },
+			LearningActivityModelImpl.GROUPID_COLUMN_BITMASK |
+			LearningActivityModelImpl.MODULEID_COLUMN_BITMASK |
+			LearningActivityModelImpl.PRIORITY_COLUMN_BITMASK);
+	public static final FinderPath FINDER_PATH_COUNT_BY_GROUPIDMODULEID = new FinderPath(LearningActivityModelImpl.ENTITY_CACHE_ENABLED,
+			LearningActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByGroupIdModuleId",
+			new String[] { Long.class.getName(), Long.class.getName() });
+
+	/**
+	 * Returns all the learning activities where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @return the matching learning activities
+	 */
+	@Override
+	public List<LearningActivity> findByGroupIdModuleId(long groupId,
+		long moduleId) {
+		return findByGroupIdModuleId(groupId, moduleId, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the learning activities where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of learning activities
+	 * @param end the upper bound of the range of learning activities (not inclusive)
+	 * @return the range of matching learning activities
+	 */
+	@Override
+	public List<LearningActivity> findByGroupIdModuleId(long groupId,
+		long moduleId, int start, int end) {
+		return findByGroupIdModuleId(groupId, moduleId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the learning activities where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of learning activities
+	 * @param end the upper bound of the range of learning activities (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching learning activities
+	 */
+	@Override
+	public List<LearningActivity> findByGroupIdModuleId(long groupId,
+		long moduleId, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		return findByGroupIdModuleId(groupId, moduleId, start, end,
+			orderByComparator, true);
+	}
+
+	/**
+	 * Returns an ordered range of all the learning activities where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of learning activities
+	 * @param end the upper bound of the range of learning activities (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @return the ordered range of matching learning activities
+	 */
+	@Override
+	public List<LearningActivity> findByGroupIdModuleId(long groupId,
+		long moduleId, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator,
+		boolean retrieveFromCache) {
+		boolean pagination = true;
+		FinderPath finderPath = null;
+		Object[] finderArgs = null;
+
+		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
+				(orderByComparator == null)) {
+			pagination = false;
+			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDMODULEID;
+			finderArgs = new Object[] { groupId, moduleId };
+		}
+		else {
+			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_GROUPIDMODULEID;
+			finderArgs = new Object[] {
+					groupId, moduleId,
+					
+					start, end, orderByComparator
+				};
+		}
+
+		List<LearningActivity> list = null;
+
+		if (retrieveFromCache) {
+			list = (List<LearningActivity>)finderCache.getResult(finderPath,
+					finderArgs, this);
+
+			if ((list != null) && !list.isEmpty()) {
+				for (LearningActivity learningActivity : list) {
+					if ((groupId != learningActivity.getGroupId()) ||
+							(moduleId != learningActivity.getModuleId())) {
+						list = null;
+
+						break;
+					}
+				}
+			}
+		}
+
+		if (list == null) {
+			StringBundler query = null;
+
+			if (orderByComparator != null) {
+				query = new StringBundler(4 +
+						(orderByComparator.getOrderByFields().length * 2));
+			}
+			else {
+				query = new StringBundler(4);
+			}
+
+			query.append(_SQL_SELECT_LEARNINGACTIVITY_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2);
+
+			if (orderByComparator != null) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator);
+			}
+			else
+			 if (pagination) {
+				query.append(LearningActivityModelImpl.ORDER_BY_JPQL);
+			}
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(moduleId);
+
+				if (!pagination) {
+					list = (List<LearningActivity>)QueryUtil.list(q,
+							getDialect(), start, end, false);
+
+					Collections.sort(list);
+
+					list = Collections.unmodifiableList(list);
+				}
+				else {
+					list = (List<LearningActivity>)QueryUtil.list(q,
+							getDialect(), start, end);
+				}
+
+				cacheResult(list);
+
+				finderCache.putResult(finderPath, finderArgs, list);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return list;
+	}
+
+	/**
+	 * Returns the first learning activity in the ordered set where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching learning activity
+	 * @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	 */
+	@Override
+	public LearningActivity findByGroupIdModuleId_First(long groupId,
+		long moduleId, OrderByComparator<LearningActivity> orderByComparator)
+		throws NoSuchLearningActivityException {
+		LearningActivity learningActivity = fetchByGroupIdModuleId_First(groupId,
+				moduleId, orderByComparator);
+
+		if (learningActivity != null) {
+			return learningActivity;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", moduleId=");
+		msg.append(moduleId);
+
+		msg.append("}");
+
+		throw new NoSuchLearningActivityException(msg.toString());
+	}
+
+	/**
+	 * Returns the first learning activity in the ordered set where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	 */
+	@Override
+	public LearningActivity fetchByGroupIdModuleId_First(long groupId,
+		long moduleId, OrderByComparator<LearningActivity> orderByComparator) {
+		List<LearningActivity> list = findByGroupIdModuleId(groupId, moduleId,
+				0, 1, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the last learning activity in the ordered set where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching learning activity
+	 * @throws NoSuchLearningActivityException if a matching learning activity could not be found
+	 */
+	@Override
+	public LearningActivity findByGroupIdModuleId_Last(long groupId,
+		long moduleId, OrderByComparator<LearningActivity> orderByComparator)
+		throws NoSuchLearningActivityException {
+		LearningActivity learningActivity = fetchByGroupIdModuleId_Last(groupId,
+				moduleId, orderByComparator);
+
+		if (learningActivity != null) {
+			return learningActivity;
+		}
+
+		StringBundler msg = new StringBundler(6);
+
+		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
+
+		msg.append("groupId=");
+		msg.append(groupId);
+
+		msg.append(", moduleId=");
+		msg.append(moduleId);
+
+		msg.append("}");
+
+		throw new NoSuchLearningActivityException(msg.toString());
+	}
+
+	/**
+	 * Returns the last learning activity in the ordered set where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching learning activity, or <code>null</code> if a matching learning activity could not be found
+	 */
+	@Override
+	public LearningActivity fetchByGroupIdModuleId_Last(long groupId,
+		long moduleId, OrderByComparator<LearningActivity> orderByComparator) {
+		int count = countByGroupIdModuleId(groupId, moduleId);
+
+		if (count == 0) {
+			return null;
+		}
+
+		List<LearningActivity> list = findByGroupIdModuleId(groupId, moduleId,
+				count - 1, count, orderByComparator);
+
+		if (!list.isEmpty()) {
+			return list.get(0);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the learning activities before and after the current learning activity in the ordered set where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param actId the primary key of the current learning activity
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next learning activity
+	 * @throws NoSuchLearningActivityException if a learning activity with the primary key could not be found
+	 */
+	@Override
+	public LearningActivity[] findByGroupIdModuleId_PrevAndNext(long actId,
+		long groupId, long moduleId,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws NoSuchLearningActivityException {
+		LearningActivity learningActivity = findByPrimaryKey(actId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			LearningActivity[] array = new LearningActivityImpl[3];
+
+			array[0] = getByGroupIdModuleId_PrevAndNext(session,
+					learningActivity, groupId, moduleId, orderByComparator, true);
+
+			array[1] = learningActivity;
+
+			array[2] = getByGroupIdModuleId_PrevAndNext(session,
+					learningActivity, groupId, moduleId, orderByComparator,
+					false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected LearningActivity getByGroupIdModuleId_PrevAndNext(
+		Session session, LearningActivity learningActivity, long groupId,
+		long moduleId, OrderByComparator<LearningActivity> orderByComparator,
+		boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(5 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(4);
+		}
+
+		query.append(_SQL_SELECT_LEARNINGACTIVITY_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2);
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				query.append(_ORDER_BY_ENTITY_ALIAS);
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			query.append(LearningActivityModelImpl.ORDER_BY_JPQL);
+		}
+
+		String sql = query.toString();
+
+		Query q = session.createQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(moduleId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(learningActivity);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<LearningActivity> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Returns all the learning activities that the user has permission to view where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @return the matching learning activities that the user has permission to view
+	 */
+	@Override
+	public List<LearningActivity> filterFindByGroupIdModuleId(long groupId,
+		long moduleId) {
+		return filterFindByGroupIdModuleId(groupId, moduleId,
+			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	}
+
+	/**
+	 * Returns a range of all the learning activities that the user has permission to view where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of learning activities
+	 * @param end the upper bound of the range of learning activities (not inclusive)
+	 * @return the range of matching learning activities that the user has permission to view
+	 */
+	@Override
+	public List<LearningActivity> filterFindByGroupIdModuleId(long groupId,
+		long moduleId, int start, int end) {
+		return filterFindByGroupIdModuleId(groupId, moduleId, start, end, null);
+	}
+
+	/**
+	 * Returns an ordered range of all the learning activities that the user has permissions to view where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of learning activities
+	 * @param end the upper bound of the range of learning activities (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching learning activities that the user has permission to view
+	 */
+	@Override
+	public List<LearningActivity> filterFindByGroupIdModuleId(long groupId,
+		long moduleId, int start, int end,
+		OrderByComparator<LearningActivity> orderByComparator) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdModuleId(groupId, moduleId, start, end,
+				orderByComparator);
+		}
+
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(4 +
+					(orderByComparator.getOrderByFields().length * 2));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_LEARNINGACTIVITY_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_LEARNINGACTIVITY_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_LEARNINGACTIVITY_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			if (getDB().isSupportsInlineDistinct()) {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
+					orderByComparator, true);
+			}
+			else {
+				appendOrderByComparator(query, _ORDER_BY_ENTITY_TABLE,
+					orderByComparator, true);
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(LearningActivityModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(LearningActivityModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				LearningActivity.class.getName(),
+				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			if (getDB().isSupportsInlineDistinct()) {
+				q.addEntity(_FILTER_ENTITY_ALIAS, LearningActivityImpl.class);
+			}
+			else {
+				q.addEntity(_FILTER_ENTITY_TABLE, LearningActivityImpl.class);
+			}
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(moduleId);
+
+			return (List<LearningActivity>)QueryUtil.list(q, getDialect(),
+				start, end);
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	/**
+	 * Returns the learning activities before and after the current learning activity in the ordered set of learning activities that the user has permission to view where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param actId the primary key of the current learning activity
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next learning activity
+	 * @throws NoSuchLearningActivityException if a learning activity with the primary key could not be found
+	 */
+	@Override
+	public LearningActivity[] filterFindByGroupIdModuleId_PrevAndNext(
+		long actId, long groupId, long moduleId,
+		OrderByComparator<LearningActivity> orderByComparator)
+		throws NoSuchLearningActivityException {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return findByGroupIdModuleId_PrevAndNext(actId, groupId, moduleId,
+				orderByComparator);
+		}
+
+		LearningActivity learningActivity = findByPrimaryKey(actId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			LearningActivity[] array = new LearningActivityImpl[3];
+
+			array[0] = filterGetByGroupIdModuleId_PrevAndNext(session,
+					learningActivity, groupId, moduleId, orderByComparator, true);
+
+			array[1] = learningActivity;
+
+			array[2] = filterGetByGroupIdModuleId_PrevAndNext(session,
+					learningActivity, groupId, moduleId, orderByComparator,
+					false);
+
+			return array;
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	protected LearningActivity filterGetByGroupIdModuleId_PrevAndNext(
+		Session session, LearningActivity learningActivity, long groupId,
+		long moduleId, OrderByComparator<LearningActivity> orderByComparator,
+		boolean previous) {
+		StringBundler query = null;
+
+		if (orderByComparator != null) {
+			query = new StringBundler(6 +
+					(orderByComparator.getOrderByConditionFields().length * 3) +
+					(orderByComparator.getOrderByFields().length * 3));
+		}
+		else {
+			query = new StringBundler(5);
+		}
+
+		if (getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_LEARNINGACTIVITY_WHERE);
+		}
+		else {
+			query.append(_FILTER_SQL_SELECT_LEARNINGACTIVITY_NO_INLINE_DISTINCT_WHERE_1);
+		}
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2);
+
+		if (!getDB().isSupportsInlineDistinct()) {
+			query.append(_FILTER_SQL_SELECT_LEARNINGACTIVITY_NO_INLINE_DISTINCT_WHERE_2);
+		}
+
+		if (orderByComparator != null) {
+			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+
+			if (orderByConditionFields.length > 0) {
+				query.append(WHERE_AND);
+			}
+
+			for (int i = 0; i < orderByConditionFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByConditionFields[i]);
+
+				if ((i + 1) < orderByConditionFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN_HAS_NEXT);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(WHERE_GREATER_THAN);
+					}
+					else {
+						query.append(WHERE_LESSER_THAN);
+					}
+				}
+			}
+
+			query.append(ORDER_BY_CLAUSE);
+
+			String[] orderByFields = orderByComparator.getOrderByFields();
+
+			for (int i = 0; i < orderByFields.length; i++) {
+				if (getDB().isSupportsInlineDistinct()) {
+					query.append(_ORDER_BY_ENTITY_ALIAS);
+				}
+				else {
+					query.append(_ORDER_BY_ENTITY_TABLE);
+				}
+
+				query.append(orderByFields[i]);
+
+				if ((i + 1) < orderByFields.length) {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC_HAS_NEXT);
+					}
+					else {
+						query.append(ORDER_BY_DESC_HAS_NEXT);
+					}
+				}
+				else {
+					if (orderByComparator.isAscending() ^ previous) {
+						query.append(ORDER_BY_ASC);
+					}
+					else {
+						query.append(ORDER_BY_DESC);
+					}
+				}
+			}
+		}
+		else {
+			if (getDB().isSupportsInlineDistinct()) {
+				query.append(LearningActivityModelImpl.ORDER_BY_JPQL);
+			}
+			else {
+				query.append(LearningActivityModelImpl.ORDER_BY_SQL);
+			}
+		}
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				LearningActivity.class.getName(),
+				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+		q.setFirstResult(0);
+		q.setMaxResults(2);
+
+		if (getDB().isSupportsInlineDistinct()) {
+			q.addEntity(_FILTER_ENTITY_ALIAS, LearningActivityImpl.class);
+		}
+		else {
+			q.addEntity(_FILTER_ENTITY_TABLE, LearningActivityImpl.class);
+		}
+
+		QueryPos qPos = QueryPos.getInstance(q);
+
+		qPos.add(groupId);
+
+		qPos.add(moduleId);
+
+		if (orderByComparator != null) {
+			Object[] values = orderByComparator.getOrderByConditionValues(learningActivity);
+
+			for (Object value : values) {
+				qPos.add(value);
+			}
+		}
+
+		List<LearningActivity> list = q.list();
+
+		if (list.size() == 2) {
+			return list.get(1);
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
+	 * Removes all the learning activities where groupId = &#63; and moduleId = &#63; from the database.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 */
+	@Override
+	public void removeByGroupIdModuleId(long groupId, long moduleId) {
+		for (LearningActivity learningActivity : findByGroupIdModuleId(
+				groupId, moduleId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+			remove(learningActivity);
+		}
+	}
+
+	/**
+	 * Returns the number of learning activities where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @return the number of matching learning activities
+	 */
+	@Override
+	public int countByGroupIdModuleId(long groupId, long moduleId) {
+		FinderPath finderPath = FINDER_PATH_COUNT_BY_GROUPIDMODULEID;
+
+		Object[] finderArgs = new Object[] { groupId, moduleId };
+
+		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
+
+		if (count == null) {
+			StringBundler query = new StringBundler(3);
+
+			query.append(_SQL_COUNT_LEARNINGACTIVITY_WHERE);
+
+			query.append(_FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2);
+
+			query.append(_FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2);
+
+			String sql = query.toString();
+
+			Session session = null;
+
+			try {
+				session = openSession();
+
+				Query q = session.createQuery(sql);
+
+				QueryPos qPos = QueryPos.getInstance(q);
+
+				qPos.add(groupId);
+
+				qPos.add(moduleId);
+
+				count = (Long)q.uniqueResult();
+
+				finderCache.putResult(finderPath, finderArgs, count);
+			}
+			catch (Exception e) {
+				finderCache.removeResult(finderPath, finderArgs);
+
+				throw processException(e);
+			}
+			finally {
+				closeSession(session);
+			}
+		}
+
+		return count.intValue();
+	}
+
+	/**
+	 * Returns the number of learning activities that the user has permission to view where groupId = &#63; and moduleId = &#63;.
+	 *
+	 * @param groupId the group ID
+	 * @param moduleId the module ID
+	 * @return the number of matching learning activities that the user has permission to view
+	 */
+	@Override
+	public int filterCountByGroupIdModuleId(long groupId, long moduleId) {
+		if (!InlineSQLHelperUtil.isEnabled(groupId)) {
+			return countByGroupIdModuleId(groupId, moduleId);
+		}
+
+		StringBundler query = new StringBundler(3);
+
+		query.append(_FILTER_SQL_COUNT_LEARNINGACTIVITY_WHERE);
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2);
+
+		query.append(_FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2);
+
+		String sql = InlineSQLHelperUtil.replacePermissionCheck(query.toString(),
+				LearningActivity.class.getName(),
+				_FILTER_ENTITY_TABLE_FILTER_PK_COLUMN, groupId);
+
+		Session session = null;
+
+		try {
+			session = openSession();
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+
+			q.addScalar(COUNT_COLUMN_NAME,
+				com.liferay.portal.kernel.dao.orm.Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+
+			qPos.add(moduleId);
+
+			Long count = (Long)q.uniqueResult();
+
+			return count.intValue();
+		}
+		catch (Exception e) {
+			throw processException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+	}
+
+	private static final String _FINDER_COLUMN_GROUPIDMODULEID_GROUPID_2 = "learningActivity.groupId = ? AND ";
+	private static final String _FINDER_COLUMN_GROUPIDMODULEID_MODULEID_2 = "learningActivity.moduleId = ?";
 
 	public LearningActivityPersistenceImpl() {
 		setModelClass(LearningActivity.class);
@@ -7377,6 +8312,15 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TYPEID,
 				args);
 
+			args = new Object[] {
+					learningActivityModelImpl.getGroupId(),
+					learningActivityModelImpl.getModuleId()
+				};
+
+			finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPIDMODULEID, args);
+			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDMODULEID,
+				args);
+
 			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
 				FINDER_ARGS_EMPTY);
@@ -7532,6 +8476,29 @@ public class LearningActivityPersistenceImpl extends BasePersistenceImpl<Learnin
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_TYPEID, args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_TYPEID,
+					args);
+			}
+
+			if ((learningActivityModelImpl.getColumnBitmask() &
+					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDMODULEID.getColumnBitmask()) != 0) {
+				Object[] args = new Object[] {
+						learningActivityModelImpl.getOriginalGroupId(),
+						learningActivityModelImpl.getOriginalModuleId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPIDMODULEID,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDMODULEID,
+					args);
+
+				args = new Object[] {
+						learningActivityModelImpl.getGroupId(),
+						learningActivityModelImpl.getModuleId()
+					};
+
+				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPIDMODULEID,
+					args);
+				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPIDMODULEID,
 					args);
 			}
 		}

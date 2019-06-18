@@ -2,11 +2,11 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 
@@ -18,11 +18,9 @@ import javax.portlet.ActionRequest;
 public abstract class BaseCourseEval implements CourseEval {
 	
 	protected Course course;
-	protected ServiceContext serviceContext;
 
-	public BaseCourseEval(Course course, ServiceContext serviceContext) {
+	public BaseCourseEval(Course course) {
 		this.course = course;
-		this.serviceContext = serviceContext;
 	}
 	
 	public void setCourse(Course course) {
@@ -66,11 +64,23 @@ public abstract class BaseCourseEval implements CourseEval {
 	public void setExtraContent(ActionRequest actionRequest) throws PortalException {	
 	}
 	
+	@Override
 	public void onOpenCourse(){
 		
 	}
 	
+	@Override
 	public void onCloseCourse(){
+		
+	}
+	
+	@Override
+	public void onDeleteCourse() {
+		
+	}
+	
+	@Override
+	public void copyCourse(Course oldCourse, Map<Long,Long> modulesRelation, Map<Long, Long> activitiesRelation) {
 		
 	}
 }

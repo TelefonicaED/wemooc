@@ -56,8 +56,8 @@ public class LearningActivityLocalServiceWrapper
 	}
 
 	@Override
-	public com.ted.lms.model.LearningActivity addLearningActivity(
-		long moduleId, long type,
+	public com.ted.lms.model.LearningActivity addLearningActivity(long userId,
+		long groupId, long moduleId, long type,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
@@ -70,18 +70,19 @@ public class LearningActivityLocalServiceWrapper
 		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.addLearningActivity(moduleId,
-			type, titleMap, descriptionMap, useStartExecutionDateCourse,
-			startDateMonth, startDateDay, startDateYear, startDateHour,
-			startDateMinute, useEndExecutionDateCourse, endDateMonth,
-			endDateDay, endDateYear, endDateHour, endDateMinute, required,
-			tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-			commentsActivated, selectedFileNames, serviceContext);
+		return _learningActivityLocalService.addLearningActivity(userId,
+			groupId, moduleId, type, titleMap, descriptionMap,
+			useStartExecutionDateCourse, startDateMonth, startDateDay,
+			startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, required, tries, passPuntuation,
+			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
+			selectedFileNames, serviceContext);
 	}
 
 	@Override
-	public com.ted.lms.model.LearningActivity addLearningActivity(
-		long moduleId, long type,
+	public com.ted.lms.model.LearningActivity addLearningActivity(long userId,
+		long groupId, long moduleId, long type,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Date startDate, java.util.Date endDate, boolean required,
@@ -91,15 +92,17 @@ public class LearningActivityLocalServiceWrapper
 		boolean commentsActivated, String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.addLearningActivity(moduleId,
-			type, titleMap, descriptionMap, startDate, endDate, required,
-			tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-			commentsActivated, selectedFileNames, serviceContext);
+		return _learningActivityLocalService.addLearningActivity(userId,
+			groupId, moduleId, type, titleMap, descriptionMap, startDate,
+			endDate, required, tries, passPuntuation, feedbackCorrectMap,
+			feedbackNoCorrectMap, commentsActivated, selectedFileNames,
+			serviceContext);
 	}
 
 	@Override
-	public com.ted.lms.model.LearningActivity addLearningActivity(
-		long moduleId, java.util.Map<java.util.Locale, String> titleMap,
+	public com.ted.lms.model.LearningActivity addLearningActivity(long userId,
+		long groupId, long moduleId,
+		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
 		java.util.Date startDate, java.util.Date endDate, int tries,
 		double passPuntuation, long priority, String extraContent,
@@ -109,11 +112,21 @@ public class LearningActivityLocalServiceWrapper
 		String[] selectedFileNames,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.addLearningActivity(moduleId,
-			titleMap, descriptionMap, typeId, startDate, endDate, tries,
-			passPuntuation, priority, extraContent, feedbackCorrectMap,
-			feedbackNoCorrectMap, required, commentsActivated,
-			selectedFileNames, serviceContext);
+		return _learningActivityLocalService.addLearningActivity(userId,
+			groupId, moduleId, titleMap, descriptionMap, typeId, startDate,
+			endDate, tries, passPuntuation, priority, extraContent,
+			feedbackCorrectMap, feedbackNoCorrectMap, required,
+			commentsActivated, selectedFileNames, serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity copyActivity(long userId,
+		com.ted.lms.model.LearningActivity oldActivity,
+		com.ted.lms.model.Module newModule,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return _learningActivityLocalService.copyActivity(userId, oldActivity,
+			newModule, serviceContext);
 	}
 
 	/**
@@ -371,6 +384,12 @@ public class LearningActivityLocalServiceWrapper
 		return _learningActivityLocalService.getLearningActivitiesOfModuleCount(moduleId);
 	}
 
+	@Override
+	public java.util.List<com.ted.lms.model.LearningActivity> getLearningActivitiesWithoutModule(
+		long groupId) {
+		return _learningActivityLocalService.getLearningActivitiesWithoutModule(groupId);
+	}
+
 	/**
 	* Returns the learning activity with the primary key.
 	*
@@ -445,11 +464,10 @@ public class LearningActivityLocalServiceWrapper
 
 	@Override
 	public com.ted.lms.model.LearningActivity moveDownLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long userId, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.moveDownLearningActivity(actId,
-			serviceContext);
+		return _learningActivityLocalService.moveDownLearningActivity(userId,
+			actId);
 	}
 
 	@Override
@@ -470,11 +488,10 @@ public class LearningActivityLocalServiceWrapper
 
 	@Override
 	public com.ted.lms.model.LearningActivity moveUpLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long userId, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.moveUpLearningActivity(actId,
-			serviceContext);
+		return _learningActivityLocalService.moveUpLearningActivity(userId,
+			actId);
 	}
 
 	@Override
@@ -500,15 +517,14 @@ public class LearningActivityLocalServiceWrapper
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
-		com.ted.lms.model.LearningActivity activity,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _learningActivityLocalService.updateLearningActivity(activity,
-			serviceContext);
+		long userId, com.ted.lms.model.LearningActivity activity) {
+		return _learningActivityLocalService.updateLearningActivity(userId,
+			activity);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
-		long actId, long moduleId,
+		long userId, long actId, long moduleId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap, long typeId,
 		java.util.Date startDate, java.util.Date endDate, int tries,
@@ -519,16 +535,18 @@ public class LearningActivityLocalServiceWrapper
 		String[] selectedFileNames, long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.updateLearningActivity(actId,
-			moduleId, titleMap, descriptionMap, typeId, startDate, endDate,
-			tries, passPuntuation, priority, extraContent, feedbackCorrectMap,
-			feedbackNoCorrectMap, required, commentsActivated,
-			selectedFileNames, removeFileEntryIds, serviceContext);
+		return _learningActivityLocalService.updateLearningActivity(userId,
+			actId, moduleId, titleMap, descriptionMap, typeId, startDate,
+			endDate, tries, passPuntuation, priority, extraContent,
+			feedbackCorrectMap, feedbackNoCorrectMap, required,
+			commentsActivated, selectedFileNames, removeFileEntryIds,
+			serviceContext);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
-		long actId, java.util.Map<java.util.Locale, String> titleMap,
+		long userId, long actId,
+		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
 		int startDateDay, int startDateYear, int startDateHour,
@@ -541,8 +559,8 @@ public class LearningActivityLocalServiceWrapper
 		long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.updateLearningActivity(actId,
-			titleMap, descriptionMap, useStartExecutionDateCourse,
+		return _learningActivityLocalService.updateLearningActivity(userId,
+			actId, titleMap, descriptionMap, useStartExecutionDateCourse,
 			startDateMonth, startDateDay, startDateYear, startDateHour,
 			startDateMinute, useEndExecutionDateCourse, endDateMonth,
 			endDateDay, endDateYear, endDateHour, endDateMinute, required,
@@ -553,7 +571,8 @@ public class LearningActivityLocalServiceWrapper
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
-		long actId, java.util.Map<java.util.Locale, String> titleMap,
+		long userId, long actId,
+		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Date startDate, java.util.Date endDate, int tries,
 		double passPuntuation,
@@ -563,8 +582,8 @@ public class LearningActivityLocalServiceWrapper
 		String[] selectedFileNames, long[] removeFileEntryIds,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityLocalService.updateLearningActivity(actId,
-			titleMap, descriptionMap, startDate, endDate, tries,
+		return _learningActivityLocalService.updateLearningActivity(userId,
+			actId, titleMap, descriptionMap, startDate, endDate, tries,
 			passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, required,
 			commentsActivated, selectedFileNames, removeFileEntryIds,
 			serviceContext);

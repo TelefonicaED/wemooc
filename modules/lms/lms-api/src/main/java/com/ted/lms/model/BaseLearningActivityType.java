@@ -3,10 +3,16 @@ package com.ted.lms.model;
 import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.xml.Element;
+import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.LearningActivityResultLocalService;
+
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 
@@ -121,5 +127,41 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	@Override
 	public LearningActivity getLearningActivity() {
 		return activity;
+	}
+	
+	@Override
+	public void copyActivity(LearningActivity oldActivity, ServiceContext serviceContext) throws Exception {
+		activity.setExtraContent(oldActivity.getExtraContent());
+	}
+	
+	@Override
+	public void updateActivityCopied(Map<Long, Long> activitiesRelation) {
+		JSONObject extraContent = activity.getExtraContentJSON();
+		System.out.println("BaseLearning: " + extraContent);
+		updateActivityIds(extraContent, activitiesRelation);
+		
+		activity.setExtraContent(extraContent.toJSONString());
+		System.out.println("extraContent final: " + extraContent.toJSONString());
+	}
+	
+	protected void updateActivityIds(JSONObject jsonObject, Map<Long, Long> activitiesRelation) {
+		jsonObject.keys().forEachRemaining(
+				key -> 
+				{
+					if(key.equals(LearningActivityConstants.JSON_ACT_ID)) {
+						jsonObject.put(LearningActivityConstants.JSON_ACT_ID, activitiesRelation.get(jsonObject.getLong(LearningActivityConstants.JSON_ACT_ID)));
+					}else if(key.equals(LearningActivityConstants.JSON_ACTIVITIES)) {
+						JSONObject newActivities = JSONFactoryUtil.createJSONObject();
+						jsonObject.getJSONObject(key).keys().forEachRemaining(
+								keyActivityId ->
+								{
+									newActivities.put(String.valueOf(activitiesRelation.get(Long.parseLong(keyActivityId))), jsonObject.getJSONObject(key).get(keyActivityId));
+									
+								});
+						jsonObject.put(LearningActivityConstants.JSON_ACTIVITIES, newActivities);
+					}else if(jsonObject.getJSONObject(key) != null) {
+						updateActivityIds(jsonObject.getJSONObject(key), activitiesRelation);
+					}
+				});
 	}
 }

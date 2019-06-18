@@ -324,6 +324,10 @@ public class CourseDisplayContext {
 				|| (navigation.equals(LMSPortletConstants.EDIT_COURSE_ASSET_LINKS) && courseAdminConfiguration != null && (courseAdminConfiguration.courseWelcomeMessage() || courseAdminConfiguration.courseGoodbyeMessage()));
 	}
 	
+	public TrashHelper getTrashHelper() {
+		return trashHelper;
+	}
+	
 	//private String[] _addMenuFavItems;
 	private Course course;
 	private String displayStyle;

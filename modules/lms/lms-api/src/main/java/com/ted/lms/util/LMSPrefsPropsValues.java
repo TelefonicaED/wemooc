@@ -68,14 +68,6 @@ public class LMSPrefsPropsValues {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_TYPE + StringPool.PERIOD + type, GetterUtil.getBoolean(PropsUtil.get(LMSPropsKeys.LEARNING_ACTIVITY_TYPE + "." + type)));
 	}
 	
-	public static String[] getPrerequisitesOfModule(long companyId){
-		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.PREREQUISITES_MODULE, StringPool.COMMA, LMSPropsValues.PREREQUISITES_MODULE);
-	}
-	
-	public static String[] getPrerequisitesOfLearningActivity(long companyId){
-		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.PREREQUISITES_LEARNING_ACTIVITY, StringPool.COMMA, LMSPropsValues.PREREQUISITES_LEARNING_ACTIVITY);
-	}
-	
 	public static boolean getLearningActivityChangeVisibility(long companyId) {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_CHANGE_VISIBILITY, LMSPropsValues.LEARNING_ACTIVITY_CHANGE_VISIBILITY);
 	}
@@ -96,4 +88,15 @@ public class LMSPrefsPropsValues {
 		return PrefsPropsUtil.getLong(companyId, LMSPropsKeys.LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE, LMSPropsValues.LEARNING_ACTIVITY_DOCUMENTS_MAX_SIZE);
 	}
 	
+	public static String[] getCourseTypeIconExtensions(long companyId) {
+		String[] defaultValues = LMSPropsValues.COURSE_TYPE_ICON_EXTENSIONS;
+		if(Validator.isNull(defaultValues) || defaultValues.length == 0) {
+			defaultValues = StringUtil.split(".gif,.jpeg,.jpg,.png", StringPool.COMMA);
+		}
+		return PrefsPropsUtil.getStringArray(companyId, LMSPropsKeys.COURSE_TYPE_ICON_EXTENSIONS, StringPool.COMMA, defaultValues);
+	}
+	
+	public static long getCourseTypeIconMaxSize(long companyId) {
+		return PrefsPropsUtil.getLong(companyId, LMSPropsKeys.COURSE_TYPE_ICON_MAX_SIZE, LMSPropsValues.COURSE_TYPE_ICON_MAX_SIZE);
+	}
 }

@@ -421,6 +421,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getCourseId();
 	}
 
+	@Override
+	public long getCourseTypeId() {
+		return _course.getCourseTypeId();
+	}
+
 	/**
 	* Returns the create date of this course.
 	*
@@ -1179,6 +1184,39 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getTitleMap();
 	}
 
+	/**
+	* Returns the trash entry created when this course was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this course.
+	*
+	* @return the trash entry created when this course was moved to the Recycle Bin
+	*/
+	@Override
+	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _course.getTrashEntry();
+	}
+
+	/**
+	* Returns the class primary key of the trash entry for this course.
+	*
+	* @return the class primary key of the trash entry for this course
+	*/
+	@Override
+	public long getTrashEntryClassPK() {
+		return _course.getTrashEntryClassPK();
+	}
+
+	/**
+	* Returns the trash handler for this course.
+	*
+	* @return the trash handler for this course
+	* @deprecated As of Judson (7.1.x), with no direct replacement
+	*/
+	@Deprecated
+	@Override
+	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler() {
+		return _course.getTrashHandler();
+	}
+
 	@Override
 	public int getTypeSite() {
 		return _course.getTypeSite();
@@ -1490,6 +1528,36 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	@Override
 	public boolean isIncomplete() {
 		return _course.isIncomplete();
+	}
+
+	/**
+	* Returns <code>true</code> if this course is in the Recycle Bin.
+	*
+	* @return <code>true</code> if this course is in the Recycle Bin; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInTrash() {
+		return _course.isInTrash();
+	}
+
+	/**
+	* Returns <code>true</code> if the parent of this course is in the Recycle Bin.
+	*
+	* @return <code>true</code> if the parent of this course is in the Recycle Bin; <code>false</code> otherwise
+	*/
+	@Override
+	public boolean isInTrashContainer() {
+		return _course.isInTrashContainer();
+	}
+
+	@Override
+	public boolean isInTrashExplicitly() {
+		return _course.isInTrashExplicitly();
+	}
+
+	@Override
+	public boolean isInTrashImplicitly() {
+		return _course.isInTrashImplicitly();
 	}
 
 	@Override

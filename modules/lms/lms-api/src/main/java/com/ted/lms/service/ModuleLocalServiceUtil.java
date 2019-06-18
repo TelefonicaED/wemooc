@@ -42,7 +42,7 @@ public class ModuleLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.ModuleLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static com.ted.lms.model.Module addModule(long userId,
+	public static com.ted.lms.model.Module addModule(long userId, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
@@ -55,7 +55,7 @@ public class ModuleLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addModule(userId, titleMap, descriptionMap,
+				   .addModule(userId, groupId, titleMap, descriptionMap,
 			useStartExecutionDateCourse, startDateMonth, startDateDay,
 			startDateYear, startDateHour, startDateMinute,
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
@@ -63,7 +63,7 @@ public class ModuleLocalServiceUtil {
 			smallImageImageSelector, moduleEvalId, serviceContext);
 	}
 
-	public static com.ted.lms.model.Module addModule(long userId,
+	public static com.ted.lms.model.Module addModule(long userId, long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		java.util.Date startDate, java.util.Date endDate, long allowedTime,
@@ -72,9 +72,9 @@ public class ModuleLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addModule(userId, titleMap, descriptionMap, startDate,
-			endDate, allowedTime, smallImageImageSelector, moduleEvalId,
-			moduleExtraData, serviceContext);
+				   .addModule(userId, groupId, titleMap, descriptionMap,
+			startDate, endDate, allowedTime, smallImageImageSelector,
+			moduleEvalId, moduleExtraData, serviceContext);
 	}
 
 	/**
@@ -100,6 +100,16 @@ public class ModuleLocalServiceUtil {
 		return getService()
 				   .addOriginalImageFileEntry(userId, groupId, entryId,
 			imageSelector);
+	}
+
+	public static com.ted.lms.model.Module copyModule(long userId,
+		com.ted.lms.model.Module oldModule, long groupId,
+		java.util.Map<Long, Long> activitiesRelation,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return getService()
+				   .copyModule(userId, oldModule, groupId, activitiesRelation,
+			serviceContext);
 	}
 
 	/**
@@ -378,10 +388,10 @@ public class ModuleLocalServiceUtil {
 		return getService().getPreviousModule(module);
 	}
 
-	public static com.ted.lms.model.Module moveDownModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static com.ted.lms.model.Module moveDownModule(long userId,
+		long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveDownModule(moduleId, serviceContext);
+		return getService().moveDownModule(userId, moduleId);
 	}
 
 	public static com.ted.lms.model.Module moveModuleToTrash(long userId,
@@ -396,10 +406,10 @@ public class ModuleLocalServiceUtil {
 		return getService().moveModuleToTrash(userId, module);
 	}
 
-	public static com.ted.lms.model.Module moveUpModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public static com.ted.lms.model.Module moveUpModule(long userId,
+		long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveUpModule(moduleId, serviceContext);
+		return getService().moveUpModule(userId, moduleId);
 	}
 
 	public static void updateAsset(long userId,

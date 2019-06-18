@@ -20,11 +20,16 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
-import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.OrderByComparatorFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.liferay.upload.AttachmentContentUpdater;
+import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
+import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
@@ -32,11 +37,7 @@ import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegist
 import com.ted.lms.learning.activity.question.service.base.QuestionLocalServiceBaseImpl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import javax.portlet.ActionRequest;
 
 /**
@@ -76,21 +77,22 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 	}
 	
 	@Override
-	public Question addQuestion(long actId, String questionText, long questionType, boolean penalize, ServiceContext serviceContext) {
+	public Question addQuestion(long userId, long groupId, long actId, String questionText, long questionType, boolean penalize, 
+			ServiceContext serviceContext) throws PortalException {
+		
 		Question question = questionPersistence.create(counterLocalService.increment(Question.class.getName()));
 		
 		//Auditoria
-		question.setGroupId(serviceContext.getScopeGroupId());
+		question.setUuid(serviceContext.getUuid());
+		question.setGroupId(groupId);
 		question.setCompanyId(serviceContext.getCompanyId());
-		question.setUserId(serviceContext.getUserId());
-		User user = userLocalService.fetchUser(serviceContext.getUserId());
-		if(user != null) {
-			question.setUserName(user.getFullName());
-		}
-		question.setCreateDate(new Date());
-		question.setModifiedDate(question.getCreateDate());
-		
+		question.setUserId(userId);
+		User user = userLocalService.getUser(userId);
+		question.setUserName(user.getFullName());
+		question.setCompanyId(user.getCompanyId());
+
 		question.setText(questionText);
+		
 		question.setPenalize(penalize);
 		question.setQuestionTypeId(questionType);
 		question.setActId(actId);
@@ -101,21 +103,45 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 	}
 	
 	@Override
-	public Question updateQuestion(long questionId, String questionText, boolean penalize) {
+	public Question updateQuestion(long userId, long questionId, String questionText, boolean penalize) throws PortalException {
 		Question question = questionPersistence.fetchByPrimaryKey(questionId);
+
+		User user = userLocalService.getUser(userId);
 		
-		question.setModifiedDate(new Date());
 		question.setText(questionText);
 		question.setPenalize(penalize);
-		question.setModifiedDate(new Date());
+		question.setUserId(userId);
+		question.setUserName(user.getFullName());
 		
 		return questionPersistence.update(question);
 	}
 	
+	public Question copyQuestion(long userId, long groupId, long actId, Question oldQuestion, ServiceContext serviceContext) throws Exception {
+		
+		serviceContext.setUuid(oldQuestion.getUuid());
+		
+		Question newQuestion = addQuestion(userId, groupId, actId, oldQuestion.getText(), oldQuestion.getQuestionTypeId(), 
+				oldQuestion.isPenalize(), serviceContext);
+		List<Answer> oldAnswers = answerLocalService.getAnswersByQuestionId(oldQuestion.getQuestionId());
+		for(Answer oldAnswer: oldAnswers) {
+			serviceContext.setUuid(oldAnswer.getUuid());
+			answerLocalService.copyAnswer(userId, groupId, newQuestion.getQuestionId(), actId, oldAnswer, serviceContext);
+		}
+		copyQuestionImages(oldQuestion, newQuestion);
+		
+		newQuestion = questionPersistence.update(newQuestion);
+		
+		return newQuestion;
+	}
+	
+	public void copyQuestionImages(Question oldQuestion, Question newQuestion) throws Exception {
+		newQuestion.setText(dlReferencesCopyContentProcessor.replaceExportDLReferences(newQuestion.getText(), oldQuestion.getGroupId(), newQuestion.getGroupId(), newQuestion.getUserId()));
+	}
+
+	
 	public void saveQuestions(ActionRequest actionRequest, long actId) throws PortalException {
 		
-		
-		ParamUtil.print(actionRequest);
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
 		//Pedimos las preguntas que ya existían por si alguna ha sido borrada eliminarla
 		List<Question> existingQuestions = questionPersistence.findByActId(actId);
@@ -158,9 +184,9 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 				log.debug("***questionText: " + questionText);
 				
 				if(questionId == 0){
-					question = addQuestion(actId, questionText, questionTypeId, penalize, serviceContext);
+					question = addQuestion(themeDisplay.getUserId(), themeDisplay.getScopeGroupId(), actId, questionText, questionTypeId, penalize, serviceContext);
 				}else{
-					question = updateQuestion(questionId, questionText, penalize);
+					question = updateQuestion(serviceContext.getUserId(), questionId, questionText, penalize);
 				}
 				
 				questionType = questionTypeFactory.getQuestionType(question);
@@ -189,5 +215,13 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		
 		log.debug("questionType: " + questionType);
 	}
+	
+	@ServiceReference(type = AttachmentContentUpdater.class)
+	private AttachmentContentUpdater attachmentContentUpdater;
+	
+	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
+	
+	
 	
 }

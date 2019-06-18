@@ -51,15 +51,13 @@ import com.ted.lms.model.Module;
 import com.ted.lms.model.ModuleEval;
 import com.ted.lms.model.ModuleEvalFactory;
 import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
+import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.service.ModuleService;
-import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.lms.web.internal.util.ModuleImageSelectorHelper;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
-import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -214,11 +212,10 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		
 		int moved = ParamUtil.getInteger(actionRequest, Constants.ACTION);
 		
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(Module.class.getName(), actionRequest);
 		if(moved == -1) {
-			moduleService.moveUpModule(moduleId, serviceContext);
+			moduleService.moveUpModule(moduleId);
 		}else if(moved == 1) {
-			moduleService.moveDownModule(moduleId, serviceContext);
+			moduleService.moveDownModule(moduleId);
 		}
 	}
 	
@@ -354,7 +351,7 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		if (moduleId <= 0) {
 
 			// Añadir módulo
-			module = moduleService.addModule(titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, startDateDay, startDateYear,
+			module = moduleService.addModule(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, startDateDay, startDateYear,
 					startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
 					allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId, serviceContext);
 		} else {
@@ -373,7 +370,7 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		moduleService.updateModule(module);
 		
 		//Guardamos los prerequisitos
-		String[] classNamePrerequisites = LMSPrefsPropsValues.getPrerequisitesOfModule(themeDisplay.getCompanyId());
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteModules(themeDisplay.getCompanyId());
 		PrerequisiteFactory prerequisiteFactory = null;
 		Prerequisite prerequisite = null;
 		long moduleClassNameId = PortalUtil.getClassNameId(Module.class);
@@ -416,19 +413,19 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 	}
 	
 	@Reference(unbind = "-")
-	protected void setPrerequisiteRelationLocalService(PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
-		this.prerequisiteRelationLocalService = prerequisiteRelationLocalService;
-	}
-	
-	@Reference(unbind = "-")
 	protected void setTrashEntryService(TrashEntryService trashEntryService) {
 		this.trashEntryService = trashEntryService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setCourseLocalService(CourseLocalService courseLocalService) {
+		this.courseLocalService = courseLocalService;
+	}
+	
 	private ModuleLocalService moduleLocalService;
 	private ModuleService moduleService;
-	private PrerequisiteRelationLocalService prerequisiteRelationLocalService;
 	private TrashEntryService trashEntryService;
+	private CourseLocalService courseLocalService;
 
 	
 	private class UpdateModuleCallable implements Callable<Module> {

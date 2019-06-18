@@ -46,6 +46,7 @@ import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.StudentLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
 import java.text.SimpleDateFormat;
@@ -237,10 +238,10 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 			obc = new UserFirstNameComparator(true);
 		}
 		
-		List<User> users = courseLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, 
+		List<User> users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, 
 				params, searchContainer.getStart(), searchContainer.getEnd(), obc);
 		
-		int total = courseLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, params);
+		int total = studentLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, params);
 		
 		searchContainer.setResults(users);
 		searchContainer.setTotal(total);
@@ -298,9 +299,15 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 		this.courseLocalService = courseLocalService;
 	}
 	
+	@Reference(unbind = "-")
+	protected void setStudentLocalService(StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
+	}
+	
 	private LearningActivityLocalService learningActivityLocalService;
 	private LearningActivityResultLocalService learningActivityResultLocalService;
 	private LearningActivityTryLocalService learningActivityTryLocalService;
 	private DLAppLocalService dlAppLocalService; 
 	private CourseLocalService courseLocalService;
+	private StudentLocalService studentLocalService;
 }

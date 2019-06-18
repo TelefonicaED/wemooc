@@ -455,7 +455,7 @@ public class CourseImpl extends CourseBaseImpl {
 	public boolean hasPermissionAccessCourseFinished(long userId) throws PortalException {
 		log.debug(":::hasPermissionAccessCourseFinished:::companyId: " + this.getCompanyId() + " - courseId: "+ this.getCourseId() + " - userId: " + userId);
 		
-		if(!CourseLocalServiceUtil.getAllowAccessToCompletedCourses()){
+		if(!CourseLocalServiceUtil.getAllowAccessToCompletedCourses(getCompanyId())){
 			return false;
 		}
 		
@@ -509,6 +509,12 @@ public class CourseImpl extends CourseBaseImpl {
 		log.debug(":::hasPermissionAccessCourseFinished:::courseResult passedDate: " + courseResult.getPassedDate());
 		
 		return !CourseResultLocalServiceUtil.hasUserTries(this.getCourseId(), userId);
+	}
+
+	
+	public long getCourseTypeId() {
+		AssetEntry assetEntry = getAssetEntry();
+		return assetEntry.getClassTypeId();
 	}
 
 }

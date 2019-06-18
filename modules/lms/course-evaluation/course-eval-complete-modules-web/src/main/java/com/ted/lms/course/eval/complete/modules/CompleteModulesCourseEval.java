@@ -26,11 +26,11 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 
 	private static final Log log = LogFactoryUtil.getLog(CompleteModulesCourseEval.class);
 	
-	public CompleteModulesCourseEval(Course course, ServiceContext serviceContext, CourseResultLocalService courseResultLocalService,
+	public CompleteModulesCourseEval(Course course, CourseResultLocalService courseResultLocalService,
 			LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityTryLocalService learningActivityTryLocalService,
 			LearningActivityLocalService learningActivityLocalService, ModuleResultLocalService moduleResultLocalService,
 			ModuleLocalService moduleLocalService) {
-		super(course, serviceContext);
+		super(course);
 		this.courseResultLocalService = courseResultLocalService;
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
 		this.learningActivityTryLocalService = learningActivityTryLocalService;

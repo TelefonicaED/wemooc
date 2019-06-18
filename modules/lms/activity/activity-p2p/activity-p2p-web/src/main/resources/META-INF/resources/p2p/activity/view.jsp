@@ -1,3 +1,6 @@
+<%@page import="com.ted.lms.model.Course"%>
+<%@page import="com.ted.lms.service.CourseLocalServiceUtil"%>
+<%@page import="com.liferay.portal.kernel.service.GroupLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.p2p.constants.P2PConstants"%>
 <%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="java.util.Date"%>
@@ -40,6 +43,8 @@ if(isTablet){
 
 P2PActivityTypeFactory p2pActivityTypeFactory = (P2PActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(P2PConstants.TYPE);
 P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(activity);
+
+Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 
 %>
 

@@ -33,7 +33,7 @@ public class ModuleServiceWrapper implements ModuleService,
 	}
 
 	@Override
-	public com.ted.lms.model.Module addModule(
+	public com.ted.lms.model.Module addModule(long groupId,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean startDate, int startDateMonth, int startDateDay,
@@ -45,11 +45,12 @@ public class ModuleServiceWrapper implements ModuleService,
 		long moduleEvalId,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleService.addModule(titleMap, descriptionMap, startDate,
-			startDateMonth, startDateDay, startDateYear, startDateHour,
-			startDateMinute, endDate, endDateMonth, endDateDay, endDateYear,
-			endDateHour, endDateMinute, allowedHours, allowedMinutes,
-			smallImageImageSelector, moduleEvalId, serviceContext);
+		return _moduleService.addModule(groupId, titleMap, descriptionMap,
+			startDate, startDateMonth, startDateDay, startDateYear,
+			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay,
+			endDateYear, endDateHour, endDateMinute, allowedHours,
+			allowedMinutes, smallImageImageSelector, moduleEvalId,
+			serviceContext);
 	}
 
 	@Override
@@ -75,10 +76,9 @@ public class ModuleServiceWrapper implements ModuleService,
 	}
 
 	@Override
-	public com.ted.lms.model.Module moveDownModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public com.ted.lms.model.Module moveDownModule(long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleService.moveDownModule(moduleId, serviceContext);
+		return _moduleService.moveDownModule(moduleId);
 	}
 
 	@Override
@@ -88,10 +88,9 @@ public class ModuleServiceWrapper implements ModuleService,
 	}
 
 	@Override
-	public com.ted.lms.model.Module moveUpModule(long moduleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public com.ted.lms.model.Module moveUpModule(long moduleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _moduleService.moveUpModule(moduleId, serviceContext);
+		return _moduleService.moveUpModule(moduleId);
 	}
 
 	@Override

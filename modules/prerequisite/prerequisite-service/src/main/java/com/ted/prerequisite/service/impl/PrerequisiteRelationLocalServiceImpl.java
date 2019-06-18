@@ -46,13 +46,13 @@ public class PrerequisiteRelationLocalServiceImpl
 	 * Never reference this class directly. Always use {@link com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil} to access the prerequisite relation local service.
 	 */
 	
-	public PrerequisiteRelation addPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK) {
+	public PrerequisiteRelation addPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK, String extraData) {
 		PrerequisiteRelation prerequisiteRelation = prerequisiteRelationPersistence.create(counterLocalService.increment(PrerequisiteRelation.class.getName()));
 		
 		prerequisiteRelation.setClassNamePrerequisiteId(classNamePrerequisiteId);
 		prerequisiteRelation.setClassNameId(classNameId);
 		prerequisiteRelation.setClassPK(classPK);
-		prerequisiteRelation.setExtraData("");
+		prerequisiteRelation.setExtraData(extraData);
 		
 		return prerequisiteRelationPersistence.update(prerequisiteRelation);
 	}
@@ -75,6 +75,10 @@ public class PrerequisiteRelationLocalServiceImpl
 		}
 		
 		return listPrerequisites;
+	}
+	
+	public List<PrerequisiteRelation> getPrerequisiteRelations(long classNameId, long classPK){
+		return prerequisiteRelationPersistence.findByClassNameIdClassPK(classNameId, classPK);
 	}
 	
 	public PrerequisiteRelation getPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK) {

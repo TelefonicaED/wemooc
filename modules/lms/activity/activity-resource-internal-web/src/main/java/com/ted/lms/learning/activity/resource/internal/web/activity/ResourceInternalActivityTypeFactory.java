@@ -1,6 +1,9 @@
 package com.ted.lms.learning.activity.resource.internal.web.activity;
 
+import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
@@ -51,11 +54,13 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceInternalActivityType(activity, learningActivityResultLocalService);
+		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService,
+				bookmarksEntryLocalService, dlFileEntryLocalService);
 	}
 	
 	public ResourceInternalActivityType getResourceInternalType(LearningActivity activity) {
-		return new ResourceInternalActivityType(activity, learningActivityResultLocalService);
+		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService,
+				bookmarksEntryLocalService, dlFileEntryLocalService);
 	}
 	
 	@Override
@@ -117,5 +122,23 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
 	}
 	protected LearningActivityResultLocalService learningActivityResultLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setAssetEntryLocalService(AssetEntryLocalService assetEntryLocalService) {
+		this.assetEntryLocalService = assetEntryLocalService;
+	}
+	protected AssetEntryLocalService assetEntryLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setBookmarksEntryLocalService(BookmarksEntryLocalService bookmarksEntryLocalService) {
+		this.bookmarksEntryLocalService = bookmarksEntryLocalService;
+	}
+	protected BookmarksEntryLocalService bookmarksEntryLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setDLFileEntryLocalService(DLFileEntryLocalService dlFileEntryLocalService) {
+		this.dlFileEntryLocalService = dlFileEntryLocalService;
+	}
+	protected DLFileEntryLocalService dlFileEntryLocalService;
 	
 }

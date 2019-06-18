@@ -3,6 +3,7 @@ package com.ted.lms.learning.activity.resource.external;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalPortletKeys;
@@ -36,12 +37,12 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 	}
 	
 	public ResourceExternalActivityType getResourceExternalActivityType(LearningActivity activity) {
-		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService);
+		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService, answerLocalService);
 	}
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService);
+		return new ResourceExternalActivityType(activity, learningActivityResultLocalService, questionLocalService, answerLocalService);
 	}
 	
 	@Override
@@ -110,4 +111,10 @@ public class ResourceExternalActivityTypeFactory extends BaseLearningActivityTyp
 		this.questionLocalService = questionLocalService;
 	}
 	protected QuestionLocalService questionLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
+		this.answerLocalService = answerLocalService;
+	}
+	protected AnswerLocalService answerLocalService;
 }

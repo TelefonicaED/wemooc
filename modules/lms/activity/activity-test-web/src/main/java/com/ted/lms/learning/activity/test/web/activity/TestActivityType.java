@@ -19,6 +19,7 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.util.TestPrefsPropsValues;
@@ -46,8 +47,8 @@ public class TestActivityType extends QuestionsLearningActivityType {
 	private LearningActivityTryLocalService learningActivityTryLocalService;
 
 	public TestActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
-			QuestionLocalService questionLocalService, LearningActivityTryLocalService learningActivityTryLocalService) {
-		super(activity, learningActivityResultLocalService, questionLocalService);
+			QuestionLocalService questionLocalService, AnswerLocalService answerLocalService, LearningActivityTryLocalService learningActivityTryLocalService) {
+		super(activity, learningActivityResultLocalService, questionLocalService, answerLocalService);
 		this.learningActivityTryLocalService = learningActivityTryLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();

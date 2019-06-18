@@ -112,7 +112,7 @@ public class UpgradeLearningActivityExtraContent extends UpgradeProcess {
 							for(Question question: listQuestions){ 
 								secondElement = rootElement.element("question_" + question.getQuestionId());
 								if(secondElement != null) {
-									questionPositions.put(ResourceExternalConstants.JSON_SECOND + question.getQuestionId(), Integer.parseInt(secondElement.getText()));
+									questionPositions.put(String.valueOf(question.getQuestionId()), Integer.parseInt(secondElement.getText()));
 								}
 							}
 						}

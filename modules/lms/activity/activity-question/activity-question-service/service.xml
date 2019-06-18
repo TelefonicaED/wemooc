@@ -39,6 +39,7 @@
 		<finder name="ActId" return-type="Collection">
 			<finder-column name="actId" />
 		</finder>
+		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
 	
 	<entity name="Answer" uuid="true" local-service="true" remote-service="true" json-enabled="false">
@@ -76,5 +77,6 @@
 		<finder name="QuestionId" return-type="Collection">
 			<finder-column name="questionId" />
 		</finder>
+		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
 </service-builder>

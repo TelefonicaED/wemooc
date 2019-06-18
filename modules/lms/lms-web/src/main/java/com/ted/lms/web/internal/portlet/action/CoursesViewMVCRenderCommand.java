@@ -3,6 +3,7 @@ package com.ted.lms.web.internal.portlet.action;
 import com.liferay.asset.kernel.service.AssetTagService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
@@ -14,13 +15,17 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.trash.TrashHelper;
+import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 import com.ted.lms.web.internal.display.context.CourseDisplayContext;
 import com.ted.lms.web.internal.display.context.CoursesManagementToolbarDisplayContext;
+
+import java.util.List;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -54,9 +59,18 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		log.debug("render criteria:_ " + criteria);
 		
 		String keywords = ParamUtil.getString(renderRequest, "keywords", null);
+		int status = ParamUtil.getInteger(renderRequest, "status");
+		
+		log.debug("status: " + status);
+		
+		int[] statusArray = null;
+		if(status == WorkflowConstants.STATUS_APPROVED) {
+			statusArray = new int[]{WorkflowConstants.STATUS_APPROVED, WorkflowConstants.STATUS_DRAFT};
+		}else if(status != WorkflowConstants.STATUS_ANY){
+			statusArray = new int[] {status};
+		}
 		
 		log.debug("keywords: " + keywords);
-		log.debug("status: " + ParamUtil.getInteger(renderRequest, "status"));
 		
 		boolean inputFiltersShowOptions = ParamUtil.getBoolean(renderRequest, "inputFiltersShowOptions", false);
 		
@@ -77,14 +91,25 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		SearchContainer<Course> searchContainer = new SearchContainer<Course>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, 
 				iteratorURL, null, "no-courses");
 
+		if(statusArray != null) {
+			for(int i: statusArray) {
+				log.debug("status array: " + i);
+			}
+		}
 		
-		searchContainer.setResults(courseLocalService.getCourses(searchContainer.getStart(), searchContainer.getEnd()));
-		searchContainer.setTotal(courseLocalService.getCoursesCount());
+		List<Course> courses = courseLocalService.searchCourses(themeDisplay.getCompanyId(), keywords, themeDisplay.getLanguageId(), statusArray, 
+				CourseConstants.DEFAULT_PARENT_COURSE_ID, themeDisplay.getScopeGroupId(), null, searchContainer.getStart(), searchContainer.getEnd(), 
+				searchContainer.getOrderByComparator());
+		int countCourses = courseLocalService.countCourses(themeDisplay.getCompanyId(), keywords, themeDisplay.getLanguageId(), statusArray, 
+				CourseConstants.DEFAULT_PARENT_COURSE_ID, themeDisplay.getScopeGroupId(), null);
+		searchContainer.setResults(courses);
+		searchContainer.setTotal(countCourses);
 		
 		log.debug("total: " + searchContainer.getTotal());
 		
 		renderRequest.setAttribute("searchContainer", searchContainer);
 		renderRequest.setAttribute("inputFiltersShowOptions", inputFiltersShowOptions);
+		renderRequest.setAttribute("portletURL", portletURL);
 		
 		renderRequest.setAttribute("coursesManagementToolbarDisplayContext", coursesManagementToolbarDisplayContext);
 		
@@ -95,7 +120,8 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 			
 			HttpServletRequest request = portal.getHttpServletRequest(renderRequest);
 			
-			CourseDisplayContext courseDisplayContext = new CourseDisplayContext(request, renderRequest, renderResponse, renderRequest.getPreferences(), configuration, trashHelper);
+			CourseDisplayContext courseDisplayContext = new CourseDisplayContext(request, renderRequest, renderResponse, 
+					renderRequest.getPreferences(), configuration, trashHelper);
 			renderRequest.setAttribute("courseDisplayContext", courseDisplayContext);
 		} catch (ConfigurationException e) {
 			e.printStackTrace();

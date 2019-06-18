@@ -2,12 +2,9 @@ package com.ted.prerequisite.model;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.xml.Element;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -28,5 +25,6 @@ public interface Prerequisite {
 	
 	public String doImportStagedModel(PortletDataContext portletDataContext, Element element);
 	public String doExportStagedModel(PortletDataContext portletDataContext, Element element);
-
+	
+	public void updatePrerequisiteCopied(long classNameId, Object ... params);
 }

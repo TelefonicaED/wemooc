@@ -27,6 +27,7 @@ import com.ted.lms.inscription.teams.service.ScheduleLocalService;
 import com.ted.lms.model.Course;
 import com.ted.lms.security.permission.resource.CoursePermission;
 import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.StudentLocalService;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
 
@@ -146,7 +147,7 @@ public class InscriptionTeamsPortlet extends MVCPortlet {
 		
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
 		try {
-			TeamsInscription inscriptionType = new TeamsInscription(course, serviceContext, courseLocalService, userLocalService, teamLocalService);
+			TeamsInscription inscriptionType = new TeamsInscription(course, serviceContext, studentLocalService, userLocalService, teamLocalService);
 			inscriptionType.enrollUser(themeDisplay.getUserId(), teamId, themeDisplay.getPermissionChecker());
 			if(course.getGroupCreatedId() != themeDisplay.getScopeGroupId()) {
 				//Redirijo
@@ -171,7 +172,7 @@ public class InscriptionTeamsPortlet extends MVCPortlet {
 		log.debug("InscriptionPortlet::unsubscribe::courseId::" + course.getCourseId());
 		
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
-		TeamsInscription inscriptionType = new TeamsInscription(course, serviceContext, courseLocalService, userLocalService, teamLocalService);
+		TeamsInscription inscriptionType = new TeamsInscription(course, serviceContext, studentLocalService, userLocalService, teamLocalService);
 		
 		boolean result = inscriptionType.unsubscribeUser(themeDisplay.getUserId(), themeDisplay.getPermissionChecker());
 		log.debug("InscriptionPortlet::unsubscribe::result::" + result);
@@ -188,6 +189,13 @@ public class InscriptionTeamsPortlet extends MVCPortlet {
 	}
 	
 	private CourseLocalService courseLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setStudentLocalService(StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
+	}
+	
+	private StudentLocalService studentLocalService;
 	
 	@Reference(unbind = "-")
 	protected void setMembershipRequestLocalService(MembershipRequestLocalService membershipRequestLocalService) {

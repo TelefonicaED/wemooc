@@ -13,6 +13,12 @@
 
 <c:set var="workflowDraft" value="<%=WorkflowConstants.STATUS_DRAFT %>" />
 
+<c:if test="${not empty course }">
+<liferay-frontend:info-bar>
+	<aui:workflow-status id="${course.courseId }" markupView="lexicon" showHelpMessage="false" showIcon="false" showLabel="false" status="${course.status }" />
+</liferay-frontend:info-bar>
+</c:if>
+
 <aui:form name="fm" enctype="multipart/form-data" method="post" action="${editCourseURL}" >
 
 	<aui:input name="<%= Constants.CMD %>" value="${cmd}" type="hidden" />

@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.Course;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -74,17 +75,27 @@ public interface CourseService extends BaseService {
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param ImageSelector imagen selector
 	* @param serviceContext contexto de la creación del curso
+	* @throws Exception
 	*/
-	public Course addCourse(Map<Locale, String> titleMap,
+	public Course addCourse(long groupId, Map<Locale, String> titleMap,
 		Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
 		boolean indexer, Map<Locale, String> friendlyURLMap,
-		long layoutSetPrototypeId, long parentCourseId,
+		long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
 		ImageSelector smallImageSelector, ServiceContext serviceContext)
-		throws PortalException;
+		throws Exception;
 
 	public int countCourses(long companyId, String title, String description,
-		String language, int status, long parentCourseId, long groupId,
+		String language, int[] status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params, boolean andOperator);
+
+	public void deleteCourse(long courseId) throws PortalException;
+
+	public long executeCopyCourse(long courseId, long courseParentId,
+		Map<Locale, String> titleMap, long layoutSetPrototypeId,
+		Date registrationStartDate, Date registrationEndDate,
+		Date executionStartDate, Date executionEndDate, boolean copyForum,
+		boolean copyDocuments, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.
@@ -93,12 +104,16 @@ public interface CourseService extends BaseService {
 	*/
 	public String getOSGiServiceIdentifier();
 
+	public Course moveEntryToTrash(long courseId) throws PortalException;
+
+	public void restoreEntryFromTrash(long courseId) throws PortalException;
+
 	/**
 	* M�todo para buscar cursos
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Course> searchCourses(long companyId, String title,
-		String description, String language, int status, long parentCourseId,
+		String description, String language, int[] status, long parentCourseId,
 		long groupId, LinkedHashMap<String, Object> params,
 		boolean andOperator, int start, int end, OrderByComparator<Course> obc);
 

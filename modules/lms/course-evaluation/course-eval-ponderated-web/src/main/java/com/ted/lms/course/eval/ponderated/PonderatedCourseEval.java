@@ -29,10 +29,10 @@ public class PonderatedCourseEval extends BaseCourseEval{
 
 	private static final Log log = LogFactoryUtil.getLog(PonderatedCourseEval.class);
 	
-	public PonderatedCourseEval(Course course, ServiceContext serviceContext, CourseResultLocalService courseResultLocalService,
+	public PonderatedCourseEval(Course course, CourseResultLocalService courseResultLocalService,
 		LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityTryLocalService learningActivityTryLocalService,
 		LearningActivityLocalService learningActivityLocalService) {
-		super(course, serviceContext);
+		super(course);
 		this.courseResultLocalService = courseResultLocalService;
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
 		this.learningActivityTryLocalService = learningActivityTryLocalService;

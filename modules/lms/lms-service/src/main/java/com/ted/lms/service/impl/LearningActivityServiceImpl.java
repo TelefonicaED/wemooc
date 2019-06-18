@@ -25,9 +25,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
-import com.liferay.portal.kernel.util.Digester;
-import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LearningActivityConstants;
@@ -74,17 +71,17 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 	}
 	
 	@Override
-	public LearningActivity moveDownLearningActivity(long actId , ServiceContext serviceContext) throws PortalException{
+	public LearningActivity moveDownLearningActivity(long actId) throws PortalException{
 		learningActivityModelResourcePermission.check(getPermissionChecker(), actId, ActionKeys.UPDATE);
 		
-		return learningActivityLocalService.moveDownLearningActivity(actId, serviceContext);
+		return learningActivityLocalService.moveDownLearningActivity(getUserId(), actId);
 	}
 	
 	@Override
-	public LearningActivity moveUpLearningActivity(long actId , ServiceContext serviceContext) throws PortalException{
+	public LearningActivity moveUpLearningActivity(long actId) throws PortalException{
 		learningActivityModelResourcePermission.check(getPermissionChecker(), actId, ActionKeys.UPDATE);
 		
-		return learningActivityLocalService.moveUpLearningActivity(actId, serviceContext);
+		return learningActivityLocalService.moveUpLearningActivity(getUserId(), actId);
 	}
 	
 	@Override
@@ -102,14 +99,14 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 	}
 	
 	@Override
-	public LearningActivity addLearningActivity(long moduleId, long type, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+	public LearningActivity addLearningActivity(long groupId, long moduleId, long type, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			boolean useStartExecutionDateCourse, int startDateMonth, int startDateDay, int startDateYear,
 			int startDateHour, int startDateMinute, boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, boolean required, int tries, double passPuntuation, Map<Locale, String> feedbackCorrectMap, 
 			Map<Locale, String> feedbackNoCorrectMap, boolean commentsActivated, String[] selectedFileNames, ServiceContext serviceContext) throws PortalException {
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, LMSActionKeys.ADD_ACT);
 		
-		return learningActivityLocalService.addLearningActivity(moduleId, type, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
+		return learningActivityLocalService.addLearningActivity(getUserId(), groupId, moduleId, type, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 				startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
 				endDateHour, endDateMinute, required, tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, 
 				selectedFileNames, serviceContext);
@@ -126,7 +123,7 @@ public class LearningActivityServiceImpl extends LearningActivityServiceBaseImpl
 		
 		learningActivityModelResourcePermission.check(getPermissionChecker(), actId, ActionKeys.UPDATE);
 		
-		return learningActivityLocalService.updateLearningActivity(actId, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
+		return learningActivityLocalService.updateLearningActivity(getUserId(), actId, titleMap, descriptionMap, useStartExecutionDateCourse, startDateMonth, 
 				startDateDay, startDateYear, startDateHour, startDateMinute, useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear, 
 				endDateHour, endDateMinute, required, tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated, 
 				selectedFileNames, removeFileEntryIds, serviceContext);

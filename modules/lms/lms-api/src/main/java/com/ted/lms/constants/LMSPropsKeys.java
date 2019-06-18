@@ -28,8 +28,8 @@ public class LMSPropsKeys implements PropsKeys{
 	public static final String MODULE_COMMENTS_ENABLED = "module.comments.enabled";
 	public static final String LEARNING_ACTIVITY_COMMENTS_ENABLED = "learning.activity.comments.enabled";
 	
-	public static final String PREREQUISITES_MODULE = "prerequisites.module";
-	public static final String PREREQUISITES_LEARNING_ACTIVITY = "prerequisites.learning-activity";
-	
 	public static final String USERS_FIRST_LAST_NAME = "users.first.last.name";
+	
+	public static final String COURSE_TYPE_ICON_EXTENSIONS = "course-type.image.extensions";
+	public static final String COURSE_TYPE_ICON_MAX_SIZE = "course-type.image.max-size";
 }

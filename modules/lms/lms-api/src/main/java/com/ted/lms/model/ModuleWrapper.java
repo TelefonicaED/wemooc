@@ -221,6 +221,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	}
 
 	@Override
+	public com.liferay.portal.kernel.repository.model.Folder addImagesFolder()
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _module.addImagesFolder();
+	}
+
+	@Override
 	public Object clone() {
 		return new ModuleWrapper((Module)_module.clone());
 	}
@@ -238,6 +244,11 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public long getAllowedTime() {
 		return _module.getAllowedTime();
+	}
+
+	@Override
+	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry() {
+		return _module.getAssetEntry();
 	}
 
 	@Override

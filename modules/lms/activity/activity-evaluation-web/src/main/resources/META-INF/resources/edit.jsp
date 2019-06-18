@@ -14,7 +14,6 @@
 <%@page import="com.ted.lms.model.Module"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Date"%>
-<%@page import="com.liferay.portal.kernel.json.JSONArray"%>
 <%@page import="com.ted.lms.learning.activity.evaluation.EvaluationActivityTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.evaluation.EvaluationActivityType"%>
 <%@page import="com.liferay.portal.kernel.json.JSONObject"%>

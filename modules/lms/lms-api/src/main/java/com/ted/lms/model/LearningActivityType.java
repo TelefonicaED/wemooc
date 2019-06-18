@@ -4,7 +4,10 @@ import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.xml.Element;
+
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;
@@ -45,5 +48,8 @@ public interface LearningActivityType {
 	public boolean hasViewPermission(PermissionChecker permissionChecker) throws PortalException;
 
 	public LearningActivity getLearningActivity();
+	
+	public void copyActivity(LearningActivity oldActivity, ServiceContext serviceContext) throws Exception;
+	public void updateActivityCopied(Map<Long, Long> activitiesRelation);
 
 }

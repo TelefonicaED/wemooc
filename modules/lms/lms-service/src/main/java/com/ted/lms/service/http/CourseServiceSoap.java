@@ -81,14 +81,15 @@ public class CourseServiceSoap {
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param ImageSelector imagen selector
 	* @param serviceContext contexto de la creación del curso
+	* @throws Exception
 	*/
-	public static com.ted.lms.model.CourseSoap addCourse(
+	public static com.ted.lms.model.CourseSoap addCourse(long groupId,
 		String[] titleMapLanguageIds, String[] titleMapValues,
 		String[] descriptionMapLanguageIds, String[] descriptionMapValues,
 		String[] summaryMapLanguageIds, String[] summaryMapValues,
 		boolean indexer, String[] friendlyURLMapLanguageIds,
 		String[] friendlyURLMapValues, long layoutSetPrototypeId,
-		long parentCourseId,
+		long parentCourseId, long courseTypeId,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector smallImageSelector,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws RemoteException {
@@ -102,10 +103,10 @@ public class CourseServiceSoap {
 			Map<Locale, String> friendlyURLMap = LocalizationUtil.getLocalizationMap(friendlyURLMapLanguageIds,
 					friendlyURLMapValues);
 
-			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(titleMap,
-					descriptionMap, summaryMap, indexer, friendlyURLMap,
-					layoutSetPrototypeId, parentCourseId, smallImageSelector,
-					serviceContext);
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(groupId,
+					titleMap, descriptionMap, summaryMap, indexer,
+					friendlyURLMap, layoutSetPrototypeId, parentCourseId,
+					courseTypeId, smallImageSelector, serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
 		}
@@ -316,6 +317,43 @@ public class CourseServiceSoap {
 		}
 	}
 
+	public static void deleteCourse(long courseId) throws RemoteException {
+		try {
+			CourseServiceUtil.deleteCourse(courseId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static com.ted.lms.model.CourseSoap moveEntryToTrash(long courseId)
+		throws RemoteException {
+		try {
+			com.ted.lms.model.Course returnValue = CourseServiceUtil.moveEntryToTrash(courseId);
+
+			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void restoreEntryFromTrash(long courseId)
+		throws RemoteException {
+		try {
+			CourseServiceUtil.restoreEntryFromTrash(courseId);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static void updateSmallImage(long courseId, String imageString,
 		String imageTitle, String imageMimeType,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -323,6 +361,33 @@ public class CourseServiceSoap {
 		try {
 			CourseServiceUtil.updateSmallImage(courseId, imageString,
 				imageTitle, imageMimeType, serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static long executeCopyCourse(long courseId, long courseParentId,
+		String[] titleMapLanguageIds, String[] titleMapValues,
+		long layoutSetPrototypeId, java.util.Date registrationStartDate,
+		java.util.Date registrationEndDate, java.util.Date executionStartDate,
+		java.util.Date executionEndDate, boolean copyForum,
+		boolean copyDocuments,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
+					titleMapValues);
+
+			long returnValue = CourseServiceUtil.executeCopyCourse(courseId,
+					courseParentId, titleMap, layoutSetPrototypeId,
+					registrationStartDate, registrationEndDate,
+					executionStartDate, executionEndDate, copyForum,
+					copyDocuments, serviceContext);
+
+			return returnValue;
 		}
 		catch (Exception e) {
 			_log.error(e, e);

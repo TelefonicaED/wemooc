@@ -27,12 +27,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.PersistedModel;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -42,10 +40,7 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
-import com.ted.lms.exception.InscriptionException;
-import com.ted.lms.exception.NoSuchCourseException;
 import com.ted.lms.model.Course;
-import com.ted.lms.model.CourseResult;
 
 import java.io.Serializable;
 
@@ -101,53 +96,39 @@ public interface CourseLocalService extends BaseLocalService,
 	* @param parentCourseId identificador del curso padre, si es cero se considera curso padre
 	* @param smallImageImageSelector imagen seleccionada para el curso
 	* @param serviceContext contexto de la creación del curso
+	* @throws Exception
 	*/
 	@Indexable(type = IndexableType.REINDEX)
-	public Course addCourse(Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
-		boolean indexer, Map<Locale, String> friendlyURLMap,
-		long layoutSetPrototypeId, long parentCourseId,
-		ImageSelector smallImageSelector, ServiceContext serviceContext);
+	public Course addCourse(long userId, long groupId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		Map<Locale, String> summaryMap, boolean indexer,
+		Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId,
+		long parentCourseId, long courseTypeId,
+		ImageSelector smallImageSelector, ServiceContext serviceContext)
+		throws Exception;
 
 	public long addOriginalImageFileEntry(long userId, long groupId,
 		long entryId, ImageSelector imageSelector) throws PortalException;
+
+	public Course copyCourse(long userId, long courseId, long courseParentId,
+		String title, long layoutSetPrototypeId, Date registrationStartDate,
+		Date registrationEndDate, Date executionStartDate,
+		Date executionEndDate, boolean copyForum, boolean copyDocuments,
+		ServiceContext serviceContext) throws Exception;
 
 	/**
 	* Método para buscar cursos
 	*/
 	public int countCourses(long companyId, String freeText, String language,
-		int status, long parentCourseId, long groupId,
+		int[] status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params);
 
 	/**
 	* Método para buscar cursos
 	*/
 	public int countCourses(long companyId, String title, String description,
-		String language, int status, long parentCourseId, long groupId,
+		String language, int[] status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params, boolean andOperator);
-
-	public int countStudentsFromCourse(long courseId, long companyId);
-
-	public int countStudentsFromCourse(long courseId, long companyId,
-		String keywords, int status, LinkedHashMap<String, Object> params);
-
-	/**
-	* Usar este método para contar los estudiantes de un curso
-	*
-	* @param courseId id del curso
-	* @param companyId id de company
-	* @param screenName nombre de usuario
-	* @param firstName nombre
-	* @param lastName apellido
-	* @param emailAddress direccion de correo
-	* @param status estado del usuario (WorkflowConstants)
-	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
-	* @return
-	*/
-	public int countStudentsFromCourse(long courseId, long companyId,
-		String screenName, String firstName, String lastName,
-		String emailAddress, int status, LinkedHashMap<String, Object> params,
-		boolean andOperator);
 
 	/**
 	* Creates a new course with the primary key. Does not add the course to the database.
@@ -163,9 +144,10 @@ public interface CourseLocalService extends BaseLocalService,
 	*
 	* @param course the course
 	* @return the course that was removed
+	* @throws PortalException
 	*/
 	@Indexable(type = IndexableType.DELETE)
-	public Course deleteCourse(Course course);
+	public Course deleteCourse(Course course) throws PortalException;
 
 	/**
 	* Deletes the course with the primary key from the database. Also notifies the appropriate model listeners.
@@ -252,9 +234,12 @@ public interface CourseLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
-	public CourseResult enrollStudent(Course course, long userId,
-		ServiceContext serviceContext, PermissionChecker permissionChecker)
-		throws PortalException, InscriptionException;
+	public long executeCopyCourse(long courseId, long courseParentId,
+		Map<Locale, String> titleMap, long layoutSetPrototypeId,
+		Date registrationStartDate, Date registrationEndDate,
+		Date executionStartDate, Date executionEndDate, boolean copyForum,
+		boolean copyDocuments, ServiceContext serviceContext)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Folder fetchAttachmentsFolder(long userId, long groupId);
@@ -276,7 +261,7 @@ public interface CourseLocalService extends BaseLocalService,
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public boolean getAllowAccessToCompletedCourses();
+	public boolean getAllowAccessToCompletedCourses(long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Course> getChildsRegistredUser(long parentCourseId, long userId);
@@ -376,25 +361,31 @@ public interface CourseLocalService extends BaseLocalService,
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public String[] getPrerequisiteActivities();
+	public String[] getPrerequisiteActivities(long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<User> getStudentsFromCourse(long courseId, long companyId,
-		String keywords, int status, LinkedHashMap<String, Object> params,
-		int start, int end, OrderByComparator obc);
+	public String[] getPrerequisiteCourses(long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<User> getStudentsFromCourse(long courseId, long companyId,
-		String screenName, String firstName, String lastName,
-		String emailAddress, int status, LinkedHashMap<String, Object> params,
-		boolean andOperator, int start, int end, OrderByComparator obc);
+	public String[] getPrerequisiteModules(long companyId);
+
+	@Indexable(type = IndexableType.REINDEX)
+	public Course moveEntryToTrash(long userId, Course course)
+		throws PortalException;
+
+	public Course moveEntryToTrash(long userId, long courseId)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	public Course restoreEntryFromTrash(long userId, long courseId)
+		throws PortalException;
 
 	/**
 	* Método para buscar cursos
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Course> searchCourses(long companyId, String freeText,
-		String language, int status, long parentCourseId, long groupId,
+		String language, int[] status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params, int start, int end,
 		OrderByComparator<Course> obc);
 
@@ -403,12 +394,9 @@ public interface CourseLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Course> searchCourses(long companyId, String title,
-		String description, String language, int status, long parentCourseId,
+		String description, String language, int[] status, long parentCourseId,
 		long groupId, LinkedHashMap<String, Object> params,
 		boolean andOperator, int start, int end, OrderByComparator<Course> obc);
-
-	public boolean unsubscribeStudent(Course course, long userId,
-		PermissionChecker permissionChecker) throws PortalException;
 
 	/**
 	* Actualiza el estado del asset correspondiente al curso
@@ -450,17 +438,17 @@ public interface CourseLocalService extends BaseLocalService,
 	* @param status estado del curso
 	* @param serviceContext contexto de la modificación del curso
 	* @return curso modificado
-	* @throws NoSuchCourseException
+	* @throws PortalException
 	*/
 	@Indexable(type = IndexableType.REINDEX)
-	public Course updateCourse(long courseId, boolean welcome,
+	public Course updateCourse(long userId, long courseId, boolean welcome,
 		Map<Locale, String> welcomeSubjectMap,
 		Map<Locale, String> welcomeMsgMap, boolean goodbye,
 		Map<Locale, String> goodbyeSubjectMap,
 		Map<Locale, String> goodbyeMsgMap, boolean deniedInscription,
 		Map<Locale, String> deniedInscriptionSubjectMap,
-		Map<Locale, String> deniedInscriptionMsgMap, int status,
-		ServiceContext serviceContext) throws NoSuchCourseException;
+		Map<Locale, String> deniedInscriptionMsgMap, int status)
+		throws PortalException;
 
 	/**
 	* Actualiza el segundo paso de un curso
@@ -482,11 +470,12 @@ public interface CourseLocalService extends BaseLocalService,
 	* @throws PortalException
 	*/
 	@Indexable(type = IndexableType.REINDEX)
-	public Course updateCourse(long courseId, Date registrationStartDate,
-		Date registrationEndDate, Date executionStartDate,
-		Date executionEndDate, int typeSite, long inscriptionType,
-		long courseEvalId, long calificationType, int maxUsers, int status,
-		ServiceContext serviceContext) throws PortalException;
+	public Course updateCourse(long userId, long courseId,
+		Date registrationStartDate, Date registrationEndDate,
+		Date executionStartDate, Date executionEndDate, int typeSite,
+		long inscriptionType, long courseEvalId, long calificationType,
+		int maxUsers, int status, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Actualiza el segundo paso de un curso
@@ -522,18 +511,19 @@ public interface CourseLocalService extends BaseLocalService,
 	* @throws Exception
 	* @return curso modificado
 	*/
-	public Course updateCourse(long courseId, int registrationStartMonth,
-		int registrationStartDay, int registrationStartYear,
-		int registrationStartHour, int registrationStartMinute,
-		int registrationEndMonth, int registrationEndDay,
-		int registrationEndYear, int registrationEndHour,
-		int registrationEndMinute, int executionStartMonth,
-		int executionStartDay, int executionStartYear, int executionStartHour,
-		int executionStartMinute, int executionEndMonth, int executionEndDay,
-		int executionEndYear, int executionEndHour, int executionEndMinute,
-		int typeSite, long inscriptionType, long courseEvalId,
-		long calificationType, int maxUsers, int status,
-		ServiceContext serviceContext) throws PortalException;
+	public Course updateCourse(long userId, long courseId,
+		int registrationStartMonth, int registrationStartDay,
+		int registrationStartYear, int registrationStartHour,
+		int registrationStartMinute, int registrationEndMonth,
+		int registrationEndDay, int registrationEndYear,
+		int registrationEndHour, int registrationEndMinute,
+		int executionStartMonth, int executionStartDay, int executionStartYear,
+		int executionStartHour, int executionStartMinute,
+		int executionEndMonth, int executionEndDay, int executionEndYear,
+		int executionEndHour, int executionEndMinute, int typeSite,
+		long inscriptionType, long courseEvalId, long calificationType,
+		int maxUsers, int status, ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	* Actualiza los contenidos relacionados y el estado
@@ -546,7 +536,7 @@ public interface CourseLocalService extends BaseLocalService,
 	* @throws PortalException
 	*/
 	@Indexable(type = IndexableType.REINDEX)
-	public Course updateCourse(long courseId, int status,
+	public Course updateCourse(long userId, long courseId, int status,
 		ServiceContext serviceContext)
 		throws PrincipalException, PortalException;
 
@@ -565,11 +555,12 @@ public interface CourseLocalService extends BaseLocalService,
 	* @throws PortalException
 	*/
 	@Indexable(type = IndexableType.REINDEX)
-	public Course updateCourse(long courseId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
-		boolean indexer, Map<Locale, String> friendlyURLMap,
-		long layoutSetPrototypeId, ImageSelector smallImageSelector,
-		ServiceContext serviceContext) throws Exception;
+	public Course updateCourse(long userId, long courseId,
+		Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
+		Map<Locale, String> summaryMap, boolean indexer,
+		Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId,
+		ImageSelector smallImageSelector, ServiceContext serviceContext)
+		throws Exception;
 
 	/**
 	* Modifica la url de un curso
@@ -584,4 +575,8 @@ public interface CourseLocalService extends BaseLocalService,
 	public void updateSmallImage(long courseId,
 		ImageSelector smallImageSelector, ServiceContext serviceContext)
 		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	public Course updateStatus(long userId, long courseId, int status,
+		ServiceContext serviceContext) throws PortalException;
 }

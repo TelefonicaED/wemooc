@@ -3,12 +3,14 @@ package com.ted.lms.learning.activity;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
@@ -16,6 +18,7 @@ import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 
@@ -26,12 +29,15 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 	private boolean showCorrectAnswerOnlyOnFinalTry;
 	private List<Question> questions;
 	protected final QuestionLocalService questionLocalService;
+	protected final AnswerLocalService answerLocalService;
+	protected Map<Long, Long> questionsRelation;
 	
 	public QuestionsLearningActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, 
-			QuestionLocalService questionLocalService) {
+			QuestionLocalService questionLocalService, AnswerLocalService answerLocalService) {
 		super(activity, learningActivityResultLocalService);
 		System.out.println("questionstype questionLocalService: " + questionLocalService);
 		this.questionLocalService = questionLocalService;
+		this.answerLocalService = answerLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -134,4 +140,19 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 		showFeedback = QuestionConstants.DEFAULT_SHOW_FEEDBACK;
 		showCorrectAnswerOnlyOnFinalTry = QuestionConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY;
 	}	
+	
+	@Override
+	public void copyActivity(LearningActivity oldActivity, ServiceContext serviceContext) throws Exception {
+		super.copyActivity(oldActivity, serviceContext);
+		
+		questionsRelation = new HashMap<Long, Long>();
+		
+		//Copiamos las preguntas y respuestas
+		List<Question> oldQuestions = questionLocalService.getQuestions(oldActivity.getActId());
+		Question newQuestion = null;
+		for(Question oldQuestion: oldQuestions) {
+			newQuestion = questionLocalService.copyQuestion(serviceContext.getUserId(), activity.getGroupId(), activity.getActId(), oldQuestion, serviceContext);
+			questionsRelation.put(oldQuestion.getQuestionId(), newQuestion.getQuestionId());
+		}
+	}
 }

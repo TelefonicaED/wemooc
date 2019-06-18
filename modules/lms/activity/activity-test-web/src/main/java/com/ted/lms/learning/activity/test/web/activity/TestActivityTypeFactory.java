@@ -3,6 +3,7 @@ package com.ted.lms.learning.activity.test.web.activity;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.constants.TestConstants;
 import com.ted.lms.learning.activity.test.web.constants.TestPortletKeys;
@@ -38,12 +39,12 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, learningActivityTryLocalService);
+		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, answerLocalService, learningActivityTryLocalService);
 	}
 	
 	public TestActivityType getTestActivityType(LearningActivity activity) {
 		System.out.println("testfactory questionLocalService: " + questionLocalService);
-		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, learningActivityTryLocalService);
+		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, answerLocalService, learningActivityTryLocalService);
 	}
 	
 	@Override
@@ -140,4 +141,10 @@ public class TestActivityTypeFactory extends BaseLearningActivityTypeFactory {
 		this.learningActivityTryLocalService = learningActivityTryLocalService;
 	}
 	protected LearningActivityTryLocalService learningActivityTryLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
+		this.answerLocalService = answerLocalService;
+	}
+	protected AnswerLocalService answerLocalService;
 }

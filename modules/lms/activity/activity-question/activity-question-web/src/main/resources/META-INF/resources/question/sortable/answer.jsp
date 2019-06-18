@@ -52,7 +52,7 @@ String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPor
 
 <script>
 	function <portlet:namespace /><%=iteratorQuestion%>changeAnswer<%=iterator%>(val){
-		$('#<%=namespace + iteratorQuestion%>_answer_title_<%=iterator%>').val(val);
+		$('#<%=namespace + iteratorQuestion%>_answer_title_<%=iterator%>').val(window.<portlet:namespace /><%=iteratorQuestion%>_answer_<%=iterator%>.getHTML());
 	}
 </script>
 	

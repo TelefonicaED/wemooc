@@ -257,7 +257,7 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 
 		            serviceContext.setUuid(module.getUuid());
 		            importedModule = moduleLocalService.addModule(             
-		            		userId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
+		            		userId, module.getGroupId(), module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
 		            		module.getAllowedTime(), null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
 		            importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
 		        } else {
@@ -291,7 +291,7 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 				
 		    } else {
 		        importedModule = moduleLocalService.addModule(             
-	            		userId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), module.getAllowedTime(), 
+	            		userId, module.getGroupId(), module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), module.getAllowedTime(), 
 	            		null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
 		        importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
 		    }

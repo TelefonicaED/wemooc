@@ -26,12 +26,13 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 <div class="container modules">
 	<c:choose>
 		<c:when test="<%=listModules != null && listModules.size() > 0%>">
-			<%for(Module module: listModules){ %>
+			<%for(Module module: listModules){ 
+				boolean moduleIsLocked  = module.isLocked(user.getUserId(), permissionChecker); %>
 				<div class='row module-row <%=moduleId == module.getModuleId() ? "module-selected" : "" %>'>
 					<div class="col-md-11" id="${renderResponse.getNamespace()}<%=module.getModuleId() %>">
 						<span class="module-title">
 							<c:choose>
-								<c:when test="<%=accessLock || (!courseIsLocked && !module.isLocked(user.getUserId(), permissionChecker)) %>">
+								<c:when test="<%=accessLock || (!courseIsLocked && !moduleIsLocked) %>">
 									<a href="<%=module.getURLView(themeDisplay) %>"><%=module.getTitle(themeDisplay.getLocale()) %></a>
 								</c:when>
 								<c:otherwise>
@@ -47,8 +48,15 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 				<%List<LearningActivity> activities = learningActivityService.getActivities(module.getModuleId());
 				for(LearningActivity activity: activities){ %>
 					<div class="row activity-row">
-						<a href="<%=activity.getURLView(themeDisplay) %>"><%=activity.getTitle(themeDisplay.getLocale()) %></a>
-						<%@ include file="/activities/activity_action.jsp" %>
+						<c:choose>
+							<c:when test="<%=accessLock || (!courseIsLocked && !moduleIsLocked && !activity.isLocked(themeDisplay.getUser(), permissionChecker)) %>">
+								<a href="<%=activity.getURLView(themeDisplay) %>"><%=activity.getTitle(themeDisplay.getLocale()) %></a>
+								<%@ include file="/activities/activity_action.jsp" %>
+							</c:when>
+							<c:otherwise>
+								<%=activity.getTitle(themeDisplay.getLocale()) %>
+							</c:otherwise>
+						</c:choose>
 					</div>
 			<%	}
 			} %>

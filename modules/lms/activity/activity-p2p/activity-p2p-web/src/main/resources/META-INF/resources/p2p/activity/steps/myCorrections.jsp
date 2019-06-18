@@ -1,3 +1,6 @@
+<%@page import="com.ted.lms.model.CalificationType"%>
+<%@page import="com.ted.lms.registry.CalificationTypeFactoryRegistryUtil"%>
+<%@page import="com.ted.lms.model.CalificationTypeFactory"%>
 <%@page import="com.liferay.portal.kernel.language.LanguageUtil"%>
 <%@page import="com.liferay.petra.string.StringPool"%>
 <%@page import="com.liferay.portal.kernel.json.JSONObject"%>
@@ -13,8 +16,11 @@
 boolean correctionsDone=false;%>
 
 <c:if test="<%=p2pActivityType.getResult() %>">
-	<% if(learnResult.getResult() >= 0 && p2pActivityType.getResult()) { %>
-			<div><liferay-ui:message key="learning-activity.p2p.steps.my-corrections.result-total" />: <%= learnResult.getResult() %></div>
+	<% CalificationTypeFactory calificationTypeFactory = CalificationTypeFactoryRegistryUtil.getCalificationTypeFactoryByType(course.getCalificationType());
+	CalificationType calificationType = calificationTypeFactory.getCalificationType(course);
+	
+	if(learnResult.getResult() >= 0 && p2pActivityType.getResult()) { %>
+			<div><liferay-ui:message key="learning-activity.p2p.steps.my-corrections.result-total" />: <%=calificationType.translate(themeDisplay.getLocale(), learnResult.getResult()) + calificationType.getSuffix() %></div>
 	<% } else { %>
 				<div><liferay-ui:message key="learning-activity.p2p.steps.my-corrections.result-not-completed" /></div>
 	<% } %>

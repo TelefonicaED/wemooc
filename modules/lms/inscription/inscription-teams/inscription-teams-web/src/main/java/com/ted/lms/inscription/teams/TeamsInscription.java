@@ -10,16 +10,16 @@ import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.BaseInscriptionType;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
-import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.StudentLocalService;
 
 import java.util.List;
 
 public class TeamsInscription extends BaseInscriptionType{
 
 	public TeamsInscription(Course course, ServiceContext serviceContext,
-			CourseLocalService courseLocalService, UserLocalService userLocalService,
+			StudentLocalService studentLocalService, UserLocalService userLocalService,
 			TeamLocalService teamLocalService) {
-		super(course, serviceContext, courseLocalService);
+		super(course, serviceContext, studentLocalService);
 	}
 	
 	@Override

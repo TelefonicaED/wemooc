@@ -26,7 +26,7 @@ public interface CourseServiceConfiguration {
 		description = "specifcy-templates-that-are-allowed-in-courses",
 		name = "course-templates", required = false
 	)
-	public long[] courseTemplates();
+	public String[] courseTemplates();
 	
 	@Meta.AD(
 		description = "specifcy-course-evaluations-that-are-allowed-in-courses",
@@ -63,4 +63,16 @@ public interface CourseServiceConfiguration {
 		name = "prerequisite-activities", required = false
 	)
 	public String[] prerequisitesActivity();
+	
+	@Meta.AD(
+		description = "specifcy-prerequisite-modules",
+		name = "prerequisite-modules", required = false
+	)
+	public String[] prerequisitesModules();
+	
+	@Meta.AD(
+		description = "specifcy-prerequisite-courses",
+		name = "prerequisite-courses", required = false
+	)
+	public String[] prerequisitesCourses();
 }

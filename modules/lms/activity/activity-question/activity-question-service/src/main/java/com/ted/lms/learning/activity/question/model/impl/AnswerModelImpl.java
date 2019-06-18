@@ -81,7 +81,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "questionId", Types.BIGINT },
 			{ "actId", Types.BIGINT },
-			{ "answer", Types.CLOB },
+			{ "answer", Types.VARCHAR },
 			{ "correct", Types.BOOLEAN },
 			{ "feedbackCorrect", Types.VARCHAR },
 			{ "feedbackIncorrect", Types.VARCHAR }
@@ -99,7 +99,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("answer", Types.CLOB);
+		TABLE_COLUMNS_MAP.put("answer", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("correct", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("feedbackCorrect", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.VARCHAR);

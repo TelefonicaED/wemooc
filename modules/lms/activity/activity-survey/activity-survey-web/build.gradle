@@ -11,4 +11,5 @@ dependencies {
 	compileOnly project(":modules:lms:lms-api")
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
 	compileOnly project(":modules:lms:activity:activity-survey:activity-survey-api")
+	compileOnly project(":modules:lms:activity:activity-question:activity-question-web")
 }

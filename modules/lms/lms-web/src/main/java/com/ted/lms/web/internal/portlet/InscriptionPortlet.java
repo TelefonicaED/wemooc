@@ -152,7 +152,7 @@ public class InscriptionPortlet extends MVCPortlet {
 									params.put(CourseParams.PARAM_TYPE, types);
 									
 									listChildCourses = courseService.searchCourses(themeDisplay.getCompanyId(), null, null, themeDisplay.getLanguageId(), 
-											WorkflowConstants.STATUS_APPROVED, course.getCourseId(), 0, params, false, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+											new int[]{WorkflowConstants.STATUS_APPROVED}, course.getCourseId(), 0, params, false, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 									
 									if(course.getParentCourseId() == CourseConstants.DEFAULT_PARENT_COURSE_ID && (listChildCourses == null || listChildCourses.size() == 0)) {
 										//Mando sólo el curso hijo

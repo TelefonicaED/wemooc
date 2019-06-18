@@ -43,7 +43,7 @@ public class LearningActivityServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.service.impl.LearningActivityServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.ted.lms.model.LearningActivity addLearningActivity(
-		long moduleId, long type,
+		long groupId, long moduleId, long type,
 		java.util.Map<java.util.Locale, String> titleMap,
 		java.util.Map<java.util.Locale, String> descriptionMap,
 		boolean useStartExecutionDateCourse, int startDateMonth,
@@ -57,7 +57,7 @@ public class LearningActivityServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .addLearningActivity(moduleId, type, titleMap,
+				   .addLearningActivity(groupId, moduleId, type, titleMap,
 			descriptionMap, useStartExecutionDateCourse, startDateMonth,
 			startDateDay, startDateYear, startDateHour, startDateMinute,
 			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
@@ -101,10 +101,8 @@ public class LearningActivityServiceUtil {
 	}
 
 	public static com.ted.lms.model.LearningActivity moveDownLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveDownLearningActivity(actId, serviceContext);
+		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveDownLearningActivity(actId);
 	}
 
 	public static com.ted.lms.model.LearningActivity moveLearningActivityToTrash(
@@ -113,10 +111,8 @@ public class LearningActivityServiceUtil {
 	}
 
 	public static com.ted.lms.model.LearningActivity moveUpLearningActivity(
-		long actId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		return getService().moveUpLearningActivity(actId, serviceContext);
+		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+		return getService().moveUpLearningActivity(actId);
 	}
 
 	public static com.ted.lms.model.LearningActivity updateLearningActivity(

@@ -18,6 +18,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.util.comparator.RepositoryModelTitleComparator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -39,6 +41,7 @@ import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portlet.asset.model.impl.AssetEntryImpl;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.model.Course;
@@ -68,6 +71,10 @@ import aQute.bnd.annotation.ProviderType;
 public class LearningActivityImpl extends LearningActivityBaseImpl {
 	
 	private static final Log log = LogFactoryUtil.getLog(LearningActivityImpl.class);
+	
+	private AssetEntry assetEntry;
+	
+	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -112,6 +119,25 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 		}
 		
 		super.setExtraContent(activityExtraContent);
+	}
+	
+	public AssetEntry getAssetEntry() {
+		if (assetEntry == NULL_ASSET_ENTRY) {
+			return null;
+		}
+
+		if (assetEntry == null) {
+			AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(PortalUtil.getClassNameId(Module.class), getModuleId());
+
+			if (assetEntry == null) {
+				this.assetEntry = NULL_ASSET_ENTRY;
+			}
+			else {
+				this.assetEntry = assetEntry;
+			}
+		}
+
+		return assetEntry;
 	}
 	
 	@Override
@@ -292,6 +318,7 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 
 		return _attachmentsFolderId;
 	}
+
 	
 	private long _attachmentsFolderId;
 }

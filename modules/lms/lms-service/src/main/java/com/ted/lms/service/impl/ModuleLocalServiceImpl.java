@@ -16,8 +16,10 @@ package com.ted.lms.service.impl;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
+import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -36,6 +38,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -48,16 +51,22 @@ import com.liferay.trash.service.TrashEntryLocalService;
 import com.ted.lms.constants.DLAppConstants;
 import com.ted.lms.constants.LMSActivityKeys;
 import com.ted.lms.constants.LMSConstants;
+import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
+import com.ted.lms.copy.permission.ResourceCopy;
 import com.ted.lms.exception.ModuleEndDateException;
 import com.ted.lms.exception.ModuleStartDateException;
 import com.ted.lms.exception.NoSuchNextModuleException;
 import com.ted.lms.exception.NoSuchPreviousModuleException;
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.base.ModuleLocalServiceBaseImpl;
 import com.ted.lms.service.util.SmallImageHelper;
 import com.ted.lms.settings.ModulesGroupServiceSettings;
 import com.ted.lms.util.LMSPrefsPropsValues;
+import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,7 +99,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	private static final Log log = LogFactoryUtil.getLog(ModuleLocalServiceImpl.class);
 	
 	@Override
-	public Module addModule(long userId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean useStartExecutionDateCourse, int startDateMonth, 
+	public Module addModule(long userId, long groupId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean useStartExecutionDateCourse, int startDateMonth, 
 			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean useEndExecutionDateCourse, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, ServiceContext serviceContext) throws PortalException {
@@ -117,13 +126,13 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		long allowedTime = TimeUnit.HOURS.toMillis(allowedHours) + TimeUnit.MINUTES.toMillis(allowedMinutes);
 		
-		return moduleLocalService.addModule(userId, titleMap, descriptionMap, startDate, endDate, allowedTime,
+		return moduleLocalService.addModule(userId, groupId, titleMap, descriptionMap, startDate, endDate, allowedTime,
 				smallImageImageSelector, moduleEvalId, StringPool.BLANK, serviceContext);
 	}
 	
 	@Override
 	@Indexable(type = IndexableType.REINDEX)
-	public Module addModule(long userId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, Date startDate, 
+	public Module addModule(long userId, long groupId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, Date startDate, 
 			Date endDate, long allowedTime, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, String moduleExtraData, ServiceContext serviceContext) throws PortalException {
 		User user = userLocalService.getUser(userId);
@@ -131,12 +140,13 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		Module module = modulePersistence.create(counterLocalService.increment(Module.class.getName()));
 		
 		module.setUuid(serviceContext.getUuid());
-		module.setGroupId(serviceContext.getScopeGroupId());
+		module.setGroupId(groupId);
 		module.setCompanyId(user.getCompanyId());
 		module.setUserId(user.getUserId());
 		module.setUserName(user.getFullName());
 		module.setTitleMap(titleMap);
 		module.setDescriptionMap(descriptionMap);
+		
 		module.setOrder(module.getModuleId());
 		module.setStartDate(startDate);
 		module.setEndDate(endDate);
@@ -144,13 +154,9 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		module.setModuleEvalId(moduleEvalId);
 		module.setModuleExtraData(moduleExtraData);
 		
-		Date now = new Date();
-		module.setCreateDate(serviceContext.getModifiedDate(now));
-		module.setModifiedDate(serviceContext.getModifiedDate(now));
-		
 		module.setStatus(WorkflowConstants.STATUS_APPROVED);
 		module.setStatusByUserId(userId);
-		module.setStatusDate(serviceContext.getModifiedDate(now));
+		module.setStatusDate(new Date());
 		module.setExpandoBridgeAttributes(serviceContext);
 		
 		long smallImageId = 0;
@@ -158,9 +164,9 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		if (smallImageImageSelector != null) {
 
 			if (smallImageImageSelector.getImageBytes() != null) {
-				ModulesGroupServiceSettings modulesGroupServiceSettings = ModulesGroupServiceSettings.getInstance(serviceContext.getScopeGroupId());
+				ModulesGroupServiceSettings modulesGroupServiceSettings = ModulesGroupServiceSettings.getInstance(groupId);
 				
-				smallImageId = SmallImageHelper.addSmallImageFileEntry(userId, serviceContext.getScopeGroupId(), Module.class.getName(),
+				smallImageId = SmallImageHelper.addSmallImageFileEntry(userId, groupId, Module.class.getName(),
 						module.getModuleId(), smallImageImageSelector, modulesGroupServiceSettings.getSmallImageWidth(), 
 						UNIQUE_FILE_NAME_TRIES, SMALL_IMAGE_FOLDER_NAME);
 			}
@@ -241,11 +247,17 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	public Module updateModule(long userId, long moduleId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, Date startDate, 
 			Date endDate, long allowedTime, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, String moduleExtraData, ServiceContext serviceContext) throws PortalException {
+
+		User user = userLocalService.getUser(userId);
 		
 		Module module = modulePersistence.fetchByPrimaryKey(moduleId);
 		
 		module.setTitleMap(titleMap);
 		module.setDescriptionMap(descriptionMap);
+		
+		module.setUserId(userId);
+		module.setUserName(user.getFullName());
+		
 		module.setStartDate(startDate);
 		module.setEndDate(endDate);
 		module.setAllowedTime(allowedTime);
@@ -255,10 +267,6 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		module.setExpandoBridgeAttributes(serviceContext);
 		
-		Date now = new Date();
-		module.setModifiedDate(serviceContext.getModifiedDate(now));
-		module.setExpandoBridgeAttributes(serviceContext);
-		
 		// Small image
 		long smallImageId = module.getSmallImageId();
 
@@ -266,7 +274,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 
 		if (smallImageImageSelector != null) {
 			if (smallImageImageSelector.getImageBytes() != null) {
-				ModulesGroupServiceSettings modulesGroupServiceSettings = ModulesGroupServiceSettings.getInstance(serviceContext.getScopeGroupId());
+				ModulesGroupServiceSettings modulesGroupServiceSettings = ModulesGroupServiceSettings.getInstance(module.getGroupId());
 				
 				smallImageId = SmallImageHelper.addSmallImageFileEntry(userId, module.getGroupId(), Module.class.getName(), 
 						moduleId,smallImageImageSelector, modulesGroupServiceSettings.getSmallImageWidth(), UNIQUE_FILE_NAME_TRIES, 
@@ -344,7 +352,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	@Override
 	public Module moveModuleToTrash(long userId, Module module) throws PortalException {
 
-		// Módulo
+		// Mï¿½dulo
 
 		if (module.isInTrash()) {
 			throw new TrashEntryException();
@@ -382,7 +390,6 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		// MÃ³dulo
 
 		User user = userLocalService.getUser(userId);
-		Date now = new Date();
 
 		Module module = modulePersistence.findByPrimaryKey(moduleId);
 
@@ -391,7 +398,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		module.setStatus(status);
 		module.setStatusByUserId(user.getUserId());
 		module.setStatusByUserName(user.getFullName());
-		module.setStatusDate(serviceContext.getModifiedDate(now));
+		module.setStatusDate(new Date());
 
 		modulePersistence.update(module);
 
@@ -454,25 +461,29 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 
 		Module module = modulePersistence.findByPrimaryKey(moduleId);
 
-		return moduleLocalService.moveModuleToTrash(userId, module);
+		return moveModuleToTrash(userId, module);
 	}
 	
 	@Override
-	public Module moveDownModule(long moduleId , ServiceContext serviceContext) throws PortalException{
-		
+	public Module moveDownModule(long userId, long moduleId) throws PortalException{
+			
 		Module module = modulePersistence.fetchByPrimaryKey(moduleId);
 		
 		Module nextModule = getNextModule(module);
 		
 		if(nextModule!=null) {
-			Date now = new Date();
+			User user = userLocalService.getUser(userId);
+			
 			//Se actualiza el orden
 			long order = module.getOrder();
-			module.setOrder(nextModule.getOrder());
-			nextModule.setOrder(order);
 			
-			module.setModifiedDate(serviceContext.getModifiedDate(now));
-			nextModule.setModifiedDate(serviceContext.getModifiedDate(now));
+			module.setOrder(nextModule.getOrder());
+			module.setUserId(userId);
+			module.setUserName(user.getFullName());
+			
+			nextModule.setOrder(order);
+			nextModule.setUserId(userId);
+			nextModule.setUserName(user.getFullName());
 			
 			modulePersistence.update(module);			
 			modulePersistence.update(nextModule);
@@ -482,20 +493,23 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
-	public Module moveUpModule(long moduleId , ServiceContext serviceContext) throws PortalException{
+	public Module moveUpModule(long userId, long moduleId) throws PortalException{
 		
 		Module module = modulePersistence.fetchByPrimaryKey(moduleId);
 		
 		Module previousModule = getPreviousModule(module);
 		
 		if(previousModule!=null) {
-			Date now = new Date();
+			User user = userLocalService.getUser(userId);
+			
 			long order=module.getOrder();
 			module.setOrder(previousModule.getOrder());
-			previousModule.setOrder(order);
+			module.setUserId(userId);
+			module.setUserName(user.getFullName());
 			
-			module.setModifiedDate(serviceContext.getModifiedDate(now));
-			previousModule.setModifiedDate(serviceContext.getModifiedDate(now));
+			previousModule.setOrder(order);
+			previousModule.setUserId(userId);
+			previousModule.setUserName(user.getFullName());
 			
 			modulePersistence.update(module);			
 			modulePersistence.update(previousModule);
@@ -553,7 +567,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 			}
         }
         
-        //Ahora creamos la carpeta para los módulos
+        //Ahora creamos la carpeta para los mï¿½dulos
         if(Validator.isNotNull(dlFolderMain)){
         	try {
 				moduleFolder = DLAppLocalServiceUtil.getFolder(repositoryId,dlFolderMain.getFolderId(),DLAppConstants.DOCUMENTLIBRARY_PORTLETFOLDER);
@@ -569,6 +583,70 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
         }
         
         return moduleFolder;
+	}
+	
+	public Module copyModule(long userId, Module oldModule, long groupId, Map<Long, Long> activitiesRelation,  ServiceContext serviceContext) throws Exception {
+		
+		ImageSelector smallImageSelector = null;
+		AssetEntry oldAssetEntry = oldModule.getAssetEntry();
+		
+		if(oldModule.getSmallImageId() > 0) {
+		
+			FileEntry fileEntry = PortletFileRepositoryUtil.getPortletFileEntry(oldModule.getSmallImageId());
+			
+			InputStream contentStream = fileEntry.getContentStream();
+			byte[] imageBytes = FileUtil.getBytes(contentStream);
+	
+			smallImageSelector = new ImageSelector(imageBytes, fileEntry.getFileName(), fileEntry.getMimeType(), StringPool.BLANK);
+		}
+		
+		serviceContext.setAssetCategoryIds(oldAssetEntry.getCategoryIds());
+		serviceContext.setAssetEntryVisible(oldAssetEntry.isVisible());
+		serviceContext.setAssetPriority(oldAssetEntry.getPriority());
+		serviceContext.setAssetTagNames(oldAssetEntry.getTagNames());
+		serviceContext.setUuid(oldModule.getUuid());
+		
+		//Primer paso, creamos el curso
+		Module newModule = addModule(userId, groupId, oldModule.getTitleMap(), oldModule.getDescriptionMap(), oldModule.getStartDate(), 
+									oldModule.getEndDate(), oldModule.getAllowedTime(), smallImageSelector, oldModule.getModuleEvalId(), 
+									oldModule.getModuleExtraData(), serviceContext);
+		
+		newModule.setDescription(copyModuleImages(newModule.getDescription(), oldModule.getGroupId(), newModule.getGroupId(), userId));
+		
+		newModule = modulePersistence.update(newModule);
+		
+		resourceCopy.copyModelResourcePermissions(newModule.getCompanyId(), Module.class.getName(), oldModule.getModuleId(), newModule.getModuleId());
+		
+		//Copiamos los expandos
+		ExpandoBridgeUtil.copyExpandoBridgeAttributes(oldModule.getExpandoBridge(), newModule.getExpandoBridge());
+		
+		//Ahora duplicamos las actividades
+		List<LearningActivity> oldActivities = learningActivityLocalService.getLearningActivities(oldModule.getModuleId());
+		LearningActivity newActivity = null;
+		for(LearningActivity oldActivity: oldActivities) {
+			newActivity = learningActivityLocalService.copyActivity(userId, oldActivity, newModule, serviceContext);
+			activitiesRelation.put(oldActivity.getActId(), newActivity.getActId());
+		}
+		
+		//Duplicamos los prerequisitos
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteModules(newModule.getCompanyId());
+		PrerequisiteFactory prerequisiteFactory = null;
+		
+		long moduleClassNameId = PortalUtil.getClassNameId(Module.class);
+		
+		for(String classNamePrerequisite: classNamePrerequisites){
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
+			if(prerequisiteFactory != null) {
+				prerequisiteFactory.copyPrerequisite(moduleClassNameId, oldModule.getModuleId(), newModule.getModuleId());
+			}
+		}
+		
+		return newModule;
+		
+	}
+
+	protected String copyModuleImages(String description, long oldGroupId, long newGroupId, long userId) throws Exception {
+		return dlReferencesCopyContentProcessor.replaceExportDLReferences(description, oldGroupId, newGroupId, userId);
 	}
 	
 	@Override
@@ -590,5 +668,12 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	
 	@ServiceReference(type = TrashEntryLocalService.class)
 	protected TrashEntryLocalService trashEntryLocalService;
+	
+	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
+	
+	@ServiceReference(type = ResourceCopy.class)
+	protected ResourceCopy resourceCopy;
+	
 	
 }

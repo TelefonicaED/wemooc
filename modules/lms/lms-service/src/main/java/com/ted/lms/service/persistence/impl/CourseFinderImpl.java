@@ -1,6 +1,5 @@
 package com.ted.lms.service.persistence.impl;
 
-import com.liferay.admin.kernel.util.PortalUserPersonalBarApplicationType;
 import com.liferay.expando.kernel.model.ExpandoColumn;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
@@ -30,6 +29,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.impl.UserImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.constants.CourseParams;
+import com.ted.lms.constants.StudentParams;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.impl.CourseImpl;
 import com.ted.lms.service.persistence.CourseFinder;
@@ -37,7 +37,6 @@ import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.lms.util.LMSUtil;
 
 import java.math.BigInteger;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -115,31 +114,30 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				".whereUserStatus";
 	public static final String INNER_JOIN_TEAM = 
 			CourseFinder.class.getName() + ".innerJoinTeam";
+	public static final String JOIN_BY_FINISHED = 
+			CourseFinder.class.getName() + ".innerFinished";
 	
 	public static final String FIND_CHILD_REGISTRED_USER = 
 			CourseFinder.class.getName() + ".findChildRegistredUser";
 	
 	private static final Log log = LogFactoryUtil.getLog(CourseFinderImpl.class);
 	
-	private LinkedHashMap<String, Object> _emptyLinkedHashMap =
-			new LinkedHashMap<String, Object>(0);
-	
-	public List<Course> findByKeywords(long companyId, String freeText, String languageId, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
+	public List<Course> findByKeywords(long companyId, String freeText, String languageId, int[] status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
 			int start, int end, OrderByComparator<Course> obc){
 		return doFindByC(companyId, freeText, freeText, languageId, status, parentCourseId, groupId, params, false, start, end, obc, false);
 	}
 	
-	public List<Course> filterByKeywords(long companyId, String freeText, String languageId, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
+	public List<Course> filterByKeywords(long companyId, String freeText, String languageId, int[] status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
 			int start, int end, OrderByComparator<Course> obc){
 		return doFindByC(companyId, freeText, freeText, languageId, status, parentCourseId, groupId, params, false, start, end, obc, true);
 	}
 	
-	public List<Course> filterByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 
+	public List<Course> filterByC(long companyId, String title, String description, String languageId, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end, OrderByComparator<Course> obc){
 		return doFindByC(companyId, title, description, languageId, status, parentCourseId, groupId, params, false, start, end, obc,true);
 	}
 	
-	public List<Course> findByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 
+	public List<Course> findByC(long companyId, String title, String description, String languageId, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end, OrderByComparator<Course> obc){
 		return doFindByC(companyId, title, description, languageId, status, parentCourseId, groupId, params, false, start, end, obc,false);
 	}
@@ -164,6 +162,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			
 			QueryPos qPos = QueryPos.getInstance(q);			
 			qPos.add(companyId);	
+			qPos.add(WorkflowConstants.STATUS_IN_TRASH);
 			
 			Iterator<Long> listGroupIds = q.iterate();
 			
@@ -181,7 +180,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Course> doFindByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 
+	public List<Course> doFindByC(long companyId, String title, String description, String languageId, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end, OrderByComparator<Course> obc, boolean inlineSQLHelper){
 		
 		Session session = null;
@@ -210,7 +209,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				description = "%" + description + "%";
 			
 			if (params == null) {
-				params = _emptyLinkedHashMap;
+				params = new LinkedHashMap<>();
 			}
 			
 			if(Validator.isNotNull(title) || Validator.isNotNull(description)){
@@ -218,7 +217,18 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				params.put(PARAM_TITLE_DESCRIPTION, titleDescription);
 			}
 			
-			if(status != WorkflowConstants.STATUS_ANY){
+			log.debug("status: " + status);
+			if(status != null) {
+				log.debug("status length: " + status.length);
+				if(status.length > 0) {
+					log.debug("status 0: " + status[0]);
+				}
+			}
+			
+			if(status != null && (status.length > 1 || (status.length == 1 && status[0] != WorkflowConstants.STATUS_ANY))){
+				for(int i: status) {
+					log.debug("status valores: " + i);
+				}
 				params.put(PARAM_STATUS, status);
 			}
 			
@@ -289,7 +299,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			setJoin(qPos, params);
 			
 			qPos.add(companyId);
-			log.debug("*****QPOS****** CompanyId: " + companyId);
+			qPos.add(WorkflowConstants.STATUS_IN_TRASH);
 			
 			if(log.isDebugEnabled()){
 				log.debug("sql: " + sql);
@@ -378,7 +388,9 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	protected String getJoinStudents(String key, Object value) {
 		String join = StringPool.BLANK;
 		
-		if (value instanceof CustomSQLParam) {
+		if (key.equals(StudentParams.PARAM_FINISHED)) {
+			join = customSQL.get(getClass(),JOIN_BY_FINISHED);
+		} else if (value instanceof CustomSQLParam) {
 			CustomSQLParam customSQLParam = (CustomSQLParam)value;
 
 			join = customSQLParam.getSQL();
@@ -608,6 +620,12 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		}
 		else if (key.equals(PARAM_STATUS)) {
 			join = customSQL.get(getClass(),WHERE_STATUS);
+			int[] valueArray = (int[])value;
+			String status = "?";
+			for(int i = 1; i < valueArray.length; i++) {
+				status += ",?"; 
+			}
+			join = StringUtil.replace(join, "[$STATUS$]", status);
 		}
 		else if (key.equals(PARAM_PARENT_COURSE_ID)) {
 			join = customSQL.get(getClass(),WHERE_PARENT_COURSE_ID);
@@ -771,25 +789,25 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		}
 	}
 
-	public int countByKeywords(long companyId, String freeText, String languageId, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, boolean inlineSQLHelper){
+	public int countByKeywords(long companyId, String freeText, String languageId, int[] status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, boolean inlineSQLHelper){
 		return doCountByC(companyId, freeText, freeText, languageId, status, parentCourseId, groupId, params, false, false);
 	}
 	
-	public int filterCountByKeywords(long companyId, String freeText, String languageId, int status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, boolean inlineSQLHelper){
+	public int filterCountByKeywords(long companyId, String freeText, String languageId, int[] status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, boolean inlineSQLHelper){
 		return doCountByC(companyId, freeText, freeText, languageId, status, parentCourseId, groupId, params, false, true);
 	}
 	
-	public int countByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 
+	public int countByC(long companyId, String title, String description, String languageId, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator){
 		return doCountByC(companyId, title, description, languageId, status, parentCourseId, groupId, params, andOperator, false);
 	}
 	
-	public int filterCountByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 
+	public int filterCountByC(long companyId, String title, String description, String languageId, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator){
 		return doCountByC(companyId, title, description, languageId, status, parentCourseId, groupId, params, andOperator, true);
 	}
 	
-	public int doCountByC(long companyId, String title, String description, String languageId, int status, long parentCourseId, long groupId, 
+	public int doCountByC(long companyId, String title, String description, String languageId, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, boolean inlineSQLHelper){
 		Session session = null;
 		
@@ -803,7 +821,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				description = "%" + description + "%";
 			
 			if (params == null) {
-				params = _emptyLinkedHashMap;
+				params = new LinkedHashMap<>();
 			}
 			
 			if(Validator.isNotNull(title) || Validator.isNotNull(description)){
@@ -811,7 +829,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				params.put(PARAM_TITLE_DESCRIPTION, titleDescription);
 			}
 			
-			if(status != WorkflowConstants.STATUS_ANY){
+			if(status != null && status.length > 0 && (status.length == 1 && status[0] != WorkflowConstants.STATUS_ANY)){
 				params.put(PARAM_STATUS, status);
 			}
 			
@@ -857,6 +875,8 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			setJoin(qPos, params);
 			
 			qPos.add(companyId);
+			qPos.add(WorkflowConstants.STATUS_IN_TRASH);
+			
 			log.debug("qPos: companyId: " + companyId);
 			
 			if(log.isDebugEnabled()){
@@ -1086,6 +1106,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	private String replaceJoinWhereUser(String sql, String screenName, String firstName, String lastName, String emailAddress, int status, long[] teamIds, LinkedHashMap<String, Object> params, boolean andOperator){
 		
 		sql = replaceJoinAndWhereStudents(sql, params);
+		log.debug("sql replaceJoinWhereUser: " + sql);
 		
 		boolean whereClause = false;
 		if(teamIds != null && teamIds.length > 0){

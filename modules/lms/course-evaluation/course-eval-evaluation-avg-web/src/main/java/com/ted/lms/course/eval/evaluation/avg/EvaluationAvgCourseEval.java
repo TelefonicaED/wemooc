@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.portlet.ActionRequest;
-import javax.portlet.PortletResponse;
 
 public class EvaluationAvgCourseEval extends BaseCourseEval{
 
@@ -49,10 +48,10 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	
 	private double passPuntuation;
 	
-	public EvaluationAvgCourseEval(Course course, ServiceContext serviceContext, CourseResultLocalService courseResultLocalService,
+	public EvaluationAvgCourseEval(Course course, CourseResultLocalService courseResultLocalService,
 			LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityLocalService learningActivityLocalService,
 			ResourceBundleLoader resourceBundleLoader) {
-		super(course, serviceContext);
+		super(course);
 		passPuntuation = NULL_PASS_PUNTUATION;
 		this.courseResultLocalService = courseResultLocalService;
 		this.learningActivityResultLocalService = learningActivityResultLocalService;

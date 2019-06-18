@@ -46,11 +46,32 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Answer addAnswer(
-		long questionId, long actId, String answerText, String feedbackCorrect,
-		String feedbackIncorrect, boolean correct,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _answerLocalService.addAnswer(questionId, actId, answerText,
-			feedbackCorrect, feedbackIncorrect, correct, serviceContext);
+		long userId, long groupId, long questionId, long actId,
+		String answerText, String feedbackCorrect, String feedbackIncorrect,
+		boolean correct,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _answerLocalService.addAnswer(userId, groupId, questionId,
+			actId, answerText, feedbackCorrect, feedbackIncorrect, correct,
+			serviceContext);
+	}
+
+	@Override
+	public com.ted.lms.learning.activity.question.model.Answer copyAnswer(
+		long userId, long groupId, long questionId, long actId,
+		com.ted.lms.learning.activity.question.model.Answer oldAnswer,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return _answerLocalService.copyAnswer(userId, groupId, questionId,
+			actId, oldAnswer, serviceContext);
+	}
+
+	@Override
+	public void copyAnswerImages(
+		com.ted.lms.learning.activity.question.model.Answer oldAnswer,
+		com.ted.lms.learning.activity.question.model.Answer newAnswer)
+		throws Exception {
+		_answerLocalService.copyAnswerImages(oldAnswer, newAnswer);
 	}
 
 	/**
@@ -344,9 +365,10 @@ public class AnswerLocalServiceWrapper implements AnswerLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Answer updateAnswer(
-		long answerId, String answerText, String feedbackCorrect,
-		String feedbackIncorrect, boolean correct) {
-		return _answerLocalService.updateAnswer(answerId, answerText,
+		long userId, long answerId, String answerText, String feedbackCorrect,
+		String feedbackIncorrect, boolean correct)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _answerLocalService.updateAnswer(userId, answerId, answerText,
 			feedbackCorrect, feedbackIncorrect, correct);
 	}
 

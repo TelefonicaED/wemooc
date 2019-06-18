@@ -3,6 +3,7 @@ package com.ted.lms.model;
 import com.liferay.portal.kernel.exception.PortalException;
 
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.ActionRequest;
 import aQute.bnd.annotation.ProviderType;

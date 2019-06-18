@@ -1,6 +1,5 @@
 package com.ted.lms.learning.activity.evaluation.web.internal.portlet;
 
-import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.learning.activity.evaluation.EvaluationActivityType;
 import com.ted.lms.learning.activity.evaluation.EvaluationActivityTypeFactory;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
@@ -13,25 +12,21 @@ import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
-import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.StudentLocalService;
 
 import java.util.Date;
 import java.util.List;
 
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -84,7 +79,7 @@ public class EvaluationPortlet extends MVCPortlet {
 			
 			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 			
-			List<User> users = courseLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), null, 
+			List<User> users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), null, 
 					WorkflowConstants.STATUS_APPROVED, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 			
 			log.debug("users: " + users.size());
@@ -96,7 +91,7 @@ public class EvaluationPortlet extends MVCPortlet {
 				evaluationActivityType.evaluateUser(user.getUserId(), serviceContext);
 			}
 		
-			learningActivityLocalService.updateLearningActivity(activity, serviceContext);
+			learningActivityLocalService.updateLearningActivity(themeDisplay.getUserId(), activity);
 			
 			SessionMessages.add(actionRequest, "calculate-result");
 		} catch (PortalException e) {
@@ -125,6 +120,8 @@ public class EvaluationPortlet extends MVCPortlet {
 	}
 	
 	public void publishResult(ActionRequest actionRequest,ActionResponse actionResponse) {
+		
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		long actId=ParamUtil.getLong(actionRequest, "actId");
 		
 		try {
@@ -134,8 +131,7 @@ public class EvaluationPortlet extends MVCPortlet {
 			
 			evaluationActivityType.setPublishDate(new Date());
 		
-			ServiceContext serviceContext = ServiceContextFactory.getInstance(LearningActivity.class.getName(), actionRequest);
-			learningActivityLocalService.updateLearningActivity(activity, serviceContext);
+			learningActivityLocalService.updateLearningActivity(themeDisplay.getUserId(), activity);
 			
 			SessionMessages.add(actionRequest, "publish-result");
 		} catch (PortalException e) {
@@ -222,13 +218,13 @@ public class EvaluationPortlet extends MVCPortlet {
 	}
 	
 	@Reference(unbind = "-")
-	protected void setUserLocalService(UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
+	protected void setStudentLocalService(StudentLocalService studentLocalService) {
+		this.studentLocalService = studentLocalService;
 	}
 	
 	private CourseLocalService courseLocalService;
 	private LearningActivityTryLocalService learningActivityTryLocalService;
 	private LearningActivityResultLocalService learningActivityResultLocalService;
 	private LearningActivityLocalService learningActivityLocalService;
-	private UserLocalService userLocalService;
+	private StudentLocalService studentLocalService;
 }

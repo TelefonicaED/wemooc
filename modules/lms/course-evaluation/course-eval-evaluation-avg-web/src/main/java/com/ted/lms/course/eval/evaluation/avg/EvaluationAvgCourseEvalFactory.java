@@ -34,8 +34,8 @@ public class EvaluationAvgCourseEvalFactory extends BaseCourseEvalFactory{
 	public static final long TYPE = 1;
 	
 	@Override
-	public CourseEval getCourseEval(Course course, ServiceContext serviceContext) throws PortalException {	
-		return new EvaluationAvgCourseEval(course, serviceContext, courseResultLocalService,
+	public CourseEval getCourseEval(Course course) throws PortalException {	
+		return new EvaluationAvgCourseEval(course, courseResultLocalService,
 				learningActivityResultLocalService, learningActivityLocalService,
 				resourceBundleLoader);
 	}

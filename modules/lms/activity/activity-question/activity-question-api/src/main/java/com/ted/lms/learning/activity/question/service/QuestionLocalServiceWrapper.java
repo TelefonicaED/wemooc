@@ -35,10 +35,12 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Question addQuestion(
-		long actId, String questionText, long questionType, boolean penalize,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _questionLocalService.addQuestion(actId, questionText,
-			questionType, penalize, serviceContext);
+		long userId, long groupId, long actId, String questionText,
+		long questionType, boolean penalize,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _questionLocalService.addQuestion(userId, groupId, actId,
+			questionText, questionType, penalize, serviceContext);
 	}
 
 	/**
@@ -51,6 +53,24 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 	public com.ted.lms.learning.activity.question.model.Question addQuestion(
 		com.ted.lms.learning.activity.question.model.Question question) {
 		return _questionLocalService.addQuestion(question);
+	}
+
+	@Override
+	public com.ted.lms.learning.activity.question.model.Question copyQuestion(
+		long userId, long groupId, long actId,
+		com.ted.lms.learning.activity.question.model.Question oldQuestion,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+		return _questionLocalService.copyQuestion(userId, groupId, actId,
+			oldQuestion, serviceContext);
+	}
+
+	@Override
+	public void copyQuestionImages(
+		com.ted.lms.learning.activity.question.model.Question oldQuestion,
+		com.ted.lms.learning.activity.question.model.Question newQuestion)
+		throws Exception {
+		_questionLocalService.copyQuestionImages(oldQuestion, newQuestion);
 	}
 
 	/**
@@ -350,9 +370,10 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 
 	@Override
 	public com.ted.lms.learning.activity.question.model.Question updateQuestion(
-		long questionId, String questionText, boolean penalize) {
-		return _questionLocalService.updateQuestion(questionId, questionText,
-			penalize);
+		long userId, long questionId, String questionText, boolean penalize)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _questionLocalService.updateQuestion(userId, questionId,
+			questionText, penalize);
 	}
 
 	/**

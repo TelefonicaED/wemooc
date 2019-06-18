@@ -2,7 +2,9 @@ package com.ted.prerequisite.activity;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.prerequisite.activity.internal.constants.ActivityPrerequisitePortletKeys;
 import com.ted.prerequisite.model.BasePrerequisiteFactory;
@@ -11,6 +13,7 @@ import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -87,6 +90,8 @@ public class ActivityPrerequisiteFactory extends BasePrerequisiteFactory {
 	}
 	
 	protected PrerequisiteRelationLocalService prerequisiteRelationLocalService;
+
+	
 
 
 }

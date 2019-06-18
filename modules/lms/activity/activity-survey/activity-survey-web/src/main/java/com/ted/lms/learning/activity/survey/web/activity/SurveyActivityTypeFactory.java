@@ -3,6 +3,7 @@ package com.ted.lms.learning.activity.survey.web.activity;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyConstants;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
@@ -37,7 +38,7 @@ public class SurveyActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new SurveyActivityType(activity, learningActivityResultLocalService, questionLocalService);
+		return new SurveyActivityType(activity, learningActivityResultLocalService, questionLocalService, answerLocalService);
 	}
 	
 	@Override
@@ -96,4 +97,10 @@ public class SurveyActivityTypeFactory extends BaseLearningActivityTypeFactory {
 		this.questionLocalService = questionLocalService;
 	}
 	protected QuestionLocalService questionLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
+		this.answerLocalService = answerLocalService;
+	}
+	protected AnswerLocalService answerLocalService;
 }

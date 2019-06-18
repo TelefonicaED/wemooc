@@ -27,7 +27,7 @@ if(questionId > 0){
 			useNamespace="false"/>
 </span> 
 
-<div id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_solution"%>' class='<%=Validator.isNull(answers) ? "hide" : ""%>'>
+<div id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_solution"%>' class='<%=Validator.isNull(answers) ||  answers.size() == 0 ? "hide" : ""%>'>
 	<%Answer answer = Validator.isNotNull(answers) && answers.size() > 0 ? answers.get(0) : null; %>
 	<liferay-ui:panel title="answer" collapsible="true" extended="true" defaultState="open" persistState="false">
 		<aui:input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_correct"%>' value="<%=answer != null %>"/>

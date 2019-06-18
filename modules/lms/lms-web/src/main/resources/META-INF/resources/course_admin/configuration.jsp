@@ -22,7 +22,7 @@ List<LayoutSetPrototype> listTemplates = LayoutSetPrototypeLocalServiceUtil.getL
 String[] searchExpandoValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.searchExpandoValues()) ? courseAdminPortletInstanceConfiguration.searchExpandoValues().split(",") : null;
 String[] searchEditionExpandoValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.searchEditionExpandoValues()) ? courseAdminPortletInstanceConfiguration.searchEditionExpandoValues().split(",") : null;
 String[] courseExpandoValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.courseExpandoValues()) ? courseAdminPortletInstanceConfiguration.courseExpandoValues().split(",") : null;
-String[] courseTemplateValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.courseTemplateValues()) ? courseAdminPortletInstanceConfiguration.courseTemplateValues().split(",") : null;
+String[] courseTemplateValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.courseTemplates()) ? courseAdminPortletInstanceConfiguration.courseTemplates(): null;
  %>
 
 <liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />

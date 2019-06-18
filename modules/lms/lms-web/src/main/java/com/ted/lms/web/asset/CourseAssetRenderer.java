@@ -1,5 +1,6 @@
 package com.ted.lms.web.asset;
 
+import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.asset.util.AssetHelper;
 import com.liferay.petra.string.StringPool;
@@ -12,6 +13,7 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.trash.TrashRenderer;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -40,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Virginia Martín Agudo
  *
  */
-public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
+public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course> implements TrashRenderer {
 	
 	private final Course course;
 	private final ResourceBundleLoader resourceBundleLoader;
@@ -197,6 +199,18 @@ public class CourseAssetRenderer extends BaseJSPAssetRenderer<Course>{
 		ThemeDisplay themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		Group courseGroup= GroupLocalServiceUtil.getGroup(course.getGroupCreatedId());
 		return courseGroup.getDisplayURL(themeDisplay);
+	}
+
+	@Override
+	public String getPortletId() {
+		AssetRendererFactory<Course> assetRendererFactory = getAssetRendererFactory();
+
+		return assetRendererFactory.getPortletId();
+	}
+
+	@Override
+	public String getType() {
+		return CourseAssetRendererFactory.TYPE;
 	}
 	
 }
