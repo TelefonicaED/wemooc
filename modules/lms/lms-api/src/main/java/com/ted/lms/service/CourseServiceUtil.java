@@ -72,6 +72,13 @@ public class CourseServiceUtil {
 			courseTypeId, smallImageSelector, serviceContext);
 	}
 
+	public static void addUserCourse(long courseId, long[] addUserIds,
+		long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService().addUserCourse(courseId, addUserIds, roleId, serviceContext);
+	}
+
 	public static int countCourses(long companyId, String title,
 		String description, String language, int[] status, long parentCourseId,
 		long groupId, java.util.LinkedHashMap<String, Object> params,
@@ -133,6 +140,14 @@ public class CourseServiceUtil {
 				   .searchCourses(companyId, title, description, language,
 			status, parentCourseId, groupId, params, andOperator, start, end,
 			obc);
+	}
+
+	public static void unsetUserCourse(long courseId, long[] removeUserIds,
+		long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		getService()
+			.unsetUserCourse(courseId, removeUserIds, roleId, serviceContext);
 	}
 
 	/**

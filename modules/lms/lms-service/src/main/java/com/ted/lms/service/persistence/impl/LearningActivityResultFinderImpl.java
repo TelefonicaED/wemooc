@@ -8,11 +8,12 @@ import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.impl.LearningActivityResultImpl;
 import com.ted.lms.service.persistence.LearningActivityResultFinder;
-import com.ted.lms.util.LMSUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -117,8 +118,7 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 			
 			QueryPos qPos = QueryPos.getInstance(q);	
-			qPos.add(LMSUtil.getTeacherRoleId(companyId));
-			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
 			qPos.add(actId);
 							
 			Iterator<Long> itr = q.iterate();

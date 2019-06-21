@@ -24,19 +24,16 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
-import com.liferay.portal.kernel.model.MembershipRequestConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
-import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
@@ -46,19 +43,16 @@ import com.liferay.portal.model.impl.GroupImpl;
 import com.liferay.portal.model.impl.LayoutSetImpl;
 import com.liferay.portlet.asset.model.impl.AssetEntryImpl;
 import com.ted.lms.constants.CourseConstants;
-import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.exception.InscriptionException;
+import com.ted.lms.exception.NoSuchCourseResultException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.Module;
-import com.ted.lms.security.permission.resource.CoursePermission;
 import com.ted.lms.service.CourseLocalServiceUtil;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
 import com.ted.lms.service.ModuleLocalServiceUtil;
+import com.ted.lms.service.StudentLocalServiceUtil;
 import com.ted.lms.service.util.DateUtil;
-import com.ted.prerequisite.model.Prerequisite;
-import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -144,8 +138,8 @@ public class CourseImpl extends CourseBaseImpl {
 		return GroupLocalServiceUtil.hasUserGroup(userId,getGroupCreatedId());
 	}
 	
-	public CourseResult getResultUser(long userId) {
-		return CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), userId);
+	public CourseResult getResultUser(long userId) throws NoSuchCourseResultException {
+		return CourseResultLocalServiceUtil.getCourseResult(getCourseId(), userId);
 	}
 	
 	public Group getGroup() {
@@ -206,83 +200,11 @@ public class CourseImpl extends CourseBaseImpl {
 	}
 	
 	public boolean canUnsubscribe(long userId, PermissionChecker permissionChecker) throws PortalException {
-		Date now = new Date();
-			
-		if (GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId()) && getRegistrationStartDate().before(now) && 
-				getRegistrationEndDate().after(now) && CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER)) {
-			CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), userId); 
-			Group group = GroupLocalServiceUtil.getGroup(getGroupCreatedId());
-
-			return courseResult == null || courseResult.getPassedDate() == null || (group.getType() == GroupConstants.TYPE_SITE_OPEN);
-		}else {
-			return false;
-		}
+		return StudentLocalServiceUtil.canUnsubscribe(this, userId, permissionChecker);
 	}
 	
 	public boolean canEnroll(long userId, Locale locale, PermissionChecker permissionChecker) throws PortalException, InscriptionException {
-		//1.Comprobamos que no esté ya inscrito
-		if(!GroupLocalServiceUtil.hasUserGroup(userId, getGroupCreatedId())) {
-			Date now = new Date();
-			
-			/*Date startDate = course.getStartDate();
-			Date endDate = course.getEndDate();
-			
-			if(teamId>0){
-				Schedule sch = scheduleLocalService.getScheduleByTeamId(teamId);	
-				if(sch!=null){
-					startDate = sch.getStartDate();
-					endDate = sch.getEndDate();
-				}
-			}*/
-			if(CoursePermission.contains(permissionChecker, this, LMSActionKeys.REGISTER)){
-				//2. Fecha actual dentro del periodo de inscripcion
-				if((getRegistrationStartDate().before(now) && getRegistrationEndDate().after(now))){
-	
-					//3.Comprobamos que se cumplan todos los prerequisitos
-					List<Prerequisite> listPrerequiste = PrerequisiteRelationLocalServiceUtil.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), getCourseId());
-					boolean isPassed = true;
-					int i = 0;
-					while(isPassed && listPrerequiste.size() > i) {
-						isPassed = listPrerequiste.get(i).isPassed(userId);
-						i++;
-					}
-					if(isPassed) {
-						// 4. El mÃ¡ximo de inscripciones del curso no ha sido superado
-						if(getMaxUsers()<=0 || UserLocalServiceUtil.getGroupUsersCount(getGroupCreatedId()) < getMaxUsers()){
-							//5. Comprobamos el tipo de inscripción
-							Group group = GroupLocalServiceUtil.getGroup(getGroupCreatedId());
-							if(group.getType()==GroupConstants.TYPE_SITE_OPEN){
-								return true;
-							}else{
-								if(group.getType()==GroupConstants.TYPE_SITE_RESTRICTED){
-									if(!MembershipRequestLocalServiceUtil.hasMembershipRequest(userId, group.getGroupId(), MembershipRequestConstants.STATUS_PENDING)){
-										return true;
-									}
-								}else{
-									if(group.getType()==GroupConstants.TYPE_SITE_PRIVATE){
-										//Debería lanzar una excepción indicando que es privado y que no se puede
-										throw new InscriptionException("site-private", LanguageUtil.get(locale, "inscription.error.site-private"));
-									}
-								}
-							}
-						}else {
-							throw new InscriptionException("max-users", LanguageUtil.get(locale, "inscription.error.max-users"));
-						}
-					}else {
-						//Debería lanzar una excepción indicando que no se cumplen los prerequisitos
-						throw new InscriptionException("prerequisites", LanguageUtil.get(locale, "inscription.error.prerequisites"));
-					}
-				}else {
-					//Debería lanzar una excepción indicando que está en periodo de ejecución
-					throw new InscriptionException("registration-dates", LanguageUtil.get(locale, "inscription.error.registration-dates"));
-				}
-			}else {
-				throw new InscriptionException("permission-register", LanguageUtil.get(locale, "inscription.error.permission-register"));
-			}
-			return false;
-		}else {
-			return false;
-		}
+		return StudentLocalServiceUtil.canEnroll(this, userId, locale, permissionChecker);
 	}
 	
 	public Calendar getExecutionStartDateCalendar() {
@@ -438,7 +360,7 @@ public class CourseImpl extends CourseBaseImpl {
 		}
 		
 		//Comprobamos si tiene fechas para realizar el curso
-		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(getCourseId(), user.getUserId());
+		CourseResult courseResult = CourseResultLocalServiceUtil.fetchCourseResult(getCourseId(), user.getUserId());
 		
         if(courseResult!=null && ((courseResult.getAllowEndDate()!=null && courseResult.getAllowEndDate().before(now)) 
         							||(courseResult.getAllowStartDate()!=null && courseResult.getAllowStartDate().after(now)))){
@@ -490,7 +412,7 @@ public class CourseImpl extends CourseBaseImpl {
 		}
 		
 		//Ahora comprobamos la condici�n de allowFinishDate
-		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(this.getCourseId(), userId);
+		CourseResult courseResult = CourseResultLocalServiceUtil.fetchCourseResult(this.getCourseId(), userId);
 		
 		if(courseResult != null){
 			log.debug(":::hasPermissionAccessCourseFinished:::courseResult allowFinishDate: " + courseResult.getAllowEndDate());
@@ -515,6 +437,10 @@ public class CourseImpl extends CourseBaseImpl {
 	public long getCourseTypeId() {
 		AssetEntry assetEntry = getAssetEntry();
 		return assetEntry.getClassTypeId();
+	}
+	
+	public int getCountEditions() {
+		return CourseLocalServiceUtil.countCourses(getCompanyId(), null, null, null, getCourseId(), 0, null);
 	}
 
 }

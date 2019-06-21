@@ -27,7 +27,6 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -62,8 +61,8 @@ public interface ScheduleLocalService extends BaseLocalService,
 	 *
 	 * Never modify or reference this interface directly. Always use {@link ScheduleLocalServiceUtil} to access the schedule local service. Add custom service methods to {@link com.ted.lms.inscription.teams.service.impl.ScheduleLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public Schedule addSchedule(long teamId, Date startDate, Date endDate,
-		long courseId, ServiceContext serviceContext);
+	public Schedule addSchedule(long userId, long teamId, Date startDate,
+		Date endDate, long courseId);
 
 	/**
 	* Adds the schedule to the database. Also notifies the appropriate model listeners.
@@ -244,9 +243,9 @@ public interface ScheduleLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Schedule updateSchedule(Schedule schedule);
 
-	public void updateScheduleUserDates(Schedule schedule, long courseId,
-		ServiceContext serviceContext, long userId);
+	public void updateScheduleUserDates(long userId, Schedule schedule,
+		long courseId, long studentId);
 
-	public void updateScheduleUsersDates(Schedule schedule, long courseId,
-		ServiceContext serviceContext);
+	public void updateScheduleUsersDates(long userId, Schedule schedule,
+		long courseId);
 }

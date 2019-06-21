@@ -362,6 +362,64 @@ public class CourseServiceHttp {
 		}
 	}
 
+	public static void addUserCourse(HttpPrincipal httpPrincipal,
+		long courseId, long[] addUserIds, long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
+					"addUserCourse", _addUserCourseParameterTypes8);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					courseId, addUserIds, roleId, serviceContext);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
+	public static void unsetUserCourse(HttpPrincipal httpPrincipal,
+		long courseId, long[] removeUserIds, long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		try {
+			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
+					"unsetUserCourse", _unsetUserCourseParameterTypes9);
+
+			MethodHandler methodHandler = new MethodHandler(methodKey,
+					courseId, removeUserIds, roleId, serviceContext);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof com.liferay.portal.kernel.exception.PortalException) {
+					throw (com.liferay.portal.kernel.exception.PortalException)e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(e);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	public static void updateSmallImage(HttpPrincipal httpPrincipal,
 		long courseId, String imageString, String imageTitle,
 		String imageMimeType,
@@ -370,7 +428,7 @@ public class CourseServiceHttp {
 			com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
-					"updateSmallImage", _updateSmallImageParameterTypes8);
+					"updateSmallImage", _updateSmallImageParameterTypes10);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					courseId, imageString, imageTitle, imageMimeType,
@@ -406,7 +464,7 @@ public class CourseServiceHttp {
 		com.liferay.portal.kernel.util.OrderByComparator<com.ted.lms.model.Course> obc) {
 		try {
 			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
-					"searchCourses", _searchCoursesParameterTypes9);
+					"searchCourses", _searchCoursesParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					companyId, title, description, language, status,
@@ -437,7 +495,7 @@ public class CourseServiceHttp {
 		java.util.LinkedHashMap<String, Object> params, boolean andOperator) {
 		try {
 			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
-					"countCourses", _countCoursesParameterTypes10);
+					"countCourses", _countCoursesParameterTypes12);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					companyId, title, description, language, status,
@@ -472,7 +530,7 @@ public class CourseServiceHttp {
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
-					"executeCopyCourse", _executeCopyCourseParameterTypes11);
+					"executeCopyCourse", _executeCopyCourseParameterTypes13);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
 					courseId, courseParentId, titleMap, layoutSetPrototypeId,
@@ -543,21 +601,29 @@ public class CourseServiceHttp {
 	private static final Class<?>[] _restoreEntryFromTrashParameterTypes7 = new Class[] {
 			long.class
 		};
-	private static final Class<?>[] _updateSmallImageParameterTypes8 = new Class[] {
+	private static final Class<?>[] _addUserCourseParameterTypes8 = new Class[] {
+			long.class, long[].class, long.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _unsetUserCourseParameterTypes9 = new Class[] {
+			long.class, long[].class, long.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[] _updateSmallImageParameterTypes10 = new Class[] {
 			long.class, String.class, String.class, String.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _searchCoursesParameterTypes9 = new Class[] {
+	private static final Class<?>[] _searchCoursesParameterTypes11 = new Class[] {
 			long.class, String.class, String.class, String.class, int[].class,
 			long.class, long.class, java.util.LinkedHashMap.class, boolean.class,
 			int.class, int.class,
 			com.liferay.portal.kernel.util.OrderByComparator.class
 		};
-	private static final Class<?>[] _countCoursesParameterTypes10 = new Class[] {
+	private static final Class<?>[] _countCoursesParameterTypes12 = new Class[] {
 			long.class, String.class, String.class, String.class, int[].class,
 			long.class, long.class, java.util.LinkedHashMap.class, boolean.class
 		};
-	private static final Class<?>[] _executeCopyCourseParameterTypes11 = new Class[] {
+	private static final Class<?>[] _executeCopyCourseParameterTypes13 = new Class[] {
 			long.class, long.class, java.util.Map.class, long.class,
 			java.util.Date.class, java.util.Date.class, java.util.Date.class,
 			java.util.Date.class, boolean.class, boolean.class,

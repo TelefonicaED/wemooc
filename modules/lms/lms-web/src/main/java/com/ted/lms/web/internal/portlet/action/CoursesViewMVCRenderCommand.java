@@ -3,12 +3,13 @@ package com.ted.lms.web.internal.portlet.action;
 import com.liferay.asset.kernel.service.AssetTagService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -17,6 +18,7 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.trash.TrashHelper;
+import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
@@ -78,7 +80,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 
 		portletURL.setParameter("mvcRenderCommandName", "/courses/view");
 		
-		long[] groupIds = {themeDisplay.getScopeGroupId()};
+		long groupId = ParamUtil.getLong(renderRequest, "groupId", themeDisplay.getScopeGroupId());
 		
 		LiferayPortletResponse liferayPortletResponse = PortalUtil.getLiferayPortletResponse(renderResponse);
 		
@@ -90,18 +92,12 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		
 		SearchContainer<Course> searchContainer = new SearchContainer<Course>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_DELTA, 
 				iteratorURL, null, "no-courses");
-
-		if(statusArray != null) {
-			for(int i: statusArray) {
-				log.debug("status array: " + i);
-			}
-		}
 		
 		List<Course> courses = courseLocalService.searchCourses(themeDisplay.getCompanyId(), keywords, themeDisplay.getLanguageId(), statusArray, 
-				CourseConstants.DEFAULT_PARENT_COURSE_ID, themeDisplay.getScopeGroupId(), null, searchContainer.getStart(), searchContainer.getEnd(), 
+				CourseConstants.DEFAULT_PARENT_COURSE_ID, groupId, null, searchContainer.getStart(), searchContainer.getEnd(), 
 				searchContainer.getOrderByComparator());
 		int countCourses = courseLocalService.countCourses(themeDisplay.getCompanyId(), keywords, themeDisplay.getLanguageId(), statusArray, 
-				CourseConstants.DEFAULT_PARENT_COURSE_ID, themeDisplay.getScopeGroupId(), null);
+				CourseConstants.DEFAULT_PARENT_COURSE_ID, groupId, null);
 		searchContainer.setResults(courses);
 		searchContainer.setTotal(countCourses);
 		
@@ -120,8 +116,11 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 			
 			HttpServletRequest request = portal.getHttpServletRequest(renderRequest);
 			
+			CourseServiceConfiguration courseServiceConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(
+							CourseServiceConfiguration.class, CompanyThreadLocal.getCompanyId());
+			
 			CourseDisplayContext courseDisplayContext = new CourseDisplayContext(request, renderRequest, renderResponse, 
-					renderRequest.getPreferences(), configuration, trashHelper);
+					renderRequest.getPreferences(), configuration, trashHelper, courseServiceConfiguration);
 			renderRequest.setAttribute("courseDisplayContext", courseDisplayContext);
 		} catch (ConfigurationException e) {
 			e.printStackTrace();

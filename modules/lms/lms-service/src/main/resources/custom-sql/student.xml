@@ -11,17 +11,14 @@
 			INNER JOIN 
 				lms_course co 
 					ON co.groupCreatedId = ug.groupId
-			LEFT JOIN 
+			INNER JOIN 
 				usergrouprole ur 
 					ON ug.userId = ur.userId AND ur.groupId = ug.groupId AND ur.roleId= ?
-			LEFT JOIN 
-				usergrouprole urE 
-					ON ug.userId = urE.userId AND urE.groupId = ug.groupId AND urE.roleId = ?
 			[$JOINTEAM$]
 			[$JOIN$]
 			WHERE 
 				[$WHERE$]
-				ur.userId IS NULL AND urE.userId IS NULL AND co.courseId = ?
+				co.courseId = ?
 				[$WHERESTATUS$]
 				[$WHERESEARCH$]
 			ORDER BY [$ORDERBY$]
@@ -44,17 +41,14 @@
 			INNER JOIN 
 				lms_course co 
 					ON co.groupCreatedId = ug.groupId
-			LEFT JOIN 
+			INNER JOIN 
 				usergrouprole ur 
 					ON ug.userId = ur.userId AND ur.groupId = ug.groupId AND ur.roleId= ?
-			LEFT JOIN 
-				usergrouprole urE 
-					ON ug.userId = urE.userId AND urE.groupId = ug.groupId AND urE.roleId = ?
 			[$JOINTEAM$]
 			[$JOIN$]
 			WHERE 
 				[$WHERE$]
-				ur.userId IS NULL AND urE.userId IS NULL AND co.courseId = ?
+				co.courseId = ?
 				[$WHERESTATUS$]
 				[$WHERESEARCH$]
 		]]>

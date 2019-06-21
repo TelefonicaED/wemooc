@@ -1,3 +1,5 @@
+<%@page import="com.ted.lms.constants.CourseConstants"%>
+<%@page import="com.ted.lms.configuration.CourseServiceConfiguration"%>
 <%@page import="com.liferay.trash.TrashHelper"%>
 <%@page import="com.liferay.portal.kernel.dao.orm.QueryUtil"%>
 <%@page import="com.liferay.portal.kernel.workflow.WorkflowConstants"%>
@@ -28,6 +30,7 @@ Course course = (Course)row.getObject();
 
 CourseDisplayContext courseDisplayContext = (CourseDisplayContext)request.getAttribute("courseDisplayContext");
 CourseAdminPortletInstanceConfiguration configuration = courseDisplayContext.getCourseAdminConfiguration();
+CourseServiceConfiguration courseServiceConfiguration = courseDisplayContext.getCourseServiceConfiguration();
 
 PortletURL portletURL = renderResponse.createRenderURL();
 portletURL.setParameter("mvcRenderCommandName", "/courses/view");
@@ -52,6 +55,18 @@ portletURL.setParameter("mvcRenderCommandName", "/courses/view");
 		<liferay-ui:icon
 			message="edit"
 			url="${editCourseURL }"
+		/>
+	</c:if>
+	<c:if test="<%=CoursePermission.contains(permissionChecker, course, LMSActionKeys.ASSIGN_MEMBERS) && course.isApproved() && (course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID || courseServiceConfiguration.editionWithoutRestrictions() || course.getCountEditions() == 0)%>">
+		<portlet:renderURL var="assignMembersURL">
+			<portlet:param name="mvcRenderCommandName" value="/courses/view_members" />
+			<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+			<portlet:param name="courseId" value="<%= String.valueOf(course.getCourseId()) %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			message="assign-member"
+			url="${assignMembersURL }"
 		/>
 	</c:if>
 	<li aria-hidden="true" class="dropdown-divider" role="presentation"></li>

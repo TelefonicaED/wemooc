@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -29,12 +30,12 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.impl.UserImpl;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.constants.CourseParams;
+import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.constants.StudentParams;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.impl.CourseImpl;
 import com.ted.lms.service.persistence.CourseFinder;
 import com.ted.lms.util.LMSPrefsPropsValues;
-import com.ted.lms.util.LMSUtil;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -1000,8 +1001,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			qPos.add(LMSUtil.getTeacherRoleId(companyId));
-			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
 			setParametersStudents(params, qPos);
 			qPos.add(courseId);
 
@@ -1074,8 +1074,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 			
 			QueryPos qPos = QueryPos.getInstance(q);
-			qPos.add(LMSUtil.getTeacherRoleId(companyId));
-			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
 			setParametersStudents(params, qPos);
 			qPos.add(courseId);
 			if(status != WorkflowConstants.STATUS_ANY){

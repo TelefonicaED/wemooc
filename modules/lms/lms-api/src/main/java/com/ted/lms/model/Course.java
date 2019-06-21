@@ -66,7 +66,8 @@ public interface Course extends CourseModel, PersistedModel {
 
 	public boolean isRegistredUser(long userId);
 
-	public CourseResult getResultUser(long userId);
+	public CourseResult getResultUser(long userId)
+		throws com.ted.lms.exception.NoSuchCourseResultException;
 
 	public com.liferay.portal.kernel.model.Group getGroup();
 
@@ -122,4 +123,6 @@ public interface Course extends CourseModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public long getCourseTypeId();
+
+	public int getCountEditions();
 }

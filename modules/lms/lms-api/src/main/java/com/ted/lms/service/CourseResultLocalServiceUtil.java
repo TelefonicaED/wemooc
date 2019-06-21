@@ -54,10 +54,18 @@ public class CourseResultLocalServiceUtil {
 		return getService().addCourseResult(courseResult);
 	}
 
-	public static com.ted.lms.model.CourseResult addCourseResult(
-		long courseId, long userId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return getService().addCourseResult(courseId, userId, serviceContext);
+	/**
+	* Crear un courseresult para el alumno cuando se inscribe
+	*
+	* @param userId identificador del usuario que está inscribiendo
+	* @param courseId identificador del curso
+	* @param studentId usuario que se inscribe en el curso
+	* @param serviceContext
+	* @return
+	*/
+	public static com.ted.lms.model.CourseResult addCourseResult(long userId,
+		long courseId, long studentId) {
+		return getService().addCourseResult(userId, courseId, studentId);
 	}
 
 	/**
@@ -184,13 +192,13 @@ public class CourseResultLocalServiceUtil {
 		return getService().fetchCourseResult(crId);
 	}
 
-	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
-		return getService().getActionableDynamicQuery();
+	public static com.ted.lms.model.CourseResult fetchCourseResult(
+		long courseId, long userId) {
+		return getService().fetchCourseResult(courseId, userId);
 	}
 
-	public static com.ted.lms.model.CourseResult getByCourseIdUserId(
-		long courseId, long userId) {
-		return getService().getByCourseIdUserId(courseId, userId);
+	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery getActionableDynamicQuery() {
+		return getService().getActionableDynamicQuery();
 	}
 
 	/**
@@ -203,6 +211,12 @@ public class CourseResultLocalServiceUtil {
 	public static com.ted.lms.model.CourseResult getCourseResult(long crId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService().getCourseResult(crId);
+	}
+
+	public static com.ted.lms.model.CourseResult getCourseResult(
+		long courseId, long userId)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
+		return getService().getCourseResult(courseId, userId);
 	}
 
 	/**

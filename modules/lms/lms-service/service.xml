@@ -94,6 +94,9 @@
 		<reference entity="Resource" package-path="com.liferay.portal" />
 		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
 		<reference entity="DLFolder" package-path="com.liferay.portlet.documentlibrary" />
+		<reference entity="UserGroupRole" package-path="com.liferay.portal" />
+		<reference entity="SocialActivity" package-path="com.liferay.portlet.social" />
+		<reference entity="Role" package-path="com.liferay.portal" />
 	</entity>
 	
 	<entity name="CourseType"  local-service="true" remote-service="true" >
@@ -206,6 +209,7 @@
 	
 	<entity local-service="true" name="Student" remote-service="false" data-source="false">
 		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
 	
 	<entity local-service="true" name="Module" remote-service="true" trash-enabled="true" uuid="true">

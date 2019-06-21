@@ -17,7 +17,6 @@ package com.ted.lms.inscription.teams.service.impl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.inscription.teams.model.Schedule;
 import com.ted.lms.inscription.teams.service.base.ScheduleLocalServiceBaseImpl;
@@ -54,32 +53,32 @@ public class ScheduleLocalServiceImpl extends ScheduleLocalServiceBaseImpl {
 		return schedulePersistence.fetchByTeamId(teamId);
 	}
 	
-	public Schedule addSchedule (long teamId, Date startDate, Date endDate, long courseId, ServiceContext serviceContext){
+	public Schedule addSchedule (long userId, long teamId, Date startDate, Date endDate, long courseId){
 		Schedule scheduledTeam = schedulePersistence.create(counterLocalService.increment(Schedule.class.getName()));
 		scheduledTeam.setTeamId(teamId);
 		scheduledTeam.setEndDate(endDate);
 		scheduledTeam.setStartDate(startDate);
 		schedulePersistence.update(scheduledTeam);
 		
-		updateScheduleUsersDates(scheduledTeam, courseId, serviceContext);
+		updateScheduleUsersDates(userId, scheduledTeam, courseId);
 		
 		return scheduledTeam;
 	}
 	
-	public void updateScheduleUsersDates(Schedule schedule, long courseId, ServiceContext serviceContext) {
+	public void updateScheduleUsersDates(long userId, Schedule schedule, long courseId) {
 		//Ponemos las fechas a los usuarios que pertenecen a ese equipo
 		List<User> listUserTeams = userLocalService.getTeamUsers(schedule.getTeamId());
 		if(Validator.isNotNull(listUserTeams)) {
 			for(User user: listUserTeams) {
-				updateScheduleUserDates(schedule, courseId, serviceContext, user.getUserId());
+				updateScheduleUserDates(userId, schedule, courseId, user.getUserId());
 			}
 		}
 	}
 	
-	public void updateScheduleUserDates(Schedule schedule, long courseId, ServiceContext serviceContext, long userId) {
-		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(courseId, userId);
+	public void updateScheduleUserDates(long userId, Schedule schedule, long courseId, long studentId) {
+		CourseResult courseResult = CourseResultLocalServiceUtil.fetchCourseResult(courseId, studentId);
 		if(courseResult == null) {
-			courseResult = CourseResultLocalServiceUtil.addCourseResult(courseId, userId, serviceContext);
+			courseResult = CourseResultLocalServiceUtil.addCourseResult(userId, courseId, studentId);
 		}
 		courseResult.setAllowStartDate(schedule.getStartDate());
 		courseResult.setAllowEndDate(schedule.getEndDate());
@@ -96,7 +95,7 @@ public class ScheduleLocalServiceImpl extends ScheduleLocalServiceBaseImpl {
 	}
 	
 	public void deleteScheduleUserDates(Schedule schedule, long courseId, long userId) {
-		CourseResult courseResult = CourseResultLocalServiceUtil.getByCourseIdUserId(courseId, userId);
+		CourseResult courseResult = CourseResultLocalServiceUtil.fetchCourseResult(courseId, userId);
 		if(courseResult != null) {
 			courseResult.setAllowStartDate(null);
 			courseResult.setAllowEndDate(null);
@@ -111,12 +110,8 @@ public class ScheduleLocalServiceImpl extends ScheduleLocalServiceBaseImpl {
 		try {
 			Team team = teamLocalService.getTeam(schedule.getTeamId());
 			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(team.getGroupId());
-			
-			ServiceContext serviceContext = new ServiceContext();
-			serviceContext.setCompanyId(team.getCompanyId());
-			serviceContext.setScopeGroupId(team.getGroupId());
-			serviceContext.setUserId(team.getUserId());
-			updateScheduleUsersDates(schedule, course.getCourseId(), serviceContext);
+
+			updateScheduleUsersDates(team.getUserId(), schedule, course.getCourseId());
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -133,11 +128,7 @@ public class ScheduleLocalServiceImpl extends ScheduleLocalServiceBaseImpl {
 			Team team = teamLocalService.getTeam(schedule.getTeamId());
 			Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(team.getGroupId());
 			
-			ServiceContext serviceContext = new ServiceContext();
-			serviceContext.setCompanyId(team.getCompanyId());
-			serviceContext.setScopeGroupId(team.getGroupId());
-			serviceContext.setUserId(team.getUserId());
-			updateScheduleUsersDates(schedule, course.getCourseId(), serviceContext);
+			updateScheduleUsersDates(team.getUserId(), schedule, course.getCourseId());
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

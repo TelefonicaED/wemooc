@@ -354,6 +354,36 @@ public class CourseServiceSoap {
 		}
 	}
 
+	public static void addUserCourse(long courseId, long[] addUserIds,
+		long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			CourseServiceUtil.addUserCourse(courseId, addUserIds, roleId,
+				serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
+	public static void unsetUserCourse(long courseId, long[] removeUserIds,
+		long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+		try {
+			CourseServiceUtil.unsetUserCourse(courseId, removeUserIds, roleId,
+				serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	public static void updateSmallImage(long courseId, String imageString,
 		String imageTitle, String imageMimeType,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)

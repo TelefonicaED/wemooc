@@ -73,9 +73,8 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
-import com.liferay.portal.kernel.service.GroupServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelectorProcessor;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
@@ -105,6 +104,7 @@ import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActivityKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LMSPortletKeys;
+import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
 import com.ted.lms.copy.permission.ResourceCopy;
 import com.ted.lms.exception.ExecutionEndDateException;
@@ -123,7 +123,6 @@ import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.service.base.CourseLocalServiceBaseImpl;
 import com.ted.lms.service.util.SmallImageHelper;
 import com.ted.lms.settings.CoursesGroupServiceSettings;
-import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
@@ -218,9 +217,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		Map<String, String> urlGroupMap = getURLGroupMap(groupId, course.getCourseId(), friendlyURLMap);
 		
 		//Creamos el group asociado, le cambiamos al nombre al grupo porque no deja crear dos con el mismo nombre por el groupKey
-		Map<Locale,String> titleMapGroup = new HashMap<Locale,String>();
-		
-		course.getTitleMap().forEach((k,v)->titleMapGroup.put(k, v + " (" + courseId + ")"));
 		
 		String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
 		if(Validator.isNull(urlGroup)) {
@@ -246,33 +242,14 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			}
 		}
 		
-		Group group = GroupServiceUtil.addGroup(parentGroupId, 0, titleMapGroup, course.getDescriptionMap(), 
+		Group group = GroupLocalServiceUtil.addGroup(userId, parentGroupId, Course.class.getName(), courseId, 0, titleMap, course.getDescriptionMap(), 
 				GroupConstants.TYPE_SITE_OPEN, true, membershipRestriction, urlGroup, 
 				true, false, true, serviceContext);
 		
 		course.setGroupCreatedId(group.getGroupId());
 		
 		LiveUsers.joinGroup(user.getCompanyId(), group.getGroupId(), userId);
-		
-		//Añadimos rol de editor o tutor al creador
-		boolean teacherRoleToCreator = LMSPrefsPropsValues.getCourseAddTeacherRoleToCreator(course.getCourseId());
-		boolean editorRoleToCreator = LMSPrefsPropsValues.getCourseAddEditorRoleToCreator(course.getCourseId());
-		
-		if(teacherRoleToCreator){
-			long teacherRole = LMSPrefsPropsValues.getLMSPrefsTeacherRole(course.getCourseId());
-			if(teacherRole > 0) {
-				long[] teacherRoleId = {teacherRole};
-				UserGroupRoleLocalServiceUtil.addUserGroupRoles(userId, course.getGroupCreatedId(), teacherRoleId);
-			}
-		}
 
-		if(editorRoleToCreator){
-			long editorRole = LMSPrefsPropsValues.getLMSPrefsEditorRole(course.getCompanyId());
-			if(editorRole > 0) {
-				long[] editorRoleId = {editorRole};
-				UserGroupRoleLocalServiceUtil.addUserGroupRoles(userId,	course.getGroupCreatedId(), editorRoleId);
-			}
-		}
 		SitesUtil.updateLayoutSetPrototypesLinks(group, layoutSetPrototypeId, 0, true,false);
 	
 		course = coursePersistence.update(course);
@@ -721,6 +698,50 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		}
 
 		return course;
+	}
+	
+	/**
+	 * A esta función no se le debe llamar para inscribir alumnos teniendo en cuenta el método de inscripción,
+	 * únicamente es para inscribir como administrador a usuarios en cursos
+	 * @param userId identifador del usuario que está inscribiendo
+	 * @param groupId identificador del grupo del curso
+	 * @param addUserIds usuarios que se quieren añadir al curso
+	 * @param roleId identificador del rol que queremos dar
+	 * @param ServiceContext contexto de la petición
+	 * @throws PortalException
+	 */
+	public void addUserCourse(long userId, long courseId, long[] addUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		userLocalService.addGroupUsers(course.getGroupCreatedId(), addUserIds);
+		userGroupRoleLocalService.addUserGroupRoles(addUserIds, course.getGroupCreatedId(), roleId);
+		
+		LiveUsers.joinGroup(course.getCompanyId(), course.getGroupCreatedId(), addUserIds);
+		
+		if(roleId == roleLocalService.getRole(course.getCompanyId(), LMSRoleConstants.STUDENT).getRoleId()) {
+			for(long addUserId: addUserIds) {
+				if(courseResultLocalService.fetchCourseResult(courseId, addUserId) == null) {
+					courseResultLocalService.addCourseResult(userId, course.getCourseId(), addUserId);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * A esta función se le debe llamar cuando un administrador desinscriba a un usuario
+	 * @param courseId identificador del curso
+	 * @param removeUserIds usuarios a desinscribir
+	 * @param roleId identificador del rol del que se le va a desinscrbir
+	 * @param serviceContext
+	 * @throws PortalException
+	 */
+	public void unsetUserCourse(long courseId, long[] removeUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		userLocalService.unsetGroupUsers(course.getGroupCreatedId(), removeUserIds, serviceContext);
+		userGroupRoleLocalService.deleteUserGroupRoles(removeUserIds, course.getGroupCreatedId(), roleId);
+
+		LiveUsers.leaveGroup(course.getCompanyId(), course.getGroupCreatedId(), removeUserIds);
 	}
 
 	
@@ -1292,7 +1313,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		//Segundo paso, copiamos la configuración
 		newCourse = updateCourse(userId, newCourse.getCourseId(), registrationStartDate, registrationEndDate, executionStartDate, executionEndDate, 
 				oldCourse.getTypeSite(), oldCourse.getInscriptionType(), oldCourse.getCourseEvalId(), oldCourse.getCalificationType(), 
-				oldCourse.getMaxUsers(), oldCourse.getStatus(), serviceContext);
+				oldCourse.getMaxUsers(), WorkflowConstants.STATUS_DRAFT, serviceContext);
 		
 		log.debug("segundo paso fin ");
 		
@@ -1302,7 +1323,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		//Actualizamos los mensajes
 		newCourse = updateCourse(userId, newCourse.getCourseId(), oldCourse.isWelcome(), oldCourse.getWelcomeSubjectMap(), oldCourse.getWelcomeMsgMap(), 
 				oldCourse.isGoodbye(), oldCourse.getGoodbyeSubjectMap(), oldCourse.getGoodbyeMsgMap(), oldCourse.isDeniedInscription(), 
-				oldCourse.getDeniedInscriptionSubjectMap(), oldCourse.getDeniedInscriptionMsgMap(), oldCourse.getStatus());
+				oldCourse.getDeniedInscriptionSubjectMap(), oldCourse.getDeniedInscriptionMsgMap(), WorkflowConstants.STATUS_DRAFT);
 		
 		log.debug("tercer paso fin ");
 

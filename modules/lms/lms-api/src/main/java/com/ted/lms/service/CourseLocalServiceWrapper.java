@@ -89,6 +89,26 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 			entryId, imageSelector);
 	}
 
+	/**
+	* A esta función no se le debe llamar para inscribir alumnos teniendo en cuenta el método de inscripción,
+	* únicamente es para inscribir como administrador a usuarios en cursos
+	*
+	* @param userId identifador del usuario que está inscribiendo
+	* @param groupId identificador del grupo del curso
+	* @param addUserIds usuarios que se quieren añadir al curso
+	* @param roleId identificador del rol que queremos dar
+	* @param ServiceContext contexto de la petición
+	* @throws PortalException
+	*/
+	@Override
+	public void addUserCourse(long userId, long courseId, long[] addUserIds,
+		long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_courseLocalService.addUserCourse(userId, courseId, addUserIds, roleId,
+			serviceContext);
+	}
+
 	@Override
 	public com.ted.lms.model.Course copyCourse(long userId, long courseId,
 		long courseParentId, String title, long layoutSetPrototypeId,
@@ -505,6 +525,24 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 		return _courseLocalService.searchCourses(companyId, title, description,
 			language, status, parentCourseId, groupId, params, andOperator,
 			start, end, obc);
+	}
+
+	/**
+	* A esta función se le debe llamar cuando un administrador desinscriba a un usuario
+	*
+	* @param courseId identificador del curso
+	* @param removeUserIds usuarios a desinscribir
+	* @param roleId identificador del rol del que se le va a desinscrbir
+	* @param serviceContext
+	* @throws PortalException
+	*/
+	@Override
+	public void unsetUserCourse(long courseId, long[] removeUserIds,
+		long roleId,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		_courseLocalService.unsetUserCourse(courseId, removeUserIds, roleId,
+			serviceContext);
 	}
 
 	/**

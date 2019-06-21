@@ -35,11 +35,10 @@ public class ScheduleLocalServiceWrapper implements ScheduleLocalService,
 
 	@Override
 	public com.ted.lms.inscription.teams.model.Schedule addSchedule(
-		long teamId, java.util.Date startDate, java.util.Date endDate,
-		long courseId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		return _scheduleLocalService.addSchedule(teamId, startDate, endDate,
-			courseId, serviceContext);
+		long userId, long teamId, java.util.Date startDate,
+		java.util.Date endDate, long courseId) {
+		return _scheduleLocalService.addSchedule(userId, teamId, startDate,
+			endDate, courseId);
 	}
 
 	/**
@@ -292,20 +291,18 @@ public class ScheduleLocalServiceWrapper implements ScheduleLocalService,
 	}
 
 	@Override
-	public void updateScheduleUserDates(
+	public void updateScheduleUserDates(long userId,
 		com.ted.lms.inscription.teams.model.Schedule schedule, long courseId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext,
-		long userId) {
-		_scheduleLocalService.updateScheduleUserDates(schedule, courseId,
-			serviceContext, userId);
+		long studentId) {
+		_scheduleLocalService.updateScheduleUserDates(userId, schedule,
+			courseId, studentId);
 	}
 
 	@Override
-	public void updateScheduleUsersDates(
-		com.ted.lms.inscription.teams.model.Schedule schedule, long courseId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		_scheduleLocalService.updateScheduleUsersDates(schedule, courseId,
-			serviceContext);
+	public void updateScheduleUsersDates(long userId,
+		com.ted.lms.inscription.teams.model.Schedule schedule, long courseId) {
+		_scheduleLocalService.updateScheduleUsersDates(userId, schedule,
+			courseId);
 	}
 
 	@Override

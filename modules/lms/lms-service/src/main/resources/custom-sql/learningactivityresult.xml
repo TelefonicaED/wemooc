@@ -31,17 +31,12 @@
 				COUNT(1) AS COUNT_VALUE 
 			FROM 
 				lms_learningactivityresult lar
-			LEFT JOIN 
+			INNER JOIN 
 				usergrouprole ugrT 
 					ON lar.userId = ugrT.userId AND ugrT.roleId = ? AND ugrT.groupId = lar.groupId
-			LEFT JOIN 
-				usergrouprole ugrE 
-					ON lar.userId = ugrE.userId AND ugrE.roleId = ? AND ugrE.groupId = lar.groupId
 			WHERE 
 				lar.actId = ? 
-				AND lar.endDate IS NOT NULL
-				AND ugrT.userId IS NULL 
-				AND ugrE.userId IS NULL;
+				AND lar.endDate IS NOT NULL;
 		]]>
 	</sql>
 </custom-sql>

@@ -33,6 +33,24 @@ public class StudentLocalServiceWrapper implements StudentLocalService,
 	}
 
 	@Override
+	public boolean canEnroll(com.ted.lms.model.Course course, long userId,
+		java.util.Locale locale,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			com.ted.lms.exception.InscriptionException {
+		return _studentLocalService.canEnroll(course, userId, locale,
+			permissionChecker);
+	}
+
+	@Override
+	public boolean canUnsubscribe(com.ted.lms.model.Course course, long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _studentLocalService.canUnsubscribe(course, userId,
+			permissionChecker);
+	}
+
+	@Override
 	public int countStudentsFinished(long courseId, long companyId,
 		String keywords, int status,
 		java.util.LinkedHashMap<String, Object> params, int start, int end) {
@@ -76,14 +94,18 @@ public class StudentLocalServiceWrapper implements StudentLocalService,
 			params, andOperator);
 	}
 
+	/**
+	* Este método realiza las comprobaciones necesarias en base al método de inscripción seleccionado en el curso e inscribe al usuario,
+	* se debe llamar cuando es el mismo estudiante el que se está inscribiendo en el curso
+	*/
 	@Override
 	public com.ted.lms.model.CourseResult enrollStudent(
-		com.ted.lms.model.Course course, long userId,
+		com.ted.lms.model.Course course, long studentId,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext,
 		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException,
 			com.ted.lms.exception.InscriptionException {
-		return _studentLocalService.enrollStudent(course, userId,
+		return _studentLocalService.enrollStudent(course, studentId,
 			serviceContext, permissionChecker);
 	}
 
@@ -117,6 +139,9 @@ public class StudentLocalServiceWrapper implements StudentLocalService,
 			andOperator, start, end, obc);
 	}
 
+	/**
+	* Este método se usa para desinscribir a un usuario de un curso teniendo en cuenta el método de inscripción
+	*/
 	@Override
 	public boolean unsubscribeStudent(com.ted.lms.model.Course course,
 		long userId,

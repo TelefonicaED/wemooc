@@ -110,6 +110,20 @@ public interface CourseLocalService extends BaseLocalService,
 	public long addOriginalImageFileEntry(long userId, long groupId,
 		long entryId, ImageSelector imageSelector) throws PortalException;
 
+	/**
+	* A esta función no se le debe llamar para inscribir alumnos teniendo en cuenta el método de inscripción,
+	* únicamente es para inscribir como administrador a usuarios en cursos
+	*
+	* @param userId identifador del usuario que está inscribiendo
+	* @param groupId identificador del grupo del curso
+	* @param addUserIds usuarios que se quieren añadir al curso
+	* @param roleId identificador del rol que queremos dar
+	* @param ServiceContext contexto de la petición
+	* @throws PortalException
+	*/
+	public void addUserCourse(long userId, long courseId, long[] addUserIds,
+		long roleId, ServiceContext serviceContext) throws PortalException;
+
 	public Course copyCourse(long userId, long courseId, long courseParentId,
 		String title, long layoutSetPrototypeId, Date registrationStartDate,
 		Date registrationEndDate, Date executionStartDate,
@@ -397,6 +411,18 @@ public interface CourseLocalService extends BaseLocalService,
 		String description, String language, int[] status, long parentCourseId,
 		long groupId, LinkedHashMap<String, Object> params,
 		boolean andOperator, int start, int end, OrderByComparator<Course> obc);
+
+	/**
+	* A esta función se le debe llamar cuando un administrador desinscriba a un usuario
+	*
+	* @param courseId identificador del curso
+	* @param removeUserIds usuarios a desinscribir
+	* @param roleId identificador del rol del que se le va a desinscrbir
+	* @param serviceContext
+	* @throws PortalException
+	*/
+	public void unsetUserCourse(long courseId, long[] removeUserIds,
+		long roleId, ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Actualiza el estado del asset correspondiente al curso

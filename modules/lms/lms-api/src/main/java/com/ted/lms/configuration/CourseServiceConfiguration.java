@@ -75,4 +75,15 @@ public interface CourseServiceConfiguration {
 		name = "prerequisite-courses", required = false
 	)
 	public String[] prerequisitesCourses();
+	
+	@Meta.AD(
+		name = "edition-without-restrictions", required = false
+	)
+	public boolean editionWithoutRestrictions();
+	
+	@Meta.AD(
+		description = "specifcy-role-courses",
+		name = "role-courses", required = false
+	)
+	public String[] roleCourses();
 }

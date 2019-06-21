@@ -84,6 +84,9 @@ public interface CourseService extends BaseService {
 		ImageSelector smallImageSelector, ServiceContext serviceContext)
 		throws Exception;
 
+	public void addUserCourse(long courseId, long[] addUserIds, long roleId,
+		ServiceContext serviceContext) throws PortalException;
+
 	public int countCourses(long companyId, String title, String description,
 		String language, int[] status, long parentCourseId, long groupId,
 		LinkedHashMap<String, Object> params, boolean andOperator);
@@ -116,6 +119,9 @@ public interface CourseService extends BaseService {
 		String description, String language, int[] status, long parentCourseId,
 		long groupId, LinkedHashMap<String, Object> params,
 		boolean andOperator, int start, int end, OrderByComparator<Course> obc);
+
+	public void unsetUserCourse(long courseId, long[] removeUserIds,
+		long roleId, ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* @param courseId identificador del curso

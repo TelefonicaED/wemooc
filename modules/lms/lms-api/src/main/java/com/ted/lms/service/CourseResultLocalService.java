@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
+import com.ted.lms.exception.NoSuchCourseResultException;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.ModuleResult;
 
@@ -72,8 +73,17 @@ public interface CourseResultLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public CourseResult addCourseResult(CourseResult courseResult);
 
-	public CourseResult addCourseResult(long courseId, long userId,
-		ServiceContext serviceContext);
+	/**
+	* Crear un courseresult para el alumno cuando se inscribe
+	*
+	* @param userId identificador del usuario que está inscribiendo
+	* @param courseId identificador del curso
+	* @param studentId usuario que se inscribe en el curso
+	* @param serviceContext
+	* @return
+	*/
+	public CourseResult addCourseResult(long userId, long courseId,
+		long studentId);
 
 	/**
 	* Creates a new course result with the primary key. Does not add the course result to the database.
@@ -179,10 +189,10 @@ public interface CourseResultLocalService extends BaseLocalService,
 	public CourseResult fetchCourseResult(long crId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
+	public CourseResult fetchCourseResult(long courseId, long userId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public CourseResult getByCourseIdUserId(long courseId, long userId);
+	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	/**
 	* Returns the course result with the primary key.
@@ -193,6 +203,10 @@ public interface CourseResultLocalService extends BaseLocalService,
 	*/
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public CourseResult getCourseResult(long crId) throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public CourseResult getCourseResult(long courseId, long userId)
+		throws NoSuchCourseResultException;
 
 	/**
 	* Returns a range of all the course results.

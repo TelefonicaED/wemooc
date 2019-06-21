@@ -3,7 +3,7 @@
 <%@page import="com.liferay.portal.kernel.util.LocaleUtil"%>
 <%@ include file="init.jsp" %>
 
-<<aui:input name="courseTypeId" type="hidden" value="${courseTypeId }"/>
+<aui:input name="courseTypeId" type="hidden" value="${courseTypeId }"/>
 
 <div class="container">
 	<div class="row">

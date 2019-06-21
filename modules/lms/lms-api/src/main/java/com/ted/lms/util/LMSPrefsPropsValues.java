@@ -24,22 +24,6 @@ public class LMSPrefsPropsValues {
 		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.LEARNING_ACTIVITY_COMMENTS_ENABLED, LMSPropsValues.LEARNING_ACTIVITY_COMMENTS_ENABLED);
 	}
 	
-	public static boolean getCourseAddTeacherRoleToCreator(long companyId) {
-		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.COURSE_ADD_TEACHER_ROLE_TO_CREATOR, LMSPropsValues.COURSE_ADD_TEACHER_ROLE_TO_CREATOR);
-	}
-	
-	public static boolean getCourseAddEditorRoleToCreator(long companyId) {
-		return PrefsPropsUtil.getBoolean(companyId, LMSPropsKeys.COURSE_ADD_EDITOR_ROLE_TO_CREATOR, LMSPropsValues.COURSE_ADD_EDITOR_ROLE_TO_CREATOR);
-	}
-	
-	public static long getLMSPrefsTeacherRole(long companyId) {
-		return PrefsPropsUtil.getLong(companyId, LMSPropsKeys.LMS_PREFS_TEACHER_ROLE, LMSPropsValues.LMS_PREFS_TEACHER_ROLE);
-	}
-	
-	public static long getLMSPrefsEditorRole(long companyId) {
-		return PrefsPropsUtil.getLong(companyId, LMSPropsKeys.LMS_PREFS_EDITOR_ROLE, LMSPropsValues.LMS_PREFS_EDITOR_ROLE);
-	}
-	
 	public static long getCourseImageMaxSize(long companyId) {
 		return PrefsPropsUtil.getLong(companyId, LMSPropsKeys.COURSE_IMAGE_MAX_SIZE, LMSPropsValues.COURSE_IMAGE_MAX_SIZE);
 	}

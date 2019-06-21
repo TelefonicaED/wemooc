@@ -14,12 +14,11 @@
 
 package com.ted.lms.service.impl;
 
-import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.ted.lms.exception.NoSuchCourseResultException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseEval;
 import com.ted.lms.model.CourseEvalFactory;
@@ -31,7 +30,6 @@ import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.registry.PostconditionRegistryUtil;
 import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
 import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -62,28 +60,39 @@ public class CourseResultLocalServiceImpl
 		
 	}
 	
-	public CourseResult getByCourseIdUserId(long courseId, long userId) {
+	public CourseResult fetchCourseResult(long courseId, long userId) {
 		return courseResultPersistence.fetchByCourseIdUserId(courseId, userId);
 	}
 	
-	public CourseResult addCourseResult(long courseId, long userId, ServiceContext serviceContext) {
+	public CourseResult getCourseResult(long courseId, long userId) throws NoSuchCourseResultException {
+		return courseResultPersistence.findByCourseIdUserId(courseId, userId);
+	}
+	
+	/**
+	 * Crear un courseresult para el alumno cuando se inscribe
+	 * @param userId identificador del usuario que está inscribiendo
+	 * @param courseId identificador del curso
+	 * @param studentId usuario que se inscribe en el curso
+	 * @param serviceContext
+	 * @return
+	 */
+	public CourseResult addCourseResult(long userId, long courseId, long studentId) {
 		CourseResult courseResult = null;
 		
 		try {
-			User userModified = userLocalService.getUser(serviceContext.getUserId());
+			User userModified = userLocalService.getUser(userId);
+			Course course = courseLocalService.getCourse(courseId);
 			
 			courseResult = courseResultPersistence.create(counterLocalService.increment(CourseResult.class.getName()));
 			courseResult.setCourseId(courseId);
-			courseResult.setUserId(userId);
+			courseResult.setUserId(studentId);
 			courseResult.setResult(0);
 			courseResult.setRegistrationDate(new Date());
 			courseResult.setPassed(false);
-			courseResult.setGroupId(serviceContext.getScopeGroupId());
-			courseResult.setCompanyId(serviceContext.getCompanyId());
-			courseResult.setUserModifiedId(serviceContext.getUserId());
+			courseResult.setGroupId(course.getGroupCreatedId());
+			courseResult.setCompanyId(course.getCompanyId());
+			courseResult.setUserModifiedId(userId);
 			courseResult.setUserModifiedName(userModified.getFullName());
-			courseResult.setCreateDate(new Date());
-			courseResult.setModifiedDate(courseResult.getCreateDate());
 			
 			courseResultPersistence.update(courseResult);
 		} catch (PortalException e) {
@@ -127,9 +136,9 @@ public class CourseResultLocalServiceImpl
 		
 		if(course!=null){
 			
-			courseResult=courseResultLocalService.getByCourseIdUserId(course.getCourseId(), moduleResult.getUserId());
+			courseResult=courseResultLocalService.fetchCourseResult(course.getCourseId(), moduleResult.getUserId());
 			if(courseResult==null) {
-				courseResult=courseResultLocalService.addCourseResult(course.getCourseId(), moduleResult.getUserId(), serviceContext);
+				courseResult=courseResultLocalService.addCourseResult(moduleResult.getUserModifiedId(), course.getCourseId(), moduleResult.getUserId());
 			}
 			
 			CourseEvalFactory courseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactoryByType(course.getCourseEvalId());

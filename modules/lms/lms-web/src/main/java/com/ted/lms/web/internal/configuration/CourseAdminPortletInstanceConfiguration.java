@@ -87,11 +87,6 @@ public interface CourseAdminPortletInstanceConfiguration {
 	public String[] courseTemplates();
 	
 	@Meta.AD(
-		name = "course-action-permissions", required = false
-	)
-	public boolean courseActionPermissions();
-	
-	@Meta.AD(
 		name = "course-action-close", required = false
 	)
 	public boolean courseActionClose();
@@ -102,29 +97,9 @@ public interface CourseAdminPortletInstanceConfiguration {
 	public boolean courseActionDelete();
 	
 	@Meta.AD(
-		name = "course-action-members", required = false
-	)
-	public boolean courseActionMembers();
-	
-	@Meta.AD(
 		name = "course-action-members-calendar", required = false
 	)
 	public boolean courseActionMembersCalendar();
-	
-	@Meta.AD(
-		name = "course-action-export", required = false
-	)
-	public boolean courseActionExport();
-	
-	@Meta.AD(
-		name = "course-action-import", required = false
-	)
-	public boolean courseActionImport();
-	
-	@Meta.AD(
-		name = "course-action-duplicate", required = false
-	)
-	public boolean courseActionDuplicate();
 	
 	@Meta.AD(
 		name = "course-column-creation-date", required = false
@@ -140,11 +115,6 @@ public interface CourseAdminPortletInstanceConfiguration {
 		name = "edition-indexer", required = false
 	)
 	public boolean editionIndexer();
-	
-	@Meta.AD(
-		name = "edition-all-options", required = false
-	)
-	public boolean editionAllOptions();
 	
 	@Meta.AD(
 		name = "edition-column-inscription-dates", required = false

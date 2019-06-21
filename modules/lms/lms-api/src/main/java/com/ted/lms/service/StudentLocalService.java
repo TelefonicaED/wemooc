@@ -33,6 +33,7 @@ import com.ted.lms.model.CourseResult;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Provides the local service interface for Student. Methods of this
@@ -55,6 +56,13 @@ public interface StudentLocalService extends BaseLocalService {
 	 *
 	 * Never modify or reference this interface directly. Always use {@link StudentLocalServiceUtil} to access the student local service. Add custom service methods to {@link com.ted.lms.service.impl.StudentLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
+	public boolean canEnroll(Course course, long userId, Locale locale,
+		PermissionChecker permissionChecker)
+		throws PortalException, InscriptionException;
+
+	public boolean canUnsubscribe(Course course, long userId,
+		PermissionChecker permissionChecker) throws PortalException;
+
 	public int countStudentsFinished(long courseId, long companyId,
 		String keywords, int status, LinkedHashMap<String, Object> params,
 		int start, int end);
@@ -82,7 +90,11 @@ public interface StudentLocalService extends BaseLocalService {
 		String emailAddress, int status, LinkedHashMap<String, Object> params,
 		boolean andOperator);
 
-	public CourseResult enrollStudent(Course course, long userId,
+	/**
+	* Este método realiza las comprobaciones necesarias en base al método de inscripción seleccionado en el curso e inscribe al usuario,
+	* se debe llamar cuando es el mismo estudiante el que se está inscribiendo en el curso
+	*/
+	public CourseResult enrollStudent(Course course, long studentId,
 		ServiceContext serviceContext, PermissionChecker permissionChecker)
 		throws PortalException, InscriptionException;
 
@@ -104,6 +116,9 @@ public interface StudentLocalService extends BaseLocalService {
 		String emailAddress, int status, LinkedHashMap<String, Object> params,
 		boolean andOperator, int start, int end, OrderByComparator obc);
 
+	/**
+	* Este método se usa para desinscribir a un usuario de un curso teniendo en cuenta el método de inscripción
+	*/
 	public boolean unsubscribeStudent(Course course, long userId,
 		PermissionChecker permissionChecker) throws PortalException;
 }

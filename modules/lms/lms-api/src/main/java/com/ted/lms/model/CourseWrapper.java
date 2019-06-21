@@ -381,6 +381,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getCompanyId();
 	}
 
+	@Override
+	public int getCountEditions() {
+		return _course.getCountEditions();
+	}
+
 	/**
 	* Returns the course eval ID of this course.
 	*
@@ -1044,7 +1049,8 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	@Override
-	public CourseResult getResultUser(long userId) {
+	public CourseResult getResultUser(long userId)
+		throws com.ted.lms.exception.NoSuchCourseResultException {
 		return _course.getResultUser(userId);
 	}
 

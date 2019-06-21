@@ -4,8 +4,11 @@ import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetTagServiceUtil;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalServiceUtil;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
@@ -18,6 +21,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.trash.TrashHelper;
+import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalServiceUtil;
@@ -27,17 +31,20 @@ import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfigur
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletResponse;
+import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 
 public class CourseDisplayContext {
 	
 	
 	public CourseDisplayContext(HttpServletRequest request, PortletRequest portletRequest,PortletResponse portletResponse,
-			PortletPreferences portletPreferences, CourseAdminPortletInstanceConfiguration courseAdminConfiguration, TrashHelper trashHelper) {
+			PortletPreferences portletPreferences, CourseAdminPortletInstanceConfiguration courseAdminConfiguration, TrashHelper trashHelper,
+			CourseServiceConfiguration courseServiceConfiguration) {
 		this.portletRequest = portletRequest;
 		this.portletResponse = portletResponse;
 		this.trashHelper = trashHelper;
@@ -46,14 +53,14 @@ public class CourseDisplayContext {
 		
 		this.courseAdminConfiguration = courseAdminConfiguration;
 		this.portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(this.request);
-		
+		this.courseServiceConfiguration = courseServiceConfiguration;
 	}
 	
 	public CourseDisplayContext(HttpServletRequest request, PortletRequest portletRequest,PortletResponse portletResponse,
 		PortletPreferences portletPreferences, TrashHelper trashHelper) {
 
 		this(request, portletRequest, portletResponse, portletPreferences, 
-				(CourseAdminPortletInstanceConfiguration)request.getAttribute(CourseAdminPortletInstanceConfiguration.class.getName()), trashHelper);
+				(CourseAdminPortletInstanceConfiguration)request.getAttribute(CourseAdminPortletInstanceConfiguration.class.getName()), trashHelper, null);
 
 	}
 	
@@ -240,6 +247,10 @@ public class CourseDisplayContext {
 		return courseAdminConfiguration;
 	}
 	
+	public CourseServiceConfiguration getCourseServiceConfiguration() {
+		return courseServiceConfiguration;
+	}
+	
 	public List<Group> getSearchListGroups(){
 		if(groups == null) {
 			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
@@ -327,7 +338,6 @@ public class CourseDisplayContext {
 	public TrashHelper getTrashHelper() {
 		return trashHelper;
 	}
-	
 	//private String[] _addMenuFavItems;
 	private Course course;
 	private String displayStyle;
@@ -353,4 +363,5 @@ public class CourseDisplayContext {
 	private List<AssetTag> listAssetTags;
 	private List<AssetVocabulary> listAssetVocabularies;
 	private final CourseAdminPortletInstanceConfiguration courseAdminConfiguration;
+	private final CourseServiceConfiguration courseServiceConfiguration;
 }

@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.constants.LMSRoleConstants"%>
 <%@page import="com.liferay.portal.kernel.model.ResourceConstants"%>
 <%@page import="com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil"%>
 <%@page import="com.liferay.portal.kernel.model.RoleConstants"%>
@@ -75,8 +76,8 @@
 	</portlet:actionURL>
 
 	<%
-		Role siteMemberRole = RoleLocalServiceUtil.getRole(themeDisplay.getCompanyId(), RoleConstants.SITE_MEMBER);
-		boolean visible = ResourcePermissionLocalServiceUtil.hasResourcePermission(siteMemberRole.getCompanyId(), LearningActivity.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL,	String.valueOf(activity.getActId()),siteMemberRole.getRoleId(), ActionKeys.VIEW);
+		Role student = RoleLocalServiceUtil.getRole(themeDisplay.getCompanyId(), LMSRoleConstants.STUDENT);
+		boolean visible = ResourcePermissionLocalServiceUtil.hasResourcePermission(student.getCompanyId(), LearningActivity.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(activity.getActId()),student.getRoleId(), ActionKeys.VIEW);
 	%>
 	
 	<liferay-ui:icon message="<%=(visible)?\"learning-activity.visible\":\"learning-activity.invisible\" %>"  image="<%=(visible)?\"global\":\"close\" %>" 

@@ -37,6 +37,8 @@ import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
 import com.liferay.portal.kernel.service.persistence.CompanyPersistence;
 import com.liferay.portal.kernel.service.persistence.GroupPersistence;
 import com.liferay.portal.kernel.service.persistence.ImagePersistence;
+import com.liferay.portal.kernel.service.persistence.RolePersistence;
+import com.liferay.portal.kernel.service.persistence.UserGroupRolePersistence;
 import com.liferay.portal.kernel.service.persistence.UserPersistence;
 import com.liferay.portal.kernel.service.persistence.WorkflowDefinitionLinkPersistence;
 import com.liferay.portal.kernel.service.persistence.WorkflowInstanceLinkPersistence;
@@ -44,6 +46,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.liferay.ratings.kernel.service.persistence.RatingsStatsPersistence;
+
+import com.liferay.social.kernel.service.persistence.SocialActivityPersistence;
 
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseService;
@@ -854,6 +858,62 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	}
 
 	/**
+	 * Returns the role local service.
+	 *
+	 * @return the role local service
+	 */
+	public com.liferay.portal.kernel.service.RoleLocalService getRoleLocalService() {
+		return roleLocalService;
+	}
+
+	/**
+	 * Sets the role local service.
+	 *
+	 * @param roleLocalService the role local service
+	 */
+	public void setRoleLocalService(
+		com.liferay.portal.kernel.service.RoleLocalService roleLocalService) {
+		this.roleLocalService = roleLocalService;
+	}
+
+	/**
+	 * Returns the role remote service.
+	 *
+	 * @return the role remote service
+	 */
+	public com.liferay.portal.kernel.service.RoleService getRoleService() {
+		return roleService;
+	}
+
+	/**
+	 * Sets the role remote service.
+	 *
+	 * @param roleService the role remote service
+	 */
+	public void setRoleService(
+		com.liferay.portal.kernel.service.RoleService roleService) {
+		this.roleService = roleService;
+	}
+
+	/**
+	 * Returns the role persistence.
+	 *
+	 * @return the role persistence
+	 */
+	public RolePersistence getRolePersistence() {
+		return rolePersistence;
+	}
+
+	/**
+	 * Sets the role persistence.
+	 *
+	 * @param rolePersistence the role persistence
+	 */
+	public void setRolePersistence(RolePersistence rolePersistence) {
+		this.rolePersistence = rolePersistence;
+	}
+
+	/**
 	 * Returns the user local service.
 	 *
 	 * @return the user local service
@@ -907,6 +967,63 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	 */
 	public void setUserPersistence(UserPersistence userPersistence) {
 		this.userPersistence = userPersistence;
+	}
+
+	/**
+	 * Returns the user group role local service.
+	 *
+	 * @return the user group role local service
+	 */
+	public com.liferay.portal.kernel.service.UserGroupRoleLocalService getUserGroupRoleLocalService() {
+		return userGroupRoleLocalService;
+	}
+
+	/**
+	 * Sets the user group role local service.
+	 *
+	 * @param userGroupRoleLocalService the user group role local service
+	 */
+	public void setUserGroupRoleLocalService(
+		com.liferay.portal.kernel.service.UserGroupRoleLocalService userGroupRoleLocalService) {
+		this.userGroupRoleLocalService = userGroupRoleLocalService;
+	}
+
+	/**
+	 * Returns the user group role remote service.
+	 *
+	 * @return the user group role remote service
+	 */
+	public com.liferay.portal.kernel.service.UserGroupRoleService getUserGroupRoleService() {
+		return userGroupRoleService;
+	}
+
+	/**
+	 * Sets the user group role remote service.
+	 *
+	 * @param userGroupRoleService the user group role remote service
+	 */
+	public void setUserGroupRoleService(
+		com.liferay.portal.kernel.service.UserGroupRoleService userGroupRoleService) {
+		this.userGroupRoleService = userGroupRoleService;
+	}
+
+	/**
+	 * Returns the user group role persistence.
+	 *
+	 * @return the user group role persistence
+	 */
+	public UserGroupRolePersistence getUserGroupRolePersistence() {
+		return userGroupRolePersistence;
+	}
+
+	/**
+	 * Sets the user group role persistence.
+	 *
+	 * @param userGroupRolePersistence the user group role persistence
+	 */
+	public void setUserGroupRolePersistence(
+		UserGroupRolePersistence userGroupRolePersistence) {
+		this.userGroupRolePersistence = userGroupRolePersistence;
 	}
 
 	/**
@@ -1477,6 +1594,63 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 		this.ratingsStatsPersistence = ratingsStatsPersistence;
 	}
 
+	/**
+	 * Returns the social activity local service.
+	 *
+	 * @return the social activity local service
+	 */
+	public com.liferay.social.kernel.service.SocialActivityLocalService getSocialActivityLocalService() {
+		return socialActivityLocalService;
+	}
+
+	/**
+	 * Sets the social activity local service.
+	 *
+	 * @param socialActivityLocalService the social activity local service
+	 */
+	public void setSocialActivityLocalService(
+		com.liferay.social.kernel.service.SocialActivityLocalService socialActivityLocalService) {
+		this.socialActivityLocalService = socialActivityLocalService;
+	}
+
+	/**
+	 * Returns the social activity remote service.
+	 *
+	 * @return the social activity remote service
+	 */
+	public com.liferay.social.kernel.service.SocialActivityService getSocialActivityService() {
+		return socialActivityService;
+	}
+
+	/**
+	 * Sets the social activity remote service.
+	 *
+	 * @param socialActivityService the social activity remote service
+	 */
+	public void setSocialActivityService(
+		com.liferay.social.kernel.service.SocialActivityService socialActivityService) {
+		this.socialActivityService = socialActivityService;
+	}
+
+	/**
+	 * Returns the social activity persistence.
+	 *
+	 * @return the social activity persistence
+	 */
+	public SocialActivityPersistence getSocialActivityPersistence() {
+		return socialActivityPersistence;
+	}
+
+	/**
+	 * Sets the social activity persistence.
+	 *
+	 * @param socialActivityPersistence the social activity persistence
+	 */
+	public void setSocialActivityPersistence(
+		SocialActivityPersistence socialActivityPersistence) {
+		this.socialActivityPersistence = socialActivityPersistence;
+	}
+
 	public void afterPropertiesSet() {
 	}
 
@@ -1607,12 +1781,24 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	protected ImagePersistence imagePersistence;
 	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
 	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.RoleLocalService.class)
+	protected com.liferay.portal.kernel.service.RoleLocalService roleLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.RoleService.class)
+	protected com.liferay.portal.kernel.service.RoleService roleService;
+	@ServiceReference(type = RolePersistence.class)
+	protected RolePersistence rolePersistence;
 	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
 	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
 	@ServiceReference(type = com.liferay.portal.kernel.service.UserService.class)
 	protected com.liferay.portal.kernel.service.UserService userService;
 	@ServiceReference(type = UserPersistence.class)
 	protected UserPersistence userPersistence;
+	@ServiceReference(type = com.liferay.portal.kernel.service.UserGroupRoleLocalService.class)
+	protected com.liferay.portal.kernel.service.UserGroupRoleLocalService userGroupRoleLocalService;
+	@ServiceReference(type = com.liferay.portal.kernel.service.UserGroupRoleService.class)
+	protected com.liferay.portal.kernel.service.UserGroupRoleService userGroupRoleService;
+	@ServiceReference(type = UserGroupRolePersistence.class)
+	protected UserGroupRolePersistence userGroupRolePersistence;
 	@ServiceReference(type = com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService.class)
 	protected com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService;
 	@ServiceReference(type = WorkflowDefinitionLinkPersistence.class)
@@ -1673,4 +1859,10 @@ public abstract class CourseServiceBaseImpl extends BaseServiceImpl
 	protected com.liferay.ratings.kernel.service.RatingsStatsLocalService ratingsStatsLocalService;
 	@ServiceReference(type = RatingsStatsPersistence.class)
 	protected RatingsStatsPersistence ratingsStatsPersistence;
+	@ServiceReference(type = com.liferay.social.kernel.service.SocialActivityLocalService.class)
+	protected com.liferay.social.kernel.service.SocialActivityLocalService socialActivityLocalService;
+	@ServiceReference(type = com.liferay.social.kernel.service.SocialActivityService.class)
+	protected com.liferay.social.kernel.service.SocialActivityService socialActivityService;
+	@ServiceReference(type = SocialActivityPersistence.class)
+	protected SocialActivityPersistence socialActivityPersistence;
 }

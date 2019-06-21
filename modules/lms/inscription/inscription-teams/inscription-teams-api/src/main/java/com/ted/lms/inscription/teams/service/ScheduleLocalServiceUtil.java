@@ -43,12 +43,10 @@ public class ScheduleLocalServiceUtil {
 	 * Never modify this class directly. Add custom service methods to {@link com.ted.lms.inscription.teams.service.impl.ScheduleLocalServiceImpl} and rerun ServiceBuilder to regenerate this class.
 	 */
 	public static com.ted.lms.inscription.teams.model.Schedule addSchedule(
-		long teamId, java.util.Date startDate, java.util.Date endDate,
-		long courseId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
+		long userId, long teamId, java.util.Date startDate,
+		java.util.Date endDate, long courseId) {
 		return getService()
-				   .addSchedule(teamId, startDate, endDate, courseId,
-			serviceContext);
+				   .addSchedule(userId, teamId, startDate, endDate, courseId);
 	}
 
 	/**
@@ -277,18 +275,16 @@ public class ScheduleLocalServiceUtil {
 		return getService().updateSchedule(schedule);
 	}
 
-	public static void updateScheduleUserDates(
+	public static void updateScheduleUserDates(long userId,
 		com.ted.lms.inscription.teams.model.Schedule schedule, long courseId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext,
-		long userId) {
+		long studentId) {
 		getService()
-			.updateScheduleUserDates(schedule, courseId, serviceContext, userId);
+			.updateScheduleUserDates(userId, schedule, courseId, studentId);
 	}
 
-	public static void updateScheduleUsersDates(
-		com.ted.lms.inscription.teams.model.Schedule schedule, long courseId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext) {
-		getService().updateScheduleUsersDates(schedule, courseId, serviceContext);
+	public static void updateScheduleUsersDates(long userId,
+		com.ted.lms.inscription.teams.model.Schedule schedule, long courseId) {
+		getService().updateScheduleUsersDates(userId, schedule, courseId);
 	}
 
 	public static ScheduleLocalService getService() {

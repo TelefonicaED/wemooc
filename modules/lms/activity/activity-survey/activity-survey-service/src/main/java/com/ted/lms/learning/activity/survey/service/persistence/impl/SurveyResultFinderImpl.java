@@ -7,9 +7,10 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.learning.activity.survey.service.persistence.SurveyResultFinder;
-import com.ted.lms.util.LMSUtil;
 
 import java.util.Iterator;
 
@@ -54,8 +55,8 @@ public class SurveyResultFinderImpl extends SurveyResultFinderBaseImpl implement
 			
 			QueryPos qPos = QueryPos.getInstance(q);			
 			qPos.add(courseGroupCreatedId);
-			qPos.add(LMSUtil.getTeacherRoleId(companyId));
-			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
+
 			qPos.add(actId);
 							
 			Iterator<Long> itr = q.iterate();
@@ -103,8 +104,7 @@ public class SurveyResultFinderImpl extends SurveyResultFinderBaseImpl implement
 			
 			QueryPos qPos = QueryPos.getInstance(q);			
 			qPos.add(courseGroupCreatedId);
-			qPos.add(LMSUtil.getTeacherRoleId(companyId));
-			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
 			qPos.add(answerId);
 			qPos.add(questionId);
 								
@@ -152,8 +152,7 @@ public class SurveyResultFinderImpl extends SurveyResultFinderBaseImpl implement
 			
 			QueryPos qPos = QueryPos.getInstance(q);			
 			qPos.add(courseGroupCreatedId);
-			qPos.add(LMSUtil.getTeacherRoleId(companyId));
-			qPos.add(LMSUtil.getEditorRoleId(companyId));
+			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
 			qPos.add(questionId);
 							
 			Iterator<Long> itr = q.iterate();
@@ -174,7 +173,6 @@ public class SurveyResultFinderImpl extends SurveyResultFinderBaseImpl implement
 	
 		return countStudents;
 	}
-
 	
 	@ServiceReference(type=CustomSQL.class)
 	private CustomSQL customSQL;

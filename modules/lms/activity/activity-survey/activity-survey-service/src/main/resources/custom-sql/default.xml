@@ -12,13 +12,9 @@
 					ON r.userId = ug.userId AND ug.groupId = ?
 			INNER JOIN
 				usergrouprole ugrT 
-					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?
-			INNER JOIN
-				usergrouprole ugrE 
-					ON ugrE.userId = r.userId AND ugrE.groupId = ug.groupId AND ugrE.roleId = ?		
+					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?	
 			WHERE 
 				actId = ?
-				AND ugrT.userId IS NULL AND ugrE.userId IS NULL 
 		]]>
 	</sql>
 	<sql id="com.ted.lms.learning.activity.survey.service.persistence.SurveyResultFinder.countStudentsByQuestionIdAnswerId">
@@ -33,13 +29,9 @@
 			INNER JOIN
 				usergrouprole ugrT 
 					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?
-			INNER JOIN
-				usergrouprole ugrE 
-					ON ugrE.userId = r.userId AND ugrE.groupId = ug.groupId AND ugrE.roleId = ?	
 			WHERE 
 				answerId = ? 
 				AND questionId = ?
-				AND ugrT.userId IS NULL AND ugrE.userId IS NULL 
 
 		]]>
 	</sql>
@@ -55,12 +47,8 @@
 			INNER JOIN
 				usergrouprole ugrT 
 					ON ugrT.userId = r.userId AND ugrT.groupId = ug.groupId AND ugrT.roleId = ?
-			INNER JOIN
-				usergrouprole ugrE 
-					ON ugrE.userId = r.userId AND ugrE.groupId = ug.groupId AND ugrE.roleId = ?	
 			WHERE 
 				questionId = ?
-				AND ugrT.userId IS NULL AND ugrE.userId IS NULL 
 
 		]]>
 	</sql>

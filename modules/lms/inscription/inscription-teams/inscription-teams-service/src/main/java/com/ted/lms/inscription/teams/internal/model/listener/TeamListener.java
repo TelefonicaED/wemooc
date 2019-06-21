@@ -6,7 +6,6 @@ import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.TeamLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.ted.lms.inscription.teams.model.Schedule;
@@ -54,11 +53,7 @@ public class TeamListener extends BaseModelListener<Team>{
 					Team team = teamLocalService.getTeam(teamId);
 					Course course = courseLocalService.getCourseByGroupCreatedId(team.getGroupId());
 					long userId = GetterUtil.getLong(associationClassPK);
-					ServiceContext serviceContext = new ServiceContext();
-					serviceContext.setCompanyId(team.getCompanyId());
-					serviceContext.setScopeGroupId(team.getGroupId());
-					serviceContext.setUserId(team.getUserId());
-					scheduleLocalService.updateScheduleUserDates(schedule, course.getCourseId(), serviceContext, userId);
+					scheduleLocalService.updateScheduleUserDates(team.getUserId(), schedule, course.getCourseId(), userId);
 				} catch (PortalException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

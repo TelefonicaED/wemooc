@@ -20,7 +20,6 @@
 </c:if>
 
 <aui:form name="fm" enctype="multipart/form-data" method="post" action="${editCourseURL}" >
-
 	<aui:input name="<%= Constants.CMD %>" value="${cmd}" type="hidden" />
 	<aui:input name="navigationItem" value="" type="hidden" />
 	<aui:input name="navigation" value="${navigation }" type="hidden" />

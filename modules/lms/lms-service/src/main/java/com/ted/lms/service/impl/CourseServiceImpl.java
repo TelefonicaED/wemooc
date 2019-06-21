@@ -235,6 +235,21 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 		courseLocalService.restoreEntryFromTrash(getUserId(), courseId);
 	}
 	
+	@Override
+	public void addUserCourse(long courseId, long[] addUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.ASSIGN_MEMBERS);
+		
+		courseLocalService.addUserCourse(getUserId(), courseId, addUserIds, roleId, serviceContext);
+	}
+	
+	@Override
+	public void unsetUserCourse(long courseId, long[] removeUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
+		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.ASSIGN_MEMBERS);
+		
+		courseLocalService.unsetUserCourse(courseId, removeUserIds, roleId, serviceContext);
+		
+	}
+	
 	public void updateSmallImage(long courseId, String imageString, String imageTitle, String imageMimeType, ServiceContext serviceContext) throws PrincipalException, PortalException {
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		

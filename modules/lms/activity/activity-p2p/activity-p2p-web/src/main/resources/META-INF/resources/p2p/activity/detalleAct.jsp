@@ -1,3 +1,8 @@
+<%@page import="com.ted.lms.model.CalificationType"%>
+<%@page import="com.ted.lms.service.CourseLocalServiceUtil"%>
+<%@page import="com.ted.lms.model.Course"%>
+<%@page import="com.ted.lms.registry.CalificationTypeFactoryRegistryUtil"%>
+<%@page import="com.ted.lms.model.CalificationTypeFactory"%>
 <%@page import="com.ted.lms.learning.activity.p2p.constants.P2PConstants"%>
 <%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="java.text.DateFormat"%>
@@ -263,8 +268,11 @@ if(actId!=0){%>
 		
 			<c:if test="<%=p2pActivityType.getResult() %>">
 				<% LearningActivityResult learnResult = LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, userId);
-				if(learnResult != null && learnResult.getResult() >= 0 && p2pActivityType.getResult()) { %>
-					<div><liferay-ui:message key="learning-activity.p2p.steps.my-corrections.result-total" />: <%= learnResult.getResult() %></div>
+				if(learnResult != null && learnResult.getResult() >= 0 && p2pActivityType.getResult()) { 
+					Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+					CalificationTypeFactory calificationTypeFactory = CalificationTypeFactoryRegistryUtil.getCalificationTypeFactoryByType(course.getCalificationType());
+					CalificationType calificationType = calificationTypeFactory.getCalificationType(course);%>
+					<div><liferay-ui:message key="learning-activity.p2p.steps.my-corrections.result-total" />: <%=calificationType.translate(themeDisplay.getLocale(), learnResult.getResult()) + calificationType.getSuffix() %></div>
 				<% } else { %>
 					<div><liferay-ui:message key="learning-activity.p2p.revisions.my-corrections.result-not-completed" /></div>
 				<% } %>

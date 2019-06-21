@@ -1,5 +1,6 @@
 package com.ted.lms.learning.activity.online.web.internal.portlet;
 
+import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.learning.activity.online.OnlineActivityType;
 import com.ted.lms.learning.activity.online.OnlineActivityTypeFactory;
 import com.ted.lms.learning.activity.online.web.constants.OnlineConstants;
@@ -20,7 +21,6 @@ import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityTryLocalService;
 import com.ted.lms.service.ModuleLocalService;
-import com.ted.lms.util.LMSUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +44,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -322,8 +323,7 @@ public class OnlinePortlet extends MVCPortlet {
 
 			//Añadimos permisos a los usuarios que tienen el permiso de ver resultados
 			try{
-				resourcePermissionLocalService.setResourcePermissions(companyId, DLFileEntry.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(fileEntry.getFileEntryId()) , LMSUtil.getTeacherRoleId(companyId), new String[]{ActionKeys.VIEW});
-				resourcePermissionLocalService.setResourcePermissions(companyId, DLFileEntry.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(fileEntry.getFileEntryId()) , LMSUtil.getEditorRoleId(companyId), new String[]{ActionKeys.VIEW});
+				resourcePermissionLocalService.setResourcePermissions(companyId, DLFileEntry.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(fileEntry.getFileEntryId()) , RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.TEACHER_ROLE).getRoleId(), new String[]{ActionKeys.VIEW});
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -352,7 +352,6 @@ public class OnlinePortlet extends MVCPortlet {
 				throw new OnlineFileEntryExtensionException("Invalid extension for file name " + fileName);
 			}
 		}
-
 	}
 	
 	@Reference(unbind = "-")
