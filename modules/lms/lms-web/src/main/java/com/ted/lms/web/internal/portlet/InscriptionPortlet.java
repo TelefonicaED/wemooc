@@ -114,56 +114,72 @@ public class InscriptionPortlet extends MVCPortlet {
 							renderRequest.setAttribute("registredUser", true);
 							renderRequest.setAttribute("course", course);
 						}else {
-							//Comprobamos si estoy inscrita en alguna de las hijas
-							long courseParentId = course.getCourseId();
-							if(course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
-								courseParentId = course.getParentCourseId();
-							}
-							List<Course> listChildCourses = courseLocalService.getChildsRegistredUser(courseParentId, themeDisplay.getUserId());
-							if(listChildCourses != null && listChildCourses.size() > 0) {
-								//Estoy inscrita en alguna convocatoria de las hijas, mando qeu estoy inscrita y las convocatorias en las que estoy
-								renderRequest.setAttribute("registredUser", true);
-								renderRequest.setAttribute("listChildCourses", listChildCourses);
-							}else {
-								//Comprobamos los prerequisitos del curso padre (tanto si tiene convocatorias como si no)
-								List<Prerequisite> listPrerequisites = prerequisiteRelationLocalService.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), 
-										course.getParentCourseId() == 0 ? course.getCourseId() : course.getParentCourseId());
-								renderRequest.setAttribute("listPrerequisites", listPrerequisites);
+							//Comprobamos si tengo la inscripción pendiente
+							boolean inscriptionPending = membershipRequestLocalService.getMembershipRequests(themeDisplay.getUserId(), course.getGroupCreatedId(), MembershipRequestConstants.STATUS_PENDING).size() > 0;
+							if(!inscriptionPending) {
 								
-								renderRequest.setAttribute("TYPE_SITE_OPEN", GroupConstants.TYPE_SITE_OPEN);
-								renderRequest.setAttribute("TYPE_SITE_RESTRICTED", GroupConstants.TYPE_SITE_RESTRICTED);
+								boolean inscriptionDenied = membershipRequestLocalService.getMembershipRequests(themeDisplay.getUserId(), course.getGroupCreatedId(), MembershipRequestConstants.STATUS_DENIED).size() > 0;
+								renderRequest.setAttribute("inscriptionDenied", inscriptionDenied);
 								
-								renderRequest.setAttribute("membershipRequestLocalService", membershipRequestLocalService);
-								renderRequest.setAttribute("STATUS_PENDING", MembershipRequestConstants.STATUS_PENDING);
-								renderRequest.setAttribute("STATUS_DENIED", MembershipRequestConstants.STATUS_DENIED);
-								
-								PortletURL enrollURL = renderResponse.createActionURL();
-								enrollURL.setParameter("javax.portlet.action", "enroll");
-								renderRequest.setAttribute("enrollURL", enrollURL);
-								
-								//Si es una convocatoria sabemos que no estoy inscrito en ninguna más así que paso el curso
-								if(course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
-									renderRequest.setAttribute("course", course);
-								}else {
-									//Si es un curso padre y no tengo convocatorias hijas mando el curso, si no mando las hijas
-									//Buscamos los cursos hijos abiertos o restringidos
-									LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
-									int[] types = {GroupConstants.TYPE_SITE_OPEN, GroupConstants.TYPE_SITE_RESTRICTED};
-									params.put(CourseParams.PARAM_TYPE, types);
-									
-									listChildCourses = courseService.searchCourses(themeDisplay.getCompanyId(), null, null, themeDisplay.getLanguageId(), 
-											new int[]{WorkflowConstants.STATUS_APPROVED}, course.getCourseId(), 0, params, false, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-									
-									if(course.getParentCourseId() == CourseConstants.DEFAULT_PARENT_COURSE_ID && (listChildCourses == null || listChildCourses.size() == 0)) {
-										//Mando sólo el curso hijo
-										renderRequest.setAttribute("course", course);
-									}else {
+								if(!inscriptionDenied) {
+									//Comprobamos si estoy inscrita en alguna de las hijas
+									long parentCourseId = course.getCourseId();
+									if(course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
+										parentCourseId = course.getParentCourseId();
+									}
+									List<Course> listChildCourses = courseLocalService.getChildsRegistredUser(parentCourseId, themeDisplay.getUserId());
+									if(listChildCourses != null && listChildCourses.size() > 0) {
+										//Estoy inscrita en alguna convocatoria de las hijas, mando qeu estoy inscrita y las convocatorias en las que estoy
+										renderRequest.setAttribute("registredUser", true);
 										renderRequest.setAttribute("listChildCourses", listChildCourses);
-										//Paso también el curso padre
-										renderRequest.setAttribute("course", course);
+									}else {
+										//Comprobamos los prerequisitos del curso padre (tanto si tiene convocatorias como si no)
+										List<Prerequisite> listPrerequisites = prerequisiteRelationLocalService.getPrerequisites(PortalUtil.getClassNameId(Course.class.getName()), 
+												course.getParentCourseId() == 0 ? course.getCourseId() : course.getParentCourseId());
+										renderRequest.setAttribute("listPrerequisites", listPrerequisites);
+										
+										renderRequest.setAttribute("TYPE_SITE_OPEN", GroupConstants.TYPE_SITE_OPEN);
+										renderRequest.setAttribute("TYPE_SITE_RESTRICTED", GroupConstants.TYPE_SITE_RESTRICTED);
+										
+										renderRequest.setAttribute("membershipRequestLocalService", membershipRequestLocalService);
+										renderRequest.setAttribute("STATUS_PENDING", MembershipRequestConstants.STATUS_PENDING);
+										renderRequest.setAttribute("STATUS_DENIED", MembershipRequestConstants.STATUS_DENIED);
+										
+										PortletURL enrollURL = renderResponse.createActionURL();
+										enrollURL.setParameter("javax.portlet.action", "enroll");
+										renderRequest.setAttribute("enrollURL", enrollURL);
+										
+										//Si es una convocatoria sabemos que no estoy inscrito en ninguna más así que paso el curso
+										if(course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
+											renderRequest.setAttribute("course", course);
+										}else {
+											//Si es un curso padre y no tengo convocatorias hijas mando el curso, si no mando las hijas
+											//Buscamos los cursos hijos abiertos o restringidos
+											LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
+											int[] types = {GroupConstants.TYPE_SITE_OPEN, GroupConstants.TYPE_SITE_RESTRICTED};
+											params.put(CourseParams.PARAM_TYPE, types);
+											
+											listChildCourses = courseService.searchCourses(themeDisplay.getCompanyId(), null, null, themeDisplay.getLanguageId(), 
+													new int[]{WorkflowConstants.STATUS_APPROVED}, course.getCourseId(), 0, params, false, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+											
+											if(course.getParentCourseId() == CourseConstants.DEFAULT_PARENT_COURSE_ID && (listChildCourses == null || listChildCourses.size() == 0)) {
+												//Mando sólo el curso hijo
+												renderRequest.setAttribute("course", course);
+											}else {
+												//Compruebo si tengo inscripción pendiente en algún hijo
+												int i = 0;
+												while(!inscriptionPending && i < listChildCourses.size()) {
+													inscriptionPending = membershipRequestLocalService.getMembershipRequests(themeDisplay.getUserId(), listChildCourses.get(i++).getGroupCreatedId(), MembershipRequestConstants.STATUS_PENDING).size() > 0;
+												}
+												renderRequest.setAttribute("listChildCourses", listChildCourses);
+												//Paso también el curso padre
+												renderRequest.setAttribute("course", course);
+											}
+										}
 									}
 								}
 							}
+							renderRequest.setAttribute("inscriptionPending", inscriptionPending);
 						}
 					}
 					
@@ -195,9 +211,10 @@ public class InscriptionPortlet extends MVCPortlet {
 			InscriptionType inscriptionType = inscriptionTypeFactory.getInscriptionType(course, serviceContext);
 			
 			inscriptionType.enrollUser(themeDisplay.getUserId(), themeDisplay.getPermissionChecker());
+			
 			if(course.getGroupCreatedId() != themeDisplay.getScopeGroupId()) {
 				//Redirijo
-				String url = themeDisplay.getPortalURL() + "/" + themeDisplay.getLocale().getLanguage() + "/web" + course.getFriendlyURL()+"?inscriptionOk=true";
+				String url = themeDisplay.getPortalURL() + "/" + themeDisplay.getLocale().getLanguage() + course.getFriendlyURL()+"?inscriptionOk=true";
 	    		log.debug("Redirect to: "+url);
 	    		actionResponse.sendRedirect(url);
 			}

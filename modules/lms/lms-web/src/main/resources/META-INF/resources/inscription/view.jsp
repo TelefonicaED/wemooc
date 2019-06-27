@@ -5,25 +5,26 @@
 		<liferay-portlet:runtime portletName="${inscriptionPortletName }" />
 	</c:when>
 	<c:otherwise>
-		<liferay-ui:success message="inscription-ok" key="inscription-ok" />
-		<liferay-ui:success message="lms.inscription.unsusbscribe.success" key="unsusbscribe" />
-		<liferay-ui:error key="error-enroll-user" />
-		<liferay-ui:error message="lms.inscription.unsusbscribe.error" key="unsusbscribe" />
+		<liferay-ui:success message="inscription.enroll.success" key="inscription-ok" />
+		<liferay-ui:success message="inscription.unsusbscribe.success" key="unsusbscribe" />
+		<liferay-ui:error message="inscription.enroll.error.already-enrolled" key="inscription-error-already-enrolled" />
+		<liferay-ui:error message="inscription.enroll.error.error-max-users" key="inscription-error-max-users" />
+		<liferay-ui:error message="inscription.unsusbscribe.error.already-unsusbscribe" key="unsusbscribe" />
 		
-		<div id="caja_inscripcion container">
+		<div class="container">
 			<c:choose>
 				<c:when test="${themeDisplay.isSignedIn() && registredUser}">
-					<div class="mensaje_marcado">
-						<liferay-ui:message key="inscripcion.inscrito" />
+					<div class="msg-info">
+						<liferay-ui:message key="inscription.enrolled" />
 					</div>
 					<c:if test="${not empty listChildCourses }">	
 						<c:forEach items="${listChildCourses }" var="childCourse">
-							<div class="mensaje_marcado">
+							<div class="row">
 								<span class="edition-name">${childCourse.getTitle(locale)}</span>
 								<aui:button type="button" value="inscription.go-to-course" href="${childCourse.friendlyURL}"/>
 								<c:if test="${childCourse.canUnsubscribe(themeDisplay.userId, themeDisplay.permissionChecker) }">
-									<div class="boton_inscibirse ">
-										<a href="#" onclick="javascript:<portlet:namespace/>unsubscribe(${childCourse.courseId })"><liferay-ui:message key="inscripcion.desinscribete" /></a>
+									<div class="button ">
+										<a href="#" onclick="javascript:<portlet:namespace/>unsubscribe(${childCourse.courseId })"><liferay-ui:message key="inscription.unsusbscribe" /></a>
 									</div>
 								</c:if>
 							</div>
@@ -31,8 +32,8 @@
 					</c:if>
 					<c:if test="${not empty course}">
 						<c:if test="${course.canUnsubscribe(themeDisplay.userId, themeDisplay.permissionChecker)}">
-							<div class="boton_inscibirse ">
-								<a href="#" onclick="javascript:<portlet:namespace />unsubscribe(${course.courseId });"><liferay-ui:message key="inscripcion.desinscribete" /></a>
+							<div class="button ">
+								<a href="#" onclick="javascript:<portlet:namespace />unsubscribe(${course.courseId });"><liferay-ui:message key="inscription.unsusbscribe" /></a>
 							</div>
 						</c:if>
 					</c:if>
@@ -41,12 +42,18 @@
 					</aui:form>
 					<script>
 						function <portlet:namespace />unsubscribe(courseId) {
-							if(confirm(Liferay.Language.get('inscripcion.desinscribete.seguro'))){
+							if(confirm(Liferay.Language.get('inscription.unsusbscribe.confirm'))){
 								document.<portlet:namespace />unsubscribeForm.<portlet:namespace />courseId.value=courseId;
 								document.<portlet:namespace />unsubscribeForm.submit();
 							}
 						}
 					</script>
+				</c:when>
+				<c:when test="${themeDisplay.isSignedIn() && inscriptionPending }">
+					<div><liferay-ui:message key="inscription.pending" /></div>
+				</c:when>
+				<c:when test="${themeDisplay.isSignedIn() && inscriptionDenied }">
+					<div><liferay-ui:message key="inscription.denied" /></div>
 				</c:when>
 				<c:when test="${themeDisplay.isSignedIn() && !registredUser}">
 					<c:set var="prerequisitePassed" value="${true }"/>
@@ -66,94 +73,65 @@
 							<c:choose>
 								<c:when test="${not empty listChildCourses}">
 								<!-- Si tiene convocatorias, se buclea por los cursos hijos pero no se tiene en cuenta los equipos -->
-									<aui:fieldset>
-										<h2>${course.getTitle(themeDisplay.getLocale())}</h2>
-									</aui:fieldset>
-									<div class="row header">
-										<div class="col-md-3">
-											<liferay-ui:message key="courseadmin.edition"/>
-										</div>
-										<div class="col-md-3">
-											<liferay-ui:message key="lms-inscription-configuration"/>
-										</div>
-										<div class="col-md-3">
-											<liferay-ui:message key="lms-execution-configuration"/>											
-										</div>
-										<div class="col-md-3"></div>
-									</div>
-									<c:forEach items="${listChildCourses}" var="childCourse">
-										<div class="row body">
-											<div class="col-md-3">
-												<span>${childCourse.getTitle(themeDisplay.getLocale())}</span>
-											</div>
-											<div class="col-md-3">
-												<span>${childCourse.registrationStartDate}</span> <span>-</span> <span>${childCourse.registrationEndDate}</span>
-											</div>
-											<div class="col-md-3">
-												<span>${childCourse.executionStartDate}</span> <span>-</span> <span>${childCourse.executionEndDate}</span>
-											</div>
-											<div class="col-md-3">
+									<h2><liferay-ui:message key="inscription.editions-available"/></h2>
+									<p><liferay-ui:message key="inscription.editions-available.select-edition"/></p>
+									
+									<c:set var="childAvailable" value="false" />
+									<aui:form name="enrollEditionForm" action="${enrollURL}">
+										<c:forEach items="${listChildCourses}" var="childCourse">
+											<c:if test="${childCourse.isRegistrationOnDate()}">
 												<c:catch var ="inscriptionException">
 													<c:if test="${childCourse.canEnroll(themeDisplay.userId, themeDisplay.locale, themeDisplay.permissionChecker)}">
-														<c:if test="${childCourse.group.type == TYPE_SITE_OPEN}">
-															<div class="boton_inscibirse ">
-																<a href="javascript:${renderResponse.getNamespace()}enroll('${childCourse.courseId}');"><liferay-ui:message key="inscripcion.inscribete" /></a>
-															</div>							
-														</c:if>
-														<c:if test="${childCourse.group.type == TYPE_SITE_RESTRICTED}">
-															<c:choose>
-																<c:when test="${not empty membershipRequestLocalService.getMembershipRequests(themeDisplay.userId, childCourse.groupCreatedId, STATUS_PENDING)}">
-																	<div class="mensaje_marcado"><liferay-ui:message key="course.pending" /></div>
-																</c:when>
-																<c:when test="${not empty membershipRequestLocalService.getMembershipRequests(themeDisplay.userId, childCourse.groupCreatedId, STATUS_DENIED)}">
-																	<div class="mensaje_marcado"><liferay-ui:message key="course.denied" /></div>
-																</c:when>
-																<c:otherwise>
-																	<div class="mensaje_marcado"><liferay-ui:message key="inscripcion.surveillance" /></div>
-																	<div class="boton_inscibirse ">
-																		<a href="javascript:${renderResponse.getNamespace()}enroll('${childCourse.courseId}');"><liferay-ui:message key="inscripcion.request" /></a>
-																	</div>
-																</c:otherwise>
-															</c:choose>		
-														</c:if>
-													</c:if>
-													<c:if test="${not empty inscriptionException }">
-														<div class="mensaje_marcado">${inscriptionException.message }</div>
+														<c:set var="childAvailable" value="true" />
 													</c:if>
 												</c:catch>
-											</div>
-										</div>
-									</c:forEach>
+												
+												<div class="row inscription-edition">
+													<aui:input label="${childCourse.getTitle(themeDisplay.getLocale())}" type="radio" name="courseId" value="${childCourse.courseId}"
+														disabled="${not empty inscriptionException }" showRequiredLabel="false">
+														<aui:validator name="required" errorMessage="inscription.enroll.select-edition"/>
+													</aui:input>
+													<div class="edition-dates">
+														<span><liferay-ui:message key="registration-date"/>:</span> <span><fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${childCourse.registrationStartDate }" /> - <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${childCourse.registrationEndDate }" /></span>
+													</div>
+													<div class="edition-dates">
+														<span><liferay-ui:message key="execution-date"/>:</span> <span><fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${childCourse.executionStartDate }" /> - <fmt:formatDate type="both" dateStyle="short" timeStyle="short" value="${childCourse.executionEndDate }" /></span>
+													</div>
+													<c:if test="${not empty inscriptionException }">
+														<div>${fn:substringAfter(inscriptionException.message, ':')}</div>
+													</c:if>
+												</div>
+											</c:if>
+										</c:forEach>
+										<c:choose>	
+											<c:when test="${childAvailable }">
+												<aui:button type="submit" value="inscription.enroll"/>						
+											</c:when>
+											<c:otherwise>
+												<liferay-ui:message key="inscription.enroll.no-schedule-open"/>
+											</c:otherwise>
+										</c:choose>
+									</aui:form>
 								</c:when>
 								<c:otherwise>
 									<!-- Si no tiene convocatorias, se hace igual que hasta ahora, teniendo en cuenta los equipos -->
 									<c:catch var ="inscriptionException">
 										<c:if test="${course.canEnroll(themeDisplay.userId, themeDisplay.locale, themeDisplay.permissionChecker)}">
 											<c:if test="${course.group.type == TYPE_SITE_OPEN}">
-										 		<div class="mensaje_marcado"><liferay-ui:message key="inscripcion.noinscrito" /></div>
-												<div class="boton_inscibirse ">
-													<a href="javascript:${renderResponse.getNamespace()}enroll('${course.courseId }');"><liferay-ui:message key="inscripcion.inscribete" /></a>
+										 		<div><liferay-ui:message key="inscription.not-registred" /></div>
+												<div class="button ">
+													<a href="javascript:${renderResponse.getNamespace()}enroll('${course.courseId }');"><liferay-ui:message key="inscription.enroll-you" /></a>
 												</div>		
 											</c:if>
 											<c:if test="${course.group.type == TYPE_SITE_RESTRICTED}">
-												<c:choose>
-													<c:when test="${not empty membershipRequestLocalService.getMembershipRequests(themeDisplay.userId, course.groupCreatedId, STATUS_PENDING)}">
-														<div class="mensaje_marcado"><liferay-ui:message key="course.pending" /></div>
-													</c:when>
-													<c:when test="${not empty membershipRequestLocalService.getMembershipRequests(themeDisplay.userId, course.groupCreatedId, STATUS_DENIED)}">
-														<div class="mensaje_marcado"><liferay-ui:message key="course.denied" /></div>
-													</c:when>
-													<c:otherwise>
-														<div class="mensaje_marcado"><liferay-ui:message key="inscripcion.surveillance" /></div>
-														<div class="boton_inscibirse ">
-															<a href="javascript:${renderResponse.getNamespace()}enroll('${course.courseId }');"><liferay-ui:message key="inscripcion.request" /></a>
-														</div>
-													</c:otherwise>
-												</c:choose>		
+												<div><liferay-ui:message key="inscription.surveillance" /></div>
+												<div class="button">
+													<a href="javascript:${renderResponse.getNamespace()}enroll('${course.courseId }');"><liferay-ui:message key="inscription.request" /></a>
+												</div>	
 											</c:if>
 										</c:if>
 										<c:if test="${not empty inscriptionException }">
-											<div class="mensaje_marcado">${inscriptionException.message }</div>
+											<div>${inscriptionException.message }</div>
 										</c:if>
 									</c:catch>
 								</c:otherwise>
@@ -177,9 +155,9 @@
 					</c:choose> 
 				</c:when>
 				<c:otherwise>
-					<div class="mensaje_marcado"><liferay-ui:message key="inscripcion.nologado" /></div>
+					<div><liferay-ui:message key="inscription.not-logged" /></div>
 					<div class="boton_inscibirse ">
-						<a href="/c/portal/login?p_l_id=${themeDisplay.layout.plid }"><liferay-ui:message key="inscripcion.registrate" /></a>
+						<a href="/c/portal/login?p_l_id=${themeDisplay.layout.plid }"><liferay-ui:message key="inscription.sign-up" /></a>
 					</div>		
 				</c:otherwise>
 			</c:choose>
