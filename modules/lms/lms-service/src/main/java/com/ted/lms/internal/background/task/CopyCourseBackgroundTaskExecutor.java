@@ -1,7 +1,6 @@
 package com.ted.lms.internal.background.task;
 
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
-import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.backgroundtask.BaseBackgroundTaskExecutor;
@@ -14,12 +13,15 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalServiceUtil;
+import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.service.CourseLocalServiceUtil;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -41,8 +43,9 @@ public class CopyCourseBackgroundTaskExecutor extends BaseBackgroundTaskExecutor
 		long userId = (long)taskContextMap.get("userId");
 		ServiceContext serviceContext = (ServiceContext)taskContextMap.get("serviceContext");
 		long courseId = (long)taskContextMap.get("courseId");
-		long courseParentId = (long)taskContextMap.get("courseParentId");
+		long parentCourseId = (long)taskContextMap.get("parentCourseId");
 		String title = (String)taskContextMap.get("title");
+		String friendlyURL = (String)taskContextMap.get("friendlyURL");
 		long layoutSetPrototypeId = (long)taskContextMap.get("layoutSetPrototypeId");
 		Date registrationStartDate = (Date)taskContextMap.get("registrationStartDate");
 		Date registrationEndDate = (Date)taskContextMap.get("registrationEndDate");
@@ -50,12 +53,17 @@ public class CopyCourseBackgroundTaskExecutor extends BaseBackgroundTaskExecutor
 		Date executionEndDate = (Date)taskContextMap.get("executionEndDate");
 		boolean copyForum = (boolean)taskContextMap.get("copyForum");
 		boolean copyDocuments = (boolean)taskContextMap.get("copyDocuments");
+		Map<Locale, String> friendlyURLMap = null;
+		if(Validator.isNotNull(friendlyURL)) {
+			friendlyURLMap = LocalizationUtil.getLocalizationMap(friendlyURL);
+		}
 		
 		if(log.isDebugEnabled()) {
 			log.debug("userId: " + userId);
 			log.debug("courseId: " + courseId);
-			log.debug("courseParentId: " + courseParentId);
+			log.debug("parentCourseId: " + parentCourseId);
 			log.debug("title: " + title);
+			log.debug("friendlyURL: " + friendlyURL);
 			log.debug("layoutSetPrototypeId: " + layoutSetPrototypeId);
 			log.debug("registrationStartDate: " + registrationStartDate);
 			log.debug("registrationEndDate: " + registrationEndDate);
@@ -65,9 +73,11 @@ public class CopyCourseBackgroundTaskExecutor extends BaseBackgroundTaskExecutor
 			log.debug("copyDocuments: " + copyDocuments);
 		}
 		
+		
+		
 		try {
 		
-			Course course = CourseLocalServiceUtil.copyCourse(userId, courseId, courseParentId, title, layoutSetPrototypeId, registrationStartDate, registrationEndDate, 
+			Course course = CourseLocalServiceUtil.copyCourse(userId, courseId, parentCourseId, title, friendlyURLMap, layoutSetPrototypeId, registrationStartDate, registrationEndDate, 
 					executionStartDate, executionEndDate, copyForum, copyDocuments, serviceContext);
 		//	sendNotification(backgroundTask, course, BackgroundTaskConstants.STATUS_SUCCESSFUL);
 		} catch (Exception e) {

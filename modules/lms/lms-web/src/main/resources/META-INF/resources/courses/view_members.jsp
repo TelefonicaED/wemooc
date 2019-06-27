@@ -18,13 +18,28 @@
 		message="<%= StringPool.BLANK %>"
 		showWhenSingleIcon="true"
 	>
+	
+		<liferay-portlet:resourceURL id="/courses/export_users" var="exportURL" copyCurrentRenderParameters="false">
+			<liferay-portlet:param name="courseId" value="${courseId }" />
+			<liferay-portlet:param name="roleId" value="${courseMembersDisplayContext.roleId }" />
+		</liferay-portlet:resourceURL>
+		
+		<liferay-util:buffer
+			var="onClickFn"
+		>
+			submitForm(document.<portlet:namespace />fm, '<%= exportURL + "&compress=0&etag=0&strip=0" %>');
+		</liferay-util:buffer>
+		
 		<liferay-ui:icon
 			message="export"
-			url="${exportURL }"
+			method="get"
+			onClick="<%= onClickFn %>"
+			url="javascript:;"
 		/>
 		<liferay-ui:icon
 			message="import"
-			url="${importURL }"
+			onClick="${renderResponse.namespace }importUsers();"
+			url="javascript:;"
 		/>
 	</liferay-ui:icon-menu>
 </aui:nav-bar>
@@ -175,4 +190,51 @@
 			);
 		}
 	);
+	
 </aui:script>
+<script>
+	function <portlet:namespace />importUsers() {
+		
+		AUI().use('liferay-portlet-url,liferay-util-window', function(A){
+			
+			var uri = '${importUsersURL}';
+			
+			var buttonClose = [
+				{
+					cssClass: 'close',
+					label: '\u00D7',
+					on: {
+						click: function() {
+							<portlet:namespace />refreshSearch();
+						}
+					},
+					render: true
+				}
+			];
+			
+			window.<portlet:namespace />popupImport = Liferay.Util.Window.getWindow(
+					{
+						dialog: {
+							modal: true,
+							resizable: false,
+							width: "auto",
+							heigth: "auto",
+							centered: true,
+							destroyOnHide: true,
+							toolbars: {
+								header: buttonClose
+							}
+						},
+						title: Liferay.Language.get('import-users'),		
+						uri: uri
+					}
+					).render();
+			window.<portlet:namespace />popupImport.show();
+	  
+		});
+	};
+	
+	function <portlet:namespace />refreshSearch(){
+		window.location.href = '${courseMembersDisplayContext.clearResultsURL }';
+	}
+</script>

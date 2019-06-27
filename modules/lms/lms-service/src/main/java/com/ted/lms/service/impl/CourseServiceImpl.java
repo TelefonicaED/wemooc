@@ -236,10 +236,10 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	}
 	
 	@Override
-	public void addUserCourse(long courseId, long[] addUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
+	public void addUserCourse(long courseId, long[] addUserIds, long roleId) throws PortalException {
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.ASSIGN_MEMBERS);
 		
-		courseLocalService.addUserCourse(getUserId(), courseId, addUserIds, roleId, serviceContext);
+		courseLocalService.addUserCourse(getUserId(), courseId, addUserIds, roleId);
 	}
 	
 	@Override
@@ -279,7 +279,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 		return courseFinder.filterCountByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator);
 	}
 
-	public long executeCopyCourse(long courseId, long courseParentId, Map<Locale, String> titleMap, long layoutSetPrototypeId, 
+	public long executeCopyCourse(long courseId, long parentCourseId, Map<Locale, String> titleMap, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
 			Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate,
 			boolean copyForum, boolean copyDocuments, ServiceContext serviceContext) throws PortalException {
 		
@@ -287,7 +287,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 				getPermissionChecker(), serviceContext.getScopeGroupId(),
 				LMSActionKeys.ADD_COURSE);
 		
-		return courseLocalService.executeCopyCourse(courseId, courseParentId, titleMap, layoutSetPrototypeId, 
+		return courseLocalService.executeCopyCourse(courseId, parentCourseId, titleMap, friendlyURLMap, layoutSetPrototypeId, 
 				registrationStartDate, registrationEndDate, executionStartDate, executionEndDate, 
 				copyForum, copyDocuments, serviceContext);
 	}

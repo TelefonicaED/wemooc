@@ -254,9 +254,9 @@ public class CourseResultLocalServiceUtil {
 		return getService().getCourseResultsCount();
 	}
 
-	public static java.util.List<com.ted.lms.model.CourseResult> getFailedCourseResults(
+	public static java.util.List<com.ted.lms.model.CourseResult> getCourseResultsNotFinished(
 		long courseId) {
-		return getService().getFailedCourseResults(courseId);
+		return getService().getCourseResultsNotFinished(courseId);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {

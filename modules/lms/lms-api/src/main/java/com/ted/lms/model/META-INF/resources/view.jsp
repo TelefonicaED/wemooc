@@ -181,7 +181,7 @@ else {
 
 	function <portlet:namespace />getUsersCount(className, ids, status, callback) {
 		AUI.$.ajax(
-			'<liferay-portlet:resourceURL id="/users_admin/get_users_count" />',
+			'<liferay-portlet:resourceURL id="/users_admin/get_users_count" />  copyCurrentRenderParameters="false"', 
 			{
 				data: {
 					className: className,

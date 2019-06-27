@@ -28,14 +28,6 @@
 					xml="${not empty course ? course.descriptionMapAsXML : '' }"
 				/>
 			</div>
-			<c:if test="${not empty listTemplates && listTemplates.size() > 1}">
-				<aui:select name="courseTemplateId" label="template" helpMessage="template-help-message">
-					<c:forEach items="${listTemplates}" var="template">
-						<aui:option selected="${template.getLayoutSetPrototypeId() == templateSelectedId}" label="${template.getName(themeDisplay.locale)}" 
-							value="${template.getLayoutSetPrototypeId()}"/>
-					</c:forEach>
-				</aui:select>
-			</c:if>
 			<c:choose>
 				<c:when test="${not empty listLayoutSetPrototype && listLayoutSetPrototype.size() > 0 }">
 					<aui:select name="layoutSetPrototypeId" label="template" helpMessage="template.help-message" required="true" >
@@ -43,7 +35,9 @@
 							<aui:option label="select-option" value="" disabled="true" selected="true"/>
 						</c:if>
 						<c:forEach items="${listLayoutSetPrototype }" var="layoutSetPrototype">
-							<aui:option label="${layoutSetPrototype.getName(themeDisplay.locale) }" value="${layoutSetPrototype.layoutSetPrototypeId }" />
+							<aui:option label="${layoutSetPrototype.getName(themeDisplay.locale) }" value="${layoutSetPrototype.layoutSetPrototypeId }" 
+									selected="${layoutSetPrototype.layoutSetPrototypeId == course.layoutSetPrototypeId }"
+									disabled="${not empty course }"/>
 						</c:forEach>
 					</aui:select>
 				</c:when>

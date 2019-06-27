@@ -3019,80 +3019,79 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 			CourseModelImpl.FINDER_CACHE_ENABLED, CourseImpl.class,
 			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByparentCourseId",
 			new String[] {
-				Long.class.getName(),
+				Long.class.getName(), Integer.class.getName(),
 				
 			Integer.class.getName(), Integer.class.getName(),
 				OrderByComparator.class.getName()
 			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PARENTCOURSEID =
+	public static final FinderPath FINDER_PATH_WITH_PAGINATION_COUNT_BY_PARENTCOURSEID =
 		new FinderPath(CourseModelImpl.ENTITY_CACHE_ENABLED,
-			CourseModelImpl.FINDER_CACHE_ENABLED, CourseImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByparentCourseId",
-			new String[] { Long.class.getName() },
-			CourseModelImpl.PARENTCOURSEID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_PARENTCOURSEID = new FinderPath(CourseModelImpl.ENTITY_CACHE_ENABLED,
 			CourseModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByparentCourseId",
-			new String[] { Long.class.getName() });
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "countByparentCourseId",
+			new String[] { Long.class.getName(), Integer.class.getName() });
 
 	/**
-	 * Returns all the courses where parentCourseId = &#63;.
+	 * Returns all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @return the matching courses
 	 */
 	@Override
-	public List<Course> findByparentCourseId(long parentCourseId) {
-		return findByparentCourseId(parentCourseId, QueryUtil.ALL_POS,
+	public List<Course> findByparentCourseId(long parentCourseId, int status) {
+		return findByparentCourseId(parentCourseId, status, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, null);
 	}
 
 	/**
-	 * Returns a range of all the courses where parentCourseId = &#63;.
+	 * Returns a range of all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param start the lower bound of the range of courses
 	 * @param end the upper bound of the range of courses (not inclusive)
 	 * @return the range of matching courses
 	 */
 	@Override
-	public List<Course> findByparentCourseId(long parentCourseId, int start,
-		int end) {
-		return findByparentCourseId(parentCourseId, start, end, null);
+	public List<Course> findByparentCourseId(long parentCourseId, int status,
+		int start, int end) {
+		return findByparentCourseId(parentCourseId, status, start, end, null);
 	}
 
 	/**
-	 * Returns an ordered range of all the courses where parentCourseId = &#63;.
+	 * Returns an ordered range of all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param start the lower bound of the range of courses
 	 * @param end the upper bound of the range of courses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	 * @return the ordered range of matching courses
 	 */
 	@Override
-	public List<Course> findByparentCourseId(long parentCourseId, int start,
-		int end, OrderByComparator<Course> orderByComparator) {
-		return findByparentCourseId(parentCourseId, start, end,
+	public List<Course> findByparentCourseId(long parentCourseId, int status,
+		int start, int end, OrderByComparator<Course> orderByComparator) {
+		return findByparentCourseId(parentCourseId, status, start, end,
 			orderByComparator, true);
 	}
 
 	/**
-	 * Returns an ordered range of all the courses where parentCourseId = &#63;.
+	 * Returns an ordered range of all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * <p>
 	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param start the lower bound of the range of courses
 	 * @param end the upper bound of the range of courses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -3100,27 +3099,19 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	 * @return the ordered range of matching courses
 	 */
 	@Override
-	public List<Course> findByparentCourseId(long parentCourseId, int start,
-		int end, OrderByComparator<Course> orderByComparator,
+	public List<Course> findByparentCourseId(long parentCourseId, int status,
+		int start, int end, OrderByComparator<Course> orderByComparator,
 		boolean retrieveFromCache) {
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
-		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
-			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PARENTCOURSEID;
-			finderArgs = new Object[] { parentCourseId };
-		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_PARENTCOURSEID;
-			finderArgs = new Object[] {
-					parentCourseId,
-					
-					start, end, orderByComparator
-				};
-		}
+		finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_PARENTCOURSEID;
+		finderArgs = new Object[] {
+				parentCourseId, status,
+				
+				start, end, orderByComparator
+			};
 
 		List<Course> list = null;
 
@@ -3130,7 +3121,8 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 
 			if ((list != null) && !list.isEmpty()) {
 				for (Course course : list) {
-					if ((parentCourseId != course.getParentCourseId())) {
+					if ((parentCourseId != course.getParentCourseId()) ||
+							(status == course.getStatus())) {
 						list = null;
 
 						break;
@@ -3143,16 +3135,18 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
+				query = new StringBundler(4 +
 						(orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
-				query = new StringBundler(3);
+				query = new StringBundler(4);
 			}
 
 			query.append(_SQL_SELECT_COURSE_WHERE);
 
 			query.append(_FINDER_COLUMN_PARENTCOURSEID_PARENTCOURSEID_2);
+
+			query.append(_FINDER_COLUMN_PARENTCOURSEID_STATUS_2);
 
 			if (orderByComparator != null) {
 				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
@@ -3175,6 +3169,8 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(parentCourseId);
+
+				qPos.add(status);
 
 				if (!pagination) {
 					list = (List<Course>)QueryUtil.list(q, getDialect(), start,
@@ -3207,30 +3203,34 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	/**
-	 * Returns the first course in the ordered set where parentCourseId = &#63;.
+	 * Returns the first course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching course
 	 * @throws NoSuchCourseException if a matching course could not be found
 	 */
 	@Override
-	public Course findByparentCourseId_First(long parentCourseId,
+	public Course findByparentCourseId_First(long parentCourseId, int status,
 		OrderByComparator<Course> orderByComparator)
 		throws NoSuchCourseException {
-		Course course = fetchByparentCourseId_First(parentCourseId,
+		Course course = fetchByparentCourseId_First(parentCourseId, status,
 				orderByComparator);
 
 		if (course != null) {
 			return course;
 		}
 
-		StringBundler msg = new StringBundler(4);
+		StringBundler msg = new StringBundler(6);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
 		msg.append("parentCourseId=");
 		msg.append(parentCourseId);
+
+		msg.append(", status=");
+		msg.append(status);
 
 		msg.append("}");
 
@@ -3238,16 +3238,17 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	/**
-	 * Returns the first course in the ordered set where parentCourseId = &#63;.
+	 * Returns the first course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the first matching course, or <code>null</code> if a matching course could not be found
 	 */
 	@Override
-	public Course fetchByparentCourseId_First(long parentCourseId,
+	public Course fetchByparentCourseId_First(long parentCourseId, int status,
 		OrderByComparator<Course> orderByComparator) {
-		List<Course> list = findByparentCourseId(parentCourseId, 0, 1,
+		List<Course> list = findByparentCourseId(parentCourseId, status, 0, 1,
 				orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -3258,30 +3259,34 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	/**
-	 * Returns the last course in the ordered set where parentCourseId = &#63;.
+	 * Returns the last course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching course
 	 * @throws NoSuchCourseException if a matching course could not be found
 	 */
 	@Override
-	public Course findByparentCourseId_Last(long parentCourseId,
+	public Course findByparentCourseId_Last(long parentCourseId, int status,
 		OrderByComparator<Course> orderByComparator)
 		throws NoSuchCourseException {
-		Course course = fetchByparentCourseId_Last(parentCourseId,
+		Course course = fetchByparentCourseId_Last(parentCourseId, status,
 				orderByComparator);
 
 		if (course != null) {
 			return course;
 		}
 
-		StringBundler msg = new StringBundler(4);
+		StringBundler msg = new StringBundler(6);
 
 		msg.append(_NO_SUCH_ENTITY_WITH_KEY);
 
 		msg.append("parentCourseId=");
 		msg.append(parentCourseId);
+
+		msg.append(", status=");
+		msg.append(status);
 
 		msg.append("}");
 
@@ -3289,23 +3294,24 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	/**
-	 * Returns the last course in the ordered set where parentCourseId = &#63;.
+	 * Returns the last course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the last matching course, or <code>null</code> if a matching course could not be found
 	 */
 	@Override
-	public Course fetchByparentCourseId_Last(long parentCourseId,
+	public Course fetchByparentCourseId_Last(long parentCourseId, int status,
 		OrderByComparator<Course> orderByComparator) {
-		int count = countByparentCourseId(parentCourseId);
+		int count = countByparentCourseId(parentCourseId, status);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<Course> list = findByparentCourseId(parentCourseId, count - 1,
-				count, orderByComparator);
+		List<Course> list = findByparentCourseId(parentCourseId, status,
+				count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -3315,17 +3321,19 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	/**
-	 * Returns the courses before and after the current course in the ordered set where parentCourseId = &#63;.
+	 * Returns the courses before and after the current course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param courseId the primary key of the current course
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	 * @return the previous, current, and next course
 	 * @throws NoSuchCourseException if a course with the primary key could not be found
 	 */
 	@Override
 	public Course[] findByparentCourseId_PrevAndNext(long courseId,
-		long parentCourseId, OrderByComparator<Course> orderByComparator)
+		long parentCourseId, int status,
+		OrderByComparator<Course> orderByComparator)
 		throws NoSuchCourseException {
 		Course course = findByPrimaryKey(courseId);
 
@@ -3337,12 +3345,12 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 			Course[] array = new CourseImpl[3];
 
 			array[0] = getByparentCourseId_PrevAndNext(session, course,
-					parentCourseId, orderByComparator, true);
+					parentCourseId, status, orderByComparator, true);
 
 			array[1] = course;
 
 			array[2] = getByparentCourseId_PrevAndNext(session, course,
-					parentCourseId, orderByComparator, false);
+					parentCourseId, status, orderByComparator, false);
 
 			return array;
 		}
@@ -3355,22 +3363,24 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	protected Course getByparentCourseId_PrevAndNext(Session session,
-		Course course, long parentCourseId,
+		Course course, long parentCourseId, int status,
 		OrderByComparator<Course> orderByComparator, boolean previous) {
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
+			query = new StringBundler(5 +
 					(orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
-			query = new StringBundler(3);
+			query = new StringBundler(4);
 		}
 
 		query.append(_SQL_SELECT_COURSE_WHERE);
 
 		query.append(_FINDER_COLUMN_PARENTCOURSEID_PARENTCOURSEID_2);
+
+		query.append(_FINDER_COLUMN_PARENTCOURSEID_STATUS_2);
 
 		if (orderByComparator != null) {
 			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
@@ -3442,6 +3452,8 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 
 		qPos.add(parentCourseId);
 
+		qPos.add(status);
+
 		if (orderByComparator != null) {
 			Object[] values = orderByComparator.getOrderByConditionValues(course);
 
@@ -3461,38 +3473,42 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 	}
 
 	/**
-	 * Removes all the courses where parentCourseId = &#63; from the database.
+	 * Removes all the courses where parentCourseId = &#63; and status &ne; &#63; from the database.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 */
 	@Override
-	public void removeByparentCourseId(long parentCourseId) {
-		for (Course course : findByparentCourseId(parentCourseId,
+	public void removeByparentCourseId(long parentCourseId, int status) {
+		for (Course course : findByparentCourseId(parentCourseId, status,
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
 			remove(course);
 		}
 	}
 
 	/**
-	 * Returns the number of courses where parentCourseId = &#63;.
+	 * Returns the number of courses where parentCourseId = &#63; and status &ne; &#63;.
 	 *
 	 * @param parentCourseId the parent course ID
+	 * @param status the status
 	 * @return the number of matching courses
 	 */
 	@Override
-	public int countByparentCourseId(long parentCourseId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_PARENTCOURSEID;
+	public int countByparentCourseId(long parentCourseId, int status) {
+		FinderPath finderPath = FINDER_PATH_WITH_PAGINATION_COUNT_BY_PARENTCOURSEID;
 
-		Object[] finderArgs = new Object[] { parentCourseId };
+		Object[] finderArgs = new Object[] { parentCourseId, status };
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
 		if (count == null) {
-			StringBundler query = new StringBundler(2);
+			StringBundler query = new StringBundler(3);
 
 			query.append(_SQL_COUNT_COURSE_WHERE);
 
 			query.append(_FINDER_COLUMN_PARENTCOURSEID_PARENTCOURSEID_2);
+
+			query.append(_FINDER_COLUMN_PARENTCOURSEID_STATUS_2);
 
 			String sql = query.toString();
 
@@ -3506,6 +3522,8 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 				QueryPos qPos = QueryPos.getInstance(q);
 
 				qPos.add(parentCourseId);
+
+				qPos.add(status);
 
 				count = (Long)q.uniqueResult();
 
@@ -3524,7 +3542,8 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_PARENTCOURSEID_PARENTCOURSEID_2 = "course.parentCourseId = ?";
+	private static final String _FINDER_COLUMN_PARENTCOURSEID_PARENTCOURSEID_2 = "course.parentCourseId = ? AND ";
+	private static final String _FINDER_COLUMN_PARENTCOURSEID_STATUS_2 = "course.status != ?";
 
 	public CoursePersistenceImpl() {
 		setModelClass(Course.class);
@@ -3896,12 +3915,6 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
 				args);
 
-			args = new Object[] { courseModelImpl.getParentCourseId() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_PARENTCOURSEID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PARENTCOURSEID,
-				args);
-
 			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
 			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
 				FINDER_ARGS_EMPTY);
@@ -3975,25 +3988,6 @@ public class CoursePersistenceImpl extends BasePersistenceImpl<Course>
 
 				finderCache.removeResult(FINDER_PATH_COUNT_BY_GROUPID, args);
 				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_GROUPID,
-					args);
-			}
-
-			if ((courseModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PARENTCOURSEID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						courseModelImpl.getOriginalParentCourseId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_PARENTCOURSEID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PARENTCOURSEID,
-					args);
-
-				args = new Object[] { courseModelImpl.getParentCourseId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_PARENTCOURSEID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_PARENTCOURSEID,
 					args);
 			}
 		}

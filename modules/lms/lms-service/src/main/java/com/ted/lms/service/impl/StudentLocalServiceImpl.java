@@ -87,7 +87,7 @@ public class StudentLocalServiceImpl extends StudentLocalServiceBaseImpl {
 			if(group.getType()==GroupConstants.TYPE_SITE_OPEN){
 				Role student = RoleLocalServiceUtil.getRole(course.getCompanyId(), LMSRoleConstants.STUDENT) ;
 				
-				courseLocalService.addUserCourse(studentId, group.getGroupId(), new long[] { studentId }, student.getRoleId(), serviceContext);
+				courseLocalService.addUserCourse(studentId, course.getCourseId(), new long[] { studentId }, student.getRoleId());
 				
 				SocialActivityLocalServiceUtil.addActivity(studentId, group.getGroupId(), Group.class.getName(), group.getGroupId(), SocialActivityConstants.TYPE_SUBSCRIBE, "", studentId);
 				
@@ -143,6 +143,7 @@ public class StudentLocalServiceImpl extends StudentLocalServiceBaseImpl {
 	public boolean canEnroll(Course course, long userId, Locale locale, PermissionChecker permissionChecker) throws PortalException, InscriptionException {
 		//1.Comprobamos que no esté ya inscrito
 		if(!GroupLocalServiceUtil.hasUserGroup(userId, course.getGroupCreatedId())) {
+			
 			Date now = new Date();
 	
 			if(CoursePermission.contains(permissionChecker, course, LMSActionKeys.REGISTER)){

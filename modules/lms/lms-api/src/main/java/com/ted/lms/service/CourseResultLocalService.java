@@ -237,7 +237,7 @@ public interface CourseResultLocalService extends BaseLocalService,
 	public int getCourseResultsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<CourseResult> getFailedCourseResults(long courseId);
+	public List<CourseResult> getCourseResultsNotFinished(long courseId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();

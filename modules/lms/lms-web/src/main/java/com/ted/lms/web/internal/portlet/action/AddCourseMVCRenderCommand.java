@@ -12,7 +12,6 @@ import com.ted.lms.service.CourseTypeLocalService;
 import java.util.List;
 
 import javax.portlet.PortletException;
-import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import org.osgi.service.component.annotations.Component;
@@ -35,6 +34,8 @@ public class AddCourseMVCRenderCommand implements MVCRenderCommand {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
+		System.out.println("AddCourseMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		
 		List<CourseType> courseTypes = courseTypeLocalService.getCourseTypes(themeDisplay.getCompanyId());
 		renderRequest.setAttribute("courseTypes", courseTypes);
 

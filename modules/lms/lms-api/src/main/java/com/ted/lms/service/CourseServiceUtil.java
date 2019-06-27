@@ -73,10 +73,8 @@ public class CourseServiceUtil {
 	}
 
 	public static void addUserCourse(long courseId, long[] addUserIds,
-		long roleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		getService().addUserCourse(courseId, addUserIds, roleId, serviceContext);
+		long roleId) throws com.liferay.portal.kernel.exception.PortalException {
+		getService().addUserCourse(courseId, addUserIds, roleId);
 	}
 
 	public static int countCourses(long companyId, String title,
@@ -93,8 +91,9 @@ public class CourseServiceUtil {
 		getService().deleteCourse(courseId);
 	}
 
-	public static long executeCopyCourse(long courseId, long courseParentId,
+	public static long executeCopyCourse(long courseId, long parentCourseId,
 		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
@@ -102,10 +101,10 @@ public class CourseServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .executeCopyCourse(courseId, courseParentId, titleMap,
-			layoutSetPrototypeId, registrationStartDate, registrationEndDate,
-			executionStartDate, executionEndDate, copyForum, copyDocuments,
-			serviceContext);
+				   .executeCopyCourse(courseId, parentCourseId, titleMap,
+			friendlyURLMap, layoutSetPrototypeId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			copyForum, copyDocuments, serviceContext);
 	}
 
 	/**

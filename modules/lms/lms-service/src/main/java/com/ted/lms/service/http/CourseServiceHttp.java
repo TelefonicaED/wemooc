@@ -363,15 +363,14 @@ public class CourseServiceHttp {
 	}
 
 	public static void addUserCourse(HttpPrincipal httpPrincipal,
-		long courseId, long[] addUserIds, long roleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long courseId, long[] addUserIds, long roleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		try {
 			MethodKey methodKey = new MethodKey(CourseServiceUtil.class,
 					"addUserCourse", _addUserCourseParameterTypes8);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
-					courseId, addUserIds, roleId, serviceContext);
+					courseId, addUserIds, roleId);
 
 			try {
 				TunnelUtil.invoke(httpPrincipal, methodHandler);
@@ -520,8 +519,9 @@ public class CourseServiceHttp {
 	}
 
 	public static long executeCopyCourse(HttpPrincipal httpPrincipal,
-		long courseId, long courseParentId,
+		long courseId, long parentCourseId,
 		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
@@ -533,10 +533,10 @@ public class CourseServiceHttp {
 					"executeCopyCourse", _executeCopyCourseParameterTypes13);
 
 			MethodHandler methodHandler = new MethodHandler(methodKey,
-					courseId, courseParentId, titleMap, layoutSetPrototypeId,
-					registrationStartDate, registrationEndDate,
-					executionStartDate, executionEndDate, copyForum,
-					copyDocuments, serviceContext);
+					courseId, parentCourseId, titleMap, friendlyURLMap,
+					layoutSetPrototypeId, registrationStartDate,
+					registrationEndDate, executionStartDate, executionEndDate,
+					copyForum, copyDocuments, serviceContext);
 
 			Object returnObj = null;
 
@@ -602,8 +602,7 @@ public class CourseServiceHttp {
 			long.class
 		};
 	private static final Class<?>[] _addUserCourseParameterTypes8 = new Class[] {
-			long.class, long[].class, long.class,
-			com.liferay.portal.kernel.service.ServiceContext.class
+			long.class, long[].class, long.class
 		};
 	private static final Class<?>[] _unsetUserCourseParameterTypes9 = new Class[] {
 			long.class, long[].class, long.class,
@@ -624,9 +623,10 @@ public class CourseServiceHttp {
 			long.class, long.class, java.util.LinkedHashMap.class, boolean.class
 		};
 	private static final Class<?>[] _executeCopyCourseParameterTypes13 = new Class[] {
-			long.class, long.class, java.util.Map.class, long.class,
-			java.util.Date.class, java.util.Date.class, java.util.Date.class,
-			java.util.Date.class, boolean.class, boolean.class,
+			long.class, long.class, java.util.Map.class, java.util.Map.class,
+			long.class, java.util.Date.class, java.util.Date.class,
+			java.util.Date.class, java.util.Date.class, boolean.class,
+			boolean.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
 }

@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -26,8 +27,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.PortletException;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.portlet.WindowState;
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Activate;
@@ -52,6 +55,7 @@ public class ViewMembersMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		long courseId = ParamUtil.getLong(renderRequest, "courseId", 0);
 		log.debug("courseId: " + courseId);
+		System.out.println("ViewMembersMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		try {
 			Course course = courseLocalService.getCourse(courseId);
@@ -103,9 +107,17 @@ public class ViewMembersMVCRenderCommand implements MVCRenderCommand {
 				}
 			};
 			
+			PortletURL importUsersURL = renderResponse.createRenderURL();
+			importUsersURL.setWindowState(LiferayWindowState.POP_UP);
+			importUsersURL.setParameter("courseId", String.valueOf(courseId));
+			importUsersURL.setParameter("roleId", String.valueOf(courseMembersDisplayContext.getRoleId()));
+			importUsersURL.setParameter("mvcRenderCommandName", "/courses/import_members");
+			
 			renderRequest.setAttribute("courseId", courseId);
 			renderRequest.setAttribute("courseMembersDisplayContext", courseMembersDisplayContext);
 			renderRequest.setAttribute("navigationItem", navigationItem);
+			renderRequest.setAttribute("importUsersURL", importUsersURL);
+			renderRequest.setAttribute("redirect", ParamUtil.getString(renderRequest, "redirect"));
 			
 			return "/courses/view_members.jsp";
 		} catch (PortalException e) {

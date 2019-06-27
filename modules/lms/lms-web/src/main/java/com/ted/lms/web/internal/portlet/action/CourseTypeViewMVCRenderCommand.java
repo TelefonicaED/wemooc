@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.CourseType;
@@ -33,9 +34,12 @@ public class CourseTypeViewMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		String redirect = ParamUtil.getString(renderRequest, "redirect");
+		System.out.println("CourseTypeViewMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		PortletURL iteratorURL = renderResponse.createRenderURL();
 		iteratorURL.setParameter("mvcRenderCommandName", "/course_type/view");
+		iteratorURL.setParameter("redirect", redirect);
 		
 		SearchContainer<CourseType> searchContainer = new SearchContainer<CourseType>(renderRequest, null, null, SearchContainer.DEFAULT_CUR_PARAM, 
 				SearchContainer.DEFAULT_DELTA, iteratorURL, null, "no-course-types");
@@ -49,6 +53,7 @@ public class CourseTypeViewMVCRenderCommand implements MVCRenderCommand {
 		
 		PortletURL addCourseTypeURL = renderResponse.createRenderURL();
 		addCourseTypeURL.setParameter("mvcRenderCommandName", "/course_type/edit_course_type");
+		addCourseTypeURL.setParameter("redirect", redirect);
 		renderRequest.setAttribute("addCourseTypeURL", addCourseTypeURL);
 		
 		return "/course_type/view.jsp";

@@ -23,4 +23,14 @@
 				tries = 0 OR numTriesUser < tries
 		]]>
 	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.notFinished">
+		<![CDATA[   
+			SELECT 
+				Lms_courseresult.*
+			FROM 
+				Lms_courseresult
+			WHERE 
+				courseId = ? AND passedDate IS NULL
+		]]>
+	</sql>
 </custom-sql>

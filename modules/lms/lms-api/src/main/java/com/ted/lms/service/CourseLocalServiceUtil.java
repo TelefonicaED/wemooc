@@ -109,15 +109,14 @@ public class CourseLocalServiceUtil {
 	* @throws PortalException
 	*/
 	public static void addUserCourse(long userId, long courseId,
-		long[] addUserIds, long roleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		long[] addUserIds, long roleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		getService()
-			.addUserCourse(userId, courseId, addUserIds, roleId, serviceContext);
+		getService().addUserCourse(userId, courseId, addUserIds, roleId);
 	}
 
 	public static com.ted.lms.model.Course copyCourse(long userId,
-		long courseId, long courseParentId, String title,
+		long courseId, long parentCourseId, String title,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
@@ -125,10 +124,10 @@ public class CourseLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws Exception {
 		return getService()
-				   .copyCourse(userId, courseId, courseParentId, title,
-			layoutSetPrototypeId, registrationStartDate, registrationEndDate,
-			executionStartDate, executionEndDate, copyForum, copyDocuments,
-			serviceContext);
+				   .copyCourse(userId, courseId, parentCourseId, title,
+			friendlyURLMap, layoutSetPrototypeId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			copyForum, copyDocuments, serviceContext);
 	}
 
 	/**
@@ -280,8 +279,9 @@ public class CourseLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
-	public static long executeCopyCourse(long courseId, long courseParentId,
+	public static long executeCopyCourse(long courseId, long parentCourseId,
 		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
@@ -289,10 +289,10 @@ public class CourseLocalServiceUtil {
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return getService()
-				   .executeCopyCourse(courseId, courseParentId, titleMap,
-			layoutSetPrototypeId, registrationStartDate, registrationEndDate,
-			executionStartDate, executionEndDate, copyForum, copyDocuments,
-			serviceContext);
+				   .executeCopyCourse(courseId, parentCourseId, titleMap,
+			friendlyURLMap, layoutSetPrototypeId, registrationStartDate,
+			registrationEndDate, executionStartDate, executionEndDate,
+			copyForum, copyDocuments, serviceContext);
 	}
 
 	public static com.liferay.portal.kernel.repository.model.Folder fetchAttachmentsFolder(
@@ -454,6 +454,23 @@ public class CourseLocalServiceUtil {
 
 	public static String[] getPrerequisiteModules(long companyId) {
 		return getService().getPrerequisiteModules(companyId);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONObject importCourseMembers(
+		long userId, long courseId, long roleId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return getService()
+				   .importCourseMembers(userId, courseId, roleId, fileEntry);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONObject importEditions(
+		long userId, long courseId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return getService().importEditions(userId, courseId, fileEntry);
 	}
 
 	public static com.ted.lms.model.Course moveEntryToTrash(long userId,

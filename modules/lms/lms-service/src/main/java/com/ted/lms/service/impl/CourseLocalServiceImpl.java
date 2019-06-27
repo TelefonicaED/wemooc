@@ -35,6 +35,7 @@ import com.liferay.message.boards.kernel.model.MBCategory;
 import com.liferay.message.boards.kernel.service.MBCategoryLocalService;
 import com.liferay.message.boards.model.MBMailingList;
 import com.liferay.message.boards.service.MBMailingListLocalService;
+import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
@@ -54,14 +55,18 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ModelHintsConstants;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -80,6 +85,7 @@ import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelectorProcessor;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -99,6 +105,7 @@ import com.liferay.trash.exception.TrashEntryException;
 import com.liferay.trash.model.TrashEntry;
 import com.liferay.trash.service.TrashEntryLocalService;
 import com.liferay.upload.AttachmentContentUpdater;
+import com.opencsv.CSVReader;
 import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActivityKeys;
@@ -128,7 +135,9 @@ import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -204,12 +213,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			course.setSmallImageId(addSmallImageCourse(userId, groupId, course.getCourseId(), smallImageSelector));
 		}
 		
-		if(parentCourseId > 0) {
-			Course parentCourse = coursePersistence.fetchByPrimaryKey(parentCourseId);
-			course.setUuid(parentCourse.getUuid());
-		}else {
-			course.setUuid(serviceContext.getUuid());
-		}
+		course.setUuid(serviceContext.getUuid());
 		
 		//Guardamos la url si no es vacía para cuando creemos el sitio web
 		// Friendly URLs
@@ -236,9 +240,9 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		long parentGroupId = GroupConstants.DEFAULT_PARENT_GROUP_ID;
 		if(course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
-			Course courseParent = coursePersistence.fetchByPrimaryKey(course.getParentCourseId());
-			if(courseParent != null) {
-				parentGroupId = courseParent.getGroupCreatedId();
+			Course parentCourse = coursePersistence.fetchByPrimaryKey(course.getParentCourseId());
+			if(parentCourse != null) {
+				parentGroupId = parentCourse.getGroupCreatedId();
 			}
 		}
 		
@@ -710,7 +714,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 * @param ServiceContext contexto de la petición
 	 * @throws PortalException
 	 */
-	public void addUserCourse(long userId, long courseId, long[] addUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
+	public void addUserCourse(long userId, long courseId, long[] addUserIds, long roleId) throws PortalException {
 		Course course = coursePersistence.findByPrimaryKey(courseId);
 		
 		userLocalService.addGroupUsers(course.getGroupCreatedId(), addUserIds);
@@ -1271,8 +1275,190 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return prerequisiteCourses;
 	}
 	
-	public Course copyCourse(long userId, long courseId, long courseParentId, String title, long layoutSetPrototypeId, Date registrationStartDate,
-			Date registrationEndDate, Date executionStartDate, Date executionEndDate,
+	public JSONObject importEditions(long userId, long courseId, FileEntry fileEntry) throws PortalException, IOException {
+		User userModified = userLocalService.getUser(userId);
+		JSONObject result = JSONFactoryUtil.createJSONObject();
+		
+		try (InputStream inputStream = dlFileEntryLocalService.getFileAsStream(
+				fileEntry.getFileEntryId(), fileEntry.getVersion(), false);
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+				CSVReader reader = new CSVReader(inputStreamReader, CharPool.SEMICOLON)) {
+			
+			Course parentCourse = coursePersistence.findByPrimaryKey(courseId);
+			
+			DateFormat dateFormatDateTime = DateFormatFactoryUtil.getDateTime(userModified.getLocale(), userModified.getTimeZone());
+			
+			String[] currLine = reader.readNext();
+			String title = null;
+			String friendlyURL = null;
+			Date registrationStartDate = null;
+			Date registrationEndDate = null;
+			Date executionStartDate = null;
+			Date executionEndDate = null;
+			int line = 1;
+			Map<Locale, String> friendlyURLMap = null;
+			String[] languageIds = {LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault())};
+			String[] valuesTitle = new String[1];
+			String[] valuesFriendlyURL = new String[1];
+			long layoutSetPrototypeId = parentCourse.getLayoutSetPrototypeId();
+			ServiceContext serviceContext = null;
+			
+			while ((currLine = reader.readNext()) != null) {
+				line++;
+				try {
+					title = currLine[0];
+					friendlyURL = currLine[1];
+					String registrationStartDateCSV = currLine[2];
+					String registrationEndDateCSV = currLine[3];
+					String executionStartDateCSV = currLine[4];
+					String executionEndDateCSV = currLine[5];
+					
+					if(Validator.isNull(title)) {
+						result.put(String.valueOf(line), LanguageUtil.get(userModified.getLocale(),"course-admin.editions.import.error.empty-edition-name"));
+					}else if(Validator.isNull(registrationStartDateCSV) || Validator.isNull(registrationEndDateCSV)) {
+						result.put(String.valueOf(line), LanguageUtil.get(userModified.getLocale(),"course-admin.editions.import.error.empty-inscription-dates"));
+					}else if(Validator.isNull(executionStartDateCSV) || Validator.isNull(executionEndDateCSV)) {
+						result.put(String.valueOf(line), LanguageUtil.get(userModified.getLocale(),"course-admin.editions.import.error.empty-execution-dates"));
+					}else if(Validator.isNotNull(friendlyURL) && groupLocalService.fetchFriendlyURLGroup(userModified.getCompanyId(), friendlyURL) != null) {
+						result.put(String.valueOf(line), LanguageUtil.get(userModified.getLocale(),"course-admin.editions.import.error.edition-friendly-url-already-exists"));
+					}else {
+						registrationStartDate = GetterUtil.getDate(registrationStartDateCSV, dateFormatDateTime);
+						registrationEndDate = GetterUtil.getDate(registrationEndDateCSV, dateFormatDateTime);
+						executionStartDate = GetterUtil.getDate(executionStartDateCSV, dateFormatDateTime);
+						executionEndDate = GetterUtil.getDate(executionEndDateCSV, dateFormatDateTime);
+						
+						valuesTitle[0] = title;
+						title = LocalizationUtil.updateLocalization(LocalizationUtil.getLocalizationMap(languageIds, valuesTitle), "", "Title", LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
+						
+						serviceContext = new ServiceContext();
+						serviceContext.setCompanyId(parentCourse.getCompanyId());
+						serviceContext.setScopeGroupId(parentCourse.getGroupId());
+						
+						if(Validator.isNotNull(friendlyURL)) {
+							valuesFriendlyURL[0] = friendlyURL;
+							friendlyURLMap = LocalizationUtil.getLocalizationMap(languageIds, valuesFriendlyURL);
+						}else {
+							friendlyURLMap = null;
+						}
+						
+						try {
+							copyCourse(userId, courseId, courseId, title, friendlyURLMap, layoutSetPrototypeId, registrationStartDate, registrationEndDate, 
+									executionStartDate, executionEndDate, false, false, serviceContext);
+							
+							result.put(String.valueOf(line), LanguageUtil.get(userModified.getLocale(),"correct"));
+						} catch (Exception e) {
+							e.printStackTrace();
+							result.put(String.valueOf(line), e.getLocalizedMessage());
+						}
+					}
+				}catch (ArrayIndexOutOfBoundsException e) {
+					result.put(String.valueOf(line), LanguageUtil.get(userModified.getLocale(), "course-admin.editions.import.error.empty-line"));
+				}catch (Exception e) {
+					e.printStackTrace();
+					result.put(String.valueOf(line), e.getLocalizedMessage());
+				}
+				
+			}
+		}
+		
+		return result;
+	}
+	
+	public JSONObject importCourseMembers(long userId, long courseId, long roleId,  FileEntry fileEntry) throws PortalException, IOException {
+		
+		Role roleStudent = roleLocalService.getRole(fileEntry.getCompanyId(), LMSRoleConstants.STUDENT);
+		boolean isStudent = roleStudent.getRoleId() == roleId;
+		
+		User userModified = userLocalService.getUser(userId);
+		
+		Company company = companyLocalService.getCompany(userModified.getCompanyId());
+		
+		String authType = company.getAuthType();
+		JSONObject result = JSONFactoryUtil.createJSONObject();
+		
+		try (InputStream inputStream = dlFileEntryLocalService.getFileAsStream(
+				fileEntry.getFileEntryId(), fileEntry.getVersion(), false);
+				InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+				CSVReader reader = new CSVReader(inputStreamReader, CharPool.SEMICOLON)) {
+			
+			DateFormat dateFormatDateTime = DateFormatFactoryUtil.getDateTime(userModified.getLocale(), userModified.getTimeZone());
+			
+			String[] currLine = reader.readNext();
+			String userAuth = null;
+			User user = null;
+			Date allowStartDate = null;
+			Date allowEndDate = null;
+			int line = 1;
+			
+			while ((currLine = reader.readNext()) != null) {
+				line++;
+				userAuth = currLine[0];
+				
+				if (Validator.isNotNull(userAuth)){
+					
+					try {
+						if (CompanyConstants.AUTH_TYPE_SN.equalsIgnoreCase(authType)) {
+							user = userLocalService.getUserByScreenName(company.getCompanyId(), userAuth.trim());
+						}else if(CompanyConstants.AUTH_TYPE_EA.equalsIgnoreCase(authType)){
+							user = userLocalService.getUserByEmailAddress(company.getCompanyId(), userAuth.trim());
+						}else{
+							user = userLocalService.getUser(Long.parseLong(userAuth.trim()));
+						}
+						
+						if(user != null){
+							if(log.isDebugEnabled())log.debug("User Name:: " + user.getFullName() );
+							
+							addUserCourse(userId, courseId, new long[] {user.getUserId()}, roleId);
+							
+							if(isStudent) {
+								String allowStartDateStr = currLine[2].trim();
+								String allowEndDateStr = currLine[3].trim();
+								
+								if(Validator.isNotNull(allowStartDateStr)){
+									allowStartDate = GetterUtil.getDate(allowStartDateStr, dateFormatDateTime);
+								}else{
+									allowStartDate=null;
+								}
+								if(Validator.isNotNull(allowEndDateStr)){
+									allowEndDate = GetterUtil.getDate(allowEndDateStr, dateFormatDateTime);
+								}else{
+									allowEndDate=null;
+								}
+								
+								if(Validator.isNotNull(allowStartDate) || Validator.isNotNull(allowEndDate) ){												
+									
+									CourseResult courseResult = courseResultLocalService.getCourseResult(courseId, user.getUserId());
+									courseResult.setAllowStartDate(allowStartDate);
+									courseResult.setAllowEndDate(allowEndDate);
+									courseResultLocalService.updateCourseResult(courseResult);												
+								}
+							}
+							result.put(String.valueOf(line), LanguageUtil.format(userModified.getLocale(),
+									 "correct", userAuth));
+						}else{
+							result.put(String.valueOf(line), LanguageUtil.format(userModified.getLocale(),
+											 "course-admin.assign-members.import.error.user-id-not-found", userAuth));
+						}
+					} catch (NumberFormatException e) {
+						result.put(String.valueOf(line), LanguageUtil.format(userModified.getLocale(),
+								 "course-admin.assign-members.import.error.user-id-bad-format", userAuth));
+					} catch (PortalException e) {
+						result.put(String.valueOf(line), LanguageUtil.format(userModified.getLocale(),
+								 "course-admin.assign-members.import.error.user-id-not-found", userAuth));
+					} catch (Exception e){
+						e.printStackTrace();
+						result.put(String.valueOf(line), LanguageUtil.format(userModified.getLocale(),
+								 "course-admin.assign-members.import.error", userAuth));
+					}
+				}
+			}
+		}
+		
+		return result;
+	}
+	
+	public Course copyCourse(long userId, long courseId, long parentCourseId, String title, Map<Locale, String> friendlyURLMap, 
+			long layoutSetPrototypeId, Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate,
 			boolean copyForum, boolean copyDocuments, ServiceContext serviceContext) throws Exception {
 		
 		log.debug("copyCourse: " + courseId);
@@ -1294,7 +1480,9 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			smallImageSelector = new ImageSelector(imageBytes, fileEntry.getFileName(), fileEntry.getMimeType(), StringPool.BLANK);
 		}
 		
-		Map<Locale, String> friendlyURLMap = new HashMap<>();
+		if(friendlyURLMap == null) {
+			friendlyURLMap = new HashMap<>();
+		}
 		
 		serviceContext.setUserId(userId);
 		serviceContext.setAssetCategoryIds(oldAssetEntry.getCategoryIds());
@@ -1306,7 +1494,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		//Primer paso, creamos el curso
 		Course newCourse = addCourse(userId, serviceContext.getScopeGroupId(), titleMap, oldCourse.getDescriptionMap(), oldAssetEntry.getSummaryMap(), oldAssetEntry.isVisible(), 
-				friendlyURLMap, layoutSetPrototypeId, courseParentId, oldCourse.getCourseTypeId(), smallImageSelector, serviceContext);
+				friendlyURLMap, layoutSetPrototypeId, parentCourseId, oldCourse.getCourseTypeId(), smallImageSelector, serviceContext);
 		
 		log.debug("primer paso fin: " + newCourse.getCourseId());
 		
@@ -1410,7 +1598,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 	}
 	
-	public long executeCopyCourse(long courseId, long courseParentId, Map<Locale, String> titleMap, long layoutSetPrototypeId, 
+	public long executeCopyCourse(long courseId, long parentCourseId, Map<Locale, String> titleMap, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
 			Date registrationStartDate, Date registrationEndDate, Date executionStartDate, Date executionEndDate,
 			boolean copyForum, boolean copyDocuments, ServiceContext serviceContext) throws PortalException {
 		
@@ -1419,12 +1607,19 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		Map<String, Serializable> taskContextMap = new HashMap<>();
 		
 		String title = LocalizationUtil.updateLocalization(titleMap, "", "Title", LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
+		String friendlyURL = null;
+		if(friendlyURLMap != null) {
+			friendlyURL = LocalizationUtil.updateLocalization(friendlyURLMap, "", "friendlyURL", LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
+		}
 		
 		taskContextMap.put("userId", serviceContext.getUserId());
 		taskContextMap.put("serviceContext", serviceContext);
 		taskContextMap.put("courseId", courseId);
-		taskContextMap.put("courseParentId", courseParentId);
+		taskContextMap.put("parentCourseId", parentCourseId);
 		taskContextMap.put("title", title);
+		if(Validator.isNotNull(friendlyURL)) {
+			taskContextMap.put("friendlyURL", friendlyURL);
+		}
 		taskContextMap.put("layoutSetPrototypeId", layoutSetPrototypeId);
 		taskContextMap.put("registrationStartDate", registrationStartDate);
 		taskContextMap.put("registrationEndDate", registrationEndDate);

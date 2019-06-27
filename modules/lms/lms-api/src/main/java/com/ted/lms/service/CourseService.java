@@ -84,8 +84,8 @@ public interface CourseService extends BaseService {
 		ImageSelector smallImageSelector, ServiceContext serviceContext)
 		throws Exception;
 
-	public void addUserCourse(long courseId, long[] addUserIds, long roleId,
-		ServiceContext serviceContext) throws PortalException;
+	public void addUserCourse(long courseId, long[] addUserIds, long roleId)
+		throws PortalException;
 
 	public int countCourses(long companyId, String title, String description,
 		String language, int[] status, long parentCourseId, long groupId,
@@ -93,12 +93,12 @@ public interface CourseService extends BaseService {
 
 	public void deleteCourse(long courseId) throws PortalException;
 
-	public long executeCopyCourse(long courseId, long courseParentId,
-		Map<Locale, String> titleMap, long layoutSetPrototypeId,
-		Date registrationStartDate, Date registrationEndDate,
-		Date executionStartDate, Date executionEndDate, boolean copyForum,
-		boolean copyDocuments, ServiceContext serviceContext)
-		throws PortalException;
+	public long executeCopyCourse(long courseId, long parentCourseId,
+		Map<Locale, String> titleMap, Map<Locale, String> friendlyURLMap,
+		long layoutSetPrototypeId, Date registrationStartDate,
+		Date registrationEndDate, Date executionStartDate,
+		Date executionEndDate, boolean copyForum, boolean copyDocuments,
+		ServiceContext serviceContext) throws PortalException;
 
 	/**
 	* Returns the OSGi service identifier.

@@ -25,8 +25,10 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -42,6 +44,7 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.Course;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 import java.util.Date;
@@ -122,10 +125,11 @@ public interface CourseLocalService extends BaseLocalService,
 	* @throws PortalException
 	*/
 	public void addUserCourse(long userId, long courseId, long[] addUserIds,
-		long roleId, ServiceContext serviceContext) throws PortalException;
+		long roleId) throws PortalException;
 
-	public Course copyCourse(long userId, long courseId, long courseParentId,
-		String title, long layoutSetPrototypeId, Date registrationStartDate,
+	public Course copyCourse(long userId, long courseId, long parentCourseId,
+		String title, Map<Locale, String> friendlyURLMap,
+		long layoutSetPrototypeId, Date registrationStartDate,
 		Date registrationEndDate, Date executionStartDate,
 		Date executionEndDate, boolean copyForum, boolean copyDocuments,
 		ServiceContext serviceContext) throws Exception;
@@ -248,12 +252,12 @@ public interface CourseLocalService extends BaseLocalService,
 	public long dynamicQueryCount(DynamicQuery dynamicQuery,
 		Projection projection);
 
-	public long executeCopyCourse(long courseId, long courseParentId,
-		Map<Locale, String> titleMap, long layoutSetPrototypeId,
-		Date registrationStartDate, Date registrationEndDate,
-		Date executionStartDate, Date executionEndDate, boolean copyForum,
-		boolean copyDocuments, ServiceContext serviceContext)
-		throws PortalException;
+	public long executeCopyCourse(long courseId, long parentCourseId,
+		Map<Locale, String> titleMap, Map<Locale, String> friendlyURLMap,
+		long layoutSetPrototypeId, Date registrationStartDate,
+		Date registrationEndDate, Date executionStartDate,
+		Date executionEndDate, boolean copyForum, boolean copyDocuments,
+		ServiceContext serviceContext) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Folder fetchAttachmentsFolder(long userId, long groupId);
@@ -382,6 +386,12 @@ public interface CourseLocalService extends BaseLocalService,
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public String[] getPrerequisiteModules(long companyId);
+
+	public JSONObject importCourseMembers(long userId, long courseId,
+		long roleId, FileEntry fileEntry) throws PortalException, IOException;
+
+	public JSONObject importEditions(long userId, long courseId,
+		FileEntry fileEntry) throws PortalException, IOException;
 
 	@Indexable(type = IndexableType.REINDEX)
 	public Course moveEntryToTrash(long userId, Course course)

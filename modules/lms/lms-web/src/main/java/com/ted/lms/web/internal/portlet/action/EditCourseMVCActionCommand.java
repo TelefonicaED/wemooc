@@ -103,6 +103,8 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 			}
 			else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
 				deleteCourse(actionRequest, true);
+			}else if (cmd.equals(Constants.PUBLISH)) {
+				changeStatusCourse(actionRequest, WorkflowConstants.STATUS_APPROVED);
 			}
 
 			String redirect = ParamUtil.getString(actionRequest, "redirect");
@@ -168,6 +170,13 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 
 			hideDefaultSuccessMessage(actionRequest);
 		}
+	}
+	
+	protected void changeStatusCourse(ActionRequest actionRequest, int status) throws PrincipalException, PortalException {
+		long courseId = ParamUtil.getLong(actionRequest, "courseId");
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
+		
+		courseService.updateCourse(courseId, status, serviceContext);
 	}
 	
 	protected void deleteCourse(ActionRequest actionRequest, boolean moveToTrash) throws Exception {
@@ -304,14 +313,14 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(Course.class.getName(), actionRequest);
 		
-		long courseParentId = ParamUtil.getLong(actionRequest, "courseParentId", CourseConstants.DEFAULT_PARENT_COURSE_ID);
+		long parentCourseId = ParamUtil.getLong(actionRequest, "parentCourseId", CourseConstants.DEFAULT_PARENT_COURSE_ID);
 		
 		Course course = null;
 
 		if (courseId <= 0) {
 			long courseTypeId = ParamUtil.getLong(actionRequest, "courseTypeId", 0);
 			// Añadir módulo
-			course = courseService.addCourse(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, courseParentId, 
+			course = courseService.addCourse(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, parentCourseId, 
 					courseTypeId, smallImageImageSelector, serviceContext);
 		} else {
 			// Actualizamos el módulo

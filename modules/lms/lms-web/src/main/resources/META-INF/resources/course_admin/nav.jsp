@@ -34,7 +34,7 @@
 <div class="course-advanced-options ${inputFiltersShowOptions ? '' :'hide'}" id="${renderResponse.getNamespace()}inputFiltersOptions">
 	<aui:form action="${coursesManagementToolbarDisplayContext.searchActionURL}" method="post" name="searchAdvancedFm">
 		<div class="row">
-			<c:if test="${courseDisplayContext.courseAdminConfiguration.searchGroups() && (empty courseDisplayContext.parentCourseId || courseDisplayContext.parentCourseId == 0) && not empty courseDisplayContext.searchListGroups}">
+			<c:if test="${courseId == 0 && courseDisplayContext.courseAdminConfiguration.searchGroups() && (empty courseDisplayContext.parentCourseId || courseDisplayContext.parentCourseId == 0) && not empty courseDisplayContext.searchListGroups}">
 				<div class="col-md-3">
 					<aui:select name="groupId" label="site" >
 						<aui:option label="" value="0"/>

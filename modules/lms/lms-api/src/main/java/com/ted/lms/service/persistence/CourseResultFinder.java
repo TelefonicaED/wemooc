@@ -23,4 +23,7 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface CourseResultFinder {
 	public boolean hasUserTries(long courseId, long userId);
+
+	public java.util.List<com.ted.lms.model.CourseResult> getCourseResultNotFinished(
+		long courseId);
 }

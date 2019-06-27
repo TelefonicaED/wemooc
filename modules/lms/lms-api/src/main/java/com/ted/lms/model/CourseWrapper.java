@@ -1588,6 +1588,11 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 	}
 
 	@Override
+	public boolean isRegistrationOnDate() {
+		return _course.isRegistrationOnDate();
+	}
+
+	@Override
 	public boolean isRegistredUser(long userId) {
 		return _course.isRegistredUser(userId);
 	}

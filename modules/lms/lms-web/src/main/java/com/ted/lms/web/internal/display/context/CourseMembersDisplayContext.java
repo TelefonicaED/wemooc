@@ -185,7 +185,7 @@ public class CourseMembersDisplayContext {
 		portletURL.setParameter("mvcRenderCommandName", "/courses/view_members");
 		portletURL.setParameter("courseId", String.valueOf(getCourseId()));
 		portletURL.setParameter("tabs", getTab());
-		portletURL.setParameter("redirect", themeDisplay.getURLCurrent());
+		portletURL.setParameter("redirect", ParamUtil.getString(renderRequest, "redirect"));
 		portletURL.setParameter("roleId", String.valueOf(getRoleId()));
 		
 		String displayStyle = getDisplayStyle();

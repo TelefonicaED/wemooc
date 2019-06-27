@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.trash.TrashHelper;
+import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.security.permission.resource.CoursePermission;
@@ -46,6 +47,9 @@ public class CoursesManagementToolbarDisplayContext {
 
 			this.portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(
 				liferayPortletRequest);
+			
+			this.parentCourseId = ParamUtil.getLong(request, "parentCourseId", CourseConstants.DEFAULT_PARENT_COURSE_ID);
+			System.out.println("parentCourseId: " + parentCourseId);
 		}
 
 		public List<DropdownItem> getActionDropdownItems() {
@@ -90,16 +94,16 @@ public class CoursesManagementToolbarDisplayContext {
 			//Dependiendo si hay tipos de curso o no, mandamos a una ventana u otra
 			int countCourseTypes = CourseTypeLocalServiceUtil.countCourseTypes(themeDisplay.getCompanyId());
 			
-			String mvcRenderCommand = countCourseTypes > 0 ? "/courses/add_course" : "/courses/edit_course";
+			String mvcRenderCommand = parentCourseId == CourseConstants.DEFAULT_PARENT_COURSE_ID ? (countCourseTypes > 0 ? "/courses/add_course" : "/courses/edit_course") : "/courses/edit_edition";
 
 			creationMenu.addDropdownItem(
 				dropdownItem -> {
 					dropdownItem.setHref(
 						liferayPortletResponse.createRenderURL(),
 						"mvcRenderCommandName", mvcRenderCommand, "redirect",
-						currentURLObj.toString());
+						currentURLObj.toString(), "parentCourseId", parentCourseId);
 					dropdownItem.setLabel(
-						LanguageUtil.get(request, "add-course"));
+						LanguageUtil.get(request, parentCourseId == CourseConstants.DEFAULT_PARENT_COURSE_ID ? "add-course" : "course-admin.new-edition"));
 				});
 
 			return creationMenu;
@@ -143,6 +147,7 @@ public class CoursesManagementToolbarDisplayContext {
 			PortletURL searchURL = liferayPortletResponse.createRenderURL();
 
 			searchURL.setParameter("mvcRenderCommandName", "/courses/view");
+			searchURL.setParameter("parentCourseId", String.valueOf(parentCourseId));
 
 			String navigation = ParamUtil.getString(request, "navigation", "entries");
 
@@ -165,6 +170,7 @@ public class CoursesManagementToolbarDisplayContext {
 			PortletURL portletURL = liferayPortletResponse.createRenderURL();
 
 			portletURL.setParameter("mvcRenderCommandName", "/courses/view");
+			portletURL.setParameter("parentCourseId", String.valueOf(parentCourseId));
 
 			int delta = ParamUtil.getInteger(request, SearchContainer.DEFAULT_DELTA_PARAM);
 
@@ -201,6 +207,7 @@ public class CoursesManagementToolbarDisplayContext {
 
 			sortingURL.setParameter("mvcRenderCommandName", "/courses/view");
 			sortingURL.setParameter(SearchContainer.DEFAULT_CUR_PARAM, "0");
+			sortingURL.setParameter("parentCourseId", String.valueOf(parentCourseId));
 
 			String keywords = ParamUtil.getString(request, "keywords");
 
@@ -221,4 +228,5 @@ public class CoursesManagementToolbarDisplayContext {
 		private final PortalPreferences portalPreferences;
 		private final HttpServletRequest request;
 		private final TrashHelper trashHelper;
+		private long parentCourseId;
 }

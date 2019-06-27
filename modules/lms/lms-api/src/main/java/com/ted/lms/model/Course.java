@@ -108,6 +108,8 @@ public interface Course extends CourseModel, PersistedModel {
 	public java.util.Map<java.util.Locale, String> getFriendlyURLMap()
 		throws com.liferay.portal.kernel.exception.PortalException;
 
+	public boolean isRegistrationOnDate();
+
 	public boolean isTypeSiteOpen();
 
 	public boolean isTypeSiteRestricted();

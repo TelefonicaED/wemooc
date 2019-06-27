@@ -299,6 +299,12 @@ public class CourseImpl extends CourseBaseImpl {
 	}
 	
 	@Override
+	public boolean isRegistrationOnDate(){
+		Date now = new Date();
+		return now.before(getRegistrationEndDate()) && now.after(getRegistrationStartDate());
+	}
+	
+	@Override
 	public boolean isTypeSiteOpen() {
 		return getGroup().getType() == GroupConstants.TYPE_SITE_OPEN;
 	}

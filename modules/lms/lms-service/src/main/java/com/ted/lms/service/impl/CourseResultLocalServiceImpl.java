@@ -107,8 +107,9 @@ public class CourseResultLocalServiceImpl
 		return courseResultPersistence.findByCourseIdPassed(courseId, passed);
 	}
 	
-	public List<CourseResult> getFailedCourseResults(long courseId){
-		return courseResultPersistence.findByFinished(courseId, false);
+	public List<CourseResult> getCourseResultsNotFinished(long courseId){
+		
+		return courseResultFinder.getCourseResultNotFinished(courseId);
 	}
 	
 	@Override

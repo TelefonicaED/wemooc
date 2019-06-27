@@ -102,24 +102,22 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	*/
 	@Override
 	public void addUserCourse(long userId, long courseId, long[] addUserIds,
-		long roleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.exception.PortalException {
-		_courseLocalService.addUserCourse(userId, courseId, addUserIds, roleId,
-			serviceContext);
+		long roleId) throws com.liferay.portal.kernel.exception.PortalException {
+		_courseLocalService.addUserCourse(userId, courseId, addUserIds, roleId);
 	}
 
 	@Override
 	public com.ted.lms.model.Course copyCourse(long userId, long courseId,
-		long courseParentId, String title, long layoutSetPrototypeId,
-		java.util.Date registrationStartDate,
+		long parentCourseId, String title,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
+		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
 		boolean copyDocuments,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws Exception {
-		return _courseLocalService.copyCourse(userId, courseId, courseParentId,
-			title, layoutSetPrototypeId, registrationStartDate,
+		return _courseLocalService.copyCourse(userId, courseId, parentCourseId,
+			title, friendlyURLMap, layoutSetPrototypeId, registrationStartDate,
 			registrationEndDate, executionStartDate, executionEndDate,
 			copyForum, copyDocuments, serviceContext);
 	}
@@ -284,18 +282,19 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
-	public long executeCopyCourse(long courseId, long courseParentId,
+	public long executeCopyCourse(long courseId, long parentCourseId,
 		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
 		boolean copyDocuments,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _courseLocalService.executeCopyCourse(courseId, courseParentId,
-			titleMap, layoutSetPrototypeId, registrationStartDate,
-			registrationEndDate, executionStartDate, executionEndDate,
-			copyForum, copyDocuments, serviceContext);
+		return _courseLocalService.executeCopyCourse(courseId, parentCourseId,
+			titleMap, friendlyURLMap, layoutSetPrototypeId,
+			registrationStartDate, registrationEndDate, executionStartDate,
+			executionEndDate, copyForum, copyDocuments, serviceContext);
 	}
 
 	@Override
@@ -477,6 +476,25 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	@Override
 	public String[] getPrerequisiteModules(long companyId) {
 		return _courseLocalService.getPrerequisiteModules(companyId);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject importCourseMembers(
+		long userId, long courseId, long roleId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return _courseLocalService.importCourseMembers(userId, courseId,
+			roleId, fileEntry);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject importEditions(
+		long userId, long courseId,
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			java.io.IOException {
+		return _courseLocalService.importEditions(userId, courseId, fileEntry);
 	}
 
 	@Override

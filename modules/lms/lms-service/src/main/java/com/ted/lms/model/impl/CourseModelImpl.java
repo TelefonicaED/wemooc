@@ -182,8 +182,9 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	public static final long GROUPCREATEDID_COLUMN_BITMASK = 2L;
 	public static final long GROUPID_COLUMN_BITMASK = 4L;
 	public static final long PARENTCOURSEID_COLUMN_BITMASK = 8L;
-	public static final long UUID_COLUMN_BITMASK = 16L;
-	public static final long COURSEID_COLUMN_BITMASK = 32L;
+	public static final long STATUS_COLUMN_BITMASK = 16L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+	public static final long COURSEID_COLUMN_BITMASK = 64L;
 
 	/**
 	 * Converts the soap model instance into a normal model instance.
@@ -1780,7 +1781,19 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 	@Override
 	public void setStatus(int status) {
+		_columnBitmask |= STATUS_COLUMN_BITMASK;
+
+		if (!_setOriginalStatus) {
+			_setOriginalStatus = true;
+
+			_originalStatus = _status;
+		}
+
 		_status = status;
+	}
+
+	public int getOriginalStatus() {
+		return _originalStatus;
 	}
 
 	@JSON
@@ -2421,6 +2434,10 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 
 		courseModelImpl._setOriginalGroupCreatedId = false;
 
+		courseModelImpl._originalStatus = courseModelImpl._status;
+
+		courseModelImpl._setOriginalStatus = false;
+
 		courseModelImpl._columnBitmask = 0;
 	}
 
@@ -2927,6 +2944,8 @@ public class CourseModelImpl extends BaseModelImpl<Course>
 	private String _deniedInscriptionMsgCurrentLanguageId;
 	private String _courseExtraData;
 	private int _status;
+	private int _originalStatus;
+	private boolean _setOriginalStatus;
 	private long _statusByUserId;
 	private String _statusByUserName;
 	private Date _statusDate;

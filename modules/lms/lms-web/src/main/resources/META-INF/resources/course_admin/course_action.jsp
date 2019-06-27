@@ -34,6 +34,8 @@ CourseServiceConfiguration courseServiceConfiguration = courseDisplayContext.get
 
 PortletURL portletURL = renderResponse.createRenderURL();
 portletURL.setParameter("mvcRenderCommandName", "/courses/view");
+portletURL.setParameter("parentCourseId", String.valueOf(ParamUtil.getLong(renderRequest, "parentCourseId")));
+portletURL.setParameter("redirect", ParamUtil.getString(renderRequest, "redirect"));
 %>
 
 <liferay-ui:icon-menu
@@ -57,7 +59,8 @@ portletURL.setParameter("mvcRenderCommandName", "/courses/view");
 			url="${editCourseURL }"
 		/>
 	</c:if>
-	<c:if test="<%=CoursePermission.contains(permissionChecker, course, LMSActionKeys.ASSIGN_MEMBERS) && course.isApproved() && (course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID || courseServiceConfiguration.editionWithoutRestrictions() || course.getCountEditions() == 0)%>">
+	<c:if test="<%=CoursePermission.contains(permissionChecker, course, LMSActionKeys.ASSIGN_MEMBERS) && course.isApproved() 
+				&& (course.getParentCourseId() != CourseConstants.DEFAULT_PARENT_COURSE_ID || courseServiceConfiguration.editionWithoutRestrictions() || course.getCountEditions() == 0)%>">
 		<portlet:renderURL var="assignMembersURL">
 			<portlet:param name="mvcRenderCommandName" value="/courses/view_members" />
 			<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
@@ -65,9 +68,33 @@ portletURL.setParameter("mvcRenderCommandName", "/courses/view");
 		</portlet:renderURL>
 
 		<liferay-ui:icon
-			message="assign-member"
+			message="course-admin.assign-members"
 			url="${assignMembersURL }"
 		/>
+	</c:if>
+	<c:if test="<%=CoursePermission.contains(permissionChecker,  course, ActionKeys.UPDATE) && (course.isApproved() || course.isDraft()) 
+				&& course.getParentCourseId() == CourseConstants.DEFAULT_PARENT_COURSE_ID && 
+				(courseServiceConfiguration.editionWithoutRestrictions() || (!courseServiceConfiguration.editionWithoutRestrictions() && StudentLocalServiceUtil.countStudentsFromCourse(course.getCourseId(), course.getCompanyId()) == 0))%>">
+		<liferay-portlet:renderURL var="editionsURL">
+			<liferay-portlet:param name="mvcRenderCommandName" value="/courses/view"/>
+			<liferay-portlet:param name="parentCourseId" value="<%=String.valueOf(course.getCourseId()) %>"/>
+			<liferay-portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+		</liferay-portlet:renderURL>
+		
+		<liferay-ui:icon 
+			message="editions" 
+			url="<%=editionsURL %>" />
+	</c:if>
+	<c:if test="<%=CoursePermission.contains(permissionChecker,  course, ActionKeys.UPDATE) && course.isDraft() %>">
+		<portlet:actionURL var="publishCourseURL" name="/courses/edit_course">
+			<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+			<portlet:param name="courseId" value="<%= String.valueOf(course.getCourseId()) %>" />
+			<portlet:param name="<%= Constants.CMD %>" value="<%=Constants.PUBLISH %>" />
+		</portlet:actionURL>
+		
+		<liferay-ui:icon 
+			message="publish" 
+			url="<%=publishCourseURL %>" />
 	</c:if>
 	<li aria-hidden="true" class="dropdown-divider" role="presentation"></li>
 	<c:if test="<%=LMSPermission.contains(permissionChecker, themeDisplay.getScopeGroupId(), LMSActionKeys.ADD_COURSE) %>">
@@ -82,6 +109,7 @@ portletURL.setParameter("mvcRenderCommandName", "/courses/view");
 			url="${copyCourseURL }"
 		/>
 	</c:if>
+	<li aria-hidden="true" class="dropdown-divider" role="presentation"></li>
 	<c:if test="<%=configuration.courseActionClose() && CoursePermission.contains(permissionChecker, course, ActionKeys.UPDATE) %>">
 		<c:choose>
 			<c:when test="<%=course.isApproved() %>">

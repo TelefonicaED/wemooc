@@ -23,7 +23,7 @@ public class CourseParams {
 	 */
 	public static final String PARAM_TEMPLATES = "templates";
 	/**
-	 * Buscar tanto en cursos padres como en cursos hijos dependiendo del parámetro courseParentId
+	 * Buscar tanto en cursos padres como en cursos hijos dependiendo del parámetro parentCourseId
 	 */
 	public static final String PARAM_SEARCH_PARENT_AND_CHILD_COURSES = "searchParentAndChildCourses";
 	/**

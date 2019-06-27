@@ -42,9 +42,7 @@ public class CourseAdminPortlet extends MVCPortlet {
 
 		long[] addUserIds = ParamUtil.getLongValues(actionRequest, "rowIds");
 
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(actionRequest);
-
-		courseService.addUserCourse(courseId, addUserIds, roleId, serviceContext);
+		courseService.addUserCourse(courseId, addUserIds, roleId);
 
 		actionResponse.setRenderParameter("mvcRenderCommandName", "/courses/view_members");
 		actionResponse.setRenderParameter("courseId", String.valueOf(courseId));

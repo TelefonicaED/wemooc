@@ -8,6 +8,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -55,7 +56,10 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
+		System.out.println("CoursesViewMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		
+		//Si recibo un courseId es porque estoy en ediciones
+		long parentCourseId = ParamUtil.getLong(renderRequest, "parentCourseId", CourseConstants.DEFAULT_PARENT_COURSE_ID);
 		
 		String criteria = ParamUtil.getString(renderRequest, "criteria");
 		log.debug("render criteria:_ " + criteria);
@@ -76,9 +80,13 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		
 		boolean inputFiltersShowOptions = ParamUtil.getBoolean(renderRequest, "inputFiltersShowOptions", false);
 		
+		String redirect = ParamUtil.getString(renderRequest, "redirect");
+		
 		PortletURL portletURL = renderResponse.createRenderURL();
 
 		portletURL.setParameter("mvcRenderCommandName", "/courses/view");
+		portletURL.setParameter("parentCourseId", String.valueOf(parentCourseId));
+		portletURL.setParameter("redirect", redirect);
 		
 		long groupId = ParamUtil.getLong(renderRequest, "groupId", themeDisplay.getScopeGroupId());
 		
@@ -94,18 +102,30 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 				iteratorURL, null, "no-courses");
 		
 		List<Course> courses = courseLocalService.searchCourses(themeDisplay.getCompanyId(), keywords, themeDisplay.getLanguageId(), statusArray, 
-				CourseConstants.DEFAULT_PARENT_COURSE_ID, groupId, null, searchContainer.getStart(), searchContainer.getEnd(), 
+				parentCourseId, groupId, null, searchContainer.getStart(), searchContainer.getEnd(), 
 				searchContainer.getOrderByComparator());
 		int countCourses = courseLocalService.countCourses(themeDisplay.getCompanyId(), keywords, themeDisplay.getLanguageId(), statusArray, 
-				CourseConstants.DEFAULT_PARENT_COURSE_ID, groupId, null);
+				parentCourseId, groupId, null);
 		searchContainer.setResults(courses);
 		searchContainer.setTotal(countCourses);
 		
 		log.debug("total: " + searchContainer.getTotal());
 		
+		if(parentCourseId != CourseConstants.DEFAULT_PARENT_COURSE_ID) {
+			Course course = courseLocalService.fetchCourse(parentCourseId);
+			renderRequest.setAttribute("course", course);
+			
+			PortletURL importEditionsURL = renderResponse.createRenderURL();
+			importEditionsURL.setWindowState(LiferayWindowState.POP_UP);
+			importEditionsURL.setParameter("parentCourseId", String.valueOf(parentCourseId));
+			importEditionsURL.setParameter("mvcRenderCommandName", "/courses/import_editions");
+			renderRequest.setAttribute("importEditionsURL", importEditionsURL);
+		}
+		
 		renderRequest.setAttribute("searchContainer", searchContainer);
 		renderRequest.setAttribute("inputFiltersShowOptions", inputFiltersShowOptions);
 		renderRequest.setAttribute("portletURL", portletURL);
+		renderRequest.setAttribute("redirect", redirect);
 		
 		renderRequest.setAttribute("coursesManagementToolbarDisplayContext", coursesManagementToolbarDisplayContext);
 		

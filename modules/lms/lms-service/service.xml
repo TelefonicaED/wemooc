@@ -73,6 +73,7 @@
 		</finder>
 		<finder name="parentCourseId" return-type="Collection">
 			<finder-column name="parentCourseId" />
+			<finder-column name="status" comparator="!="/>
 		</finder>
 
 		<!-- References -->
@@ -194,7 +195,6 @@
 			<finder-column name="courseId" />
 			<finder-column name="passed" />
 		</finder>
-		
 		<finder name="Finished" return-type="Collection" where="passedDate IS NOT NULL">
 			<finder-column name="courseId" />
 			<finder-column name="passed" />

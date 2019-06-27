@@ -62,11 +62,9 @@ public class CourseServiceWrapper implements CourseService,
 	}
 
 	@Override
-	public void addUserCourse(long courseId, long[] addUserIds, long roleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+	public void addUserCourse(long courseId, long[] addUserIds, long roleId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		_courseService.addUserCourse(courseId, addUserIds, roleId,
-			serviceContext);
+		_courseService.addUserCourse(courseId, addUserIds, roleId);
 	}
 
 	@Override
@@ -84,18 +82,19 @@ public class CourseServiceWrapper implements CourseService,
 	}
 
 	@Override
-	public long executeCopyCourse(long courseId, long courseParentId,
+	public long executeCopyCourse(long courseId, long parentCourseId,
 		java.util.Map<java.util.Locale, String> titleMap,
+		java.util.Map<java.util.Locale, String> friendlyURLMap,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
 		boolean copyDocuments,
 		com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _courseService.executeCopyCourse(courseId, courseParentId,
-			titleMap, layoutSetPrototypeId, registrationStartDate,
-			registrationEndDate, executionStartDate, executionEndDate,
-			copyForum, copyDocuments, serviceContext);
+		return _courseService.executeCopyCourse(courseId, parentCourseId,
+			titleMap, friendlyURLMap, layoutSetPrototypeId,
+			registrationStartDate, registrationEndDate, executionStartDate,
+			executionEndDate, copyForum, copyDocuments, serviceContext);
 	}
 
 	/**

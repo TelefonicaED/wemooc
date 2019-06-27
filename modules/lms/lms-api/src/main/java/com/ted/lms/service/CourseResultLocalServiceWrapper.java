@@ -267,9 +267,9 @@ public class CourseResultLocalServiceWrapper implements CourseResultLocalService
 	}
 
 	@Override
-	public java.util.List<com.ted.lms.model.CourseResult> getFailedCourseResults(
+	public java.util.List<com.ted.lms.model.CourseResult> getCourseResultsNotFinished(
 		long courseId) {
-		return _courseResultLocalService.getFailedCourseResults(courseId);
+		return _courseResultLocalService.getCourseResultsNotFinished(courseId);
 	}
 
 	@Override

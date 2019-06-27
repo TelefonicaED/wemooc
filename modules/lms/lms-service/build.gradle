@@ -27,6 +27,7 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.upgrade.api"
 	compileOnly group: 'com.liferay', name: 'com.liferay.configuration.admin.api'
 	compileOnly project(":modules:audit:audit-api")
+	compile group: 'com.opencsv', name: 'opencsv', version: '4.6'
 }
 
 buildService {

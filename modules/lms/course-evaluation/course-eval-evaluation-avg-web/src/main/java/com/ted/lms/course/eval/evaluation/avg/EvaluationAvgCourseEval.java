@@ -11,7 +11,6 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -254,7 +253,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	
 	@Override
 	public void onCloseCourse() {
-		List<CourseResult> listCourseResults = courseResultLocalService.getFailedCourseResults(course.getCourseId());
+		List<CourseResult> listCourseResults = courseResultLocalService.getCourseResultsNotFinished(course.getCourseId());
 		for(CourseResult courseResult: listCourseResults) {
 			courseResult.setPassedDate(course.getModifiedDate());
 			courseResultLocalService.updateCourseResult(courseResult);

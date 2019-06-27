@@ -936,60 +936,67 @@ public class CourseUtil {
 	}
 
 	/**
-	* Returns all the courses where parentCourseId = &#63;.
+	* Returns all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @return the matching courses
 	*/
-	public static List<Course> findByparentCourseId(long parentCourseId) {
-		return getPersistence().findByparentCourseId(parentCourseId);
+	public static List<Course> findByparentCourseId(long parentCourseId,
+		int status) {
+		return getPersistence().findByparentCourseId(parentCourseId, status);
 	}
 
 	/**
-	* Returns a range of all the courses where parentCourseId = &#63;.
+	* Returns a range of all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param start the lower bound of the range of courses
 	* @param end the upper bound of the range of courses (not inclusive)
 	* @return the range of matching courses
 	*/
 	public static List<Course> findByparentCourseId(long parentCourseId,
-		int start, int end) {
-		return getPersistence().findByparentCourseId(parentCourseId, start, end);
+		int status, int start, int end) {
+		return getPersistence()
+				   .findByparentCourseId(parentCourseId, status, start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the courses where parentCourseId = &#63;.
+	* Returns an ordered range of all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param start the lower bound of the range of courses
 	* @param end the upper bound of the range of courses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
 	* @return the ordered range of matching courses
 	*/
 	public static List<Course> findByparentCourseId(long parentCourseId,
-		int start, int end, OrderByComparator<Course> orderByComparator) {
+		int status, int start, int end,
+		OrderByComparator<Course> orderByComparator) {
 		return getPersistence()
-				   .findByparentCourseId(parentCourseId, start, end,
+				   .findByparentCourseId(parentCourseId, status, start, end,
 			orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the courses where parentCourseId = &#63;.
+	* Returns an ordered range of all the courses where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* <p>
 	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link CourseModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	* </p>
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param start the lower bound of the range of courses
 	* @param end the upper bound of the range of courses (not inclusive)
 	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
@@ -997,104 +1004,115 @@ public class CourseUtil {
 	* @return the ordered range of matching courses
 	*/
 	public static List<Course> findByparentCourseId(long parentCourseId,
-		int start, int end, OrderByComparator<Course> orderByComparator,
-		boolean retrieveFromCache) {
+		int status, int start, int end,
+		OrderByComparator<Course> orderByComparator, boolean retrieveFromCache) {
 		return getPersistence()
-				   .findByparentCourseId(parentCourseId, start, end,
+				   .findByparentCourseId(parentCourseId, status, start, end,
 			orderByComparator, retrieveFromCache);
 	}
 
 	/**
-	* Returns the first course in the ordered set where parentCourseId = &#63;.
+	* Returns the first course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the first matching course
 	* @throws NoSuchCourseException if a matching course could not be found
 	*/
 	public static Course findByparentCourseId_First(long parentCourseId,
-		OrderByComparator<Course> orderByComparator)
+		int status, OrderByComparator<Course> orderByComparator)
 		throws com.ted.lms.exception.NoSuchCourseException {
 		return getPersistence()
-				   .findByparentCourseId_First(parentCourseId, orderByComparator);
-	}
-
-	/**
-	* Returns the first course in the ordered set where parentCourseId = &#63;.
-	*
-	* @param parentCourseId the parent course ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching course, or <code>null</code> if a matching course could not be found
-	*/
-	public static Course fetchByparentCourseId_First(long parentCourseId,
-		OrderByComparator<Course> orderByComparator) {
-		return getPersistence()
-				   .fetchByparentCourseId_First(parentCourseId,
+				   .findByparentCourseId_First(parentCourseId, status,
 			orderByComparator);
 	}
 
 	/**
-	* Returns the last course in the ordered set where parentCourseId = &#63;.
+	* Returns the first course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching course, or <code>null</code> if a matching course could not be found
+	*/
+	public static Course fetchByparentCourseId_First(long parentCourseId,
+		int status, OrderByComparator<Course> orderByComparator) {
+		return getPersistence()
+				   .fetchByparentCourseId_First(parentCourseId, status,
+			orderByComparator);
+	}
+
+	/**
+	* Returns the last course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
+	*
+	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching course
 	* @throws NoSuchCourseException if a matching course could not be found
 	*/
 	public static Course findByparentCourseId_Last(long parentCourseId,
-		OrderByComparator<Course> orderByComparator)
+		int status, OrderByComparator<Course> orderByComparator)
 		throws com.ted.lms.exception.NoSuchCourseException {
 		return getPersistence()
-				   .findByparentCourseId_Last(parentCourseId, orderByComparator);
+				   .findByparentCourseId_Last(parentCourseId, status,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the last course in the ordered set where parentCourseId = &#63;.
+	* Returns the last course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the last matching course, or <code>null</code> if a matching course could not be found
 	*/
 	public static Course fetchByparentCourseId_Last(long parentCourseId,
-		OrderByComparator<Course> orderByComparator) {
+		int status, OrderByComparator<Course> orderByComparator) {
 		return getPersistence()
-				   .fetchByparentCourseId_Last(parentCourseId, orderByComparator);
+				   .fetchByparentCourseId_Last(parentCourseId, status,
+			orderByComparator);
 	}
 
 	/**
-	* Returns the courses before and after the current course in the ordered set where parentCourseId = &#63;.
+	* Returns the courses before and after the current course in the ordered set where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* @param courseId the primary key of the current course
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
 	* @return the previous, current, and next course
 	* @throws NoSuchCourseException if a course with the primary key could not be found
 	*/
 	public static Course[] findByparentCourseId_PrevAndNext(long courseId,
-		long parentCourseId, OrderByComparator<Course> orderByComparator)
+		long parentCourseId, int status,
+		OrderByComparator<Course> orderByComparator)
 		throws com.ted.lms.exception.NoSuchCourseException {
 		return getPersistence()
 				   .findByparentCourseId_PrevAndNext(courseId, parentCourseId,
-			orderByComparator);
+			status, orderByComparator);
 	}
 
 	/**
-	* Removes all the courses where parentCourseId = &#63; from the database.
+	* Removes all the courses where parentCourseId = &#63; and status &ne; &#63; from the database.
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	*/
-	public static void removeByparentCourseId(long parentCourseId) {
-		getPersistence().removeByparentCourseId(parentCourseId);
+	public static void removeByparentCourseId(long parentCourseId, int status) {
+		getPersistence().removeByparentCourseId(parentCourseId, status);
 	}
 
 	/**
-	* Returns the number of courses where parentCourseId = &#63;.
+	* Returns the number of courses where parentCourseId = &#63; and status &ne; &#63;.
 	*
 	* @param parentCourseId the parent course ID
+	* @param status the status
 	* @return the number of matching courses
 	*/
-	public static int countByparentCourseId(long parentCourseId) {
-		return getPersistence().countByparentCourseId(parentCourseId);
+	public static int countByparentCourseId(long parentCourseId, int status) {
+		return getPersistence().countByparentCourseId(parentCourseId, status);
 	}
 
 	/**

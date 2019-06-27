@@ -114,7 +114,7 @@ public class CopyCourseMVCActionCommand extends BaseMVCActionCommand {
 			log.debug("courseId: " + courseId);
 			log.debug("layoutSetPrototypeId: " + layoutSetPrototypeId);
 			
-			courseService.executeCopyCourse(courseId, CourseConstants.DEFAULT_PARENT_COURSE_ID, titleMap, layoutSetPrototypeId, registrationStartDate, 
+			courseService.executeCopyCourse(courseId, CourseConstants.DEFAULT_PARENT_COURSE_ID, titleMap, null, layoutSetPrototypeId, registrationStartDate, 
 					registrationEndDate, executionStartDate, executionEndDate, copyForum, copyDocuments, serviceContext);
 		}
 	}

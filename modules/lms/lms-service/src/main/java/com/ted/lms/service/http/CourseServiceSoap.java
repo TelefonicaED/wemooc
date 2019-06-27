@@ -355,12 +355,9 @@ public class CourseServiceSoap {
 	}
 
 	public static void addUserCourse(long courseId, long[] addUserIds,
-		long roleId,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws RemoteException {
+		long roleId) throws RemoteException {
 		try {
-			CourseServiceUtil.addUserCourse(courseId, addUserIds, roleId,
-				serviceContext);
+			CourseServiceUtil.addUserCourse(courseId, addUserIds, roleId);
 		}
 		catch (Exception e) {
 			_log.error(e, e);
@@ -399,8 +396,9 @@ public class CourseServiceSoap {
 		}
 	}
 
-	public static long executeCopyCourse(long courseId, long courseParentId,
+	public static long executeCopyCourse(long courseId, long parentCourseId,
 		String[] titleMapLanguageIds, String[] titleMapValues,
+		String[] friendlyURLMapLanguageIds, String[] friendlyURLMapValues,
 		long layoutSetPrototypeId, java.util.Date registrationStartDate,
 		java.util.Date registrationEndDate, java.util.Date executionStartDate,
 		java.util.Date executionEndDate, boolean copyForum,
@@ -410,12 +408,14 @@ public class CourseServiceSoap {
 		try {
 			Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(titleMapLanguageIds,
 					titleMapValues);
+			Map<Locale, String> friendlyURLMap = LocalizationUtil.getLocalizationMap(friendlyURLMapLanguageIds,
+					friendlyURLMapValues);
 
 			long returnValue = CourseServiceUtil.executeCopyCourse(courseId,
-					courseParentId, titleMap, layoutSetPrototypeId,
-					registrationStartDate, registrationEndDate,
-					executionStartDate, executionEndDate, copyForum,
-					copyDocuments, serviceContext);
+					parentCourseId, titleMap, friendlyURLMap,
+					layoutSetPrototypeId, registrationStartDate,
+					registrationEndDate, executionStartDate, executionEndDate,
+					copyForum, copyDocuments, serviceContext);
 
 			return returnValue;
 		}

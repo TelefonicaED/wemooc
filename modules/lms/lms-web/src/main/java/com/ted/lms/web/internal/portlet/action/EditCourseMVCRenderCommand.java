@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.trash.TrashHelper;
 import com.ted.lms.configuration.CourseServiceConfiguration;
+import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.CalificationTypeFactory;
 import com.ted.lms.model.Course;
@@ -74,6 +75,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		
 		String navigation = ParamUtil.getString(renderRequest, "navigation", LMSPortletConstants.EDIT_COURSE_DEFAULT_NAVIGATION);
 		log.debug("navigation: " + navigation);
+		System.out.println("EditCourseMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		Course course = null;
 		
@@ -110,6 +112,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		PortletURL editCourseURL = renderResponse.createActionURL();
 		editCourseURL.setParameter("javax.portlet.action", "/courses/edit_course");
 		editCourseURL.setParameter("courseId", String.valueOf(courseId));
+		editCourseURL.setParameter("redirect", ParamUtil.getString(renderRequest, "redirect"));
 		renderRequest.setAttribute("editCourseURL", editCourseURL);
 		
 		log.debug("editCourseURL: " + editCourseURL.toString());
