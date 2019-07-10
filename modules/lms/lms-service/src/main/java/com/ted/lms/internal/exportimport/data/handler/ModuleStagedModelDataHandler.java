@@ -10,6 +10,7 @@ import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
+import com.liferay.exportimport.kernel.xstream.XStreamAliasRegistryUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -22,6 +23,8 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.trash.TrashHandler;
+import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -31,13 +34,16 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
 import com.ted.lms.internal.exportimport.creation.strategy.ModuleCreationStrategy;
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
+import com.ted.lms.model.impl.ModuleImpl;
 import com.ted.lms.service.ModuleLocalService;
 
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferencePolicy;
@@ -53,6 +59,11 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 
 	public static final String[] CLASS_NAMES = {Module.class.getName()};
 
+	@Activate
+	protected void activate() {
+		XStreamAliasRegistryUtil.register(ModuleImpl.class, "Module");
+	}
+	
 	@Override
 	public String[] getClassNames() {
 	    return CLASS_NAMES;
@@ -60,17 +71,56 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 	
 	@Override
 	public void deleteStagedModel(Module module) throws PortalException {
-
+		log.debug("deleteStageModel: " + module.getModuleId());
 		moduleLocalService.deleteModule(module);
 	}
 
 	@Override
 	public void deleteStagedModel(String uuid, long groupId, String className, String extraData) throws PortalException {
-
 		Module module = fetchStagedModelByUuidAndGroupId(uuid, groupId);
 
 		if (module != null) {
 			deleteStagedModel(module);
+		}
+	}
+	
+	@Override
+	public void restoreStagedModel(
+			PortletDataContext portletDataContext, Module stagedModel)
+		throws PortletDataException {
+
+		log.debug("restoreStagedModel: " + stagedModel.getModuleId());
+		
+		try {
+			doRestoreStagedModel(portletDataContext, stagedModel);
+		}
+		catch (PortletDataException pde) {
+			throw pde;
+		}
+		catch (Exception e) {
+			throw new PortletDataException(e);
+		}
+	}
+	
+	@Override
+	protected void doRestoreStagedModel(
+			PortletDataContext portletDataContext, Module module) throws Exception {
+		
+		log.debug("doRestoreStagedModel: " + module.getModuleId());
+
+		Module existingModule = fetchStagedModelByUuidAndGroupId(
+			module.getUuid(), portletDataContext.getScopeGroupId());
+
+		if ((existingModule == null) || !existingModule.isInTrash()) {
+			return;
+		}
+
+		TrashHandler trashHandler = TrashHandlerRegistryUtil.getTrashHandler(Module.class.getName());
+
+		if (trashHandler.isRestorable(existingModule.getModuleId())) {
+			long userId = portletDataContext.getUserId(module.getUserUuid());
+
+			trashHandler.restoreTrashEntry(userId, existingModule.getModuleId());
 		}
 	}
 	
@@ -93,6 +143,8 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 	@Override
 	public boolean validateReference(PortletDataContext portletDataContext, Element referenceElement) {
 
+		log.debug("validateReference: " + referenceElement);
+		
 		validateMissingGroupReference(portletDataContext, referenceElement);
 
 		String uuid = referenceElement.attributeValue("uuid");
@@ -104,6 +156,8 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		groupId = MapUtil.getLong(groupIds, groupId);
 
 		String displayName = referenceElement.attributeValue("display-name");
+		
+		log.debug("validamos las referencias que no están: " + uuid + " - " + groupId + " - " + displayName);
 
 		return validateMissingReference(uuid, groupId, displayName);
 	}
@@ -151,15 +205,14 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		log.debug("modulePath: " + modulePath);
 		
 		for (FileEntry fileEntry : module.getImagesFileEntries()) {
+			log.debug("fileEntry: " + fileEntry.getFileName());
 			StagedModelDataHandlerUtil.exportReferenceStagedModel(portletDataContext, module, fileEntry,PortletDataContext.REFERENCE_TYPE_WEAK);
 		}
 		
 		String description = moduleExportImportContentProcessor.replaceExportContentReferences(portletDataContext, module, module.getDescription(),
-					portletDataContext.getBooleanParameter("modules", "referenced-content"),false);
+					true,false);
 
 		module.setDescription(description);
-		
-		portletDataContext.addReferenceElement(module, moduleElement, module, PortletDataContext.REFERENCE_TYPE_DEPENDENCY, false);
 		
 		portletDataContext.addZipEntry(modulePath, module);
 	}
@@ -175,6 +228,12 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		if (authorId != ModuleCreationStrategy.USE_DEFAULT_USER_ID_STRATEGY) {
 			userId = authorId;
 		}
+		
+		long groupId = portletDataContext.getScopeGroupId();
+		
+		log.debug("doImportStagedModel: " + userId + " - " + authorId + " - " + groupId);
+		
+		log.debug("antigua descripción: " + module.getDescription());
 
 		module.setDescription(moduleExportImportContentProcessor.replaceImportContentReferences(portletDataContext, module, module.getDescription()));
 
@@ -190,14 +249,20 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 			module.setDescription(newDescription);
 		}
 		
+		log.debug("new descripción: " + module.getDescription());
+		
 	    try {
 	    	
 	    	Element moduleElement = portletDataContext.getImportDataStagedModelElement(module);
 			
 			List<Element> attachmentElements = portletDataContext.getReferenceDataElements(module, DLFileEntry.class, PortletDataContext.REFERENCE_TYPE_WEAK);
 
+			log.debug("cargamos los attachment");
+			
 			for (Element attachmentElement : attachmentElements) {
 				String path = attachmentElement.attributeValue("path");
+				
+				log.debug("attachment: " + path);
 
 				FileEntry fileEntry = (FileEntry)portletDataContext.getZipEntryAsObject(path);
 
@@ -247,20 +312,22 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		    String moduleUuid = moduleElement.attributeValue("module-uuid");
 
 		    if (portletDataContext.isDataStrategyMirror()) {
+		    	log.debug("data strategry mirror");
 		    	
 		    	serviceContext.setUuid(module.getUuid());
 				serviceContext.setAttribute("moduleUuid", moduleUuid);
 
-		        Module existingModule = moduleLocalService. fetchModuleByUuidAndGroupId(module.getUuid(), portletDataContext.getScopeGroupId());
+		        Module existingModule = moduleLocalService.fetchModuleByUuidAndGroupId(module.getUuid(), portletDataContext.getScopeGroupId());
 
 		        if (existingModule == null) {
-
+		        	log.debug("no existía el módulo, lo creamos");
 		            serviceContext.setUuid(module.getUuid());
 		            importedModule = moduleLocalService.addModule(             
-		            		userId, module.getGroupId(), module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
+		            		userId, groupId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
 		            		module.getAllowedTime(), null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
 		            importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
 		        } else {
+		        	log.debug("el módulo ya existe: " + module.getModuleId());
 		            importedModule = moduleLocalService.updateModule(userId, module.getModuleId(), module.getTitleMap(),module.getDescriptionMap(), 
 		            		module.getStartDate(), module.getEndDate(), module.getAllowedTime(), null, module.getModuleEvalId(),  module.getModuleExtraData(),
 		            		serviceContext);
@@ -290,8 +357,9 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 				}
 				
 		    } else {
+		    	log.debug("lo creamos porque no es espejo");
 		        importedModule = moduleLocalService.addModule(             
-	            		userId, module.getGroupId(), module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), module.getAllowedTime(), 
+	            		userId, groupId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), module.getAllowedTime(), 
 	            		null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
 		        importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
 		    }
@@ -300,6 +368,8 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		    
 		    Map<Long, Long> moduleIds = (Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(Module.class);
 
+		    log.debug("******añadimos relación: " + module.getPrimaryKey() + " - " + importedModule.getPrimaryKey());
+		    
 		    moduleIds.put(module.getPrimaryKey(), importedModule.getPrimaryKey());
 	    }finally {
 	    	ServiceContextThreadLocal.popServiceContext();

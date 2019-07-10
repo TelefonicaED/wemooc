@@ -20,10 +20,12 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.Validator;
+import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+import java.util.List;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -45,7 +47,8 @@ public class QuestionImpl extends QuestionBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a question model instance should use the {@link com.ted.lms.learning.activity.question.model.Question} interface instead.
 	 */
-	private JSONObject extraContent = null;
+	private JSONObject extraContentJSON = null;
+	
 	private QuestionType questionType = null;
 	
 	public QuestionImpl() {
@@ -53,35 +56,19 @@ public class QuestionImpl extends QuestionBaseImpl {
 	
 	@Override
 	public JSONObject getExtraContentJSON() {
-		if(extraContent == null) {
+		if(extraContentJSON == null) {
 			try {
-				extraContent = JSONFactoryUtil.createJSONObject(getExtraContent());
+				extraContentJSON = JSONFactoryUtil.createJSONObject(getExtraContent());
 			} catch (JSONException e) {
 				e.printStackTrace();
-				extraContent = JSONFactoryUtil.createJSONObject();
+				extraContentJSON = JSONFactoryUtil.createJSONObject();
 			}
 		}
-		return extraContent;
+		return extraContentJSON;
 	}
-	
-	@Override
-	public void setExtraContent(String activityExtraContent) {
-		if(Validator.isNotNull(activityExtraContent)) {
-			try {
-				extraContent = JSONFactoryUtil.createJSONObject(activityExtraContent);
-			} catch (JSONException e) {
-				extraContent = JSONFactoryUtil.createJSONObject();
-			}
-		}else {
-			extraContent = JSONFactoryUtil.createJSONObject();
-		}
-		
-		super.setExtraContent(activityExtraContent);
-	}
-	
-	@Override
+
 	public void setExtraContentJSON(JSONObject extraContent) {
-		this.extraContent = extraContent;
+		this.extraContentJSON = extraContent;
 		super.setExtraContent(extraContent.toJSONString());
 	}
 	
@@ -92,5 +79,10 @@ public class QuestionImpl extends QuestionBaseImpl {
 			questionType = questionTypeFactory.getQuestionType(this);
 		}
 		return questionType;
+	}
+	
+	@Override
+	public List<Answer> getAnswers(){
+		return AnswerLocalServiceUtil.getAnswersByQuestionId(getQuestionId());
 	}
 }

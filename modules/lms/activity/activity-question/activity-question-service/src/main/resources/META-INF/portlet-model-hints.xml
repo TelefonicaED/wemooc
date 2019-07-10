@@ -10,6 +10,7 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="lastPublishDate" type="Date" />
 		<field name="questionId" type="long" />
 		<field name="actId" type="long" />
 		<field name="answer" type="String">
@@ -28,6 +29,7 @@
 		<field name="userName" type="String" />
 		<field name="createDate" type="Date" />
 		<field name="modifiedDate" type="Date" />
+		<field name="lastPublishDate" type="Date" />
 		<field name="actId" type="long" />
 		<field name="text" type="String">
 			<hint name="max-length">500000</hint>

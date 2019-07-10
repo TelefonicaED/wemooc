@@ -17,6 +17,7 @@ dependencies {
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
+	compileOnly group: "com.liferay", name: "com.liferay.staging.api"
 	compileOnly group: "commons-fileupload", name: "commons-fileupload", version: '1.2'
 	compileOnly group: "javax.portlet", name: "portlet-api"
 	compileOnly group: "javax.servlet", name: "javax.servlet-api"

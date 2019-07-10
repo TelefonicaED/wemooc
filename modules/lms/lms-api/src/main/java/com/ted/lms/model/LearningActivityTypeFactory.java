@@ -1,7 +1,10 @@
 package com.ted.lms.model;
 
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.xml.Element;
+
 import java.util.Locale;
 
 import javax.portlet.ActionRequest;
@@ -34,6 +37,9 @@ public interface LearningActivityTypeFactory {
 	//public PortletURL getURLView(LiferayPortletResponse liferayPortletResponse,WindowState windowState) throws PortalException;
 	public boolean hasAddPermission(PermissionChecker permissionChecker, long groupId, long classTypeId) throws Exception;
 	public boolean hasPermission(PermissionChecker permissionChecker, long actId, String actionId) throws Exception;
+	
+	public void doImportStagedModel(PortletDataContext portletDataContext) throws PortalException;
+	public void doExportStagedModel(PortletDataContext portletDataContext) throws PortalException;
 	
 	public boolean isActive(long companyId, long groupId);
 	

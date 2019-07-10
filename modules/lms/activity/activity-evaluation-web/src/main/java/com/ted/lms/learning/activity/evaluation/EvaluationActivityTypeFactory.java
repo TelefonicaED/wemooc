@@ -11,6 +11,7 @@ import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.LearningActivityTryLocalService;
@@ -43,12 +44,12 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 	}
 	
 	public EvaluationActivityType getEvaluationActivityType(LearningActivity activity) throws PortalException {
-		return new EvaluationActivityType(activity, learningActivityResultLocalService, moduleService, activityService, learningActivityTryLocalService);
+		return new EvaluationActivityType(activity, learningActivityResultLocalService, moduleService, activityService, learningActivityTryLocalService, learningActivityLocalService);
 	}
 	
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
-		return new EvaluationActivityType(activity, learningActivityResultLocalService, moduleService, activityService, learningActivityTryLocalService);
+		return new EvaluationActivityType(activity, learningActivityResultLocalService, moduleService, activityService, learningActivityTryLocalService, learningActivityLocalService);
 	}
 	
 	@Override
@@ -122,5 +123,11 @@ public class EvaluationActivityTypeFactory extends BaseLearningActivityTypeFacto
 		this.learningActivityTryLocalService = learningActivityTryLocalService;
 	}
 	private LearningActivityTryLocalService learningActivityTryLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
+		this.learningActivityLocalService = learningActivityLocalService;
+	}
+	private LearningActivityLocalService learningActivityLocalService;
 	
 }

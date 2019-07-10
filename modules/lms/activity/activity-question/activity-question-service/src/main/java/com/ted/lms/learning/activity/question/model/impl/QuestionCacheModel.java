@@ -64,7 +64,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(33);
 
 		sb.append("{uuid=");
 		sb.append(uuid);
@@ -82,6 +82,8 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
 		sb.append(", actId=");
 		sb.append(actId);
 		sb.append(", text=");
@@ -138,6 +140,13 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 			questionImpl.setModifiedDate(new Date(modifiedDate));
 		}
 
+		if (lastPublishDate == Long.MIN_VALUE) {
+			questionImpl.setLastPublishDate(null);
+		}
+		else {
+			questionImpl.setLastPublishDate(new Date(lastPublishDate));
+		}
+
 		questionImpl.setActId(actId);
 
 		if (text == null) {
@@ -178,6 +187,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
+		lastPublishDate = objectInput.readLong();
 
 		actId = objectInput.readLong();
 		text = objectInput.readUTF();
@@ -219,6 +229,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
+		objectOutput.writeLong(lastPublishDate);
 
 		objectOutput.writeLong(actId);
 
@@ -253,6 +264,7 @@ public class QuestionCacheModel implements CacheModel<Question>, Externalizable 
 	public String userName;
 	public long createDate;
 	public long modifiedDate;
+	public long lastPublishDate;
 	public long actId;
 	public String text;
 	public long questionTypeId;

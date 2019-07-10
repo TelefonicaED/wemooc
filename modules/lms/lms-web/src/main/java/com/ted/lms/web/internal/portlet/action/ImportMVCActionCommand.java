@@ -14,14 +14,12 @@
 
 package com.ted.lms.web.internal.portlet.action;
 
-import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
 import com.liferay.document.library.kernel.exception.FileSizeException;
 import com.liferay.exportimport.kernel.exception.LARFileSizeException;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.staging.Staging;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -37,19 +35,14 @@ import com.liferay.portal.kernel.upload.UploadException;
 import com.liferay.portal.kernel.upload.UploadPortletRequest;
 import com.liferay.portal.kernel.upload.UploadRequestSizeException;
 import com.liferay.portal.kernel.util.ContentTypes;
-import com.liferay.portal.kernel.util.Digester;
-import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.exception.CSVFileException;
 
 import java.io.InputStream;
-import java.util.ResourceBundle;
-
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
@@ -70,9 +63,9 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.name=" + LMSPortletKeys.COURSE,
 		"mvc.command.name=importLayouts"
 	},
-	service = {ImportCSVMVCActionCommand.class, MVCActionCommand.class}
+	service = {ImportMVCActionCommand.class, MVCActionCommand.class}
 )
-public class ImportCSVMVCActionCommand extends BaseMVCActionCommand {
+public class ImportMVCActionCommand extends BaseMVCActionCommand {
 
 	protected FileEntry addTempFileEntry(
 			ActionRequest actionRequest, String folderName)
@@ -251,7 +244,7 @@ public class ImportCSVMVCActionCommand extends BaseMVCActionCommand {
 
 	}
 
-	private static final Log log = LogFactoryUtil.getLog(ImportCSVMVCActionCommand.class);
+	private static final Log log = LogFactoryUtil.getLog(ImportMVCActionCommand.class);
 
 
 	@Reference

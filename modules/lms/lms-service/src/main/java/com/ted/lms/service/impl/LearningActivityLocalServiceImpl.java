@@ -675,6 +675,22 @@ public class LearningActivityLocalServiceImpl
 		}
 	}
 	
+	@Override
+	public LearningActivity deleteLearningActivity(LearningActivity activity) {
+		try {
+			activity = super.deleteLearningActivity(activity);
+			LearningActivityTypeFactory activityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
+			LearningActivityType activityType = activityTypeFactory.getLearningActivityType(activity);
+			
+			activityType.onDelete();
+		}catch (PortalException e) {
+			e.printStackTrace();
+			activity = null;
+		}
+		
+		return activity;
+	}
+	
 	
 	@ServiceReference(type = CommentManager.class)
 	protected CommentManager commentManager;

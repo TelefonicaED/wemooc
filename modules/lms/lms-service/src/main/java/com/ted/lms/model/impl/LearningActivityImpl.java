@@ -18,11 +18,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlMixed;
+import javax.xml.bind.annotation.XmlTransient;
+
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
 import com.liferay.document.library.kernel.util.comparator.RepositoryModelTitleComparator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.json.JSONObjectImpl;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
@@ -55,6 +59,7 @@ import com.ted.lms.service.ModuleLocalServiceUtil;
 import com.ted.lms.service.util.LearningActivityAttachmentsUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
+//import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -72,50 +77,57 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	
 	private static final Log log = LogFactoryUtil.getLog(LearningActivityImpl.class);
 	
-	private AssetEntry assetEntry;
-	
 	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
+	private static final JSONObject NULL_JSON_OBJECT = new JSONObjectImpl();
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. All methods that expect a learning activity model instance should use the {@link com.ted.lms.model.LearningActivity} interface instead.
 	 */
-	private JSONObject extraContent;
+	//Se omite en la exportación
+
+	private AssetEntry assetEntry;
+	private JSONObject extraContentJSON;
+	private long attachmentsFolderId;
 	private long teamId;
 	private LearningActivityTypeFactory activityTypeFactory;
-	
 	{
-		extraContent = null;
+		extraContentJSON = NULL_JSON_OBJECT;
 		teamId = -1;
 		activityTypeFactory = null;
+		attachmentsFolderId = -1;
 	}
 	
 	public LearningActivityImpl() {
 	}
 	
-	@Override
 	public JSONObject getExtraContentJSON() {
-		if(extraContent == null) {
+		System.out.println("estamos llamando al función ");
+		if(extraContentJSON == NULL_JSON_OBJECT) {
 			try {
-				extraContent = JSONFactoryUtil.createJSONObject(getExtraContent());
+				extraContentJSON = JSONFactoryUtil.createJSONObject(getExtraContent());
 			} catch (JSONException e) {
 				e.printStackTrace();
-				extraContent = JSONFactoryUtil.createJSONObject();
+				extraContentJSON = JSONFactoryUtil.createJSONObject();
 			}
 		}
-		return extraContent;
+		return extraContentJSON;
+	}
+	
+	public void setExtraContentJSON(JSONObject extraContent) {
+		this.extraContentJSON = extraContent;
 	}
 	
 	@Override
 	public void setExtraContent(String activityExtraContent) {
 		if(Validator.isNotNull(activityExtraContent)) {
 			try {
-				extraContent = JSONFactoryUtil.createJSONObject(activityExtraContent);
+				extraContentJSON = JSONFactoryUtil.createJSONObject(activityExtraContent);
 			} catch (JSONException e) {
-				extraContent = JSONFactoryUtil.createJSONObject();
+				extraContentJSON = JSONFactoryUtil.createJSONObject();
 			}
 		}else {
-			extraContent = JSONFactoryUtil.createJSONObject();
+			extraContentJSON = JSONFactoryUtil.createJSONObject();
 		}
 		
 		super.setExtraContent(activityExtraContent);
@@ -144,7 +156,7 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	public void addExtraContentJSON(String key, Object value) {
 		JSONObject extraContent = getExtraContentJSON();
 		extraContent.put(key, value);
-		this.extraContent = extraContent;
+		this.extraContentJSON = extraContent;
 	}
 	
 	public Calendar getStartDateCalendar() {
@@ -161,9 +173,9 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	
 	public long getTeamId() {
 		if(teamId == -1) {
-			extraContent = getExtraContentJSON();
-			if(extraContent != null) {
-				teamId = extraContent.getLong(LearningActivityConstants.JSON_TEAM);
+			JSONObject extraContentJSON = getExtraContentJSON();
+			if(extraContentJSON != null) {
+				teamId = extraContentJSON.getLong(LearningActivityConstants.JSON_TEAM);
 			}else {
 				teamId = 0;
 			}
@@ -310,15 +322,12 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	
 	@Override
 	public long getAttachmentsFolderId() throws PortalException {
-		if (_attachmentsFolderId > 0) {
-			return _attachmentsFolderId;
+		if (attachmentsFolderId > 0) {
+			return attachmentsFolderId;
 		}
 
-		_attachmentsFolderId = LearningActivityAttachmentsUtil.getFolderId(getGroupId(), getUserId(), getActId());
+		attachmentsFolderId = LearningActivityAttachmentsUtil.getFolderId(getGroupId(), getUserId(), getActId());
 
-		return _attachmentsFolderId;
+		return attachmentsFolderId;
 	}
-
-	
-	private long _attachmentsFolderId;
 }

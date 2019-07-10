@@ -117,7 +117,7 @@ public class ImportEditionsMVCActionCommand extends BaseImportCSVMVCActionComman
 	}
 	
 	@Override 
-	protected ImportCSVMVCActionCommand getImportCSVMVCActionCommand() {
+	protected ImportMVCActionCommand getImportCSVMVCActionCommand() {
 		return importLayoutsMVCActionCommand;
 	}
 	
@@ -129,12 +129,12 @@ public class ImportEditionsMVCActionCommand extends BaseImportCSVMVCActionComman
 	
 	@Reference(unbind = "-")
 	protected void setImportLayoutsMVCActionCommand(
-		ImportCSVMVCActionCommand importLayoutsMVCActionCommand) {
+		ImportMVCActionCommand importLayoutsMVCActionCommand) {
 
 		this.importLayoutsMVCActionCommand = importLayoutsMVCActionCommand;
 	}
 
-	private ImportCSVMVCActionCommand importLayoutsMVCActionCommand;
+	private ImportMVCActionCommand importLayoutsMVCActionCommand;
 	private DLFileEntryLocalService dlFileEntryLocalService;
 	
 	@Reference

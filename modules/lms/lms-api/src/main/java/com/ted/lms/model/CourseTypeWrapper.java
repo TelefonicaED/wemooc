@@ -67,6 +67,7 @@ public class CourseTypeWrapper implements CourseType, ModelWrapper<CourseType> {
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 		attributes.put("iconId", getIconId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		return attributes;
 	}
@@ -131,6 +132,12 @@ public class CourseTypeWrapper implements CourseType, ModelWrapper<CourseType> {
 
 		if (iconId != null) {
 			setIconId(iconId);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 	}
 
@@ -290,6 +297,16 @@ public class CourseTypeWrapper implements CourseType, ModelWrapper<CourseType> {
 		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
 		throws com.liferay.portal.kernel.exception.PortalException {
 		return _courseType.getIconURL(themeDisplay);
+	}
+
+	/**
+	* Returns the last publish date of this course type.
+	*
+	* @return the last publish date of this course type
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _courseType.getLastPublishDate();
 	}
 
 	/**
@@ -592,6 +609,16 @@ public class CourseTypeWrapper implements CourseType, ModelWrapper<CourseType> {
 	@Override
 	public void setIconId(long iconId) {
 		_courseType.setIconId(iconId);
+	}
+
+	/**
+	* Sets the last publish date of this course type.
+	*
+	* @param lastPublishDate the last publish date of this course type
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_courseType.setLastPublishDate(lastPublishDate);
 	}
 
 	/**

@@ -109,6 +109,30 @@ portletURL.setParameter("redirect", ParamUtil.getString(renderRequest, "redirect
 			url="${copyCourseURL }"
 		/>
 	</c:if>
+	<c:if test="<%=CoursePermission.contains(permissionChecker, course, ActionKeys.UPDATE)%>">
+		<portlet:renderURL var="exportCourseURL">
+			<portlet:param name="mvcRenderCommandName" value="/courses/export_course" />
+			<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+			<portlet:param name="courseId" value="<%= String.valueOf(course.getCourseId()) %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			message='export'
+			url='${exportCourseURL }'
+		/>
+	</c:if>
+	<c:if test="<%=CoursePermission.contains(permissionChecker, course, ActionKeys.UPDATE)%>">
+		<portlet:renderURL var="importCourseURL">
+			<portlet:param name="mvcRenderCommandName" value="/courses/import_course" />
+			<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+			<portlet:param name="courseId" value="<%= String.valueOf(course.getCourseId()) %>" />
+		</portlet:renderURL>
+
+		<liferay-ui:icon
+			message='import'
+			url='${importCourseURL }'
+		/>
+	</c:if>
 	<li aria-hidden="true" class="dropdown-divider" role="presentation"></li>
 	<c:if test="<%=configuration.courseActionClose() && CoursePermission.contains(permissionChecker, course, ActionKeys.UPDATE) %>">
 		<c:choose>

@@ -120,6 +120,7 @@
 		<column name="name" type="String" localized="true"/>
 		<column name="description" type="String" localized="true"/>
 		<column name="iconId" type="long"></column>
+		<column name="lastPublishDate" type="Date" />
 		
 		<finder name="CompanyId" return-type="Collection">
 			<finder-column name="companyId"/>

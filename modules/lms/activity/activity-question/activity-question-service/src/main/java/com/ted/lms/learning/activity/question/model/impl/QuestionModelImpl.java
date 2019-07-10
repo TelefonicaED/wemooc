@@ -81,6 +81,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
+			{ "lastPublishDate", Types.TIMESTAMP },
 			{ "actId", Types.BIGINT },
 			{ "text_", Types.VARCHAR },
 			{ "questionTypeId", Types.BIGINT },
@@ -100,6 +101,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("text_", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("questionTypeId", Types.BIGINT);
@@ -109,7 +111,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		TABLE_COLUMNS_MAP.put("extraContent", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,actId LONG,text_ TEXT null,questionTypeId LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent STRING null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,actId LONG,text_ TEXT null,questionTypeId LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent STRING null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Question";
 	public static final String ORDER_BY_JPQL = " ORDER BY question.questionId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Question.questionId ASC";
@@ -152,6 +154,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setLastPublishDate(soapModel.getLastPublishDate());
 		model.setActId(soapModel.getActId());
 		model.setText(soapModel.getText());
 		model.setQuestionTypeId(soapModel.getQuestionTypeId());
@@ -231,6 +234,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("actId", getActId());
 		attributes.put("text", getText());
 		attributes.put("questionTypeId", getQuestionTypeId());
@@ -293,6 +297,12 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long actId = (Long)attributes.get("actId");
@@ -494,6 +504,17 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@JSON
 	@Override
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
+	}
+
+	@JSON
+	@Override
 	public long getActId() {
 		return _actId;
 	}
@@ -648,6 +669,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		questionImpl.setUserName(getUserName());
 		questionImpl.setCreateDate(getCreateDate());
 		questionImpl.setModifiedDate(getModifiedDate());
+		questionImpl.setLastPublishDate(getLastPublishDate());
 		questionImpl.setActId(getActId());
 		questionImpl.setText(getText());
 		questionImpl.setQuestionTypeId(getQuestionTypeId());
@@ -788,6 +810,15 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 			questionCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		Date lastPublishDate = getLastPublishDate();
+
+		if (lastPublishDate != null) {
+			questionCacheModel.lastPublishDate = lastPublishDate.getTime();
+		}
+		else {
+			questionCacheModel.lastPublishDate = Long.MIN_VALUE;
+		}
+
 		questionCacheModel.actId = getActId();
 
 		questionCacheModel.text = getText();
@@ -819,7 +850,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(31);
+		StringBundler sb = new StringBundler(33);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -837,6 +868,8 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
 		sb.append(getModifiedDate());
+		sb.append(", lastPublishDate=");
+		sb.append(getLastPublishDate());
 		sb.append(", actId=");
 		sb.append(getActId());
 		sb.append(", text=");
@@ -858,7 +891,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(49);
+		StringBundler sb = new StringBundler(52);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.learning.activity.question.model.Question");
@@ -895,6 +928,10 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 		sb.append(
 			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
 		sb.append(getModifiedDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
+		sb.append(getLastPublishDate());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>actId</column-name><column-value><![CDATA[");
@@ -948,6 +985,7 @@ public class QuestionModelImpl extends BaseModelImpl<Question>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private Date _lastPublishDate;
 	private long _actId;
 	private long _originalActId;
 	private boolean _setOriginalActId;

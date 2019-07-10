@@ -1,5 +1,6 @@
 package com.ted.lms.model;
 
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -36,6 +37,16 @@ public abstract class BaseLearningActivityTypeFactory implements LearningActivit
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
 
 		return null;
+	}
+	
+	@Override
+	public void doImportStagedModel(PortletDataContext portletDataContext) throws PortalException{
+		
+	}
+	
+	@Override
+	public void doExportStagedModel(PortletDataContext portletDataContext) throws PortalException{
+		
 	}
 
 	@Override

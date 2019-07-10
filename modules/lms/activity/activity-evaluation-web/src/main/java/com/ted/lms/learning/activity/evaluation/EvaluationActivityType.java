@@ -1,15 +1,24 @@
 package com.ted.lms.learning.activity.evaluation;
 
+import com.liferay.asset.kernel.model.AssetEntry;
+import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
 import com.ted.lms.model.BaseLearningActivityType;
@@ -17,6 +26,7 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.model.Module;
+import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.LearningActivityTryLocalService;
@@ -33,6 +43,7 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 	private final ModuleService moduleService;
 	private final LearningActivityService activityService;
 	private final LearningActivityTryLocalService learningActivityTryLocalService;
+	private final LearningActivityLocalService activityLocalService;
 	private static final Log log = LogFactoryUtil.getLog(EvaluationActivityType.class);
 	
 	private Date firedDate;
@@ -40,12 +51,14 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 	private JSONObject activities;
 
 	public EvaluationActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
-			ModuleService moduleService, LearningActivityService activityService, LearningActivityTryLocalService learningActivityTryLocalService) {
+			ModuleService moduleService, LearningActivityService activityService, LearningActivityTryLocalService learningActivityTryLocalService,
+			LearningActivityLocalService activityLocalService) {
 		super(activity, learningActivityResultLocalService);
 		
 		this.moduleService = moduleService;
 		this.activityService  = activityService;
 		this.learningActivityTryLocalService = learningActivityTryLocalService;
+		this.activityLocalService = activityLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -224,6 +237,25 @@ public class EvaluationActivityType extends BaseLearningActivityType {
 			learningActivityTryLocalService.finishLearningActivityTry(learningActivityTry, calculateResult(learningActivityTry), serviceContext);	
 		}else {
 			log.debug("No hay actividades configuradas para la actividad: " + activity.getActId());
+		}
+	}
+	
+	@Override
+	public void doExportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException{
+		
+		activities = getActivities();
+		
+		if(activities.length() > 0) {
+			activities.keys().forEachRemaining(keyStr ->{
+				try {
+					LearningActivity activityRelation = activityLocalService.getLearningActivity(Long.parseLong(keyStr));
+					StagedModelDataHandlerUtil.exportReferenceStagedModel(
+							portletDataContext, activity, activityRelation,
+							PortletDataContext.REFERENCE_TYPE_DEPENDENCY);
+				} catch (NumberFormatException | PortalException e) {
+					e.printStackTrace();
+				}
+			});
 		}
 	}
 			

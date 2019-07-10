@@ -42,17 +42,11 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	}
 
 	@Override
-	public void onDelete(ActionRequest actionRequest) throws PortalException {
+	public void onDelete() throws PortalException {
 	}
 
 	@Override
-	public String doImportStagedModel(PortletDataContext portletDataContext, Element activityElement) {
-		return null;
-	}
-
-	@Override
-	public String doExportStagedModel(PortletDataContext portletDataContext, Element activityElement) {
-		return null;
+	public void doExportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException {
 	}
 
 	@Override
@@ -144,8 +138,23 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 		System.out.println("extraContent final: " + extraContent.toJSONString());
 	}
 	
+	@Override
+	public void doImportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException{
+		Map<Long, Long> activityIds = (Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(LearningActivity.class);
+		
+		JSONObject extraContent = activity.getExtraContentJSON();
+		if(extraContent != null) {
+			updateActivityIds(extraContent, activityIds);
+			activity.setExtraContent(extraContent.toJSONString());
+			System.out.println("extraContent final: " + extraContent.toJSONString());
+		}
+		
+	}
+	
+	
 	protected void updateActivityIds(JSONObject jsonObject, Map<Long, Long> activitiesRelation) {
-		jsonObject.keys().forEachRemaining(
+		if(jsonObject != null) {
+			jsonObject.keys().forEachRemaining(
 				key -> 
 				{
 					if(key.equals(LearningActivityConstants.JSON_ACT_ID)) {
@@ -162,6 +171,8 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 					}else if(jsonObject.getJSONObject(key) != null) {
 						updateActivityIds(jsonObject.getJSONObject(key), activitiesRelation);
 					}
-				});
+				}
+			);
+		}
 	}
 }

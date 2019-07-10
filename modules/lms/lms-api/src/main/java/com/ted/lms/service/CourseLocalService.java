@@ -259,6 +259,10 @@ public interface CourseLocalService extends BaseLocalService,
 		Date executionEndDate, boolean copyForum, boolean copyDocuments,
 		ServiceContext serviceContext) throws PortalException;
 
+	public long exportCourseContent(long courseId, long sourcePlid,
+		String fileName, Map<String, String[]> parameterMap,
+		ServiceContext serviceContext) throws PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Folder fetchAttachmentsFolder(long userId, long groupId);
 

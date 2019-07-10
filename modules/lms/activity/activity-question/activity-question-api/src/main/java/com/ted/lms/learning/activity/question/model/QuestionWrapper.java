@@ -67,6 +67,7 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("actId", getActId());
 		attributes.put("text", getText());
 		attributes.put("questionTypeId", getQuestionTypeId());
@@ -126,6 +127,12 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long actId = (Long)attributes.get("actId");
@@ -201,6 +208,11 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 		return _question.getActive();
 	}
 
+	@Override
+	public java.util.List<Answer> getAnswers() {
+		return _question.getAnswers();
+	}
+
 	/**
 	* Returns the company ID of this question.
 	*
@@ -249,6 +261,16 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	@Override
 	public long getGroupId() {
 		return _question.getGroupId();
+	}
+
+	/**
+	* Returns the last publish date of this question.
+	*
+	* @return the last publish date of this question
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _question.getLastPublishDate();
 	}
 
 	/**
@@ -502,6 +524,16 @@ public class QuestionWrapper implements Question, ModelWrapper<Question> {
 	@Override
 	public void setGroupId(long groupId) {
 		_question.setGroupId(groupId);
+	}
+
+	/**
+	* Sets the last publish date of this question.
+	*
+	* @param lastPublishDate the last publish date of this question
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_question.setLastPublishDate(lastPublishDate);
 	}
 
 	/**

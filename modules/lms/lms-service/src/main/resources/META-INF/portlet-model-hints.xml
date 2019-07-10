@@ -80,6 +80,7 @@
 		<field localized="true" name="name" type="String" />
 		<field localized="true" name="description" type="String" />
 		<field name="iconId" type="long" />
+		<field name="lastPublishDate" type="Date" />
 	</model>
 	<model name="com.ted.lms.model.CourseTypeRelation">
 		<field name="courseTypeId" type="long" />

@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.MembershipRequestLocalServiceUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -129,7 +130,11 @@ public class StudentLocalServiceImpl extends StudentLocalServiceBaseImpl {
 	public boolean canUnsubscribe(Course course, long userId, PermissionChecker permissionChecker) throws PortalException {
 		Date now = new Date();
 			
-		if (GroupLocalServiceUtil.hasUserGroup(userId, course.getGroupCreatedId()) && course.getRegistrationStartDate().before(now) && 
+		Role roleStudent = RoleLocalServiceUtil.getRole(course.getCompanyId(), LMSRoleConstants.STUDENT);
+		
+		if (GroupLocalServiceUtil.hasUserGroup(userId, course.getGroupCreatedId()) 
+				&& UserGroupRoleLocalServiceUtil.hasUserGroupRole(userId, course.getGroupCreatedId(), roleStudent.getRoleId()) 
+				&& course.getRegistrationStartDate().before(now) && 
 				course.getRegistrationEndDate().after(now) && CoursePermission.contains(permissionChecker, course, LMSActionKeys.REGISTER)) {
 			CourseResult courseResult = CourseResultLocalServiceUtil.getCourseResult(course.getCourseId(), userId); 
 			Group group = GroupLocalServiceUtil.getGroup(course.getGroupCreatedId());

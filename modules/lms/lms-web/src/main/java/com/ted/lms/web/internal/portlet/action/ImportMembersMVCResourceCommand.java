@@ -83,7 +83,7 @@ public class ImportMembersMVCResourceCommand extends BaseImportCSVMVCResourceCom
 	}
 
 	@Override
-	protected ImportCSVMVCActionCommand getImportCSVMVCActionCommand() {
+	protected ImportMVCActionCommand getImportCSVMVCActionCommand() {
 		return importLayoutsMVCActionCommand;
 	}
 	
@@ -95,12 +95,12 @@ public class ImportMembersMVCResourceCommand extends BaseImportCSVMVCResourceCom
 	
 	@Reference(unbind = "-")
 	protected void setImportLayoutsMVCActionCommand(
-		ImportCSVMVCActionCommand importLayoutsMVCActionCommand) {
+		ImportMVCActionCommand importLayoutsMVCActionCommand) {
 
 		this.importLayoutsMVCActionCommand = importLayoutsMVCActionCommand;
 	}
 
-	private ImportCSVMVCActionCommand importLayoutsMVCActionCommand;
+	private ImportMVCActionCommand importLayoutsMVCActionCommand;
 	private CourseLocalService courseLocalService;
 	
 	@Reference

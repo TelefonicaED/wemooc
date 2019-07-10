@@ -58,7 +58,7 @@ public abstract class BaseImportCSVMVCResourceCommand extends BaseMVCResourceCom
 			
 			long parentCourseId  = ParamUtil.getLong(resourceRequest, "parentCourseId");
 			
-			ImportCSVMVCActionCommand importCSVMVCActionCommand = getImportCSVMVCActionCommand();
+			ImportMVCActionCommand importCSVMVCActionCommand = getImportCSVMVCActionCommand();
 			String portletId = getPortletId(resourceRequest);
 			
 			//Fichero a importar
@@ -80,5 +80,5 @@ public abstract class BaseImportCSVMVCResourceCommand extends BaseMVCResourceCom
 	
 	protected abstract long getBackgroundTaskId(ResourceRequest resourceRequest, ResourceResponse resourceResponse, String folderName, FileEntry fileEntry);
 	protected abstract String getPortletId(ResourceRequest resourceRequest);
-	protected abstract ImportCSVMVCActionCommand getImportCSVMVCActionCommand();
+	protected abstract ImportMVCActionCommand getImportCSVMVCActionCommand();
 }

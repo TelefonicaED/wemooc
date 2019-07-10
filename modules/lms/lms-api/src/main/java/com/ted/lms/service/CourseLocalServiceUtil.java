@@ -295,6 +295,15 @@ public class CourseLocalServiceUtil {
 			copyForum, copyDocuments, serviceContext);
 	}
 
+	public static long exportCourseContent(long courseId, long sourcePlid,
+		String fileName, java.util.Map<String, String[]> parameterMap,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return getService()
+				   .exportCourseContent(courseId, sourcePlid, fileName,
+			parameterMap, serviceContext);
+	}
+
 	public static com.liferay.portal.kernel.repository.model.Folder fetchAttachmentsFolder(
 		long userId, long groupId) {
 		return getService().fetchAttachmentsFolder(userId, groupId);

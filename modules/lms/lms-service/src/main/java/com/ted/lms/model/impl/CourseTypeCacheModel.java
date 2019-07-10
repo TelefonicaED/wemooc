@@ -65,7 +65,7 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{courseTypeId=");
 		sb.append(courseTypeId);
@@ -87,6 +87,8 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 		sb.append(description);
 		sb.append(", iconId=");
 		sb.append(iconId);
+		sb.append(", lastPublishDate=");
+		sb.append(lastPublishDate);
 		sb.append("}");
 
 		return sb.toString();
@@ -138,6 +140,13 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 
 		courseTypeImpl.setIconId(iconId);
 
+		if (lastPublishDate == Long.MIN_VALUE) {
+			courseTypeImpl.setLastPublishDate(null);
+		}
+		else {
+			courseTypeImpl.setLastPublishDate(new Date(lastPublishDate));
+		}
+
 		courseTypeImpl.resetOriginalValues();
 
 		return courseTypeImpl;
@@ -159,6 +168,7 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 		description = objectInput.readUTF();
 
 		iconId = objectInput.readLong();
+		lastPublishDate = objectInput.readLong();
 	}
 
 	@Override
@@ -197,6 +207,7 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 		}
 
 		objectOutput.writeLong(iconId);
+		objectOutput.writeLong(lastPublishDate);
 	}
 
 	public long courseTypeId;
@@ -209,4 +220,5 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 	public String name;
 	public String description;
 	public long iconId;
+	public long lastPublishDate;
 }

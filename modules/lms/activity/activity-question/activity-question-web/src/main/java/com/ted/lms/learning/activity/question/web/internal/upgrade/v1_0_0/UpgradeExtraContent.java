@@ -83,6 +83,7 @@ public class UpgradeExtraContent extends UpgradeProcess {
 						}
 						
 						question.setExtraContent(questionExtraContent.toJSONString());
+						question.setExtraContentJSON(questionExtraContent);
 						questionLocalService.updateQuestion(question);
 					} catch(DocumentException e) {
 						e.printStackTrace();

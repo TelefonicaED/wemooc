@@ -3,6 +3,7 @@ package com.ted.lms.internal.exportimport.data.handler;
 import com.liferay.document.library.kernel.exception.DuplicateFileEntryException;
 import com.liferay.document.library.kernel.exception.NoSuchFileException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -10,6 +11,7 @@ import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelModifiedDateComparator;
+import com.liferay.exportimport.kernel.xstream.XStreamAliasRegistryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
@@ -17,8 +19,11 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.trash.TrashHandler;
+import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
@@ -28,9 +33,11 @@ import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
+import com.ted.lms.model.impl.LearningActivityImpl;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.ModuleLocalService;
+import com.ted.lms.service.util.LearningActivityAttachmentsUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
@@ -38,8 +45,11 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 @Component(
 	immediate = true, 
@@ -51,6 +61,11 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 
 	public static final String[] CLASS_NAMES = {LearningActivity.class.getName()};
 
+	@Activate
+	protected void activate() {
+		XStreamAliasRegistryUtil.register(LearningActivityImpl.class, "LearningActivity");
+	}
+	
 	@Override
 	public String[] getClassNames() {
 	    return CLASS_NAMES;
@@ -59,7 +74,7 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 	@Override
 	public void deleteStagedModel(LearningActivity activity)
 		throws PortalException {
-
+		log.debug("deleteStagedModel: " + activity.getActId());
 		activityLocalService.deleteLearningActivity(activity);
 	}
 
@@ -115,9 +130,13 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 		
 		activityElement.addAttribute("path", activityPath);
 		
-		portletDataContext.addReferenceElement(
-				activity, activityElement, activity,
-				PortletDataContext.REFERENCE_TYPE_DEPENDENCY, false);
+		String description = activityExportImportContentProcessor.replaceExportContentReferences(portletDataContext, activity, activity.getDescription(),
+				true,false);
+
+		activity.setDescription(description);
+		activity.setExtraContentJSON(null);
+		
+		exportLearningActivityAttachments(portletDataContext, activityElement, activity);
 		
 		//Exportamos el extracontent
 		LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
@@ -146,16 +165,27 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 			userId = authorId;
 		}
 		
+		long groupId = portletDataContext.getScopeGroupId();
+		
+		log.debug("doImportStagedModel: " + userId + " - " + authorId + " - " + groupId);
+		log.debug("antigua descripción: " + activity.getDescription());
+		
+		activity.setDescription(activityExportImportContentProcessor.replaceImportContentReferences(portletDataContext, activity, activity.getDescription()));
+		
 		String newDescription = learningActivityCreationStrategy.getTransformedDescription(portletDataContext, activity);
 
 		if (newDescription != LearningActivityCreationStrategy.LEARNING_ACTIVITY_DESCRIPTION_UNCHANGED) {
 			activity.setDescription(newDescription);
 		}
+		
+		log.debug("new descripción: " + activity.getDescription());
 
 		Map<Long, Long> moduleIds =
 				(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(Module.class);
 		
+		log.debug("oldModuleId: " + activity.getModuleId());
 		long moduleId = MapUtil.getLong(moduleIds, activity.getModuleId(), activity.getModuleId());	
+		log.debug("new moduleId: " + moduleId);
 		
     	//Element activityElement = portletDataContext.getImportDataStagedModelElement(activity);
 		
@@ -173,14 +203,16 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 		serviceContext.setAddGroupPermissions(addGroupPermissions);
 		serviceContext.setAddGuestPermissions(addGuestPermissions);	
 		
-   	 serviceContext.setUserId(userId);
-     serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
+   	 	serviceContext.setUserId(userId);
+   	 	serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
 
 	    LearningActivity importedLearningActivity = null;
 	    
 	    Element activityElement = portletDataContext.getImportDataStagedModelElement(activity);
 
 	    if (portletDataContext.isDataStrategyMirror()) {
+	    	
+	    	log.debug("data strategry mirror");
 	    	
 	    	serviceContext.setUuid(activity.getUuid());
 
@@ -189,37 +221,45 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 	                activity.getUuid(), portletDataContext.getScopeGroupId());
 
 	        if (existingLearningActivity == null) {
-
+	        	log.debug("no existía la actividad, lo creamos");
 	            serviceContext.setUuid(activity.getUuid());
 	            serviceContext.setUserId(userId);
 	            serviceContext.setScopeGroupId(portletDataContext.getScopeGroupId());
 	            
-	            importedLearningActivity = activityLocalService.addLearningActivity(userId, activity.getGroupId(), moduleId, 
+	            importedLearningActivity = activityLocalService.addLearningActivity(userId, groupId, moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
 	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
 	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), 
 	            		null, serviceContext);
 	        }
 	        else {
+	        	log.debug("la actividad ya existe: " + activity.getActId());
 	            importedLearningActivity = activityLocalService.updateLearningActivity(userId, activity.getActId(), moduleId, 
 	            		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
 	            		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
 	            		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), null, null, serviceContext);
 	        }
 	    }
-	    else {     
-	        importedLearningActivity = activityLocalService.addLearningActivity(userId, activity.getGroupId(), moduleId, 
+	    else {   
+	    	log.debug("la actividad ya existe: " + activity.getActId());
+	        importedLearningActivity = activityLocalService.addLearningActivity(userId, groupId, moduleId, 
             		activity.getTitleMap(), activity.getDescriptionMap(), activity.getTypeId(), activity.getStartDate(), activity.getEndDate(), 
             		activity.getTries(), activity.getPassPuntuation(), activity.getPriority(), activity.getExtraContent(), activity.getFeedbackCorrectMap(), 
             		activity.getFeedbackNoCorrectMap(), activity.getRequired(), activity.getCommentsActivated(), null, serviceContext);
 	    }
 	    
+	    log.debug("importamos los attachments");
 	    importLearningActivityAttachments(portletDataContext, activity, importedLearningActivity);
+	    log.debug("fin importación los attachments");
 	    
 	    LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
-		LearningActivityType learningActivityType = learningActivityTypeFactory.getLearningActivityType(activity);
+		LearningActivityType learningActivityType = learningActivityTypeFactory.getLearningActivityType(importedLearningActivity);
 		
+		log.debug("importamos la parte específica de la actividad");
 		learningActivityType.doImportStagedModel(portletDataContext, activityElement);
+		log.debug("fin de la importación la parte específica de la actividad");
+		
+		importedLearningActivity = activityLocalService.updateLearningActivity(userId, importedLearningActivity);
 	    
 	    Map<Long, Long> activityIds = (Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(LearningActivity.class);
 
@@ -228,6 +268,42 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 	    Map<String, String> activityUuids = (Map<String, String>)portletDataContext.getNewPrimaryKeysMap(LearningActivity.class + ".uuid");
 	    
 	    activityUuids.put(activity.getUuid(), importedLearningActivity.getUuid());
+	}
+	
+	@Override
+	public void restoreStagedModel(
+			PortletDataContext portletDataContext, LearningActivity stagedModel)
+		throws PortletDataException {
+
+		try {
+			doRestoreStagedModel(portletDataContext, stagedModel);
+		}
+		catch (PortletDataException pde) {
+			throw pde;
+		}
+		catch (Exception e) {
+			throw new PortletDataException(e);
+		}
+	}
+	
+	@Override
+	protected void doRestoreStagedModel(
+			PortletDataContext portletDataContext, LearningActivity activity) throws Exception {
+
+		LearningActivity existingActivity = fetchStagedModelByUuidAndGroupId(
+				activity.getUuid(), portletDataContext.getScopeGroupId());
+
+		if ((existingActivity == null) || !existingActivity.isInTrash()) {
+			return;
+		}
+
+		TrashHandler trashHandler = TrashHandlerRegistryUtil.getTrashHandler(Module.class.getName());
+
+		if (trashHandler.isRestorable(existingActivity.getActId())) {
+			long userId = portletDataContext.getUserId(activity.getUserUuid());
+
+			trashHandler.restoreTrashEntry(userId, existingActivity.getActId());
+		}
 	}
 	
 	@Override
@@ -245,6 +321,20 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 			(Map<Long, Long>)portletDataContext.getNewPrimaryKeysMap(LearningActivity.class);
 
 		activityIds.put(activityId, existingLearningActivity.getActId());
+	}
+	
+	protected void exportLearningActivityAttachments(
+			PortletDataContext portletDataContext, Element activityElement,
+			LearningActivity activity)
+		throws Exception {
+
+		List<FileEntry> attachmentsFileEntries = activity.getAttachmentsFileEntries();
+
+		for (FileEntry fileEntry : attachmentsFileEntries) {
+			StagedModelDataHandlerUtil.exportReferenceStagedModel(
+				portletDataContext, activity, fileEntry,
+				PortletDataContext.REFERENCE_TYPE_WEAK);
+		}
 	}
 	
 	protected void importLearningActivityAttachments(PortletDataContext portletDataContext, 
@@ -275,13 +365,18 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 
 					continue;
 				}
+				
+				long folderId = LearningActivityAttachmentsUtil.getFolderId(importedLearningActivity.getGroupId(), importedLearningActivity.getUserId(), 
+						importedLearningActivity.getActId());
+				
+				System.out.println("folderId: " + folderId);
 
 				_portletFileRepository.addPortletFileEntry(
-					portletDataContext.getScopeGroupId(),
+					importedLearningActivity.getGroupId(),
 					portletDataContext.getUserId(importedLearningActivity.getUserUuid()),
 					LearningActivity.class.getName(), importedLearningActivity.getActId(),
 					LMSPortletKeys.MODULES_ACTIVITIES,
-					importedLearningActivity.getAttachmentsFolderId(), inputStream,
+					folderId, inputStream,
 					fileEntry.getFileName(), fileEntry.getMimeType(), true);
 			} catch (DuplicateFileEntryException dfee) {
 				if (log.isDebugEnabled()) {
@@ -344,6 +439,13 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 
 		this.learningActivityCreationStrategy = learningActivityCreationStrategy;
 	}
+	
+	@Reference(
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY,
+		target = "(model.class.name=com.ted.lms.model.LearningActivity)"
+	)
+	private volatile ExportImportContentProcessor<String> activityExportImportContentProcessor;
 	
 	@Reference(unbind = "-")
 	protected void setPortletFileRepository(PortletFileRepository portletFileRepository) {

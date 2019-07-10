@@ -13,7 +13,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.ted.lms.service.CourseLocalServiceUtil;
-import com.ted.lms.web.internal.portlet.action.ImportCSVMVCActionCommand;
+import com.ted.lms.web.internal.portlet.action.ImportMVCActionCommand;
 
 import java.io.File;
 import java.io.Serializable;

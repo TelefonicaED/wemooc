@@ -61,4 +61,6 @@ public interface Question extends QuestionModel, PersistedModel {
 
 	public QuestionType getQuestionType()
 		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.List<Answer> getAnswers();
 }

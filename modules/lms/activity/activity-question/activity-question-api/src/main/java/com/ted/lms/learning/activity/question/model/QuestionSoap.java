@@ -42,6 +42,7 @@ public class QuestionSoap implements Serializable {
 		soapModel.setUserName(model.getUserName());
 		soapModel.setCreateDate(model.getCreateDate());
 		soapModel.setModifiedDate(model.getModifiedDate());
+		soapModel.setLastPublishDate(model.getLastPublishDate());
 		soapModel.setActId(model.getActId());
 		soapModel.setText(model.getText());
 		soapModel.setQuestionTypeId(model.getQuestionTypeId());
@@ -165,6 +166,14 @@ public class QuestionSoap implements Serializable {
 		_modifiedDate = modifiedDate;
 	}
 
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
+	}
+
 	public long getActId() {
 		return _actId;
 	}
@@ -237,6 +246,7 @@ public class QuestionSoap implements Serializable {
 	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
+	private Date _lastPublishDate;
 	private long _actId;
 	private String _text;
 	private long _questionTypeId;

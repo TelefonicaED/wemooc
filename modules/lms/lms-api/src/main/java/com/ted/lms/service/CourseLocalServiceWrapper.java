@@ -298,6 +298,15 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
+	public long exportCourseContent(long courseId, long sourcePlid,
+		String fileName, java.util.Map<String, String[]> parameterMap,
+		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _courseLocalService.exportCourseContent(courseId, sourcePlid,
+			fileName, parameterMap, serviceContext);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.repository.model.Folder fetchAttachmentsFolder(
 		long userId, long groupId) {
 		return _courseLocalService.fetchAttachmentsFolder(userId, groupId);

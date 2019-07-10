@@ -82,6 +82,7 @@ public class OptionsQuestionType extends BaseQuestionType{
 		
 		JSONObject extraContent = question.getExtraContentJSON();
 		
+		
 		log.debug("extraContent: " + extraContent);
 		
 		JSONObject optionsContent = extraContent.getJSONObject(QuestionConstants.JSON_OPTIONS);
@@ -100,6 +101,7 @@ public class OptionsQuestionType extends BaseQuestionType{
 		log.debug("extraContent modified: " + extraContent);
 		
 		question.setExtraContent(extraContent.toJSONString());
+		question.setExtraContentJSON(extraContent);
 	}
 
 	@Override

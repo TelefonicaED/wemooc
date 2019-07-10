@@ -184,7 +184,7 @@ public class PonderatedCourseEval extends BaseCourseEval{
 	
 	@Override
 	public void onCloseCourse() {
-		List<CourseResult> listCourseResults = courseResultLocalService.getFailedCourseResults(course.getCourseId());
+		List<CourseResult> listCourseResults = courseResultLocalService.getCourseResultsNotFinished(course.getCourseId());
 		for(CourseResult courseResult: listCourseResults) {
 			courseResult.setPassedDate(course.getModifiedDate());
 			courseResultLocalService.updateCourseResult(courseResult);

@@ -79,6 +79,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			{ "userName", Types.VARCHAR },
 			{ "createDate", Types.TIMESTAMP },
 			{ "modifiedDate", Types.TIMESTAMP },
+			{ "lastPublishDate", Types.TIMESTAMP },
 			{ "questionId", Types.BIGINT },
 			{ "actId", Types.BIGINT },
 			{ "answer", Types.VARCHAR },
@@ -97,6 +98,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("answer", Types.VARCHAR);
@@ -105,7 +107,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.VARCHAR);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,questionId LONG,actId LONG,answer TEXT null,correct BOOLEAN,feedbackCorrect VARCHAR(75) null,feedbackIncorrect VARCHAR(75) null)";
+	public static final String TABLE_SQL_CREATE = "create table qu_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,questionId LONG,actId LONG,answer TEXT null,correct BOOLEAN,feedbackCorrect VARCHAR(75) null,feedbackIncorrect VARCHAR(75) null)";
 	public static final String TABLE_SQL_DROP = "drop table qu_Answer";
 	public static final String ORDER_BY_JPQL = " ORDER BY answer.answerId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY qu_Answer.answerId ASC";
@@ -148,6 +150,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		model.setUserName(soapModel.getUserName());
 		model.setCreateDate(soapModel.getCreateDate());
 		model.setModifiedDate(soapModel.getModifiedDate());
+		model.setLastPublishDate(soapModel.getLastPublishDate());
 		model.setQuestionId(soapModel.getQuestionId());
 		model.setActId(soapModel.getActId());
 		model.setAnswer(soapModel.getAnswer());
@@ -226,6 +229,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("questionId", getQuestionId());
 		attributes.put("actId", getActId());
 		attributes.put("answer", getAnswer());
@@ -287,6 +291,12 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long questionId = (Long)attributes.get("questionId");
@@ -473,6 +483,16 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	}
 
 	@Override
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
+	}
+
+	@Override
 	public long getQuestionId() {
 		return _questionId;
 	}
@@ -609,6 +629,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		answerImpl.setUserName(getUserName());
 		answerImpl.setCreateDate(getCreateDate());
 		answerImpl.setModifiedDate(getModifiedDate());
+		answerImpl.setLastPublishDate(getLastPublishDate());
 		answerImpl.setQuestionId(getQuestionId());
 		answerImpl.setActId(getActId());
 		answerImpl.setAnswer(getAnswer());
@@ -748,6 +769,15 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 			answerCacheModel.modifiedDate = Long.MIN_VALUE;
 		}
 
+		Date lastPublishDate = getLastPublishDate();
+
+		if (lastPublishDate != null) {
+			answerCacheModel.lastPublishDate = lastPublishDate.getTime();
+		}
+		else {
+			answerCacheModel.lastPublishDate = Long.MIN_VALUE;
+		}
+
 		answerCacheModel.questionId = getQuestionId();
 
 		answerCacheModel.actId = getActId();
@@ -783,7 +813,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(29);
+		StringBundler sb = new StringBundler(31);
 
 		sb.append("{uuid=");
 		sb.append(getUuid());
@@ -801,6 +831,8 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(getCreateDate());
 		sb.append(", modifiedDate=");
 		sb.append(getModifiedDate());
+		sb.append(", lastPublishDate=");
+		sb.append(getLastPublishDate());
 		sb.append(", questionId=");
 		sb.append(getQuestionId());
 		sb.append(", actId=");
@@ -820,7 +852,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(46);
+		StringBundler sb = new StringBundler(49);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.learning.activity.question.model.Answer");
@@ -857,6 +889,10 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 		sb.append(
 			"<column><column-name>modifiedDate</column-name><column-value><![CDATA[");
 		sb.append(getModifiedDate());
+		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
+		sb.append(getLastPublishDate());
 		sb.append("]]></column-value></column>");
 		sb.append(
 			"<column><column-name>questionId</column-name><column-value><![CDATA[");
@@ -906,6 +942,7 @@ public class AnswerModelImpl extends BaseModelImpl<Answer>
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private Date _lastPublishDate;
 	private long _questionId;
 	private long _originalQuestionId;
 	private boolean _setOriginalQuestionId;

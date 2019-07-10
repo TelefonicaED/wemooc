@@ -21,9 +21,8 @@ import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
-import com.liferay.portal.kernel.model.StagedAuditedModel;
+import com.liferay.portal.kernel.model.StagedGroupedModel;
 import com.liferay.portal.kernel.service.ServiceContext;
 
 import java.io.Serializable;
@@ -44,8 +43,8 @@ import java.util.Date;
  * @generated
  */
 @ProviderType
-public interface QuestionModel extends BaseModel<Question>, GroupedModel,
-	ShardedModel, StagedAuditedModel {
+public interface QuestionModel extends BaseModel<Question>, ShardedModel,
+	StagedGroupedModel {
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -209,6 +208,22 @@ public interface QuestionModel extends BaseModel<Question>, GroupedModel,
 	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate);
+
+	/**
+	 * Returns the last publish date of this question.
+	 *
+	 * @return the last publish date of this question
+	 */
+	@Override
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this question.
+	 *
+	 * @param lastPublishDate the last publish date of this question
+	 */
+	@Override
+	public void setLastPublishDate(Date lastPublishDate);
 
 	/**
 	 * Returns the act ID of this question.

@@ -23,11 +23,11 @@ import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
-import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
-import com.liferay.exportimport.kernel.lar.ManifestSummary;
-import com.liferay.exportimport.kernel.lar.PortletDataContext;
-import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationConstants;
+import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSettingsMapFactoryUtil;
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
+import com.liferay.exportimport.kernel.service.ExportImportLocalService;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.message.boards.constants.MBCategoryConstants;
@@ -41,16 +41,7 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.bean.BeanReference;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.Conjunction;
-import com.liferay.portal.kernel.dao.orm.Criterion;
-import com.liferay.portal.kernel.dao.orm.Disjunction;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.Property;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -78,6 +69,7 @@ import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
@@ -1096,107 +1088,8 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			coursePersistence.remove(course);
 		}
 	}
-	
+
 	@Override
-	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
-		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
-				@Override
-				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
-
-					StagedModelType stagedModelType = getStagedModelType();
-
-					long modelAdditionCount = super.performCount();
-
-					manifestSummary.addModelAdditionCount(stagedModelType,
-						modelAdditionCount);
-
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
-
-					manifestSummary.addModelDeletionCount(stagedModelType,
-						modelDeletionCount);
-
-					return modelAdditionCount;
-				}
-			};
-
-		initActionableDynamicQuery(exportActionableDynamicQuery);
-
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
-				@Override
-				public void addCriteria(DynamicQuery dynamicQuery) {
-					Criterion modifiedDateCriterion = portletDataContext.getDateRangeCriteria(
-							"modifiedDate");
-
-					if (modifiedDateCriterion != null) {
-						Conjunction conjunction = RestrictionsFactoryUtil.conjunction();
-
-						conjunction.add(modifiedDateCriterion);
-
-						Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
-
-						disjunction.add(RestrictionsFactoryUtil.gtProperty(
-								"modifiedDate", "lastPublishDate"));
-
-						Property lastPublishDateProperty = PropertyFactoryUtil.forName(
-								"lastPublishDate");
-
-						disjunction.add(lastPublishDateProperty.isNull());
-
-						conjunction.add(disjunction);
-
-						modifiedDateCriterion = conjunction;
-					}
-
-					Criterion statusDateCriterion = portletDataContext.getDateRangeCriteria(
-							"statusDate");
-
-					if ((modifiedDateCriterion != null) &&
-							(statusDateCriterion != null)) {
-						Disjunction disjunction = RestrictionsFactoryUtil.disjunction();
-
-						disjunction.add(modifiedDateCriterion);
-						disjunction.add(statusDateCriterion);
-
-						dynamicQuery.add(disjunction);
-					}
-
-					Property workflowStatusProperty = PropertyFactoryUtil.forName(
-							"status");
-
-					if (portletDataContext.isInitialPublication()) {
-						dynamicQuery.add(workflowStatusProperty.ne(
-								WorkflowConstants.STATUS_IN_TRASH));
-					}
-					else {
-						/*StagedModelDataHandler<?> stagedModelDataHandler = StagedModelDataHandlerRegistryUtil.getStagedModelDataHandler(Course.class.getName());
-
-						dynamicQuery.add(workflowStatusProperty.in(
-								stagedModelDataHandler.getExportableStatuses()));*/
-					}
-				}
-			});
-
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
-
-		exportActionableDynamicQuery.setGroupId(portletDataContext.getScopeGroupId());
-
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<Course>() {
-				@Override
-				public void performAction(Course course)
-					throws PortalException {
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						course);
-				}
-			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
-				PortalUtil.getClassNameId(Course.class.getName())));
-
-		return exportActionableDynamicQuery;
-	}
-	
 	public List<Group> getDistinctCourseGroups(long companyId){
 		return courseFinder.getDistinctCourseGroups(companyId);
 	}
@@ -1731,6 +1624,31 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		}
 	}
 	
+	public long exportCourseContent(
+			long courseId, long sourcePlid, String fileName, Map<String, String[]> parameterMap, ServiceContext serviceContext) throws PortalException {
+		
+		Course course = coursePersistence.findByPrimaryKey(courseId);
+		
+		User user = userLocalService.getUser(
+				GetterUtil.getLong(PrincipalThreadLocal.getName()));
+		
+		Map<String, Serializable> exportLayoutSettingsMap =
+			ExportImportConfigurationSettingsMapFactoryUtil.
+				buildExportPortletSettingsMap(user, sourcePlid, course.getGroupCreatedId(), 
+						LMSPortletKeys.MODULES_ADMIN, parameterMap, fileName);
+
+		
+		ExportImportConfiguration exportImportConfiguration =
+			exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					user.getUserId(),
+					ExportImportConfigurationConstants.TYPE_EXPORT_PORTLET,
+					exportLayoutSettingsMap);
+
+		return exportImportLocalService.exportPortletInfoAsFileInBackground(user.getUserId(), 
+			exportImportConfiguration);
+	}
+	
 	@Override
 	public Folder addAttachmentsFolder(long userId, long groupId) throws PortalException {
 
@@ -1763,6 +1681,12 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	
 	@ServiceReference(type = MBMailingListLocalService.class)
 	protected MBMailingListLocalService mbMailingListLocalService;
+	
+	@ServiceReference(type = ExportImportConfigurationLocalService.class)
+	protected ExportImportConfigurationLocalService exportImportConfigurationLocalService;
+	
+	@ServiceReference(type = ExportImportLocalService.class)
+	protected ExportImportLocalService exportImportLocalService;
 	
 	@BeanReference(type = RepositoryProvider.class)
 	protected RepositoryProvider repositoryProvider;

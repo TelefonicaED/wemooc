@@ -1285,6 +1285,12 @@ public class LearningActivityWrapper implements LearningActivity,
 		_learningActivity.setExtraContent(extraContent);
 	}
 
+	@Override
+	public void setExtraContentJSON(
+		com.liferay.portal.kernel.json.JSONObject extraContent) {
+		_learningActivity.setExtraContentJSON(extraContent);
+	}
+
 	/**
 	* Sets the feedback correct of this learning activity.
 	*

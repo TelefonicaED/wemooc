@@ -236,6 +236,14 @@ public class QuestionLocalServiceWrapper implements QuestionLocalService,
 	}
 
 	@Override
+	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery getExportActionableDynamicQuery(
+		com.liferay.exportimport.kernel.lar.PortletDataContext portletDataContext,
+		long actId) {
+		return _questionLocalService.getExportActionableDynamicQuery(portletDataContext,
+			actId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
 		return _questionLocalService.getIndexableActionableDynamicQuery();
 	}

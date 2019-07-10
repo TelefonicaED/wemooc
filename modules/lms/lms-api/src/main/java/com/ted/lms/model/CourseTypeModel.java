@@ -410,6 +410,20 @@ public interface CourseTypeModel extends BaseModel<CourseType>, GroupedModel,
 	 */
 	public void setIconId(long iconId);
 
+	/**
+	 * Returns the last publish date of this course type.
+	 *
+	 * @return the last publish date of this course type
+	 */
+	public Date getLastPublishDate();
+
+	/**
+	 * Sets the last publish date of this course type.
+	 *
+	 * @param lastPublishDate the last publish date of this course type
+	 */
+	public void setLastPublishDate(Date lastPublishDate);
+
 	@Override
 	public boolean isNew();
 

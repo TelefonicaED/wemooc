@@ -1,12 +1,18 @@
 package com.ted.lms.learning.activity;
 
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.PortletDataException;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
+import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
@@ -14,6 +20,7 @@ import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.Module;
 import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.util.HashMap;
@@ -50,11 +57,10 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 			}else {
 				initializateActivity();
 			}
+			activity.setExtraContent(extraContent.toJSONString());
 		}else {
 			initializateActivity();
 		}
-		
-		activity.setExtraContent(extraContent.toJSONString());
 	}
 	
 	@Override
@@ -113,6 +119,15 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 		return hasFreeQuestions(questions);
 	}
 	
+	@Override
+	public void onDelete() throws PortalException {
+		//Borramos las preguntas y respuestas
+		questions = getQuestions();
+		for(Question question: questions) {
+			questionLocalService.deleteQuestion(question);
+		}
+	}
+	
 	public boolean hasFreeQuestions(List<Question> questions) {
 		
 		int i = 0;
@@ -140,6 +155,8 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 		showFeedback = QuestionConstants.DEFAULT_SHOW_FEEDBACK;
 		showCorrectAnswerOnlyOnFinalTry = QuestionConstants.DEFAULT_SHOW_CORRECT_ANSWER_ONLY_ON_FINAL_TRY;
 	}	
+	
+
 	
 	@Override
 	public void copyActivity(LearningActivity oldActivity, ServiceContext serviceContext) throws Exception {

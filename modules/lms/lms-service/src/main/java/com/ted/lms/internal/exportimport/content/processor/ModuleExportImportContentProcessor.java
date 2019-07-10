@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.model.StagedModel;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.ted.lms.service.ModuleLocalService;
+import com.ted.lms.service.util.MissingReferencesExportImportContentProcessor;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -44,6 +45,9 @@ public class ModuleExportImportContentProcessor implements ExportImportContentPr
 				replaceExportContentReferences(
 					portletDataContext, stagedModel, content,
 					exportReferencedContent, escapeContent);
+		
+		MissingReferencesExportImportContentProcessor.setOtherGroupIdsMissingReferences(portletDataContext, stagedModel);
+		System.out.println("eeee");
 
 		return content;
 	}

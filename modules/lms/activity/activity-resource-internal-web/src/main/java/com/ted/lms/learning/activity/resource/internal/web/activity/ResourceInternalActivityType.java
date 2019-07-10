@@ -3,13 +3,17 @@ package com.ted.lms.learning.activity.resource.internal.web.activity;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.blogs.kernel.model.BlogsEntry;
+import com.liferay.blogs.kernel.service.BlogsEntryLocalService;
 import com.liferay.bookmarks.model.BookmarksEntry;
 import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppHelperLocalServiceUtil;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -18,11 +22,14 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalConstants;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.service.LearningActivityResultLocalService;
+
+import java.util.List;
 
 import javax.portlet.ActionRequest;
 
@@ -32,14 +39,19 @@ public class ResourceInternalActivityType extends BaseLearningActivityType{
 	protected final AssetEntryLocalService assetEntryLocalService;
 	protected final BookmarksEntryLocalService bookmarksEntryLocalService;
 	protected final DLFileEntryLocalService dlFileEntryLocalService;
+	protected final BlogsEntryLocalService blogsEntryLocalService;
+	protected final DLAppLocalService dlAppLocalService;
 	
 	public ResourceInternalActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService,
 			AssetEntryLocalService assetEntryLocalService, BookmarksEntryLocalService bookmarksEntryLocalService,
-			DLFileEntryLocalService dlFileEntryLocalService) {
+			DLFileEntryLocalService dlFileEntryLocalService, BlogsEntryLocalService blogsEntryLocalService,
+			DLAppLocalService dlAppLocalService) {
 		super(activity, learningActivityResultLocalService);
 		this.assetEntryLocalService = assetEntryLocalService;
 		this.bookmarksEntryLocalService = bookmarksEntryLocalService;
 		this.dlFileEntryLocalService = dlFileEntryLocalService;
+		this.blogsEntryLocalService = blogsEntryLocalService;
+		this.dlAppLocalService = dlAppLocalService;
 		
 		JSONObject extraContent = activity.getExtraContentJSON();
 		
@@ -139,6 +151,56 @@ public class ResourceInternalActivityType extends BaseLearningActivityType{
 		
 		resourceInternal.put(ResourceInternalConstants.JSON_RESOURCE_INTERNAL_ASSET_ENTRY, assetEntryId);
 		activity.setExtraContent(extraContent.toJSONString());
+	}
+	
+	@Override
+	public void doExportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException{
+		
+		long assetEntryId = getAssetEntryId();
+		AssetEntry assetEntry = assetEntryLocalService.fetchAssetEntry(assetEntryId);
+		
+		if(assetEntry != null) {
+			if(assetEntry.getClassNameId() == PortalUtil.getClassNameId(DLFileEntry.class)) {
+				FileEntry fileEntry = dlAppLocalService.getFileEntry(assetEntry.getClassPK());
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+						portletDataContext, activity, fileEntry,
+						PortletDataContext.REFERENCE_TYPE_EMBEDDED);
+			}else if(assetEntry.getClassNameId() == PortalUtil.getClassNameId(BookmarksEntry.class)) {
+				BookmarksEntry bookmarksEntry = bookmarksEntryLocalService.getBookmarksEntry(assetEntry.getClassPK());
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+						portletDataContext, activity, bookmarksEntry,
+						PortletDataContext.REFERENCE_TYPE_EMBEDDED);
+			}else if(assetEntry.getClassNameId() == PortalUtil.getClassNameId(BlogsEntry.class)) {
+				BlogsEntry blogsEntry = blogsEntryLocalService.getBlogsEntry(assetEntry.getClassPK());
+				StagedModelDataHandlerUtil.exportReferenceStagedModel(
+						portletDataContext, activity, blogsEntry,
+						PortletDataContext.REFERENCE_TYPE_EMBEDDED);
+			}
+		}
+	}
+	
+	@Override
+	public void doImportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException {
+		List<Element> elements = portletDataContext.getReferenceDataElements(activityElement, DLFileEntry.class, PortletDataContext.REFERENCE_TYPE_EMBEDDED);
+		if(elements != null && elements.size() > 0) {
+			Element element = elements.get(0);
+			element.nodeIterator().forEachRemaining(action -> System.out.println("action: " + action));
+			System.out.println("element: " + elements.get(0));
+		}else {
+			elements = portletDataContext.getReferenceDataElements(activityElement, BookmarksEntry.class, PortletDataContext.REFERENCE_TYPE_EMBEDDED);
+			if(elements != null && elements.size() > 0) {
+				Element element = elements.get(0);
+				element.nodeIterator().forEachRemaining(action -> System.out.println("action: " + action));
+				System.out.println("element: " + elements.get(0));
+			}else {
+				elements = portletDataContext.getReferenceDataElements(activityElement, BlogsEntry.class, PortletDataContext.REFERENCE_TYPE_EMBEDDED);
+				if(elements != null && elements.size() > 0) {
+					Element element = elements.get(0);
+					element.nodeIterator().forEachRemaining(action -> System.out.println("action: " + action));
+					System.out.println("element: " + elements.get(0));
+				}
+			}
+		}
 	}
 
 }

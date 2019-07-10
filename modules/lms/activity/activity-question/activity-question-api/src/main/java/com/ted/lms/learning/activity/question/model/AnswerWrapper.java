@@ -67,6 +67,7 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("questionId", getQuestionId());
 		attributes.put("actId", getActId());
 		attributes.put("answer", getAnswer());
@@ -125,6 +126,12 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 
 		Long questionId = (Long)attributes.get("questionId");
@@ -267,6 +274,16 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public long getGroupId() {
 		return _answer.getGroupId();
+	}
+
+	/**
+	* Returns the last publish date of this answer.
+	*
+	* @return the last publish date of this answer
+	*/
+	@Override
+	public Date getLastPublishDate() {
+		return _answer.getLastPublishDate();
 	}
 
 	/**
@@ -488,6 +505,16 @@ public class AnswerWrapper implements Answer, ModelWrapper<Answer> {
 	@Override
 	public void setGroupId(long groupId) {
 		_answer.setGroupId(groupId);
+	}
+
+	/**
+	* Sets the last publish date of this answer.
+	*
+	* @param lastPublishDate the last publish date of this answer
+	*/
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_answer.setLastPublishDate(lastPublishDate);
 	}
 
 	/**

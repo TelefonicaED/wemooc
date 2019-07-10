@@ -31,10 +31,10 @@ public interface LearningActivityType {
 	
 	public void afterInsertOrUpdate(ActionRequest actionRequest) throws PortalException;
 
-	public void onDelete(ActionRequest actionRequest) throws PortalException;
+	public void onDelete() throws PortalException;
 	
-	public String doImportStagedModel(PortletDataContext portletDataContext, Element activityElement);
-	public String doExportStagedModel(PortletDataContext portletDataContext, Element activityElement);
+	public void doImportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException;
+	public void doExportStagedModel(PortletDataContext portletDataContext, Element activityElement) throws PortalException;
 	
 	public double calculateResult(LearningActivityTry learningActivityTry);
 	public boolean isPassed(LearningActivityTry learningActivityTry);

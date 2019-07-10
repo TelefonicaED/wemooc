@@ -13,8 +13,13 @@ import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
+import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
 import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.CourseTypeLocalService;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.ModuleLocalService;
+
 import java.util.List;
 
 import javax.portlet.PortletPreferences;
@@ -43,72 +48,144 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class CoursePortletDataHandler extends BasePortletDataHandler {
 	
+	public static final String[] CLASS_NAMES = {
+			Course.class.getName(), Module.class.getName(),
+			LearningActivity.class.getName()
+		};
+	
 	public static final String NAMESPACE = "courses";
 	
+	@Override
+	public String[] getClassNames() {
+		return CLASS_NAMES;
+	}
+
 	@Activate
 	protected void activate() {
 		setDeletionSystemEventStagedModelTypes(
-			new StagedModelType(Module.class));
+			new StagedModelType(Course.class),
+			new StagedModelType(Module.class),
+			new StagedModelType(LearningActivity.class));
+		
 		setExportControls(
 				new PortletDataHandlerBoolean(
-					NAMESPACE, "course", true, false, null,
+					NAMESPACE, "courses", true, false, 
+					new PortletDataHandlerBoolean[] {
+						new PortletDataHandlerBoolean(
+							NAMESPACE, "modules", true, false, 
+							new PortletDataHandlerBoolean[] {
+								new PortletDataHandlerBoolean(
+									NAMESPACE, "activities", true, false, 
+									new PortletDataHandlerBoolean[] {
+											new PortletDataHandlerBoolean(
+												NAMESPACE, "referenced-content")
+									},
+									LearningActivity.class.getName()),
+								new PortletDataHandlerBoolean(
+										NAMESPACE, "referenced-content")
+							},
+							Module.class.getName()),
+						new PortletDataHandlerBoolean(
+								NAMESPACE, "referenced-content")
+					},
 					Course.class.getName()));
 		setStagingControls(getExportControls());
 	}
 	
+	/**
+	 * Definimos los datos que vamos a exportar
+	 */
 	@Override
 	protected String doExportData(
 	        final PortletDataContext portletDataContext, String portletId,
 	        PortletPreferences portletPreferences)
 	    throws Exception {
+		
+		portletDataContext.addPortletPermissions(LMSConstants.RESOURCE_NAME);
 
 	    Element rootElement = addExportDataRootElement(portletDataContext);
-
-	    if (!portletDataContext.getBooleanParameter(NAMESPACE, "course")) {
-	        return getExportDataRootElementString(rootElement);
-	    }
-
-	    portletDataContext.addPortletPermissions(
-	        LMSConstants.RESOURCE_NAME);
-
+	    
 	    rootElement.addAttribute(
-	        "group-id", String.valueOf(portletDataContext.getScopeGroupId()));
+    	        "group-id", String.valueOf(portletDataContext.getScopeGroupId()));
 
-	    ExportActionableDynamicQuery courseActionableDynamicQuery =
-	        courseLocalService.
-	            getExportActionableDynamicQuery(portletDataContext);
+	    if (portletDataContext.getBooleanParameter(NAMESPACE, "courses")) {
+    	    ExportActionableDynamicQuery courseActionableDynamicQuery =
+    	        courseLocalService.
+    	            getExportActionableDynamicQuery(portletDataContext);
 
-	    courseActionableDynamicQuery.performActions();
+    	    courseActionableDynamicQuery.performActions();
+	    }
+	    
+	    if(portletDataContext.getBooleanParameter(NAMESPACE, "modules")) {
+	    	ExportActionableDynamicQuery moduleActionableDynamicQuery =
+	    	        moduleLocalService.
+	    	            getExportActionableDynamicQuery(portletDataContext);
+
+	    	moduleActionableDynamicQuery.performActions();
+	    }
+	    
+	    if(portletDataContext.getBooleanParameter(NAMESPACE, "activities")) {
+	    	ExportActionableDynamicQuery activityActionableDynamicQuery =
+	    	        learningActivityLocalService.
+	    	            getExportActionableDynamicQuery(portletDataContext);
+
+	    	activityActionableDynamicQuery.performActions();
+	    }
+	    
 
 	    return getExportDataRootElementString(rootElement);
 	}
 
+	/**
+	 * Definimos los datos que vamos a importar
+	 */
 	@Override
 	protected PortletPreferences doImportData(
 	        PortletDataContext portletDataContext, String portletId,
 	        PortletPreferences portletPreferences, String data)
 	    throws Exception {
+		
+		 portletDataContext.importPortletPermissions(LMSConstants.RESOURCE_NAME);
 
-	    if (!portletDataContext.getBooleanParameter(NAMESPACE, "courses")) {
-	        return null;
+	    if (portletDataContext.getBooleanParameter(NAMESPACE, "courses")) {
+	    	 Element coursesElement = portletDataContext.getImportDataGroupElement(Course.class);
+
+		    List<Element> courseElements = coursesElement.elements();
+
+		    for (Element courseElement : courseElements) {
+		        StagedModelDataHandlerUtil.importStagedModel(
+		            portletDataContext, courseElement);
+		    }
 	    }
 
-	    portletDataContext.importPortletPermissions(
-	        LMSConstants.RESOURCE_NAME);
+	   if(portletDataContext.getBooleanParameter(NAMESPACE, "modules")) {
+	    	 Element modulesElement = portletDataContext.getImportDataGroupElement(Module.class);
 
-	    Element coursesElement = portletDataContext.getImportDataGroupElement(
-	        Course.class);
+		    List<Element> moduleElements = modulesElement.elements();
 
-	    List<Element> courseElements = coursesElement.elements();
+		    for (Element moduleElement : moduleElements) {
+		        StagedModelDataHandlerUtil.importStagedModel(
+		            portletDataContext, moduleElement);
+		    }
+	    }
 
-	    for (Element courseElement : courseElements) {
-	        StagedModelDataHandlerUtil.importStagedModel(
-	            portletDataContext, courseElement);
+	   if(portletDataContext.getBooleanParameter(NAMESPACE, "activities")) {
+	    	 Element activitiesElement = portletDataContext.getImportDataGroupElement(LearningActivity.class);
+
+		    List<Element> activityElements = activitiesElement.elements();
+
+		    for (Element activityElement : activityElements) {
+		        StagedModelDataHandlerUtil.importStagedModel(
+		            portletDataContext, activityElement);
+		    }
 	    }
 
 	    return null;
 	}
 	
+	/**
+	 * Los cursos que borraremos si se marca la opción al importar de eliminar el contenido actual
+	 */
 	@Override
 	protected PortletPreferences doDeleteData(
 	        PortletDataContext portletDataContext, String portletId,
@@ -127,6 +204,9 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 	    return portletPreferences;
 	}
 	
+	/**
+	 * Número de cursos a exportar
+	 */
 	@Override
 	protected void doPrepareManifestSummary(
 	        PortletDataContext portletDataContext,
@@ -138,6 +218,16 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 	            getExportActionableDynamicQuery(portletDataContext);
 
 	    courseExportActionableDynamicQuery.performCount();
+	    
+	    ActionableDynamicQuery moduleExportActionableDynamicQuery =
+		        moduleLocalService.getExportActionableDynamicQuery(portletDataContext);
+
+	    moduleExportActionableDynamicQuery.performCount();
+		    
+	    ActionableDynamicQuery activityExportActionableDynamicQuery =
+		        learningActivityLocalService.getExportActionableDynamicQuery(portletDataContext);
+
+	    activityExportActionableDynamicQuery.performCount();
 	}
 	
 	public static final String SCHEMA_VERSION = "1.0.0";
@@ -159,8 +249,31 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 
 	    this.courseLocalService = courseLocalService;
 	}
+	
+	@Reference(unbind = "-")
+	protected void setModuleLocalService(
+			ModuleLocalService moduleLocalService) {
+
+	    this.moduleLocalService = moduleLocalService;
+	}
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityLocalService(
+			LearningActivityLocalService learningActivityLocalService) {
+
+	    this.learningActivityLocalService = learningActivityLocalService;
+	}
+	
+	@Reference(unbind = "-")
+	protected void setCourseTypeLocalService(CourseTypeLocalService courseTypeLocalService) {
+
+	    this.courseTypeLocalService = courseTypeLocalService;
+	}
 
 	private CourseLocalService courseLocalService;
+	private CourseTypeLocalService courseTypeLocalService;
+	private ModuleLocalService moduleLocalService;
+	private LearningActivityLocalService learningActivityLocalService;
 	
 	@Reference
 	private PortletDataHandlerHelper portletDataHandlerHelper;

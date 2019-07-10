@@ -19,7 +19,7 @@ public abstract class BaseImportCSVMVCActionCommand extends BaseMVCActionCommand
 		
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 		String portletId = getPortletId(actionRequest);
-		ImportCSVMVCActionCommand importCSVMVCActionCommand = getImportCSVMVCActionCommand();
+		ImportMVCActionCommand importCSVMVCActionCommand = getImportCSVMVCActionCommand();
 		try {
 			
 			if (cmd.equals(Constants.ADD_TEMP)) {
@@ -78,6 +78,6 @@ public abstract class BaseImportCSVMVCActionCommand extends BaseMVCActionCommand
 	protected abstract long importData(ActionRequest actionRequest, ActionResponse actionResponse) throws PortalException;
 	protected abstract void validateFile(ActionRequest actionRequest, ActionResponse actionResponse, FileEntry fileEntry) throws Exception;
 	protected abstract String getPortletId(ActionRequest actionRequest);
-	protected abstract ImportCSVMVCActionCommand getImportCSVMVCActionCommand();
+	protected abstract ImportMVCActionCommand getImportCSVMVCActionCommand();
 	
 }

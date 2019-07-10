@@ -2,6 +2,7 @@ dependencies {
 	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
 	compileOnly group: "javax.portlet", name: "portlet-api"
 	compileOnly group: "javax.servlet", name: "javax.servlet-api"
@@ -9,7 +10,10 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.petra.xml"
 	compileOnly group: "com.liferay", name: "com.liferay.upload.api"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.function"
+	compileOnly group: "com.liferay", name: "com.liferay.exportimport.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
 	compileOnly project(":modules:lms:lms-api")
+	compileOnly project(":modules:lms:lms-service")
 }
 
 buildService {

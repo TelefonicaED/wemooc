@@ -68,7 +68,8 @@ create table LMS_CourseType (
 	modifiedDate DATE null,
 	name STRING null,
 	description STRING null,
-	iconId LONG
+	iconId LONG,
+	lastPublishDate DATE null
 );
 
 create table LMS_CourseTypeRelation (

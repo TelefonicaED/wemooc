@@ -44,6 +44,7 @@ public class CourseTypeSoap implements Serializable {
 		soapModel.setName(model.getName());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setIconId(model.getIconId());
+		soapModel.setLastPublishDate(model.getLastPublishDate());
 
 		return soapModel;
 	}
@@ -176,6 +177,14 @@ public class CourseTypeSoap implements Serializable {
 		_iconId = iconId;
 	}
 
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
+	}
+
 	private long _courseTypeId;
 	private long _groupId;
 	private long _companyId;
@@ -186,4 +195,5 @@ public class CourseTypeSoap implements Serializable {
 	private String _name;
 	private String _description;
 	private long _iconId;
+	private Date _lastPublishDate;
 }

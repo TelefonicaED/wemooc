@@ -86,7 +86,8 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 			{ "modifiedDate", Types.TIMESTAMP },
 			{ "name", Types.VARCHAR },
 			{ "description", Types.VARCHAR },
-			{ "iconId", Types.BIGINT }
+			{ "iconId", Types.BIGINT },
+			{ "lastPublishDate", Types.TIMESTAMP }
 		};
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP = new HashMap<String, Integer>();
 
@@ -101,9 +102,10 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("description", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("iconId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 	}
 
-	public static final String TABLE_SQL_CREATE = "create table LMS_CourseType (courseTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name STRING null,description STRING null,iconId LONG)";
+	public static final String TABLE_SQL_CREATE = "create table LMS_CourseType (courseTypeId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,name STRING null,description STRING null,iconId LONG,lastPublishDate DATE null)";
 	public static final String TABLE_SQL_DROP = "drop table LMS_CourseType";
 	public static final String ORDER_BY_JPQL = " ORDER BY courseType.courseTypeId ASC";
 	public static final String ORDER_BY_SQL = " ORDER BY LMS_CourseType.courseTypeId ASC";
@@ -145,6 +147,7 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 		model.setName(soapModel.getName());
 		model.setDescription(soapModel.getDescription());
 		model.setIconId(soapModel.getIconId());
+		model.setLastPublishDate(soapModel.getLastPublishDate());
 
 		return model;
 	}
@@ -219,6 +222,7 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 		attributes.put("name", getName());
 		attributes.put("description", getDescription());
 		attributes.put("iconId", getIconId());
+		attributes.put("lastPublishDate", getLastPublishDate());
 
 		attributes.put("entityCacheEnabled", isEntityCacheEnabled());
 		attributes.put("finderCacheEnabled", isFinderCacheEnabled());
@@ -286,6 +290,12 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 
 		if (iconId != null) {
 			setIconId(iconId);
+		}
+
+		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
+
+		if (lastPublishDate != null) {
+			setLastPublishDate(lastPublishDate);
 		}
 	}
 
@@ -630,6 +640,17 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 		_iconId = iconId;
 	}
 
+	@JSON
+	@Override
+	public Date getLastPublishDate() {
+		return _lastPublishDate;
+	}
+
+	@Override
+	public void setLastPublishDate(Date lastPublishDate) {
+		_lastPublishDate = lastPublishDate;
+	}
+
 	public long getColumnBitmask() {
 		return _columnBitmask;
 	}
@@ -753,6 +774,7 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 		courseTypeImpl.setName(getName());
 		courseTypeImpl.setDescription(getDescription());
 		courseTypeImpl.setIconId(getIconId());
+		courseTypeImpl.setLastPublishDate(getLastPublishDate());
 
 		courseTypeImpl.resetOriginalValues();
 
@@ -884,12 +906,21 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 
 		courseTypeCacheModel.iconId = getIconId();
 
+		Date lastPublishDate = getLastPublishDate();
+
+		if (lastPublishDate != null) {
+			courseTypeCacheModel.lastPublishDate = lastPublishDate.getTime();
+		}
+		else {
+			courseTypeCacheModel.lastPublishDate = Long.MIN_VALUE;
+		}
+
 		return courseTypeCacheModel;
 	}
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(21);
+		StringBundler sb = new StringBundler(23);
 
 		sb.append("{courseTypeId=");
 		sb.append(getCourseTypeId());
@@ -911,6 +942,8 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 		sb.append(getDescription());
 		sb.append(", iconId=");
 		sb.append(getIconId());
+		sb.append(", lastPublishDate=");
+		sb.append(getLastPublishDate());
 		sb.append("}");
 
 		return sb.toString();
@@ -918,7 +951,7 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 
 	@Override
 	public String toXmlString() {
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(37);
 
 		sb.append("<model><model-name>");
 		sb.append("com.ted.lms.model.CourseType");
@@ -964,6 +997,10 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 			"<column><column-name>iconId</column-name><column-value><![CDATA[");
 		sb.append(getIconId());
 		sb.append("]]></column-value></column>");
+		sb.append(
+			"<column><column-name>lastPublishDate</column-name><column-value><![CDATA[");
+		sb.append(getLastPublishDate());
+		sb.append("]]></column-value></column>");
 
 		sb.append("</model>");
 
@@ -991,6 +1028,7 @@ public class CourseTypeModelImpl extends BaseModelImpl<CourseType>
 	private String _description;
 	private String _descriptionCurrentLanguageId;
 	private long _iconId;
+	private Date _lastPublishDate;
 	private long _columnBitmask;
 	private CourseType _escapedModel;
 }

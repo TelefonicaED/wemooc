@@ -1,6 +1,5 @@
 package com.ted.lms.internal.exportimport.data.handler;
 
-import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.exportimport.kernel.lar.BasePortletDataHandler;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -9,23 +8,22 @@ import com.liferay.exportimport.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.exportimport.kernel.staging.Staging;
-import com.liferay.exportimport.kernel.xstream.XStreamAliasRegistryUtil;
 import com.liferay.exportimport.portlet.data.handler.helper.PortletDataHandlerHelper;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
-import com.ted.lms.model.impl.LearningActivityImpl;
-import com.ted.lms.model.impl.ModuleImpl;
+import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.ModuleLocalService;
 
 import java.util.List;
-
 import javax.portlet.PortletPreferences;
 
 import org.osgi.service.component.annotations.Activate;
@@ -52,7 +50,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class ModulePortletDataHandler extends BasePortletDataHandler {
 	
-	public static final String NAMESPACE = "admin_modules";
+	public static final String NAMESPACE = "modules";
 	
 	private static final Log log = LogFactoryUtil.getLog(ModulePortletDataHandler.class);
 	
@@ -66,17 +64,15 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 			new StagedModelType(Module.class),
 			new StagedModelType(LearningActivity.class));
 		setExportControls(
-			new PortletDataHandlerBoolean(
-				NAMESPACE, "activities", true, false, null,
-				LearningActivity.class.getName()),
-			new PortletDataHandlerBoolean(
-				NAMESPACE, "modules", true, false, null,
-				Module.class.getName()));
+				new PortletDataHandlerBoolean(
+						NAMESPACE, "modules", true, false, 
+						new PortletDataHandlerBoolean[] {
+							new PortletDataHandlerBoolean(
+								NAMESPACE, "activities", true, false, null,
+								LearningActivity.class.getName())
+						},
+						Module.class.getName()));
 		setStagingControls(getExportControls());
-		
-		XStreamAliasRegistryUtil.register(ModuleImpl.class, "Module");
-		XStreamAliasRegistryUtil.register(
-			LearningActivityImpl.class, "LearningActivity");
 	}
 	
 	@Override
@@ -84,22 +80,33 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 	        PortletPreferences portletPreferences) throws Exception {
 		
 	    Element rootElement = addExportDataRootElement(portletDataContext);
-
+	    
+	    log.debug("entramos a la exportación de los módulos: " + portletDataContext.getScopeGroupId());
+	    
+	    
 	    rootElement.addAttribute("group-id", String.valueOf(portletDataContext.getScopeGroupId()));
 	    
-	    if(portletDataContext.getBooleanParameter(NAMESPACE, "activities")) {
-	    	ActionableDynamicQuery activityActionableDynamicQuery =
-			        learningActivityLocalService.getExportActionableDynamicQuery(portletDataContext);
-			    
-	    	activityActionableDynamicQuery.performActions();
-	    }
-
 	    if(portletDataContext.getBooleanParameter(NAMESPACE, "modules")) {
-	    	ActionableDynamicQuery moduleActionableDynamicQuery =
-		        moduleLocalService.getExportActionableDynamicQuery(portletDataContext);
-		    
-		    moduleActionableDynamicQuery.performActions();
+	    	ExportActionableDynamicQuery moduleActionableDynamicQuery =
+	    	        moduleLocalService.
+	    	            getExportActionableDynamicQuery(portletDataContext);
+
+	    	moduleActionableDynamicQuery.performActions();
 	    }
+	    
+	    if(portletDataContext.getBooleanParameter(NAMESPACE, "activities")) {
+	    	ExportActionableDynamicQuery activityActionableDynamicQuery =
+	    	        learningActivityLocalService.
+	    	            getExportActionableDynamicQuery(portletDataContext);
+
+	    	activityActionableDynamicQuery.performActions();
+	    	
+	    	List<LearningActivityTypeFactory> activityTypeFactories = LearningActivityTypeFactoryRegistryUtil.getLearningActivityFactories(portletDataContext.getCompanyId());
+	    	for(LearningActivityTypeFactory activityTypeFactory: activityTypeFactories) {
+	    		activityTypeFactory.doExportStagedModel(portletDataContext);
+	    	}
+	    }
+	    
 	    return getExportDataRootElementString(rootElement);
 	}
 
@@ -109,26 +116,38 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 	        PortletPreferences portletPreferences, String data)
 	    throws Exception {
 
-		if (portletDataContext.getBooleanParameter(NAMESPACE, "activities")) {
-			Element activitiesElement = portletDataContext.getImportDataGroupElement(LearningActivity.class);
+		if(portletDataContext.getBooleanParameter(NAMESPACE, "modules")) {
+	    	Element modulesElement = portletDataContext.getImportDataGroupElement(Module.class);
 
-			List<Element> activityElements = activitiesElement.elements();
-
-			for (Element activityElement : activityElements) {
-			
-				StagedModelDataHandlerUtil.importStagedModel(portletDataContext, activityElement);
-			}
-		}
-	    
-		if (portletDataContext.getBooleanParameter(NAMESPACE, "modules")) {
-		    Element modulesElement = portletDataContext.getImportDataGroupElement(Module.class);
-	
 		    List<Element> moduleElements = modulesElement.elements();
-	
+
 		    for (Element moduleElement : moduleElements) {
-		        StagedModelDataHandlerUtil.importStagedModel(portletDataContext, moduleElement);
+		    	log.debug("import module: " + moduleElement.toString());
+		    	try {
+			        StagedModelDataHandlerUtil.importStagedModel(
+			            portletDataContext, moduleElement);
+		    	}catch(Exception e) {
+		    		e.printStackTrace();
+		    	}
 		    }
-		}
+	    }
+
+	   if(portletDataContext.getBooleanParameter(NAMESPACE, "activities")) {
+	    	 Element activitiesElement = portletDataContext.getImportDataGroupElement(LearningActivity.class);
+
+		    List<Element> activityElements = activitiesElement.elements();
+
+		    for (Element activityElement : activityElements) {
+		    	log.debug("import activity: " + activityElement.toString());
+		        StagedModelDataHandlerUtil.importStagedModel(
+		            portletDataContext, activityElement);
+		    }
+		    
+		    List<LearningActivityTypeFactory> activityTypeFactories = LearningActivityTypeFactoryRegistryUtil.getLearningActivityFactories(portletDataContext.getCompanyId());
+	    	for(LearningActivityTypeFactory activityTypeFactory: activityTypeFactories) {
+	    		activityTypeFactory.doImportStagedModel(portletDataContext);
+	    	}
+	    }
 
 	    return null;
 	}
@@ -148,12 +167,14 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 
 	        return portletPreferences;
 	    }
+	    
+	    log.debug("doDeleteData eliminamos los módulos");
 
 	    moduleLocalService.deleteModules(portletDataContext.getScopeGroupId());
 	    
-	    long repositoryId = DLFolderConstants.getDataRepositoryId(portletDataContext.getScopeGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID);
-
-	    dLAppLocalService.deleteAll(repositoryId);
+	    log.debug("doDeleteData eliminamos los repositorios");
+	    
+	    dLAppLocalService.deleteAllRepositories(portletDataContext.getScopeGroupId());
 
 	    return portletPreferences;
 	}
@@ -161,14 +182,15 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 	@Override
 	protected void doPrepareManifestSummary(PortletDataContext portletDataContext, PortletPreferences portletPreferences) throws Exception {
 		
-		ActionableDynamicQuery moduleExportActionableDynamicQuery = moduleLocalService.getExportActionableDynamicQuery(portletDataContext);
+		ActionableDynamicQuery moduleExportActionableDynamicQuery =
+		        moduleLocalService.getExportActionableDynamicQuery(portletDataContext);
 
-		moduleExportActionableDynamicQuery.performCount();
-		
-		ActionableDynamicQuery activityExportActionableDynamicQuery = learningActivityLocalService.
-		            getExportActionableDynamicQuery(portletDataContext);
+	    moduleExportActionableDynamicQuery.performCount();
+		    
+	    ActionableDynamicQuery activityExportActionableDynamicQuery =
+		        learningActivityLocalService.getExportActionableDynamicQuery(portletDataContext);
 
-		activityExportActionableDynamicQuery.performCount();
+	    activityExportActionableDynamicQuery.performCount();
 	}
 	
 	public static final String SCHEMA_VERSION = "1.0.0";

@@ -1,12 +1,10 @@
 package com.ted.lms.internal.exportimport.data.handler;
 
-import com.liferay.exportimport.content.processor.ExportImportContentProcessor;
 import com.liferay.exportimport.data.handler.base.BaseStagedModelDataHandler;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataException;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandler;
-import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -26,8 +24,6 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 @Component(
 	immediate = true, 
@@ -45,7 +41,8 @@ public class CourseStagedModelDataHandler extends BaseStagedModelDataHandler<Cou
 	}
 	
 	/**
-	 * Añadimos el objeto al portletDataContext
+	 * Añadimos el objeto al portletDataContext, debemos comprobar que se exportar todo lo necesario para el curso,
+	 * como el curso padre, el tipo de curso y la imagen del curso
 	 */
 	@Override
 	protected void doExportStagedModel(
@@ -82,6 +79,10 @@ public class CourseStagedModelDataHandler extends BaseStagedModelDataHandler<Cou
 				course.setSmallImageId(0);
 			}
 	    }
+		
+		//TODO añadir comprobación de que exista el tipo de curso
+		
+		//TODO añadir la comprobación de que está el curso padre
 
 	    Element entryElement = portletDataContext.getExportDataElement(course);
 
@@ -102,7 +103,6 @@ public class CourseStagedModelDataHandler extends BaseStagedModelDataHandler<Cou
 		String description = course.getDescription();
 
 		course.setDescription(description);
-		
 		
 	    File smallFile = null;
 	    

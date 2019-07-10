@@ -56,6 +56,9 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 
 	public com.liferay.portal.kernel.json.JSONObject getExtraContentJSON();
 
+	public void setExtraContentJSON(
+		com.liferay.portal.kernel.json.JSONObject extraContent);
+
 	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry();
 
 	public void addExtraContentJSON(String key, Object value);

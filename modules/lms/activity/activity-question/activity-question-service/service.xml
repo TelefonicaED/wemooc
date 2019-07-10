@@ -13,7 +13,7 @@
 		<!-- Group instance -->
 
 		<column name="groupId" type="long" />
-
+		
 		<!-- Audit fields -->
 
 		<column name="companyId" type="long" />
@@ -21,6 +21,9 @@
 		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
+		
+		<!-- Staged -->
+		<column name="lastPublishDate" type="Date" />
 		
 		<column name="actId" type="long" />
 		<column name="text" type="String" />
@@ -59,6 +62,9 @@
 		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
+		
+		<!-- Staged -->
+		<column name="lastPublishDate" type="Date" />
 		
 		<column name="questionId" type="long" />
 		<column name="actId" type="long" />

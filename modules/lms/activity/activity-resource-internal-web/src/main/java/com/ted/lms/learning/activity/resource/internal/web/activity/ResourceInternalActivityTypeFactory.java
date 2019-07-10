@@ -1,8 +1,10 @@
 package com.ted.lms.learning.activity.resource.internal.web.activity;
 
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
+import com.liferay.blogs.kernel.service.BlogsEntryLocalService;
 import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -55,12 +57,12 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 	@Override
 	public LearningActivityType getLearningActivityType(LearningActivity activity) throws PortalException {
 		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService,
-				bookmarksEntryLocalService, dlFileEntryLocalService);
+				bookmarksEntryLocalService, dlFileEntryLocalService, blogsEntryLocalService, dlAppLocalService);
 	}
 	
 	public ResourceInternalActivityType getResourceInternalType(LearningActivity activity) {
 		return new ResourceInternalActivityType(activity, learningActivityResultLocalService, assetEntryLocalService,
-				bookmarksEntryLocalService, dlFileEntryLocalService);
+				bookmarksEntryLocalService, dlFileEntryLocalService, blogsEntryLocalService, dlAppLocalService);
 	}
 	
 	@Override
@@ -140,5 +142,17 @@ public class ResourceInternalActivityTypeFactory extends BaseLearningActivityTyp
 		this.dlFileEntryLocalService = dlFileEntryLocalService;
 	}
 	protected DLFileEntryLocalService dlFileEntryLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setBlogsEntryLocalService(BlogsEntryLocalService blogsEntryLocalService) {
+		this.blogsEntryLocalService = blogsEntryLocalService;
+	}
+	protected BlogsEntryLocalService blogsEntryLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setDLAppLocalService(DLAppLocalService dlAppLocalService) {
+		this.dlAppLocalService = dlAppLocalService;
+	}
+	protected DLAppLocalService dlAppLocalService;
 	
 }

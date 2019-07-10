@@ -3,11 +3,11 @@ package com.ted.lms.learning.activity.survey.web.activity;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.ted.lms.learning.activity.QuestionsLearningActivityTypeFactory;
 import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyConstants;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
-import com.ted.lms.model.BaseLearningActivityTypeFactory;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
@@ -24,7 +24,7 @@ import org.osgi.service.component.annotations.Reference;
     property = {},
     service = LearningActivityTypeFactory.class
 )
-public class SurveyActivityTypeFactory extends BaseLearningActivityTypeFactory {
+public class SurveyActivityTypeFactory extends QuestionsLearningActivityTypeFactory {
 	
 	@Override
 	public String getClassName() {
@@ -96,11 +96,9 @@ public class SurveyActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
 		this.questionLocalService = questionLocalService;
 	}
-	protected QuestionLocalService questionLocalService;
 	
 	@Reference(unbind = "-")
 	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
 		this.answerLocalService = answerLocalService;
 	}
-	protected AnswerLocalService answerLocalService;
 }
