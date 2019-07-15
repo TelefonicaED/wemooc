@@ -86,4 +86,10 @@ public interface CourseServiceConfiguration {
 		name = "role-courses", required = false
 	)
 	public String[] roleCourses();
+	
+	@Meta.AD(
+		deflt = "com/ted/lms/web/template/dependencies/my-courses-portlet-display-templates.xml",
+		name = "display-templates-my-courses-config", required = false
+	)
+	public String displayTemplatesMyCoursesConfig();
 }

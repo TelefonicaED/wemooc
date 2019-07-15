@@ -14,6 +14,9 @@
 
 package com.ted.lms.model.impl;
 
+import com.ted.lms.model.Course;
+import com.ted.lms.service.CourseLocalServiceUtil;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -32,6 +35,22 @@ public class CourseResultImpl extends CourseResultBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a course result model instance should use the {@link com.ted.lms.model.CourseResult} interface instead.
 	 */
+	
+	private Course course;
+	
 	public CourseResultImpl() {
 	}
+	
+	public Course getCourse() {
+		if (course == null) {
+			course = CourseLocalServiceUtil.fetchCourse(getCourseId());
+		}
+
+		return course;
+	}
+	
+	public double getProgress() {
+		return getResult();
+	}
+	
 }

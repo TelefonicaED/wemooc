@@ -1064,6 +1064,13 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		return _course.getSmallImageId();
 	}
 
+	@Override
+	public String getSmallImageURL(
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException {
+		return _course.getSmallImageURL(themeDisplay);
+	}
+
 	/**
 	* Returns the status of this course.
 	*

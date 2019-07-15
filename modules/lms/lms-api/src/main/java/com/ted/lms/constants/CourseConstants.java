@@ -1,5 +1,7 @@
 package com.ted.lms.constants;
 
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
 /**
  * Esta clase define las constantes propias de los cursos
  * @author Virginia Martín Agudo
@@ -12,4 +14,5 @@ public class CourseConstants {
 	public static final String JSON_CALIFICATION = "calification";
 	public static final String JSON_COURSE_EVAL = "courseEval";
 	public static final String JSON_COURSE_EVAL_PASS_PUNTUATION = "passPuntuation";
+	
 }

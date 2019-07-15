@@ -16,6 +16,7 @@ package com.ted.lms.model.impl;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalServiceUtil;
+import com.liferay.document.library.kernel.util.DLUtil;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalServiceUtil;
@@ -30,11 +31,14 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -345,10 +349,10 @@ public class CourseImpl extends CourseBaseImpl {
 		
 		//Si perteneces a la comunidad
 	
-			if(!UserLocalServiceUtil.hasGroupUser(this.getGroupCreatedId(), user.getUserId())){
-				log.debug("CourseImpl::isLocked::hasGroupUser:" + false);
-				return true;
-			}
+		if(!UserLocalServiceUtil.hasGroupUser(this.getGroupCreatedId(), user.getUserId())){
+			log.debug("CourseImpl::isLocked::hasGroupUser:" + false);
+			return true;
+		}
 
 		log.debug("CourseImpl::isLocked::hasGroupUser:" + true);
 		
@@ -447,6 +451,23 @@ public class CourseImpl extends CourseBaseImpl {
 	
 	public int getCountEditions() {
 		return CourseLocalServiceUtil.countCourses(getCompanyId(), null, null, null, getCourseId(), 0, null);
+	}
+	
+	@Override
+	public String getSmallImageURL(ThemeDisplay themeDisplay) throws PortalException {
+
+		long smallImageFileEntryId = getSmallImageId();
+
+		if (smallImageFileEntryId == 0) {
+			return null;
+		}
+
+		FileEntry fileEntry = PortletFileRepositoryUtil.getPortletFileEntry(
+				smallImageFileEntryId);
+
+		return DLUtil.getPreviewURL(
+			fileEntry, fileEntry.getFileVersion(), themeDisplay,
+			StringPool.BLANK);
 	}
 
 }

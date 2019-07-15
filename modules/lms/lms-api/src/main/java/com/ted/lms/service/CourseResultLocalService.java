@@ -242,6 +242,15 @@ public interface CourseResultLocalService extends BaseLocalService,
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CourseResult> getMyCourses(long userId, boolean inProgress,
+		boolean completed, boolean expired, long groupId, int start, int end,
+		OrderByComparator obc);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getMyCoursesCount(long userId, boolean inProgress,
+		boolean completed, boolean expired, long groupId);
+
 	/**
 	* Returns the OSGi service identifier.
 	*

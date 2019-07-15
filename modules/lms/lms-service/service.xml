@@ -188,6 +188,9 @@
 		<finder name="CourseId" return-type="Collection">
 			<finder-column name="courseId" />
 		</finder>
+		<finder name="UserId" return-type="Collection">
+			<finder-column name="userId" />
+		</finder>
 		<finder name="CourseIdUserId" return-type="CourseResult" unique="true">
 			<finder-column name="courseId" />
 			<finder-column name="userId" />

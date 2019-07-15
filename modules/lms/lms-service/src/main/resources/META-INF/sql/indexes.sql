@@ -8,6 +8,7 @@ create unique index IX_93C2C164 on LMS_Course (uuid_[$COLUMN_LENGTH:75$], groupI
 create index IX_664FE819 on LMS_CourseResult (courseId, passed);
 create unique index IX_DE7486F on LMS_CourseResult (courseId, userId);
 create index IX_A1660519 on LMS_CourseResult (passed, courseId);
+create index IX_52038025 on LMS_CourseResult (userId);
 
 create index IX_F2B28E60 on LMS_CourseType (companyId);
 

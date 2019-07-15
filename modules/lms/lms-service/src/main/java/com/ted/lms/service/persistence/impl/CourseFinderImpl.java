@@ -890,7 +890,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				log.debug("description: " + description);
 				log.debug("andOperator: " + andOperator);
 			}
-			
+
 			Iterator<Object> itr = q.iterate();
 
 			if (itr.hasNext()) {

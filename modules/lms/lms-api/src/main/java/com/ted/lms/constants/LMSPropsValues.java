@@ -21,4 +21,6 @@ public class LMSPropsValues {
 	
 	public static final String[] COURSE_TYPE_ICON_EXTENSIONS = PropsUtil.getArray(LMSPropsKeys.COURSE_TYPE_ICON_EXTENSIONS);
 	public static final long COURSE_TYPE_ICON_MAX_SIZE = GetterUtil.getLong(PropsUtil.get(LMSPropsKeys.COURSE_TYPE_ICON_MAX_SIZE), LMSConstants.DEFAULT_IMAGE_MAX_SIZE);
+	
+	
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<root>
+	<template>
+		<template-key>my-courses-basic-ftl</template-key>
+		<name>portlet-display-template-name-basic</name>
+		<description>portlet-display-template-description-basic</description>
+		<language>ftl</language>
+		<script-file>com/ted/lms/web/template/dependencies/my_courses_portlet_display_template_basic.ftl</script-file>
+		<cacheable>false</cacheable>
+	</template>
+	<template>
+		<template-key>my-courses-card-ftl</template-key>
+		<name>portlet-display-template-name-card</name>
+		<description>portlet-display-template-description-card</description>
+		<language>ftl</language>
+		<script-file>com/ted/lms/web/template/dependencies/my_courses_portlet_display_template_card.ftl</script-file>
+		<cacheable>false</cacheable>
+	</template>
+</root>

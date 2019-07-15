@@ -263,6 +263,22 @@ public class CourseResultLocalServiceUtil {
 		return getService().getIndexableActionableDynamicQuery();
 	}
 
+	public static java.util.List<com.ted.lms.model.CourseResult> getMyCourses(
+		long userId, boolean inProgress, boolean completed, boolean expired,
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc) {
+		return getService()
+				   .getMyCourses(userId, inProgress, completed, expired,
+			groupId, start, end, obc);
+	}
+
+	public static int getMyCoursesCount(long userId, boolean inProgress,
+		boolean completed, boolean expired, long groupId) {
+		return getService()
+				   .getMyCoursesCount(userId, inProgress, completed, expired,
+			groupId);
+	}
+
 	/**
 	* Returns the OSGi service identifier.
 	*

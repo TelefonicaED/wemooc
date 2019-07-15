@@ -17,6 +17,7 @@ package com.ted.lms.service.impl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.ted.lms.exception.NoSuchCourseResultException;
 import com.ted.lms.model.Course;
@@ -160,5 +161,14 @@ public class CourseResultLocalServiceImpl
 	public boolean hasUserTries(long courseId, long userId) {
 		return courseResultFinder.hasUserTries(courseId, userId);
 	}
+	
+	public List<CourseResult> getMyCourses(long userId, boolean inProgress, boolean completed, boolean expired, long groupId, int start, int end, 
+			OrderByComparator obc){
+		return courseResultFinder.filterByU_G(userId, inProgress, completed, expired, groupId, start, end, obc, true);
+	}
 
+	public int getMyCoursesCount(long userId, boolean inProgress, boolean completed, boolean expired, long groupId) {
+		return courseResultFinder.doCountByU_G(userId, inProgress, completed, expired, groupId, true);
+		
+	}
 }

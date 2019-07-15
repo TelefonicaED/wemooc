@@ -16,7 +16,8 @@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
 <%@ taglib uri="http://liferay.com/tld/asset" prefix="liferay-asset" %>
 <%@taglib uri="http://liferay.com/tld/security" prefix="liferay-security" %>
 <%@taglib uri="http://liferay.com/tld/editor" prefix="liferay-editor" %><%@
-taglib uri="http://liferay.com/tld/staging" prefix="liferay-staging" %>
+taglib uri="http://liferay.com/tld/staging" prefix="liferay-staging" %><%@
+taglib uri="http://liferay.com/tld/ddm" prefix="liferay-ddm" %>
 
 <liferay-frontend:defineObjects />
 
@@ -25,4 +26,3 @@ taglib uri="http://liferay.com/tld/staging" prefix="liferay-staging" %>
 <liferay-trash:defineObjects />
 
 <portlet:defineObjects /> 
-

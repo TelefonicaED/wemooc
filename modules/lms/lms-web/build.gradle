@@ -17,6 +17,8 @@ dependencies {
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
 	compileOnly group: "com.liferay.portal", name: "com.liferay.util.taglib"
+	compileOnly group: "com.liferay", name: "com.liferay.portlet.display.template.api"
+	compileOnly group: "com.liferay", name: "com.liferay.dynamic.data.mapping.taglib"
 	compileOnly group: "com.liferay", name: "com.liferay.staging.api"
 	compileOnly group: "commons-fileupload", name: "commons-fileupload", version: '1.2'
 	compileOnly group: "javax.portlet", name: "portlet-api"
@@ -30,4 +32,6 @@ dependencies {
 	compileOnly project(":modules:lms:lms-item-selector-api")
 	compileOnly project(":modules:lms:lms-navigation-control-panel")
 	compile group: 'com.opencsv', name: 'opencsv', version: '4.6'
+	
+	compileOnly group: "javax.servlet.jsp", name: "javax.servlet.jsp-api", version: "2.3.1"
 }

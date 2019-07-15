@@ -241,6 +241,11 @@ public class CourseResultWrapper implements CourseResult,
 		return _courseResult.getCompanyId();
 	}
 
+	@Override
+	public Course getCourse() {
+		return _courseResult.getCourse();
+	}
+
 	/**
 	* Returns the course ID of this course result.
 	*
@@ -339,6 +344,11 @@ public class CourseResultWrapper implements CourseResult,
 	@Override
 	public Serializable getPrimaryKeyObj() {
 		return _courseResult.getPrimaryKeyObj();
+	}
+
+	@Override
+	public double getProgress() {
+		return _courseResult.getProgress();
 	}
 
 	/**

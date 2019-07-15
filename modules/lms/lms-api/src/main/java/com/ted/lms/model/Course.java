@@ -127,4 +127,8 @@ public interface Course extends CourseModel, PersistedModel {
 	public long getCourseTypeId();
 
 	public int getCountEditions();
+
+	public String getSmallImageURL(
+		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+		throws com.liferay.portal.kernel.exception.PortalException;
 }

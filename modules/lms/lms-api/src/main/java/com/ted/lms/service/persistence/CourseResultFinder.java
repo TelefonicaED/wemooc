@@ -22,6 +22,15 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface CourseResultFinder {
+	public java.util.List<com.ted.lms.model.CourseResult> filterByU_G(
+		long userId, boolean inProgress, boolean completed, boolean expired,
+		long groupId, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator obc,
+		boolean inlineSQLHelper);
+
+	public int doCountByU_G(long userId, boolean inProgress, boolean completed,
+		boolean expired, long groupId, boolean inlineSQLHelper);
+
 	public boolean hasUserTries(long courseId, long userId);
 
 	public java.util.List<com.ted.lms.model.CourseResult> getCourseResultNotFinished(

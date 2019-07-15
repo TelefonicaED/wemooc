@@ -53,4 +53,8 @@ public interface CourseResult extends CourseResultModel, PersistedModel {
 				return CourseResult.class;
 			}
 		};
+
+	public Course getCourse();
+
+	public double getProgress();
 }

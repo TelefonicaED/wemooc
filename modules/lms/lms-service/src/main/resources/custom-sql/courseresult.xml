@@ -33,4 +33,56 @@
 				courseId = ? AND passedDate IS NULL
 		]]>
 	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.findBy_U_G">
+		<![CDATA[   
+			SELECT
+				Lms_courseresult.*
+			FROM
+				Lms_courseresult
+			INNER JOIN 
+				Lms_course
+					ON Lms_courseresult.courseId = Lms_course.courseId
+			INNER JOIN 
+				users_groups u 
+					ON Lms_Course.groupCreatedId = u.groupId AND u.userId = Lms_courseresult.userId
+			WHERE
+				Lms_courseresult.userId = ? AND Lms_course.`status` IN (?,?) AND (Lms_course.groupId = ? OR 0 = ?)
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.countBy_U_G">
+		<![CDATA[   
+			SELECT
+				COUNT(1) AS COUNT_VALUE
+			FROM
+				Lms_courseresult
+			INNER JOIN 
+				Lms_course
+					ON Lms_courseresult.courseId = Lms_course.courseId
+			INNER JOIN 
+				users_groups u 
+					ON Lms_Course.groupCreatedId = u.groupId AND u.userId = Lms_courseresult.userId
+			WHERE
+				Lms_courseresult.userId = ? AND Lms_course.`status` IN (?,?) AND (Lms_course.groupId = ? OR 0 = ?)
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.whereMyCoursesPassedDateNull">
+		<![CDATA[
+			Lms_courseresult.passedDate IS NULL
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.whereMyCoursesPassedDateNotNull">
+		<![CDATA[
+			Lms_courseresult.passedDate IS NOT NULL
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.whereMyCoursesEndDateAfter">
+		<![CDATA[
+			Lms_course.executionEndDate >= NOW()
+		]]>
+	</sql>
+	<sql id="com.ted.lms.service.persistence.CourseResultFinder.whereMyCoursesEndDateBefore">
+		<![CDATA[
+			Lms_course.executionEndDate < NOW()
+		]]>
+	</sql>
 </custom-sql>

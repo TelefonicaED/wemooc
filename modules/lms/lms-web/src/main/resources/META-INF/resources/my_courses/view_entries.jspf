@@ -1,0 +1,21 @@
+<%@page import="com.ted.lms.model.CourseResult"%>
+
+<c:if test="${searchContainer.results.isEmpty() }">
+	<liferay-ui:empty-result-message
+		message="my-courses.no-courses-were-found"
+	/>
+</c:if>
+
+<liferay-ddm:template-renderer
+	className="<%= CourseResult.class.getName() %>"
+	contextObjects="${contextObjects }"
+	displayStyle="${myCoursesPortletInstanceConfiguration.displayStyle()}"
+	displayStyleGroupId="${myCoursesPortletInstanceSettingsHelper.getDisplayStyleGroupId()}"
+	entries="${searchContainer.results }" 
+>
+	
+</liferay-ddm:template-renderer>
+
+<liferay-ui:search-paginator
+	searchContainer="${searchContainer }"
+/>
