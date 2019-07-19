@@ -212,7 +212,7 @@ public interface PrerequisiteRelationLocalService extends BaseLocalService,
 		long prerequisiteRelationId) throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public PrerequisiteRelation getPrerequisiteRelation(
+	public List<PrerequisiteRelation> getPrerequisiteRelation(
 		long classNamePrerequisiteId, long classNameId, long classPK);
 
 	/**
@@ -234,6 +234,10 @@ public interface PrerequisiteRelationLocalService extends BaseLocalService,
 	public List<PrerequisiteRelation> getPrerequisiteRelations(
 		long classNameId, long classPK);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<PrerequisiteRelation> getPrerequisiteRelations(
+		long classNameId, long classPK, int start, int end);
+
 	/**
 	* Returns the number of prerequisite relations.
 	*
@@ -243,7 +247,14 @@ public interface PrerequisiteRelationLocalService extends BaseLocalService,
 	public int getPrerequisiteRelationsCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getPrerequisiteRelationsCount(long classNameId, long classPK);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Prerequisite> getPrerequisites(long classNameId, long classPK);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Prerequisite> getPrerequisites(long classNameId, long classPK,
+		int start, int end);
 
 	/**
 	* Updates the prerequisite relation in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.

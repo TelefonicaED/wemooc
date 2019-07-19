@@ -14,9 +14,13 @@
 
 package com.ted.prerequisite.model.impl;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.ted.prerequisite.model.Prerequisite;
+import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
 import aQute.bnd.annotation.ProviderType;
 
@@ -38,8 +42,31 @@ public class PrerequisiteRelationImpl extends PrerequisiteRelationBaseImpl {
 	 */
 	
 	private JSONObject extraData = null;
+	private PrerequisiteFactory prerequisiteFactory = null;
+	private Prerequisite prerequisite = null;
 	
 	public PrerequisiteRelationImpl() {
+	}
+	
+	public PrerequisiteFactory getPrerequisiteFactory() {
+		if(prerequisiteFactory == null) {
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassNameId(getClassNamePrerequisiteId());
+		}
+		
+		return prerequisiteFactory;
+	}
+	
+	public Prerequisite getPrerequisite() {
+		if(prerequisite == null) {
+			 PrerequisiteFactory prerequisiteFactory = getPrerequisiteFactory();
+			 try {
+				prerequisite = prerequisiteFactory.getPrerequisite(this);
+			} catch (PortalException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return prerequisite;
 	}
 	
 	@Override

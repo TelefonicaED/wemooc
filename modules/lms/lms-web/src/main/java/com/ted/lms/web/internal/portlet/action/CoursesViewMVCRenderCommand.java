@@ -27,7 +27,12 @@ import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
 import com.ted.lms.web.internal.display.context.CourseDisplayContext;
 import com.ted.lms.web.internal.display.context.CoursesManagementToolbarDisplayContext;
+import com.ted.postcondition.model.PostconditionFactory;
+import com.ted.postcondition.registry.PostconditionFactoryRegistryUtil;
+import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.portlet.PortletException;
@@ -145,6 +150,35 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
+		
+		//Mandamos los prerequisitos y las postcondiciones si las hay para mostrarlas en el menú de acciones
+		String[] classNamePrerequisites = courseLocalService.getPrerequisiteCourses(themeDisplay.getCompanyId());
+		
+		PrerequisiteFactory prerequisiteFactory = null;
+		
+		List<PrerequisiteFactory> prerequisiteFactories = new ArrayList<PrerequisiteFactory>();
+		
+		for(String classNamePrerequisite: classNamePrerequisites){
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
+			if(prerequisiteFactory != null) {
+				prerequisiteFactories.add(prerequisiteFactory);
+			}
+		}
+		
+		String[] classNamePostconditions = courseLocalService.getPostconditionCourses(themeDisplay.getCompanyId());
+		
+		PostconditionFactory postconditionFactory = null;
+		
+		List<PostconditionFactory> postconditionFactories = new ArrayList<PostconditionFactory>();
+		
+		for(String classNamePostcondition: classNamePostconditions){
+			postconditionFactory = PostconditionFactoryRegistryUtil.getPostconditionFactoryByClassName(classNamePostcondition);
+			if(postconditionFactory != null) {
+				postconditionFactories.add(postconditionFactory);
+			}
+		}
+		
+		renderRequest.setAttribute("showPrerequisitePostcondition", prerequisiteFactories.size() > 0 || postconditionFactories.size() > 0);
 		
 		return "/course_admin/view.jsp";
 	}

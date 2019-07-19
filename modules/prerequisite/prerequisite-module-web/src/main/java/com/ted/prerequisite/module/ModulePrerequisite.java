@@ -8,12 +8,16 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.model.Module;
 import com.ted.lms.model.ModuleResult;
+import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.prerequisite.model.BasePrerequisite;
+import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.module.internal.constants.ModulePrerequisiteConstants;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -21,23 +25,50 @@ import javax.portlet.PortletRequest;
 public class ModulePrerequisite extends BasePrerequisite{
 
 	public ModulePrerequisite(PrerequisiteRelation prerequisiteRelation, ModuleResultLocalService moduleResultLocalService, 
-								PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
+								PrerequisiteRelationLocalService prerequisiteRelationLocalService, ModuleLocalService moduleLocalService) {
 		super(prerequisiteRelation, prerequisiteRelationLocalService);
 		this.moduleResultLocalService = moduleResultLocalService;
+		this.moduleLocalService = moduleLocalService;
 	}
 	
-	public ModulePrerequisite(long classNameId, long classPK, ModuleResultLocalService moduleResultLocalService, 
-				PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
+/*	public ModulePrerequisite(long classNameId, long classPK, ModuleResultLocalService moduleResultLocalService, 
+				PrerequisiteRelationLocalService prerequisiteRelationLocalService, ModuleLocalService moduleLocalService) {
 		super(classNameId, classPK, prerequisiteRelationLocalService);
 		this.moduleResultLocalService = moduleResultLocalService;
-		if(prerequisiteRelation == null) {
-			prerequisiteRelation = prerequisiteRelationLocalService.getPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), classNameId, classPK);
+		this.moduleLocalService = moduleLocalService;
+	}*/
+	
+	@Override
+	public String getTitle(Locale locale) {
+		JSONObject extraData = prerequisiteRelation.getExtraDataJSON();
+		long moduleId = extraData.getLong(ModulePrerequisiteConstants.JSON_MODULE_ID);
+		
+		String title  = "";
+		
+		try {
+			Module module = moduleLocalService.getModule(moduleId);
+			title = module.getTitle(locale);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
+		return title;
 	}
 
 	@Override
 	public String getClassName() {
 		return ModulePrerequisite.class.getName();
+	}
+	
+	@Override
+	public PrerequisiteFactory getPrerequisiteFactory(){
+		if (prerequisiteFactory != null) {
+			return prerequisiteFactory;
+		}
+		
+		prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(ModulePrerequisiteFactory.class.getName());
+
+		return prerequisiteFactory;
 	}
 
 	@Override
@@ -91,5 +122,6 @@ public class ModulePrerequisite extends BasePrerequisite{
 	}
 	
 	private ModuleResultLocalService moduleResultLocalService;
+	private ModuleLocalService moduleLocalService;
 
 }

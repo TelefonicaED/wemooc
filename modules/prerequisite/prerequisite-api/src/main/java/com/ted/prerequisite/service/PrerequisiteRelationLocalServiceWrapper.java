@@ -236,7 +236,7 @@ public class PrerequisiteRelationLocalServiceWrapper
 	}
 
 	@Override
-	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+	public java.util.List<com.ted.prerequisite.model.PrerequisiteRelation> getPrerequisiteRelation(
 		long classNamePrerequisiteId, long classNameId, long classPK) {
 		return _prerequisiteRelationLocalService.getPrerequisiteRelation(classNamePrerequisiteId,
 			classNameId, classPK);
@@ -267,6 +267,13 @@ public class PrerequisiteRelationLocalServiceWrapper
 			classPK);
 	}
 
+	@Override
+	public java.util.List<com.ted.prerequisite.model.PrerequisiteRelation> getPrerequisiteRelations(
+		long classNameId, long classPK, int start, int end) {
+		return _prerequisiteRelationLocalService.getPrerequisiteRelations(classNameId,
+			classPK, start, end);
+	}
+
 	/**
 	* Returns the number of prerequisite relations.
 	*
@@ -278,10 +285,23 @@ public class PrerequisiteRelationLocalServiceWrapper
 	}
 
 	@Override
+	public int getPrerequisiteRelationsCount(long classNameId, long classPK) {
+		return _prerequisiteRelationLocalService.getPrerequisiteRelationsCount(classNameId,
+			classPK);
+	}
+
+	@Override
 	public java.util.List<com.ted.prerequisite.model.Prerequisite> getPrerequisites(
 		long classNameId, long classPK) {
 		return _prerequisiteRelationLocalService.getPrerequisites(classNameId,
 			classPK);
+	}
+
+	@Override
+	public java.util.List<com.ted.prerequisite.model.Prerequisite> getPrerequisites(
+		long classNameId, long classPK, int start, int end) {
+		return _prerequisiteRelationLocalService.getPrerequisites(classNameId,
+			classPK, start, end);
 	}
 
 	/**

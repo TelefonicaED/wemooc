@@ -135,6 +135,7 @@
 					<liferay-util:include page="${prerequisiteFactory.getURLSpecificContent()}" portletId="${prerequisiteFactory.getPortletId()}" >
 						<liferay-util:param name="classNameId" value="<%=String.valueOf(PortalUtil.getClassNameId(Module.class)) %>" />
 						<liferay-util:param name="classPK" value="${moduleId }" />
+						<liferay-util:param name="prerequisiteRelationId" value="${module.getPrerequisiteRelation(prerequisiteFactory.getClassNameId()).prerequisiteRelationId }" />
 						<liferay-util:param name="groupId" value="${themeDisplay.scopeGroupId }" />
 					</liferay-util:include>
 				</c:forEach>

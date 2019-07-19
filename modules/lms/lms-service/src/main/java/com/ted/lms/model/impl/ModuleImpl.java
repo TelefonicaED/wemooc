@@ -55,6 +55,7 @@ import com.ted.lms.model.Module;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
 import com.ted.lms.service.util.DateUtil;
 import com.ted.prerequisite.model.Prerequisite;
+import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
 import java.util.ArrayList;
@@ -340,6 +341,16 @@ public class ModuleImpl extends ModuleBaseImpl {
 		}
 
 		return assetEntry;
+	}
+	
+	public PrerequisiteRelation getPrerequisiteRelation(long classNameFactoryId) {
+		List<PrerequisiteRelation> prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(classNameFactoryId, PortalUtil.getClassNameId(Module.class), getModuleId());
+		PrerequisiteRelation prerequisiteRelation = null;
+		if(prerequisiteRelations != null && prerequisiteRelations.size() > 0) {
+			prerequisiteRelation = prerequisiteRelations.get(0);
+		}
+		
+		return prerequisiteRelation;
 	}
 	
 	@Override

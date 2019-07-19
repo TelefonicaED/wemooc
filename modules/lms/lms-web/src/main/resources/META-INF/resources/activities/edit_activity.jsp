@@ -317,6 +317,7 @@
 						<liferay-util:include page="${prerequisiteFactory.getURLSpecificContent()}" portletId="${prerequisiteFactory.getPortletId()}" >
 							<liferay-util:param name="classNameId" value="<%=String.valueOf(PortalUtil.getClassNameId(LearningActivity.class)) %>" />
 							<liferay-util:param name="classPK" value="${activity.actId }" />
+							<liferay-util:param name="prerequisiteRelationId" value="${activity.getPrerequisiteRelation(prerequisiteFactory.getClassNameId()).prerequisiteRelationId }" />
 							<liferay-util:param name="groupId" value="${themeDisplay.scopeGroupId }" />
 						</liferay-util:include>
 					</div>

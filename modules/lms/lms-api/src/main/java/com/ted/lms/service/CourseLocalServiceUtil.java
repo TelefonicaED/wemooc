@@ -453,6 +453,10 @@ public class CourseLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static String[] getPostconditionCourses(long companyId) {
+		return getService().getPostconditionCourses(companyId);
+	}
+
 	public static String[] getPrerequisiteActivities(long companyId) {
 		return getService().getPrerequisiteActivities(companyId);
 	}

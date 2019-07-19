@@ -57,7 +57,10 @@ import com.ted.lms.service.ModuleService;
 import com.ted.lms.web.internal.util.ModuleImageSelectorHelper;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
+import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -374,11 +377,15 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		PrerequisiteFactory prerequisiteFactory = null;
 		Prerequisite prerequisite = null;
 		long moduleClassNameId = PortalUtil.getClassNameId(Module.class);
+		List<PrerequisiteRelation> prerequisiteRelations = null;
 		
 		for(String classNamePrerequisite: classNamePrerequisites){
 			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
-			prerequisite = prerequisiteFactory.getPrerequisite(moduleClassNameId, module.getModuleId());
-			prerequisite.setExtraContent(actionRequest);
+			prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(prerequisiteFactory.getClassNameId(), moduleClassNameId, module.getModuleId());
+			if(prerequisiteRelations != null && prerequisiteRelations.size() > 0) {
+				prerequisite = prerequisiteFactory.getPrerequisite(prerequisiteRelations.get(0));
+				prerequisite.setExtraContent(actionRequest);
+			}
 		}
 		
 		if (moduleSmallImageSelectorHelper.isFileEntryTempFile()) {

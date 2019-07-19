@@ -77,11 +77,39 @@ public class PrerequisiteRelationLocalServiceImpl
 		return listPrerequisites;
 	}
 	
+	public List<Prerequisite> getPrerequisites(long classNameId, long classPK, int start, int end){
+		List<Prerequisite> listPrerequisites = new ArrayList<Prerequisite>();
+		
+		List<PrerequisiteRelation> listPrerequisiteRelation = prerequisiteRelationPersistence.findByClassNameIdClassPK(classNameId, classPK, start, end);
+		
+		PrerequisiteFactory prerequisiteFactory = null;
+		for(PrerequisiteRelation prerequisiteRelation: listPrerequisiteRelation) {
+			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassNameId(prerequisiteRelation.getClassNamePrerequisiteId());
+			if(prerequisiteFactory != null) {
+				try {
+					listPrerequisites.add(prerequisiteFactory.getPrerequisite(prerequisiteRelation));
+				} catch (PortalException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return listPrerequisites;
+	}
+	
+	public int getPrerequisiteRelationsCount(long classNameId, long classPK) {
+		return prerequisiteRelationPersistence.countByClassNameIdClassPK(classNameId, classPK);
+	}
+	
 	public List<PrerequisiteRelation> getPrerequisiteRelations(long classNameId, long classPK){
 		return prerequisiteRelationPersistence.findByClassNameIdClassPK(classNameId, classPK);
 	}
 	
-	public PrerequisiteRelation getPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK) {
-		return prerequisiteRelationPersistence.fetchByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId, classNameId, classPK);
+	public List<PrerequisiteRelation> getPrerequisiteRelations(long classNameId, long classPK, int start, int end){
+		return prerequisiteRelationPersistence.findByClassNameIdClassPK(classNameId, classPK, start, end);
+	}
+	
+	public List<PrerequisiteRelation> getPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK) {
+		return prerequisiteRelationPersistence.findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId, classNameId, classPK);
 	}
 }

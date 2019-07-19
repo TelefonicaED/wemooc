@@ -1168,6 +1168,17 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return prerequisiteCourses;
 	}
 	
+	public String[] getPostconditionCourses(long companyId) {
+		String[] postconditionCourses = null;
+		try {
+			CourseServiceConfiguration courseServiceConfiguration = configurationProvider.getCompanyConfiguration(CourseServiceConfiguration.class, companyId);
+			postconditionCourses = courseServiceConfiguration.postconditionCourses();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		return postconditionCourses;
+	}
+	
 	public JSONObject importEditions(long userId, long courseId, FileEntry fileEntry) throws PortalException, IOException {
 		User userModified = userLocalService.getUser(userId);
 		JSONObject result = JSONFactoryUtil.createJSONObject();

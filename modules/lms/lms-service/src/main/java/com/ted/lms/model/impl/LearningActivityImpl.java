@@ -58,6 +58,7 @@ import com.ted.lms.security.permission.resource.LearningActivityPermission;
 import com.ted.lms.service.ModuleLocalServiceUtil;
 import com.ted.lms.service.util.LearningActivityAttachmentsUtil;
 import com.ted.prerequisite.model.Prerequisite;
+import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 //import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
@@ -310,6 +311,16 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 		}
 		
 		return false;			
+	}
+	
+	public PrerequisiteRelation getPrerequisiteRelation(long classNameFactoryId) {
+		List<PrerequisiteRelation> prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(classNameFactoryId, PortalUtil.getClassNameId(LearningActivity.class), getActId());
+		PrerequisiteRelation prerequisiteRelation = null;
+		if(prerequisiteRelations != null && prerequisiteRelations.size() > 0) {
+			prerequisiteRelation = prerequisiteRelations.get(0);
+		}
+		
+		return prerequisiteRelation;
 	}
 	
 	@Override

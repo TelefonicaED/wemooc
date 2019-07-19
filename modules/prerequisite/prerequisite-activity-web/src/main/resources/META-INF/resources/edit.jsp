@@ -19,13 +19,16 @@
 long classNameId = ParamUtil.getLong(request, "classNameId", 0);
 long classPK = ParamUtil.getLong(request, "classPK", 0);
 long groupId = ParamUtil.getLong(request, "groupId", 0);
-System.out.println("classPK:" + classPK);%>
+long prerequisiteRelationId = ParamUtil.getLong(request, "prerequisiteRelationId", 0);
+boolean required = ParamUtil.getBoolean(request, "required", false);
+PrerequisiteRelation prerequisiteRelation = null;
+if(prerequisiteRelationId > 0){
+	prerequisiteRelation = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(prerequisiteRelationId);
+}%>
 
 <script>activityExcludedId = <%=classPK%>;</script>
 
-<%PrerequisiteRelation prerequisiteRelation = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(
-												PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), 
-												classNameId, classPK);
+<%
 
 System.out.println("prerequisiteRelation: " + (prerequisiteRelation != null ? prerequisiteRelation.getPrerequisiteRelationId() : ""));
 
@@ -42,7 +45,7 @@ if(activityPrerequisiteId > 0){
 
 <aui:select label="prerequisite-activity.module" name='prerequisiteActivityModuleId' />
 
-<aui:select label="prerequisite-activity.activity" name='prerequisiteActId' />
+<aui:select label="prerequisite-activity.activity" name='prerequisiteActId' required="<%=required %>"/>
 
 
 <aui:script use="lms-activities,liferay-dynamic-select">

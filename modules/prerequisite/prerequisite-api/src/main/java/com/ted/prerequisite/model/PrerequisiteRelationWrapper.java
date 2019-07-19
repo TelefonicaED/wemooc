@@ -179,6 +179,16 @@ public class PrerequisiteRelationWrapper implements PrerequisiteRelation,
 		return _prerequisiteRelation.getExtraDataJSON();
 	}
 
+	@Override
+	public Prerequisite getPrerequisite() {
+		return _prerequisiteRelation.getPrerequisite();
+	}
+
+	@Override
+	public PrerequisiteFactory getPrerequisiteFactory() {
+		return _prerequisiteRelation.getPrerequisiteFactory();
+	}
+
 	/**
 	* Returns the prerequisite relation ID of this prerequisite relation.
 	*

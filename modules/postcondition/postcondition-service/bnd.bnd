@@ -1,0 +1,5 @@
+Bundle-Name: postcondition-service
+Bundle-SymbolicName: com.ted.postcondition.service
+Bundle-Version: 1.0.0
+Liferay-Require-SchemaVersion: 1.0.0
+Liferay-Service: true

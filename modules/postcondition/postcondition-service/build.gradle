@@ -1,0 +1,13 @@
+dependencies {
+	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+	compileOnly project(":modules:postcondition:postcondition-api")
+}
+
+buildService {
+	apiDir = "../postcondition-api/src/main/java"
+}
+
+group = "com.ted.postcondition"

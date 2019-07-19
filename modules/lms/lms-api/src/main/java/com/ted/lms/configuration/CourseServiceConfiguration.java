@@ -77,6 +77,12 @@ public interface CourseServiceConfiguration {
 	public String[] prerequisitesCourses();
 	
 	@Meta.AD(
+		description = "specifcy-postcondition-courses",
+		name = "postcondition-courses", required = false
+	)
+	public String[] postconditionCourses();
+	
+	@Meta.AD(
 		name = "edition-without-restrictions", required = false
 	)
 	public boolean editionWithoutRestrictions();

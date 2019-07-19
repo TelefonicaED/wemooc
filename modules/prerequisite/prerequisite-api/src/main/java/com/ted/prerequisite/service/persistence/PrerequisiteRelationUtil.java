@@ -455,67 +455,197 @@ public class PrerequisiteRelationUtil {
 	}
 
 	/**
-	* Returns the prerequisite relation where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63; or throws a {@link NoSuchPrerequisiteRelationException} if it could not be found.
+	* Returns all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
 	*
 	* @param classNamePrerequisiteId the class name prerequisite ID
 	* @param classNameId the class name ID
 	* @param classPK the class pk
-	* @return the matching prerequisite relation
-	* @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
+	* @return the matching prerequisite relations
 	*/
-	public static PrerequisiteRelation findByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK)
-		throws com.ted.prerequisite.exception.NoSuchPrerequisiteRelationException {
+	public static List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
 		return getPersistence()
 				   .findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
 			classNameId, classPK);
 	}
 
 	/**
-	* Returns the prerequisite relation where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	* Returns a range of all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
 	*
 	* @param classNamePrerequisiteId the class name prerequisite ID
 	* @param classNameId the class name ID
 	* @param classPK the class pk
-	* @return the matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
+	* @param start the lower bound of the range of prerequisite relations
+	* @param end the upper bound of the range of prerequisite relations (not inclusive)
+	* @return the range of matching prerequisite relations
 	*/
-	public static PrerequisiteRelation fetchByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK) {
+	public static List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		int start, int end) {
 		return getPersistence()
-				   .fetchByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-			classNameId, classPK);
+				   .findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
+			classNameId, classPK, start, end);
 	}
 
 	/**
-	* Returns the prerequisite relation where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	* Returns an ordered range of all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
 	*
 	* @param classNamePrerequisiteId the class name prerequisite ID
 	* @param classNameId the class name ID
 	* @param classPK the class pk
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
+	* @param start the lower bound of the range of prerequisite relations
+	* @param end the upper bound of the range of prerequisite relations (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @return the ordered range of matching prerequisite relations
 	*/
-	public static PrerequisiteRelation fetchByClassNamePrerequisiteIdClassNameIdClassPK(
+	public static List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
 		long classNamePrerequisiteId, long classNameId, long classPK,
+		int start, int end,
+		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+		return getPersistence()
+				   .findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
+			classNameId, classPK, start, end, orderByComparator);
+	}
+
+	/**
+	* Returns an ordered range of all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* <p>
+	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	* </p>
+	*
+	* @param classNamePrerequisiteId the class name prerequisite ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param start the lower bound of the range of prerequisite relations
+	* @param end the upper bound of the range of prerequisite relations (not inclusive)
+	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	* @param retrieveFromCache whether to retrieve from the finder cache
+	* @return the ordered range of matching prerequisite relations
+	*/
+	public static List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		int start, int end,
+		OrderByComparator<PrerequisiteRelation> orderByComparator,
 		boolean retrieveFromCache) {
 		return getPersistence()
-				   .fetchByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-			classNameId, classPK, retrieveFromCache);
+				   .findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
+			classNameId, classPK, start, end, orderByComparator,
+			retrieveFromCache);
 	}
 
 	/**
-	* Removes the prerequisite relation where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
+	* Returns the first prerequisite relation in the ordered set where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
 	*
 	* @param classNamePrerequisiteId the class name prerequisite ID
 	* @param classNameId the class name ID
 	* @param classPK the class pk
-	* @return the prerequisite relation that was removed
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching prerequisite relation
+	* @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
 	*/
-	public static PrerequisiteRelation removeByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK)
+	public static PrerequisiteRelation findByClassNamePrerequisiteIdClassNameIdClassPK_First(
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws com.ted.prerequisite.exception.NoSuchPrerequisiteRelationException {
 		return getPersistence()
-				   .removeByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
+				   .findByClassNamePrerequisiteIdClassNameIdClassPK_First(classNamePrerequisiteId,
+			classNameId, classPK, orderByComparator);
+	}
+
+	/**
+	* Returns the first prerequisite relation in the ordered set where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* @param classNamePrerequisiteId the class name prerequisite ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the first matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
+	*/
+	public static PrerequisiteRelation fetchByClassNamePrerequisiteIdClassNameIdClassPK_First(
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+		return getPersistence()
+				   .fetchByClassNamePrerequisiteIdClassNameIdClassPK_First(classNamePrerequisiteId,
+			classNameId, classPK, orderByComparator);
+	}
+
+	/**
+	* Returns the last prerequisite relation in the ordered set where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* @param classNamePrerequisiteId the class name prerequisite ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching prerequisite relation
+	* @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
+	*/
+	public static PrerequisiteRelation findByClassNamePrerequisiteIdClassNameIdClassPK_Last(
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		OrderByComparator<PrerequisiteRelation> orderByComparator)
+		throws com.ted.prerequisite.exception.NoSuchPrerequisiteRelationException {
+		return getPersistence()
+				   .findByClassNamePrerequisiteIdClassNameIdClassPK_Last(classNamePrerequisiteId,
+			classNameId, classPK, orderByComparator);
+	}
+
+	/**
+	* Returns the last prerequisite relation in the ordered set where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* @param classNamePrerequisiteId the class name prerequisite ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the last matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
+	*/
+	public static PrerequisiteRelation fetchByClassNamePrerequisiteIdClassNameIdClassPK_Last(
+		long classNamePrerequisiteId, long classNameId, long classPK,
+		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+		return getPersistence()
+				   .fetchByClassNamePrerequisiteIdClassNameIdClassPK_Last(classNamePrerequisiteId,
+			classNameId, classPK, orderByComparator);
+	}
+
+	/**
+	* Returns the prerequisite relations before and after the current prerequisite relation in the ordered set where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
+	*
+	* @param prerequisiteRelationId the primary key of the current prerequisite relation
+	* @param classNamePrerequisiteId the class name prerequisite ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	* @return the previous, current, and next prerequisite relation
+	* @throws NoSuchPrerequisiteRelationException if a prerequisite relation with the primary key could not be found
+	*/
+	public static PrerequisiteRelation[] findByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
+		long prerequisiteRelationId, long classNamePrerequisiteId,
+		long classNameId, long classPK,
+		OrderByComparator<PrerequisiteRelation> orderByComparator)
+		throws com.ted.prerequisite.exception.NoSuchPrerequisiteRelationException {
+		return getPersistence()
+				   .findByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(prerequisiteRelationId,
+			classNamePrerequisiteId, classNameId, classPK, orderByComparator);
+	}
+
+	/**
+	* Removes all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63; from the database.
+	*
+	* @param classNamePrerequisiteId the class name prerequisite ID
+	* @param classNameId the class name ID
+	* @param classPK the class pk
+	*/
+	public static void removeByClassNamePrerequisiteIdClassNameIdClassPK(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+		getPersistence()
+			.removeByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
 			classNameId, classPK);
 	}
 

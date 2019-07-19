@@ -22,7 +22,7 @@
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />
 		</finder>
-		<finder name="ClassNamePrerequisiteIdClassNameIdClassPK" return-type="PrerequisiteRelation" unique="true">
+		<finder name="ClassNamePrerequisiteIdClassNameIdClassPK" return-type="Collection" >
 			<finder-column name="classNamePrerequisiteId" />
 			<finder-column name="classNameId" />
 			<finder-column name="classPK" />

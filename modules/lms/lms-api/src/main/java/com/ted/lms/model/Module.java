@@ -104,6 +104,9 @@ public interface Module extends ModuleModel, PersistedModel {
 
 	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry();
 
+	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+		long classNameFactoryId);
+
 	public com.liferay.portal.kernel.repository.model.Folder addImagesFolder()
 		throws com.liferay.portal.kernel.exception.PortalException;
 }

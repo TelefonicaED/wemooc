@@ -72,6 +72,20 @@ portletURL.setParameter("redirect", ParamUtil.getString(renderRequest, "redirect
 			url="${assignMembersURL }"
 		/>
 	</c:if>
+	<c:if test="<%= CoursePermission.contains(permissionChecker, course, ActionKeys.UPDATE) %>">
+		<c:if test="${showPrerequisitePostcondition}">
+			<portlet:renderURL var="prerequisitePostconditionCourseURL">
+				<portlet:param name="mvcRenderCommandName" value="/courses/prerequisite_postcondition_course" />
+				<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+				<portlet:param name="courseId" value="<%= String.valueOf(course.getCourseId()) %>" />
+			</portlet:renderURL>
+	
+			<liferay-ui:icon
+				message="course-admin.prerequisite-and-postcondition"
+				url="${prerequisitePostconditionCourseURL }"
+			/>
+		</c:if>
+	</c:if>
 	<c:if test="<%=CoursePermission.contains(permissionChecker,  course, ActionKeys.UPDATE) && (course.isApproved() || course.isDraft()) 
 				&& course.getParentCourseId() == CourseConstants.DEFAULT_PARENT_COURSE_ID && 
 				(courseServiceConfiguration.editionWithoutRestrictions() || (!courseServiceConfiguration.editionWithoutRestrictions() && StudentLocalServiceUtil.countStudentsFromCourse(course.getCourseId(), course.getCompanyId()) == 0))%>">

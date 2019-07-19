@@ -483,6 +483,12 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		return _module.getOrder();
 	}
 
+	@Override
+	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+		long classNameFactoryId) {
+		return _module.getPrerequisiteRelation(classNameFactoryId);
+	}
+
 	/**
 	* Returns the primary key of this module.
 	*

@@ -1,0 +1,4 @@
+Bundle-Name: prerequisite-language
+Bundle-SymbolicName: com.ted.prerequisite.language
+Bundle-Version: 1.0.0
+-sources: true

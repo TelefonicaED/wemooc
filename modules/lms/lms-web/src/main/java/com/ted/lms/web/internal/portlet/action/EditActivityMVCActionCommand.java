@@ -49,7 +49,9 @@ import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
+import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
+import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -389,11 +391,15 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		PrerequisiteFactory prerequisiteFactory = null;
 		Prerequisite prerequisite = null;
 		long activityClassNameId = PortalUtil.getClassNameId(LearningActivity.class);
+		List<PrerequisiteRelation> prerequisiteRelations = null;
 		
 		for(String classNamePrerequisite: classNamePrerequisites){
 			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
-			prerequisite = prerequisiteFactory.getPrerequisite(activityClassNameId, activity.getActId());
-			prerequisite.setExtraContent(actionRequest);
+			prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(prerequisiteFactory.getClassNameId(), activityClassNameId, activity.getActId());
+			if(prerequisiteRelations != null && prerequisiteRelations.size() > 0) {
+				prerequisite = prerequisiteFactory.getPrerequisite(prerequisiteRelations.get(0));
+				prerequisite.setExtraContent(actionRequest);
+			}
 		}
 
 		return activity;

@@ -98,6 +98,9 @@ public interface LearningActivity extends LearningActivityModel, PersistedModel 
 		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
+	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+		long classNameFactoryId);
+
 	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getAttachmentsFileEntries()
 		throws com.liferay.portal.kernel.exception.PortalException;
 

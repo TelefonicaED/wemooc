@@ -56,5 +56,9 @@ public interface PrerequisiteRelation extends PrerequisiteRelationModel,
 			}
 		};
 
+	public PrerequisiteFactory getPrerequisiteFactory();
+
+	public Prerequisite getPrerequisite();
+
 	public com.liferay.portal.kernel.json.JSONObject getExtraDataJSON();
 }

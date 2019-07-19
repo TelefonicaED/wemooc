@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+
+<service-builder package-path="com.ted.postcondition">
+	<namespace>post</namespace>
+	<entity local-service="true" name="PostconditionRelation" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="postconditionRelationId" primary="true" type="long" />
+
+		<!-- Other fields -->
+
+		<column name="classNamePostconditionId" type="long" />
+		<column name="classNameId" type="long" />
+		<column name="classPK" type="long"/>
+		<column name="extraData" type="String"/>
+
+		<!-- Finder methods -->
+
+		<finder name="ClassNameIdClassPK" return-type="Collection">
+			<finder-column name="classNameId" />
+			<finder-column name="classPK" />
+		</finder>
+		<finder name="ClassNamePostconditionIdClassNameIdClassPK" return-type="Collection">
+			<finder-column name="classNamePostconditionId" />
+			<finder-column name="classNameId" />
+			<finder-column name="classPK" />
+		</finder>
+	</entity>
+</service-builder>

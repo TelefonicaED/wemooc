@@ -383,6 +383,9 @@ public interface CourseLocalService extends BaseLocalService,
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public String[] getPostconditionCourses(long companyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public String[] getPrerequisiteActivities(long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)

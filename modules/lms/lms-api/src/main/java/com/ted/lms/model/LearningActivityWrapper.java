@@ -681,6 +681,12 @@ public class LearningActivityWrapper implements LearningActivity,
 		return _learningActivity.getPassPuntuation();
 	}
 
+	@Override
+	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
+		long classNameFactoryId) {
+		return _learningActivity.getPrerequisiteRelation(classNameFactoryId);
+	}
+
 	/**
 	* Returns the primary key of this learning activity.
 	*

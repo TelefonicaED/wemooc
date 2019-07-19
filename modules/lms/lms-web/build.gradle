@@ -28,6 +28,7 @@ dependencies {
 	compileOnly group: "org.osgi", name: "osgi.cmpn"
 	compileOnly project(":modules:lms:lms-api")
 	compileOnly project(":modules:prerequisite:prerequisite-api")
+	compileOnly project(":modules:postcondition:postcondition-api")
 	compileOnly project(":modules:audit:audit-api")
 	compileOnly project(":modules:lms:lms-item-selector-api")
 	compileOnly project(":modules:lms:lms-navigation-control-panel")

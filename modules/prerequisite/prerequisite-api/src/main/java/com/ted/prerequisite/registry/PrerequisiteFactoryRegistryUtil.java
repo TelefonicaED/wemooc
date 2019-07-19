@@ -51,6 +51,8 @@ public class PrerequisiteFactoryRegistryUtil {
 	public static PrerequisiteFactory getPrerequisiteFactoryByClassName(
 		String className) {
 
+		_prerequisiteFactoriesMapByClassName.forEach((key,value) -> System.out.println("key: " + key + " - value: " + value));
+		
 		return _prerequisiteFactoriesMapByClassName.get(className);
 	}
 

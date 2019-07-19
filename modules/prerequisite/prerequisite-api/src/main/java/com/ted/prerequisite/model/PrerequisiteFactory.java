@@ -20,7 +20,7 @@ public interface PrerequisiteFactory {
 
 	public Prerequisite getPrerequisite(PrerequisiteRelation prerequisiteRelation) throws PortalException;
 	
-	public Prerequisite getPrerequisite(long classNameId, long classPK) throws PortalException;
+	//public Prerequisite getPrerequisite(long classNameId, long classPK) throws PortalException;
 
 	public String getClassName();
 

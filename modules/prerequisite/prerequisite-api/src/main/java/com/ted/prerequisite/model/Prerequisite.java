@@ -4,6 +4,8 @@ import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.xml.Element;
 
+import java.util.Locale;
+
 import javax.portlet.PortletRequest;
 import aQute.bnd.annotation.ProviderType;
 
@@ -15,9 +17,13 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface Prerequisite {
 	
+	public String getTitle(Locale locale);
+	
 	public String getClassName();
 	
 	public boolean isPassed(long userId);
+	
+	public PrerequisiteRelation getPrerequisiteRelation();
 	
 	public void setExtraContent(PortletRequest request) throws PortalException;
 	

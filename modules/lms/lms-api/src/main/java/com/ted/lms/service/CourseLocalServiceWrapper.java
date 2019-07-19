@@ -473,6 +473,11 @@ public class CourseLocalServiceWrapper implements CourseLocalService,
 	}
 
 	@Override
+	public String[] getPostconditionCourses(long companyId) {
+		return _courseLocalService.getPostconditionCourses(companyId);
+	}
+
+	@Override
 	public String[] getPrerequisiteActivities(long companyId) {
 		return _courseLocalService.getPrerequisiteActivities(companyId);
 	}

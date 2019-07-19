@@ -1,0 +1,11 @@
+Bundle-Name: postcondition-api
+Bundle-SymbolicName: com.ted.postcondition.api
+Bundle-Version: 1.0.0
+Export-Package: \
+	com.ted.postcondition.exception,\
+	com.ted.postcondition.model,\
+	com.ted.postcondition.service,\
+	com.ted.postcondition.service.persistence,\
+	com.ted.postcondition.registry
+-check: EXPORTS
+-includeresource: META-INF/service.xml=../postcondition-service/service.xml

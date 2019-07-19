@@ -8,12 +8,16 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
+import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.prerequisite.activity.internal.constants.ActivityPrerequisiteConstants;
 import com.ted.prerequisite.model.BasePrerequisite;
+import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.model.PrerequisiteRelation;
+import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
 
+import java.util.Locale;
 import java.util.Map;
 
 import javax.portlet.PortletRequest;
@@ -21,18 +25,34 @@ import javax.portlet.PortletRequest;
 public class ActivityPrerequisite extends BasePrerequisite{
 
 	public ActivityPrerequisite(PrerequisiteRelation prerequisiteRelation, LearningActivityResultLocalService learningActivityResultLocalService, 
-								PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
+								PrerequisiteRelationLocalService prerequisiteRelationLocalService, LearningActivityLocalService learningActivityLocalService) {
 		super(prerequisiteRelation, prerequisiteRelationLocalService);
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
+		this.learningActivityLocalService = learningActivityLocalService;
 	}
 	
-	public ActivityPrerequisite(long classNameId, long classPK, LearningActivityResultLocalService learningActivityResultLocalService, 
-				PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
+/*	public ActivityPrerequisite(long classNameId, long classPK, LearningActivityResultLocalService learningActivityResultLocalService, 
+				PrerequisiteRelationLocalService prerequisiteRelationLocalService, LearningActivityLocalService learningActivityLocalService) {
 		super(classNameId, classPK, prerequisiteRelationLocalService);
 		this.learningActivityResultLocalService = learningActivityResultLocalService;
-		if(prerequisiteRelation == null) {
-			prerequisiteRelation = prerequisiteRelationLocalService.getPrerequisiteRelation(PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), classNameId, classPK);
+		this.learningActivityLocalService = learningActivityLocalService;
+	}*/
+	
+	@Override
+	public String getTitle(Locale locale) {
+		JSONObject extraData = prerequisiteRelation.getExtraDataJSON();
+		long actId = extraData.getLong(ActivityPrerequisiteConstants.JSON_ACT_ID);
+		
+		String title  = "";
+		
+		try {
+			LearningActivity activity = learningActivityLocalService.getLearningActivity(actId);
+			title = activity.getTitle(locale);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
+		return title;
 	}
 
 	@Override
@@ -76,6 +96,17 @@ public class ActivityPrerequisite extends BasePrerequisite{
 	}
 	
 	@Override
+	public PrerequisiteFactory getPrerequisiteFactory(){
+		if (prerequisiteFactory != null) {
+			return prerequisiteFactory;
+		}
+		
+		prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(ActivityPrerequisiteFactory.class.getName());
+
+		return prerequisiteFactory;
+	}
+	
+	@Override
 	public void updatePrerequisiteCopied(long classNameId, Object ... params) {
 		if(classNameId == PortalUtil.getClassNameId(LearningActivity.class) && params != null && params.length > 0 && params[0] instanceof Map<?,?>) {
 			Map<Long,Long> activitiesRelation = (Map<Long,Long>)params[0];
@@ -90,5 +121,5 @@ public class ActivityPrerequisite extends BasePrerequisite{
 	}
 	
 	private LearningActivityResultLocalService learningActivityResultLocalService;
-
+	private LearningActivityLocalService learningActivityLocalService;
 }
