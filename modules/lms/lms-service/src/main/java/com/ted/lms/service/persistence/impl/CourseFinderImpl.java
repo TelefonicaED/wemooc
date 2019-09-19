@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
@@ -972,8 +973,8 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	    return listCourse;
 	}
 	
-	public List<User> findStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
-			long[] teamIds,LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc){
+	private List<User> findUsers(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
+			long[] teamIds,LinkedHashMap<String,Object> params, long roleId, boolean andOperator, int start, int end, OrderByComparator obc){
 		Session session = null;
 		
 		try{
@@ -1012,7 +1013,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 			
 			QueryPos qPos = QueryPos.getInstance(q);
 
-			qPos.add(RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId());
+			qPos.add(roleId);
 			setParametersStudents(params, qPos);
 			qPos.add(courseId);
 
@@ -1041,6 +1042,18 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 	    }
 	
 	    return new ArrayList<User>();
+	}
+	
+	public List<User> findStudents(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
+			long[] teamIds,LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc) throws PortalException{
+		long roleId = RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.STUDENT).getRoleId();
+		return findUsers(courseId, companyId, screenName, firstName, lastName, emailAddress, status, teamIds, params, roleId, andOperator, start, end, obc);
+	}
+	
+	public List<User> findTeachers(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
+			long[] teamIds,LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc) throws PortalException{
+		long roleId = RoleLocalServiceUtil.getRole(companyId, LMSRoleConstants.TEACHER_ROLE).getRoleId();
+		return findUsers(courseId, companyId, screenName, firstName, lastName, emailAddress, status, teamIds, params, roleId, andOperator, start, end, obc);
 	}
 	
 	private void setParametersStudents(LinkedHashMap<String, Object> params, QueryPos qPos) {

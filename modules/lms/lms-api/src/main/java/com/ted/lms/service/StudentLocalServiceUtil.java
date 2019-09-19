@@ -129,22 +129,24 @@ public class StudentLocalServiceUtil {
 	}
 
 	public static java.util.List<com.liferay.portal.kernel.model.User>
-		getStudentsFromCourse(
-			long courseId, long companyId, String keywords, int status,
-			java.util.LinkedHashMap<String, Object> params, int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator obc) {
+			getStudentsFromCourse(
+				long courseId, long companyId, String keywords, int status,
+				java.util.LinkedHashMap<String, Object> params, int start,
+				int end, com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getStudentsFromCourse(
 			courseId, companyId, keywords, status, params, start, end, obc);
 	}
 
 	public static java.util.List<com.liferay.portal.kernel.model.User>
-		getStudentsFromCourse(
-			long courseId, long companyId, String screenName, String firstName,
-			String lastName, String emailAddress, int status,
-			java.util.LinkedHashMap<String, Object> params, boolean andOperator,
-			int start, int end,
-			com.liferay.portal.kernel.util.OrderByComparator obc) {
+			getStudentsFromCourse(
+				long courseId, long companyId, String screenName,
+				String firstName, String lastName, String emailAddress,
+				int status, java.util.LinkedHashMap<String, Object> params,
+				boolean andOperator, int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().getStudentsFromCourse(
 			courseId, companyId, screenName, firstName, lastName, emailAddress,

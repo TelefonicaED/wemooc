@@ -32,5 +32,7 @@ public class LMSPortletKeys {
 			"com_ted_lms_web_portlet_StudentResultsPortlet";
 	public static final String MODULE_TIMER = 
 			"com_ted_lms_web_portlet_ModuleTimerPortlet";
+	public static final String TEACHERS = 
+			"com_ted_lms_web_portlet_TeachersPortlet";
 	
 }

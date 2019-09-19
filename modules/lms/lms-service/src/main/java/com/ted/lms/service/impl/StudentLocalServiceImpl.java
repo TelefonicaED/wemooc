@@ -240,13 +240,13 @@ private static final Log log = LogFactoryUtil.getLog(StudentLocalServiceImpl.cla
 	}
 	
 	public List<User> getStudentsFromCourse(long courseId, long companyId, String screenName, String firstName, String lastName, String emailAddress, int status, 
-			LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc){
+			LinkedHashMap<String,Object> params, boolean andOperator, int start, int end, OrderByComparator obc) throws PortalException{
 		return courseFinder.findStudents(courseId, companyId, screenName, firstName, lastName, emailAddress, status, null, params, andOperator, start, end, obc);
 			
 	}
 	
 	public List<User> getStudentsFromCourse(long courseId, long companyId, String keywords, int status, 
-			LinkedHashMap<String,Object> params, int start, int end, OrderByComparator obc){
+			LinkedHashMap<String,Object> params, int start, int end, OrderByComparator obc) throws PortalException{
 		return courseFinder.findStudents(courseId, companyId, keywords, keywords, keywords, keywords, status, null, params, false, start, end, obc);
 	}
 	

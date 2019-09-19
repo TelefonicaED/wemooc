@@ -238,8 +238,15 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 			obc = new UserFirstNameComparator(true);
 		}
 		
-		List<User> users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, 
-				params, searchContainer.getStart(), searchContainer.getEnd(), obc);
+		List<User> users = null;
+		try {
+			users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, 
+					params, searchContainer.getStart(), searchContainer.getEnd(), obc);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			users = new ArrayList<User>();
+		}
 		
 		int total = studentLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), keywords, WorkflowConstants.STATUS_APPROVED, params);
 		

@@ -97,11 +97,20 @@ public interface CourseFinder {
 		long parentCourseId, long userId);
 
 	public java.util.List<com.liferay.portal.kernel.model.User> findStudents(
-		long courseId, long companyId, String screenName, String firstName,
-		String lastName, String emailAddress, int status, long[] teamIds,
-		java.util.LinkedHashMap<String, Object> params, boolean andOperator,
-		int start, int end,
-		com.liferay.portal.kernel.util.OrderByComparator obc);
+			long courseId, long companyId, String screenName, String firstName,
+			String lastName, String emailAddress, int status, long[] teamIds,
+			java.util.LinkedHashMap<String, Object> params, boolean andOperator,
+			int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public java.util.List<com.liferay.portal.kernel.model.User> findTeachers(
+			long courseId, long companyId, String screenName, String firstName,
+			String lastName, String emailAddress, int status, long[] teamIds,
+			java.util.LinkedHashMap<String, Object> params, boolean andOperator,
+			int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator obc)
+		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public int countStudents(
 		long courseId, long companyId, String screenName, String firstName,

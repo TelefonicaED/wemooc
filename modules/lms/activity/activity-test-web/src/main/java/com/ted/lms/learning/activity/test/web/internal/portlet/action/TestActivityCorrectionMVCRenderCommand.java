@@ -33,6 +33,7 @@ import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.StudentLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -100,8 +101,15 @@ public class TestActivityCorrectionMVCRenderCommand implements MVCRenderCommand 
 				ParamUtil.getInteger(renderRequest, SearchContainer.DEFAULT_DELTA_PARAM,SearchContainer.DEFAULT_DELTA), portletURL, 
 				null,  "no-results");
 
-		List<User> users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
-				WorkflowConstants.STATUS_APPROVED, null, andOperator, userSearchContainer.getStart(), userSearchContainer.getEnd(), obc);
+		List<User> users = null;
+		try {
+			users = studentLocalService.getStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
+					WorkflowConstants.STATUS_APPROVED, null, andOperator, userSearchContainer.getStart(), userSearchContainer.getEnd(), obc);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			users = new ArrayList<User>();
+		}
 
 		int totalUsers = studentLocalService.countStudentsFromCourse(course.getCourseId(), themeDisplay.getCompanyId(), screenName, firstName, lastName, emailAddress, 
 				WorkflowConstants.STATUS_APPROVED, null, andOperator);

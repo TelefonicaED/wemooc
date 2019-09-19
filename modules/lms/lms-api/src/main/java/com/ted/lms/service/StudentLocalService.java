@@ -112,16 +112,18 @@ public interface StudentLocalService extends BaseLocalService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getStudentsFromCourse(
-		long courseId, long companyId, String keywords, int status,
-		LinkedHashMap<String, Object> params, int start, int end,
-		OrderByComparator obc);
+			long courseId, long companyId, String keywords, int status,
+			LinkedHashMap<String, Object> params, int start, int end,
+			OrderByComparator obc)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<User> getStudentsFromCourse(
-		long courseId, long companyId, String screenName, String firstName,
-		String lastName, String emailAddress, int status,
-		LinkedHashMap<String, Object> params, boolean andOperator, int start,
-		int end, OrderByComparator obc);
+			long courseId, long companyId, String screenName, String firstName,
+			String lastName, String emailAddress, int status,
+			LinkedHashMap<String, Object> params, boolean andOperator,
+			int start, int end, OrderByComparator obc)
+		throws PortalException;
 
 	/**
 	 * Este método se usa para desinscribir a un usuario de un curso teniendo en cuenta el método de inscripción

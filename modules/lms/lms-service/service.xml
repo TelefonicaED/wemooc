@@ -215,6 +215,11 @@
 		<reference entity="User" package-path="com.liferay.portal" />
 	</entity>
 	
+	<entity local-service="true" name="Teacher" remote-service="false" data-source="false">
+		<reference entity="Group" package-path="com.liferay.portal" />
+		<reference entity="User" package-path="com.liferay.portal" />
+	</entity>
+	
 	<entity local-service="true" name="Module" remote-service="true" trash-enabled="true" uuid="true">
 
 		<!-- PK fields -->
