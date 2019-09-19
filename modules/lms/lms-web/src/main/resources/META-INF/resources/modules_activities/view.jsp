@@ -41,9 +41,11 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 							</c:choose>
 						</span>
 					</div>
-					<div class="col-md-1 lms-content-editable">
-						<%@ include file="/modules/module_action.jsp" %>
-					</div>
+					<c:if test="${showActions }">
+						<div class="col-md-1 lms-content-editable">
+							<%@ include file="/modules/module_action.jsp" %>
+						</div>
+					</c:if>
 				</div>
 				<%List<LearningActivity> activities = learningActivityService.getActivities(module.getModuleId());
 				for(LearningActivity activity: activities){ %>
@@ -51,9 +53,11 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 						<c:choose>
 							<c:when test="<%=accessLock || (!courseIsLocked && !moduleIsLocked && !activity.isLocked(themeDisplay.getUser(), permissionChecker)) %>">
 								<a href="<%=activity.getURLView(themeDisplay) %>"><%=activity.getTitle(themeDisplay.getLocale()) %></a>
-								<div class="lms-content-editable">
-									<%@ include file="/activities/activity_action.jsp" %>
-								</div>
+								<c:if test="${showActions }">
+									<div class="lms-content-editable">
+										<%@ include file="/activities/activity_action.jsp" %>
+									</div>
+								</c:if>
 							</c:when>
 							<c:otherwise>
 								<%=activity.getTitle(themeDisplay.getLocale()) %>

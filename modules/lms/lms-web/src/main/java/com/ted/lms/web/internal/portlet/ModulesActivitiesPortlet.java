@@ -8,11 +8,13 @@ import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.ModuleService;
+import com.ted.lms.web.internal.configuration.ModulesActivitiesPortletInstanceConfiguration;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder.Result;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
@@ -20,6 +22,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -44,6 +47,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Virginia Mart�n Agudo
  */
 @Component(
+	configurationPid = "com.ted.lms.web.internal.configuration.ModulesActivitiesPortletInstanceConfiguration",
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=category.wemooc",
@@ -81,10 +85,21 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 		long moduleId = ParamUtil.getLong(renderRequest, "moduleId");
 		log.debug("moduleId: " + moduleId);
 		
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+		boolean showActions = true;
+
+		try {
+			ModulesActivitiesPortletInstanceConfiguration configuration = portletDisplay.getPortletInstanceConfiguration(ModulesActivitiesPortletInstanceConfiguration.class);
+			showActions = configuration.showActions();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		
 		renderRequest.setAttribute("listModules", listModules);
 		renderRequest.setAttribute("trashHelper", trashHelper);
 		renderRequest.setAttribute("accessLock", accessLock);
 		renderRequest.setAttribute("courseIsLocked", courseIsLocked);
+		renderRequest.setAttribute("showActions", showActions);
 		renderRequest.setAttribute("newModuleURL", getURLNewModule(renderRequest, themeDisplay));
 		renderRequest.setAttribute("activityPortletLayoutFinder", activityPortletLayoutFinder);
 		renderRequest.setAttribute("moduleId", moduleId);
