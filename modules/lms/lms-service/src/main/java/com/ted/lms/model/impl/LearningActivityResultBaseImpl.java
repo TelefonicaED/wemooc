@@ -14,10 +14,10 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the LearningActivityResult service. Represents a row in the &quot;LMS_LearningActivityResult&quot; database table, with each column mapped to a property of this class.
@@ -34,18 +34,22 @@ import com.ted.lms.service.LearningActivityResultLocalServiceUtil;
 @ProviderType
 public abstract class LearningActivityResultBaseImpl
 	extends LearningActivityResultModelImpl implements LearningActivityResult {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a learning activity result model instance should use the {@link LearningActivityResult} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a learning activity result model instance should use the <code>LearningActivityResult</code> interface instead.
 	 */
 	@Override
 	public void persist() {
 		if (this.isNew()) {
-			LearningActivityResultLocalServiceUtil.addLearningActivityResult(this);
+			LearningActivityResultLocalServiceUtil.addLearningActivityResult(
+				this);
 		}
 		else {
-			LearningActivityResultLocalServiceUtil.updateLearningActivityResult(this);
+			LearningActivityResultLocalServiceUtil.updateLearningActivityResult(
+				this);
 		}
 	}
+
 }

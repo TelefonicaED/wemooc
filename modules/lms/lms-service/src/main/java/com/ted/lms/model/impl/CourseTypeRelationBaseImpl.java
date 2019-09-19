@@ -14,10 +14,10 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.model.CourseTypeRelation;
 import com.ted.lms.service.CourseTypeRelationLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the CourseTypeRelation service. Represents a row in the &quot;LMS_CourseTypeRelation&quot; database table, with each column mapped to a property of this class.
@@ -34,10 +34,11 @@ import com.ted.lms.service.CourseTypeRelationLocalServiceUtil;
 @ProviderType
 public abstract class CourseTypeRelationBaseImpl
 	extends CourseTypeRelationModelImpl implements CourseTypeRelation {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a course type relation model instance should use the {@link CourseTypeRelation} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a course type relation model instance should use the <code>CourseTypeRelation</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -48,4 +49,5 @@ public abstract class CourseTypeRelationBaseImpl
 			CourseTypeRelationLocalServiceUtil.updateCourseTypeRelation(this);
 		}
 	}
+
 }

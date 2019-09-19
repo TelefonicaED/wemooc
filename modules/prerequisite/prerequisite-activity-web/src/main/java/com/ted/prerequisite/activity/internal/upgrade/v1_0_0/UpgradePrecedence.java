@@ -3,7 +3,9 @@ package com.ted.prerequisite.activity.internal.upgrade.v1_0_0;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -19,14 +21,19 @@ import java.util.List;
 
 public class UpgradePrecedence extends UpgradeProcess{
 	
-	public UpgradePrecedence(CompanyLocalService companyLocalService, PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
+	public UpgradePrecedence(CompanyLocalService companyLocalService, PrerequisiteRelationLocalService prerequisiteRelationLocalService,
+			ReleaseLocalService releaseLocalService) {
 		this.companyLocalService = companyLocalService;
 		this.prerequisiteRelationLocalService = prerequisiteRelationLocalService;
+		this.releaseLocalService = releaseLocalService;
 	}
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		updatePrecedenceActivities();
+		Release release = releaseLocalService.fetchRelease("liferaylms-portlet");
+		if(release != null && release.getBuildNumber() > 0) {
+			updatePrecedenceActivities();
+		}
 	}
 	
 	protected void updatePrecedenceActivities() throws Exception {
@@ -67,4 +74,5 @@ public class UpgradePrecedence extends UpgradeProcess{
 
 	private final CompanyLocalService companyLocalService;
 	private final PrerequisiteRelationLocalService prerequisiteRelationLocalService;
+	private final ReleaseLocalService releaseLocalService;
 }

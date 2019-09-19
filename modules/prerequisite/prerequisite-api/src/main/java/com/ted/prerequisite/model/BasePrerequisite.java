@@ -4,7 +4,7 @@ import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para las postcondiciones que se ejecutan cuando un usuario ha finalizado un curso
@@ -26,14 +26,6 @@ public abstract class BasePrerequisite implements Prerequisite{
 		this.classNameId = prerequisiteRelation.getClassNameId();
 		this.classPK = prerequisiteRelation.getClassPK();
 	}
-	
-/*	public BasePrerequisite(long classNameId, long classPK, PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
-		System.out.println("prerequisiteRelationLocalService: " + prerequisiteRelationLocalService);
-		this.prerequisiteRelationLocalService = prerequisiteRelationLocalService;
-		this.classNameId = classNameId;
-		this.classPK = classPK;
-		prerequisiteRelation = prerequisiteRelationLocalService.getPrerequisiteRelation(PortalUtil.getClassNameId(getClassName()), classNameId, classPK);
-	}*/
 	
 	@Override
 	public PrerequisiteRelation getPrerequisiteRelation() {

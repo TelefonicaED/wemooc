@@ -14,11 +14,9 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.model.Module;
 
@@ -29,15 +27,17 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing Module in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see Module
  * @generated
  */
 @ProviderType
 public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -90,8 +90,8 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		sb.append(description);
 		sb.append(", smallImageId=");
 		sb.append(smallImageId);
-		sb.append(", order=");
-		sb.append(order);
+		sb.append(", priority=");
+		sb.append(priority);
 		sb.append(", startDate=");
 		sb.append(startDate);
 		sb.append(", endDate=");
@@ -174,7 +174,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 		}
 
 		moduleImpl.setSmallImageId(smallImageId);
-		moduleImpl.setOrder(order);
+		moduleImpl.setPriority(priority);
 
 		if (startDate == Long.MIN_VALUE) {
 			moduleImpl.setStartDate(null);
@@ -242,7 +242,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 
 		smallImageId = objectInput.readLong();
 
-		order = objectInput.readLong();
+		priority = objectInput.readLong();
 		startDate = objectInput.readLong();
 		endDate = objectInput.readLong();
 
@@ -259,8 +259,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -303,7 +302,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 
 		objectOutput.writeLong(smallImageId);
 
-		objectOutput.writeLong(order);
+		objectOutput.writeLong(priority);
 		objectOutput.writeLong(startDate);
 		objectOutput.writeLong(endDate);
 
@@ -344,7 +343,7 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 	public String title;
 	public String description;
 	public long smallImageId;
-	public long order;
+	public long priority;
 	public long startDate;
 	public long endDate;
 	public long allowedTime;
@@ -354,4 +353,5 @@ public class ModuleCacheModel implements CacheModel<Module>, Externalizable {
 	public long statusByUserId;
 	public String statusByUserName;
 	public long statusDate;
+
 }

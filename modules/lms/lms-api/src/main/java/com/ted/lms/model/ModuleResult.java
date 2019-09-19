@@ -14,30 +14,31 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the ModuleResult service. Represents a row in the &quot;LMS_ModuleResult&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see ModuleResultModel
- * @see com.ted.lms.model.impl.ModuleResultImpl
- * @see com.ted.lms.model.impl.ModuleResultModelImpl
  * @generated
  */
 @ImplementationClassName("com.ted.lms.model.impl.ModuleResultImpl")
 @ProviderType
 public interface ModuleResult extends ModuleResultModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.model.impl.ModuleResultImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.model.impl.ModuleResultImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<ModuleResult, Long> MR_ID_ACCESSOR = new Accessor<ModuleResult, Long>() {
+	public static final Accessor<ModuleResult, Long> MR_ID_ACCESSOR =
+		new Accessor<ModuleResult, Long>() {
+
 			@Override
 			public Long get(ModuleResult moduleResult) {
 				return moduleResult.getMrId();
@@ -52,5 +53,11 @@ public interface ModuleResult extends ModuleResultModel, PersistedModel {
 			public Class<ModuleResult> getTypeClass() {
 				return ModuleResult.class;
 			}
+
 		};
+
+	public boolean isFinished();
+
+	public String getModuleStatus(java.util.Locale locale);
+
 }

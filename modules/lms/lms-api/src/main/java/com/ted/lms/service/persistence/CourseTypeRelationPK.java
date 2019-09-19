@@ -14,20 +14,21 @@
 
 package com.ted.lms.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 
 import java.io.Serializable;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
 @ProviderType
-public class CourseTypeRelationPK implements Comparable<CourseTypeRelationPK>,
-	Serializable {
+public class CourseTypeRelationPK
+	implements Comparable<CourseTypeRelationPK>, Serializable {
+
 	public long courseTypeId;
 	public long classNameId;
 	public long classPK;
@@ -35,8 +36,9 @@ public class CourseTypeRelationPK implements Comparable<CourseTypeRelationPK>,
 	public CourseTypeRelationPK() {
 	}
 
-	public CourseTypeRelationPK(long courseTypeId, long classNameId,
-		long classPK) {
+	public CourseTypeRelationPK(
+		long courseTypeId, long classNameId, long classPK) {
+
 		this.courseTypeId = courseTypeId;
 		this.classNameId = classNameId;
 		this.classPK = classPK;
@@ -132,7 +134,8 @@ public class CourseTypeRelationPK implements Comparable<CourseTypeRelationPK>,
 		CourseTypeRelationPK pk = (CourseTypeRelationPK)obj;
 
 		if ((courseTypeId == pk.courseTypeId) &&
-				(classNameId == pk.classNameId) && (classPK == pk.classPK)) {
+			(classNameId == pk.classNameId) && (classPK == pk.classPK)) {
+
 			return true;
 		}
 		else {
@@ -171,4 +174,5 @@ public class CourseTypeRelationPK implements Comparable<CourseTypeRelationPK>,
 
 		return sb.toString();
 	}
+
 }

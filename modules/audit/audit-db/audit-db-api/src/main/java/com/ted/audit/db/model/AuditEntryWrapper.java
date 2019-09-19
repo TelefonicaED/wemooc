@@ -14,19 +14,14 @@
 
 package com.ted.audit.db.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
-
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <p>
@@ -38,19 +33,12 @@ import java.util.Objects;
  * @generated
  */
 @ProviderType
-public class AuditEntryWrapper implements AuditEntry, ModelWrapper<AuditEntry> {
+public class AuditEntryWrapper
+	extends BaseModelWrapper<AuditEntry>
+	implements AuditEntry, ModelWrapper<AuditEntry> {
+
 	public AuditEntryWrapper(AuditEntry auditEntry) {
-		_auditEntry = auditEntry;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return AuditEntry.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return AuditEntry.class.getName();
+		super(auditEntry);
 	}
 
 	@Override
@@ -148,440 +136,309 @@ public class AuditEntryWrapper implements AuditEntry, ModelWrapper<AuditEntry> {
 		}
 	}
 
-	@Override
-	public Object clone() {
-		return new AuditEntryWrapper((AuditEntry)_auditEntry.clone());
-	}
-
-	@Override
-	public int compareTo(AuditEntry auditEntry) {
-		return _auditEntry.compareTo(auditEntry);
-	}
-
 	/**
-	* Returns the action ID of this audit entry.
-	*
-	* @return the action ID of this audit entry
-	*/
+	 * Returns the action ID of this audit entry.
+	 *
+	 * @return the action ID of this audit entry
+	 */
 	@Override
 	public int getActionId() {
-		return _auditEntry.getActionId();
+		return model.getActionId();
 	}
 
 	/**
-	* Returns the association class pk of this audit entry.
-	*
-	* @return the association class pk of this audit entry
-	*/
+	 * Returns the association class pk of this audit entry.
+	 *
+	 * @return the association class pk of this audit entry
+	 */
 	@Override
 	public long getAssociationClassPK() {
-		return _auditEntry.getAssociationClassPK();
+		return model.getAssociationClassPK();
 	}
 
 	/**
-	* Returns the audit ID of this audit entry.
-	*
-	* @return the audit ID of this audit entry
-	*/
+	 * Returns the audit ID of this audit entry.
+	 *
+	 * @return the audit ID of this audit entry
+	 */
 	@Override
 	public long getAuditId() {
-		return _auditEntry.getAuditId();
+		return model.getAuditId();
 	}
 
 	/**
-	* Returns the fully qualified class name of this audit entry.
-	*
-	* @return the fully qualified class name of this audit entry
-	*/
+	 * Returns the fully qualified class name of this audit entry.
+	 *
+	 * @return the fully qualified class name of this audit entry
+	 */
 	@Override
 	public String getClassName() {
-		return _auditEntry.getClassName();
+		return model.getClassName();
 	}
 
 	/**
-	* Returns the class name ID of this audit entry.
-	*
-	* @return the class name ID of this audit entry
-	*/
+	 * Returns the class name ID of this audit entry.
+	 *
+	 * @return the class name ID of this audit entry
+	 */
 	@Override
 	public long getClassNameId() {
-		return _auditEntry.getClassNameId();
+		return model.getClassNameId();
 	}
 
 	/**
-	* Returns the class pk of this audit entry.
-	*
-	* @return the class pk of this audit entry
-	*/
+	 * Returns the class pk of this audit entry.
+	 *
+	 * @return the class pk of this audit entry
+	 */
 	@Override
 	public long getClassPK() {
-		return _auditEntry.getClassPK();
+		return model.getClassPK();
 	}
 
 	/**
-	* Returns the company ID of this audit entry.
-	*
-	* @return the company ID of this audit entry
-	*/
+	 * Returns the company ID of this audit entry.
+	 *
+	 * @return the company ID of this audit entry
+	 */
 	@Override
 	public long getCompanyId() {
-		return _auditEntry.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	/**
-	* Returns the end date of this audit entry.
-	*
-	* @return the end date of this audit entry
-	*/
+	 * Returns the end date of this audit entry.
+	 *
+	 * @return the end date of this audit entry
+	 */
 	@Override
 	public Date getEndDate() {
-		return _auditEntry.getEndDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _auditEntry.getExpandoBridge();
+		return model.getEndDate();
 	}
 
 	/**
-	* Returns the extradata of this audit entry.
-	*
-	* @return the extradata of this audit entry
-	*/
+	 * Returns the extradata of this audit entry.
+	 *
+	 * @return the extradata of this audit entry
+	 */
 	@Override
 	public String getExtradata() {
-		return _auditEntry.getExtradata();
+		return model.getExtradata();
 	}
 
 	/**
-	* Returns the group ID of this audit entry.
-	*
-	* @return the group ID of this audit entry
-	*/
+	 * Returns the group ID of this audit entry.
+	 *
+	 * @return the group ID of this audit entry
+	 */
 	@Override
 	public long getGroupId() {
-		return _auditEntry.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
-	* Returns the primary key of this audit entry.
-	*
-	* @return the primary key of this audit entry
-	*/
+	 * Returns the primary key of this audit entry.
+	 *
+	 * @return the primary key of this audit entry
+	 */
 	@Override
 	public long getPrimaryKey() {
-		return _auditEntry.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _auditEntry.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
-	* Returns the start date of this audit entry.
-	*
-	* @return the start date of this audit entry
-	*/
+	 * Returns the start date of this audit entry.
+	 *
+	 * @return the start date of this audit entry
+	 */
 	@Override
 	public Date getStartDate() {
-		return _auditEntry.getStartDate();
+		return model.getStartDate();
 	}
 
 	/**
-	* Returns the user ID of this audit entry.
-	*
-	* @return the user ID of this audit entry
-	*/
+	 * Returns the user ID of this audit entry.
+	 *
+	 * @return the user ID of this audit entry
+	 */
 	@Override
 	public long getUserId() {
-		return _auditEntry.getUserId();
+		return model.getUserId();
 	}
 
 	/**
-	* Returns the user name of this audit entry.
-	*
-	* @return the user name of this audit entry
-	*/
+	 * Returns the user name of this audit entry.
+	 *
+	 * @return the user name of this audit entry
+	 */
 	@Override
 	public String getUserName() {
-		return _auditEntry.getUserName();
+		return model.getUserName();
 	}
 
 	/**
-	* Returns the user uuid of this audit entry.
-	*
-	* @return the user uuid of this audit entry
-	*/
+	 * Returns the user uuid of this audit entry.
+	 *
+	 * @return the user uuid of this audit entry
+	 */
 	@Override
 	public String getUserUuid() {
-		return _auditEntry.getUserUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _auditEntry.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _auditEntry.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _auditEntry.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _auditEntry.isNew();
+		return model.getUserUuid();
 	}
 
 	@Override
 	public void persist() {
-		_auditEntry.persist();
+		model.persist();
 	}
 
 	/**
-	* Sets the action ID of this audit entry.
-	*
-	* @param actionId the action ID of this audit entry
-	*/
+	 * Sets the action ID of this audit entry.
+	 *
+	 * @param actionId the action ID of this audit entry
+	 */
 	@Override
 	public void setActionId(int actionId) {
-		_auditEntry.setActionId(actionId);
+		model.setActionId(actionId);
 	}
 
 	/**
-	* Sets the association class pk of this audit entry.
-	*
-	* @param associationClassPK the association class pk of this audit entry
-	*/
+	 * Sets the association class pk of this audit entry.
+	 *
+	 * @param associationClassPK the association class pk of this audit entry
+	 */
 	@Override
 	public void setAssociationClassPK(long associationClassPK) {
-		_auditEntry.setAssociationClassPK(associationClassPK);
+		model.setAssociationClassPK(associationClassPK);
 	}
 
 	/**
-	* Sets the audit ID of this audit entry.
-	*
-	* @param auditId the audit ID of this audit entry
-	*/
+	 * Sets the audit ID of this audit entry.
+	 *
+	 * @param auditId the audit ID of this audit entry
+	 */
 	@Override
 	public void setAuditId(long auditId) {
-		_auditEntry.setAuditId(auditId);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_auditEntry.setCachedModel(cachedModel);
+		model.setAuditId(auditId);
 	}
 
 	@Override
 	public void setClassName(String className) {
-		_auditEntry.setClassName(className);
+		model.setClassName(className);
 	}
 
 	/**
-	* Sets the class name ID of this audit entry.
-	*
-	* @param classNameId the class name ID of this audit entry
-	*/
+	 * Sets the class name ID of this audit entry.
+	 *
+	 * @param classNameId the class name ID of this audit entry
+	 */
 	@Override
 	public void setClassNameId(long classNameId) {
-		_auditEntry.setClassNameId(classNameId);
+		model.setClassNameId(classNameId);
 	}
 
 	/**
-	* Sets the class pk of this audit entry.
-	*
-	* @param classPK the class pk of this audit entry
-	*/
+	 * Sets the class pk of this audit entry.
+	 *
+	 * @param classPK the class pk of this audit entry
+	 */
 	@Override
 	public void setClassPK(long classPK) {
-		_auditEntry.setClassPK(classPK);
+		model.setClassPK(classPK);
 	}
 
 	/**
-	* Sets the company ID of this audit entry.
-	*
-	* @param companyId the company ID of this audit entry
-	*/
+	 * Sets the company ID of this audit entry.
+	 *
+	 * @param companyId the company ID of this audit entry
+	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_auditEntry.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
-	* Sets the end date of this audit entry.
-	*
-	* @param endDate the end date of this audit entry
-	*/
+	 * Sets the end date of this audit entry.
+	 *
+	 * @param endDate the end date of this audit entry
+	 */
 	@Override
 	public void setEndDate(Date endDate) {
-		_auditEntry.setEndDate(endDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_auditEntry.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_auditEntry.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_auditEntry.setExpandoBridgeAttributes(serviceContext);
+		model.setEndDate(endDate);
 	}
 
 	/**
-	* Sets the extradata of this audit entry.
-	*
-	* @param extradata the extradata of this audit entry
-	*/
+	 * Sets the extradata of this audit entry.
+	 *
+	 * @param extradata the extradata of this audit entry
+	 */
 	@Override
 	public void setExtradata(String extradata) {
-		_auditEntry.setExtradata(extradata);
+		model.setExtradata(extradata);
 	}
 
 	/**
-	* Sets the group ID of this audit entry.
-	*
-	* @param groupId the group ID of this audit entry
-	*/
+	 * Sets the group ID of this audit entry.
+	 *
+	 * @param groupId the group ID of this audit entry
+	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_auditEntry.setGroupId(groupId);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_auditEntry.setNew(n);
+		model.setGroupId(groupId);
 	}
 
 	/**
-	* Sets the primary key of this audit entry.
-	*
-	* @param primaryKey the primary key of this audit entry
-	*/
+	 * Sets the primary key of this audit entry.
+	 *
+	 * @param primaryKey the primary key of this audit entry
+	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_auditEntry.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_auditEntry.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Sets the start date of this audit entry.
-	*
-	* @param startDate the start date of this audit entry
-	*/
+	 * Sets the start date of this audit entry.
+	 *
+	 * @param startDate the start date of this audit entry
+	 */
 	@Override
 	public void setStartDate(Date startDate) {
-		_auditEntry.setStartDate(startDate);
+		model.setStartDate(startDate);
 	}
 
 	/**
-	* Sets the user ID of this audit entry.
-	*
-	* @param userId the user ID of this audit entry
-	*/
+	 * Sets the user ID of this audit entry.
+	 *
+	 * @param userId the user ID of this audit entry
+	 */
 	@Override
 	public void setUserId(long userId) {
-		_auditEntry.setUserId(userId);
+		model.setUserId(userId);
 	}
 
 	/**
-	* Sets the user name of this audit entry.
-	*
-	* @param userName the user name of this audit entry
-	*/
+	 * Sets the user name of this audit entry.
+	 *
+	 * @param userName the user name of this audit entry
+	 */
 	@Override
 	public void setUserName(String userName) {
-		_auditEntry.setUserName(userName);
+		model.setUserName(userName);
 	}
 
 	/**
-	* Sets the user uuid of this audit entry.
-	*
-	* @param userUuid the user uuid of this audit entry
-	*/
+	 * Sets the user uuid of this audit entry.
+	 *
+	 * @param userUuid the user uuid of this audit entry
+	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		_auditEntry.setUserUuid(userUuid);
+		model.setUserUuid(userUuid);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<AuditEntry> toCacheModel() {
-		return _auditEntry.toCacheModel();
+	protected AuditEntryWrapper wrap(AuditEntry auditEntry) {
+		return new AuditEntryWrapper(auditEntry);
 	}
 
-	@Override
-	public AuditEntry toEscapedModel() {
-		return new AuditEntryWrapper(_auditEntry.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _auditEntry.toString();
-	}
-
-	@Override
-	public AuditEntry toUnescapedModel() {
-		return new AuditEntryWrapper(_auditEntry.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _auditEntry.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof AuditEntryWrapper)) {
-			return false;
-		}
-
-		AuditEntryWrapper auditEntryWrapper = (AuditEntryWrapper)obj;
-
-		if (Objects.equals(_auditEntry, auditEntryWrapper._auditEntry)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public AuditEntry getWrappedModel() {
-		return _auditEntry;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _auditEntry.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _auditEntry.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_auditEntry.resetOriginalValues();
-	}
-
-	private final AuditEntry _auditEntry;
 }

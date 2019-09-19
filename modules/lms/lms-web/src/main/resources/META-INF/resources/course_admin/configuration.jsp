@@ -23,7 +23,7 @@ String[] searchExpandoValues = Validator.isNotNull(courseAdminPortletInstanceCon
 String[] searchEditionExpandoValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.searchEditionExpandoValues()) ? courseAdminPortletInstanceConfiguration.searchEditionExpandoValues().split(",") : null;
 String[] courseExpandoValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.courseExpandoValues()) ? courseAdminPortletInstanceConfiguration.courseExpandoValues().split(",") : null;
 String[] courseTemplateValues = Validator.isNotNull(courseAdminPortletInstanceConfiguration.courseTemplates()) ? courseAdminPortletInstanceConfiguration.courseTemplates(): null;
- %>
+  %>
 
 <liferay-portlet:actionURL portletConfiguration="true" var="configurationActionURL" />
 
@@ -99,7 +99,6 @@ String[] courseTemplateValues = Validator.isNotNull(courseAdminPortletInstanceCo
 				label="edit-edition"
 			>
 				<aui:input type="checkbox" name="preferences--editionIndexer--" value="<%= courseAdminPortletInstanceConfiguration.editionIndexer()%>"/>
-				<aui:input type="checkbox" name="preferences--editionAllOptions--" value="<%= courseAdminPortletInstanceConfiguration.editionAllOptions()%>"/>
 			</liferay-frontend:fieldset>
 		</liferay-frontend:fieldset-group>
 		<liferay-frontend:fieldset-group >
@@ -107,14 +106,9 @@ String[] courseTemplateValues = Validator.isNotNull(courseAdminPortletInstanceCo
 				collapsible="false"
 				label="actions"
 			>
-				<aui:input type="checkbox" name="preferences--courseActionPermissions--" value="<%= courseAdminPortletInstanceConfiguration.courseActionPermissions()%>"/>
 				<aui:input type="checkbox" name="preferences--courseActionClose--" value="<%= courseAdminPortletInstanceConfiguration.courseActionClose()%>"/>
 				<aui:input type="checkbox" name="preferences--courseActionDelete--" value="<%= courseAdminPortletInstanceConfiguration.courseActionDelete()%>"/>
-				<aui:input type="checkbox" name="preferences--courseActionMembers--" value="<%= courseAdminPortletInstanceConfiguration.courseActionMembers()%>"/>
 				<aui:input type="checkbox" name="preferences--courseActionMembersCalendar--" value="<%= courseAdminPortletInstanceConfiguration.courseActionMembersCalendar()%>"/>
-				<aui:input type="checkbox" name="preferences--courseActionExport--" value="<%= courseAdminPortletInstanceConfiguration.courseActionExport()%>"/>
-				<aui:input type="checkbox" name="preferences--courseActionImport--" value="<%= courseAdminPortletInstanceConfiguration.courseActionImport()%>"/>
-				<aui:input type="checkbox" name="preferences--courseActionDuplicate--" value="<%= courseAdminPortletInstanceConfiguration.courseActionDuplicate()%>"/>
 			</liferay-frontend:fieldset>
 		</liferay-frontend:fieldset-group>
 		<liferay-frontend:fieldset-group>

@@ -19,6 +19,7 @@ import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -35,6 +36,8 @@ import com.ted.audit.api.AuditFactory;
 import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
+import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService;
+import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil;
 import com.ted.lms.learning.activity.p2p.service.base.P2PActivityCorrectionsLocalServiceBaseImpl;
 import com.ted.lms.learning.activity.p2p.util.P2PPrefsPropsValues;
 import com.ted.lms.model.Course;
@@ -52,11 +55,14 @@ import java.util.List;
 
 import javax.mail.internet.InternetAddress;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the p2p activity corrections local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -64,14 +70,18 @@ import javax.mail.internet.InternetAddress;
  *
  * @author Brian Wing Shun Chan
  * @see P2PActivityCorrectionsLocalServiceBaseImpl
- * @see com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections",
+	service = AopService.class
+)
 public class P2PActivityCorrectionsLocalServiceImpl
 	extends P2PActivityCorrectionsLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil} to access the p2p activity corrections local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil</code>.
 	 */
 	
 	@Override
@@ -145,8 +155,8 @@ public class P2PActivityCorrectionsLocalServiceImpl
 		//Subimos el fichero
 		if(Validator.isNotNull(fileName)) {
 			try {
-				Folder folder = p2pActivityLocalService.addP2PFolder(serviceContext.getUserId(), serviceContext.getScopeGroupId());
-				DLFileEntry p2pFileEntry = p2pActivityLocalService.addP2PFileEntry(fileName, file, mimeType, folder.getFolderId(), serviceContext.getScopeGroupId(),
+				Folder folder = P2PActivityLocalServiceUtil.addP2PFolder(serviceContext.getUserId(), serviceContext.getScopeGroupId());
+				DLFileEntry p2pFileEntry = P2PActivityLocalServiceUtil.addP2PFileEntry(fileName, file, mimeType, folder.getFolderId(), serviceContext.getScopeGroupId(),
 						serviceContext.getCompanyId(), serviceContext.getUserId());
 				//Asociamos con el fichero subido.
 				p2pActivityCorrections.setFileEntryId(p2pFileEntry.getFileEntryId());
@@ -233,15 +243,15 @@ public class P2PActivityCorrectionsLocalServiceImpl
 			
 			log.debug("Incrementamos el contador de correcciones que se ha asignado para corregir.");
 			p2pActivity.setCountCorrections(p2pActivity.getCountCorrections()+1);
-			p2pActivityLocalService.updateP2PActivity(p2pActivity);
+			p2pActivityPersistence.update(p2pActivity);
 			
 		}
 		log.debug("Ponemos que ya estan realizadas las asignaciones para no tener que calcular de nuevo las asignaciones.");
 		//Ponemos que ya estan realizadas las asignaciones para no tener que calcular de nuevo las asignaciones.
 		try {
-			P2PActivity p2pActivity = p2pActivityLocalService.getP2PActivity(p2pActivityId);
+			P2PActivity p2pActivity = p2pActivityPersistence.fetchByPrimaryKey(p2pActivityId);
 			p2pActivity.setAsignationsCompleted(true);
-			p2pActivityLocalService.updateP2PActivity(p2pActivity);
+			p2pActivityPersistence.update(p2pActivity);
 			
 			log.debug("Mandar email al usuario avisando de que ya puede corregir sus actividades.");
 			User user = userLocalService.getUser(p2pActivity.getUserId());
@@ -327,5 +337,7 @@ public class P2PActivityCorrectionsLocalServiceImpl
 	}
 	
 	private static Log log = LogFactoryUtil.getLog(P2PActivityCorrectionsLocalServiceImpl.class);
-
+	
+	//@Reference
+	//private P2PActivityLocalService p2pActivityLocalService;
 }

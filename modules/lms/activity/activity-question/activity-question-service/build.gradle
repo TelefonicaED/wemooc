@@ -1,17 +1,16 @@
 dependencies {
-	compileOnly group: "biz.aQute.bnd", name: "biz.aQute.bndlib"
-	compileOnly group: "com.liferay", name: "com.liferay.portal.spring.extender.api"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
+	compileOnly group: "com.liferay", name: "com.liferay.exportimport.api"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.lang"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+	compileOnly group: "com.liferay", name: "com.liferay.portal.aop.api"
+	compileOnly group: "com.liferay", name: "com.liferay.upload.api"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel"
 	compileOnly group: "javax.portlet", name: "portlet-api"
 	compileOnly group: "javax.servlet", name: "javax.servlet-api"
+	compileOnly group: "org.osgi", name: "org.osgi.annotation.versioning"
+	compileOnly group: "org.osgi", name: "org.osgi.core"
+	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
-	compileOnly group: "com.liferay", name: "com.liferay.petra.xml"
-	compileOnly group: "com.liferay", name: "com.liferay.upload.api"
-	compileOnly group: "com.liferay", name: "com.liferay.petra.function"
-	compileOnly group: "com.liferay", name: "com.liferay.exportimport.api"
-	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.impl"
 	compileOnly project(":modules:lms:lms-api")
 	compileOnly project(":modules:lms:lms-service")
 }
@@ -19,4 +18,5 @@ dependencies {
 buildService {
 	apiDir = "../activity-question-api/src/main/java"
 }
+
 group = "com.ted.lms.learning.activity.question"

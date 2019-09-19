@@ -14,10 +14,10 @@
 
 package com.ted.audit.db.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.audit.db.model.AuditEntry;
 import com.ted.audit.db.service.AuditEntryLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the AuditEntry service. Represents a row in the &quot;Aud_AuditEntry&quot; database table, with each column mapped to a property of this class.
@@ -32,12 +32,13 @@ import com.ted.audit.db.service.AuditEntryLocalServiceUtil;
  * @generated
  */
 @ProviderType
-public abstract class AuditEntryBaseImpl extends AuditEntryModelImpl
-	implements AuditEntry {
+public abstract class AuditEntryBaseImpl
+	extends AuditEntryModelImpl implements AuditEntry {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a audit entry model instance should use the {@link AuditEntry} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a audit entry model instance should use the <code>AuditEntry</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -48,4 +49,5 @@ public abstract class AuditEntryBaseImpl extends AuditEntryModelImpl
 			AuditEntryLocalServiceUtil.updateAuditEntry(this);
 		}
 	}
+
 }

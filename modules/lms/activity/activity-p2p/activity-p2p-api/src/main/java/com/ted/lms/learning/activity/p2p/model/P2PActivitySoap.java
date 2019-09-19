@@ -14,13 +14,13 @@
 
 package com.ted.lms.learning.activity.p2p.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -30,6 +30,7 @@ import java.util.List;
  */
 @ProviderType
 public class P2PActivitySoap implements Serializable {
+
 	public static P2PActivitySoap toSoapModel(P2PActivity model) {
 		P2PActivitySoap soapModel = new P2PActivitySoap();
 
@@ -80,7 +81,8 @@ public class P2PActivitySoap implements Serializable {
 	}
 
 	public static P2PActivitySoap[] toSoapModels(List<P2PActivity> models) {
-		List<P2PActivitySoap> soapModels = new ArrayList<P2PActivitySoap>(models.size());
+		List<P2PActivitySoap> soapModels = new ArrayList<P2PActivitySoap>(
+			models.size());
 
 		for (P2PActivity model : models) {
 			soapModels.add(toSoapModel(model));
@@ -239,4 +241,5 @@ public class P2PActivitySoap implements Serializable {
 	private String _description;
 	private Date _date;
 	private boolean _asignationsCompleted;
+
 }

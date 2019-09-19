@@ -2,7 +2,6 @@ package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
 import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.lms.service.ModuleResultLocalServiceUtil;
@@ -20,11 +19,9 @@ import javax.portlet.ActionRequest;
 public abstract class BaseModuleEval implements ModuleEval {
 	
 	protected Module module;
-	protected ServiceContext serviceContext;
 
-	public BaseModuleEval(Module module, ServiceContext serviceContext, ModuleResultLocalService moduleResultLocalService) {
+	public BaseModuleEval(Module module, ModuleResultLocalService moduleResultLocalService) {
 		this.module = module;
-		this.serviceContext = serviceContext;
 		this.moduleResultLocalService = moduleResultLocalService;
 	}
 	

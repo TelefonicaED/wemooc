@@ -14,6 +14,7 @@
 
 package com.ted.postcondition.service.impl;
 
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.ted.postcondition.model.Postcondition;
 import com.ted.postcondition.model.PostconditionFactory;
@@ -24,11 +25,13 @@ import com.ted.postcondition.service.base.PostconditionRelationLocalServiceBaseI
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the postcondition relation local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.postcondition.service.PostconditionRelationLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.postcondition.service.PostconditionRelationLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -36,14 +39,18 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see PostconditionRelationLocalServiceBaseImpl
- * @see com.ted.postcondition.service.PostconditionRelationLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.postcondition.model.PostconditionRelation",
+	service = AopService.class
+)
 public class PostconditionRelationLocalServiceImpl
 	extends PostconditionRelationLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.postcondition.service.PostconditionRelationLocalServiceUtil} to access the postcondition relation local service.
+	 * Never reference this class directly. Use <code>com.ted.postcondition.service.PostconditionRelationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.postcondition.service.PostconditionRelationLocalServiceUtil</code>.
 	 */
 	
 	public PostconditionRelation addPostconditionRelation(long classNamePostconditionId, long classNameId, long classPK, String extraData) {

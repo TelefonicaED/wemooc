@@ -1,7 +1,7 @@
 package com.ted.lms.learning.activity.resource.internal.web.activity;
 
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
-import com.liferay.blogs.kernel.service.BlogsEntryLocalService;
+import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLAppLocalService;

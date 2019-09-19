@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_2_0.dtd">
 
-<service-builder package-path="com.ted.lms.learning.activity.question">
-	<namespace>qu</namespace>
+<service-builder dependency-injector="ds" package-path="com.ted.lms.learning.activity.question">
+	<namespace>QU</namespace>
 	
-	<entity name="Question" uuid="true" local-service="true" remote-service="true" >
+	<entity name="Question" uuid="true" local-service="true" remote-service="false" >
 
 		<!-- PK fields -->
 
@@ -45,7 +45,7 @@
 		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
 	
-	<entity name="Answer" uuid="true" local-service="true" remote-service="true" json-enabled="false">
+	<entity name="Answer" uuid="true" local-service="true" remote-service="false" json-enabled="false">
 	
 		<!-- PK fields -->
 	

@@ -14,8 +14,6 @@
 
 package com.ted.lms.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
@@ -40,6 +38,8 @@ import java.io.Serializable;
 
 import java.util.List;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * Provides the local service interface for ModuleResult. Methods of this
  * service will not have security checks based on the propagated JAAS
@@ -48,65 +48,66 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see ModuleResultLocalServiceUtil
- * @see com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl
- * @see com.ted.lms.service.impl.ModuleResultLocalServiceImpl
  * @generated
  */
 @ProviderType
-@Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
-	PortalException.class, SystemException.class})
-public interface ModuleResultLocalService extends BaseLocalService,
-	PersistedModelLocalService {
+@Transactional(
+	isolation = Isolation.PORTAL,
+	rollbackFor = {PortalException.class, SystemException.class}
+)
+public interface ModuleResultLocalService
+	extends BaseLocalService, PersistedModelLocalService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link ModuleResultLocalServiceUtil} to access the module result local service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleResultLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify or reference this interface directly. Always use {@link ModuleResultLocalServiceUtil} to access the module result local service. Add custom service methods to <code>com.ted.lms.service.impl.ModuleResultLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public ModuleResult addModuleResult(long moduleId, long userId,
-		ServiceContext serviceContext);
+	public ModuleResult addModuleResult(
+		long moduleId, long userId, ServiceContext serviceContext);
 
 	/**
-	* Adds the module result to the database. Also notifies the appropriate model listeners.
-	*
-	* @param moduleResult the module result
-	* @return the module result that was added
-	*/
+	 * Adds the module result to the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param moduleResult the module result
+	 * @return the module result that was added
+	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public ModuleResult addModuleResult(ModuleResult moduleResult);
 
 	public int countModulesUserPassed(long groupId, long userId);
 
 	/**
-	* Creates a new module result with the primary key. Does not add the module result to the database.
-	*
-	* @param mrId the primary key for the new module result
-	* @return the new module result
-	*/
+	 * Creates a new module result with the primary key. Does not add the module result to the database.
+	 *
+	 * @param mrId the primary key for the new module result
+	 * @return the new module result
+	 */
 	@Transactional(enabled = false)
 	public ModuleResult createModuleResult(long mrId);
 
 	/**
-	* Deletes the module result with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param mrId the primary key of the module result
-	* @return the module result that was removed
-	* @throws PortalException if a module result with the primary key could not be found
-	*/
+	 * Deletes the module result with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param mrId the primary key of the module result
+	 * @return the module result that was removed
+	 * @throws PortalException if a module result with the primary key could not be found
+	 */
 	@Indexable(type = IndexableType.DELETE)
 	public ModuleResult deleteModuleResult(long mrId) throws PortalException;
 
 	/**
-	* Deletes the module result from the database. Also notifies the appropriate model listeners.
-	*
-	* @param moduleResult the module result
-	* @return the module result that was removed
-	*/
+	 * Deletes the module result from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param moduleResult the module result
+	 * @return the module result that was removed
+	 */
 	@Indexable(type = IndexableType.DELETE)
 	public ModuleResult deleteModuleResult(ModuleResult moduleResult);
 
 	/**
-	* @throws PortalException
-	*/
+	 * @throws PortalException
+	 */
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
@@ -115,66 +116,67 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	public DynamicQuery dynamicQuery();
 
 	/**
-	* Performs a dynamic query on the database and returns the matching rows.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the matching rows
-	*/
+	 * Performs a dynamic query on the database and returns the matching rows.
+	 *
+	 * @param dynamicQuery the dynamic query
+	 * @return the matching rows
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery);
 
 	/**
-	* Performs a dynamic query on the database and returns a range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.model.impl.ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @return the range of matching rows
-	*/
+	 * Performs a dynamic query on the database and returns a range of the matching rows.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.model.impl.ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dynamicQuery the dynamic query
+	 * @param start the lower bound of the range of model instances
+	 * @param end the upper bound of the range of model instances (not inclusive)
+	 * @return the range of matching rows
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end);
 
 	/**
-	* Performs a dynamic query on the database and returns an ordered range of the matching rows.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.model.impl.ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param dynamicQuery the dynamic query
-	* @param start the lower bound of the range of model instances
-	* @param end the upper bound of the range of model instances (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching rows
-	*/
+	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.model.impl.ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param dynamicQuery the dynamic query
+	 * @param start the lower bound of the range of model instances
+	 * @param end the upper bound of the range of model instances (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching rows
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator);
 
 	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @return the number of rows matching the dynamic query
-	*/
+	 * Returns the number of rows matching the dynamic query.
+	 *
+	 * @param dynamicQuery the dynamic query
+	 * @return the number of rows matching the dynamic query
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long dynamicQueryCount(DynamicQuery dynamicQuery);
 
 	/**
-	* Returns the number of rows matching the dynamic query.
-	*
-	* @param dynamicQuery the dynamic query
-	* @param projection the projection to apply to the query
-	* @return the number of rows matching the dynamic query
-	*/
+	 * Returns the number of rows matching the dynamic query.
+	 *
+	 * @param dynamicQuery the dynamic query
+	 * @param projection the projection to apply to the query
+	 * @return the number of rows matching the dynamic query
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection);
+	public long dynamicQueryCount(
+		DynamicQuery dynamicQuery, Projection projection);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ModuleResult fetchModuleResult(long mrId);
@@ -186,12 +188,12 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery();
 
 	/**
-	* Returns the module result with the primary key.
-	*
-	* @param mrId the primary key of the module result
-	* @return the module result
-	* @throws PortalException if a module result with the primary key could not be found
-	*/
+	 * Returns the module result with the primary key.
+	 *
+	 * @param mrId the primary key of the module result
+	 * @return the module result
+	 * @throws PortalException if a module result with the primary key could not be found
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ModuleResult getModuleResult(long mrId) throws PortalException;
 
@@ -199,16 +201,16 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	public ModuleResult getModuleResult(long moduleId, long userId);
 
 	/**
-	* Returns a range of all the module results.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.model.impl.ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @return the range of module results
-	*/
+	 * Returns a range of all the module results.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.model.impl.ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @return the range of module results
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<ModuleResult> getModuleResults(int start, int end);
 
@@ -216,18 +218,18 @@ public interface ModuleResultLocalService extends BaseLocalService,
 	public List<ModuleResult> getModuleResults(long moduleId);
 
 	/**
-	* Returns the number of module results.
-	*
-	* @return the number of module results
-	*/
+	 * Returns the number of module results.
+	 *
+	 * @return the number of module results
+	 */
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getModuleResultsCount();
 
 	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
+	 * Returns the OSGi service identifier.
+	 *
+	 * @return the OSGi service identifier
+	 */
 	public String getOSGiServiceIdentifier();
 
 	@Override
@@ -236,15 +238,16 @@ public interface ModuleResultLocalService extends BaseLocalService,
 		throws PortalException;
 
 	public ModuleResult updateModuleResult(
-		LearningActivityResult learningActivityResult,
-		ServiceContext serviceContext) throws PortalException;
+			LearningActivityResult learningActivityResult)
+		throws PortalException;
 
 	/**
-	* Updates the module result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
-	*
-	* @param moduleResult the module result
-	* @return the module result that was updated
-	*/
+	 * Updates the module result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
+	 *
+	 * @param moduleResult the module result
+	 * @return the module result that was updated
+	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public ModuleResult updateModuleResult(ModuleResult moduleResult);
+
 }

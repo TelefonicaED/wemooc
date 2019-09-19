@@ -1,26 +1,16 @@
 package com.ted.lms.course.eval.evaluation.avg;
 
-import com.liferay.portal.kernel.dao.orm.DynamicQueryFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.CourseConstants;
-import com.ted.lms.course.eval.evaluation.avg.constants.EvaluationAvgPropsKeys;
+import com.ted.lms.learning.activity.evaluation.web.constants.EvaluationConstants;
 import com.ted.lms.model.BaseCourseEval;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
@@ -29,16 +19,8 @@ import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.service.CourseResultLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.portlet.ActionRequest;
 
 public class EvaluationAvgCourseEval extends BaseCourseEval{
 
@@ -59,7 +41,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 		
 		JSONObject courseExtraData = course.getCourseExtraDataJSON();
 		
@@ -69,7 +51,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		
 		double passPuntuation = getPassPuntuation();
 		
-		Map<Long,Long> evaluations=getEvaluations();
+		List<LearningActivity> evaluations = learningActivityLocalService.getLearningActivitiesByTypeId(EvaluationConstants.TYPE);
 		if(evaluations.size()==0){
 			return null;
 		}
@@ -77,26 +59,24 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		return updateCourseResult(courseResult, passPuntuation, evaluations);	
 	}
 	
-	private CourseResult updateCourseResult(CourseResult courseResult, double passPuntuation, Map<Long, Long> evaluations) throws SystemException {
-		double[] values=new double[evaluations.size()];
-		double[] weights=new double[evaluations.size()];
-		int i=0;
+	private CourseResult updateCourseResult(CourseResult courseResult, double passPuntuation, List<LearningActivity> evaluations) throws SystemException {
+		double values = 0;
 		
-		for(Map.Entry<Long,Long> evaluation:evaluations.entrySet()){
+		for(LearningActivity evaluation:evaluations){
 			
-			LearningActivityResult result=learningActivityResultLocalService.getLearningActivityResult(evaluation.getKey(),courseResult.getUserId());
+			LearningActivityResult result=learningActivityResultLocalService.getLearningActivityResult(evaluation.getActId(),courseResult.getUserId());
 			if(result!=null){
-				values[i]=result.getResult();
+				values += result.getResult();
 			}
-
-			weights[i++]=evaluation.getValue();
 		}
 		
 		if(courseResult.getStartDate() == null){
 			courseResult.setStartDate(new Date());
 		}
 		
-		courseResult.setResult((long) calculateMean(values,weights));
+		double result = values/evaluations.size();
+		
+		courseResult.setResult(result);
 		boolean passed = courseResult.getResult()>=passPuntuation;
 
 		if((courseResult.getPassedDate()==null)||
@@ -105,66 +85,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		}
 		courseResult.setPassed(passed);
 
-		return courseResultLocalService.updateCourseResult(courseResult);
-	}
-	
-	private double calculateMean(double[] values, double[] weights) {
-		int i;
-		double sumWeight=0;
-		for (i = 0; i < weights.length; i++) {
-			sumWeight+=weights[i];
-		}
-		
-		double mean=0;
-		for (i = 0; i < values.length; i++) {
-			mean+=weights[i]*values[i];
-		}
-		mean/=sumWeight;
-		
-		//Correction factor
-		double correction=0;
-		for (i = 0; i < values.length; i++) {
-			correction += weights[i] * (values[i] - mean);
-		}
-		
-		return mean + (correction/sumWeight);
-	}
-	
-	private Map<Long,Long> getEvaluations() throws SystemException{
-
-		Map<Long,Long> evaluations = new HashMap<Long,Long>();
-		JSONObject courseEval = course.getCourseEvalJSON();
-		
-		if(courseEval != null) {
-			
-			JSONArray evaluationsArray = courseEval.getJSONArray("evaluations");
-			
-			if(evaluationsArray  != null && evaluationsArray.length() > 0) {
-				
-				for (int i = 0; i < evaluationsArray.length(); i++) {
-					long id = evaluationsArray.getJSONObject(i).getLong("id");
-					long weight = evaluationsArray.getJSONObject(i).getLong("weight");
-					if((id!=0)&&(weight!=0)){
-						evaluations.put(id, weight);
-					}
-				}
-				
-				List<Long> actIdsInDatabase = 
-						learningActivityLocalService.dynamicQuery(
-						DynamicQueryFactoryUtil.forClass(LearningActivity.class)
-						.add(PropertyFactoryUtil.forName("actId").in((Collection<Object>)(Collection<?>)evaluations.keySet()))
-						.setProjection(ProjectionFactoryUtil.property("actId")));
-				
-				Iterator<Map.Entry<Long,Long>> evaluationsIterator = evaluations.entrySet().iterator();
-				while (evaluationsIterator.hasNext()) {
-					if(!actIdsInDatabase.contains(evaluationsIterator.next().getKey())){
-						evaluationsIterator.remove();
-				    }
-				}
-			}
-		}
-		
-		return evaluations;
+		return courseResult;
 	}
 
 	@Override
@@ -195,7 +116,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 		
 		JSONObject courseExtraData = course.getCourseExtraDataJSON();
 		
@@ -205,7 +126,7 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		
 		double passPuntuation = getPassPuntuation();
 		
-		Map<Long,Long> evaluations=getEvaluations();
+		List<LearningActivity> evaluations = learningActivityLocalService.getLearningActivitiesByTypeId(EvaluationConstants.TYPE);
 		if(evaluations.size()==0){
 			return null;
 		}
@@ -218,28 +139,6 @@ public class EvaluationAvgCourseEval extends BaseCourseEval{
 		}
 		
 		return courseResult;
-	}
-	
-	@Override
-	public void setExtraContent(ActionRequest actionRequest) throws PortalException {
-		
-		String actionId = ParamUtil.getString(actionRequest, Constants.CMD);
-		
-		if((Validator.isNumber(PropsUtil.get(EvaluationAvgPropsKeys.DEFAULT_EVALUATIONS)))&&(Constants.ADD.equals(actionId))) {
-			long numOfEvaluations = ParamUtil.getLong(actionRequest, "numOfEvaluations",GetterUtil.getLong(PropsUtil.get(EvaluationAvgPropsKeys.DEFAULT_EVALUATIONS), -1));
-			
-			ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
-			ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(themeDisplay.getLocale());
-			
-			for(int currentEvaluation=1;currentEvaluation<=numOfEvaluations;currentEvaluation++) {
-				
-				Map<Locale,String> evaluationTitle = new HashMap<Locale, String>(1);
-				evaluationTitle.put(themeDisplay.getLocale(), LanguageUtil.format(resourceBundle, "course-eval.evaluation-avg.evaluation-number", new Object[]{currentEvaluation}));
-	
-			/*	LearningActivityLocalServiceUtil.addLearningActivity(course.getUserId(), course.getGroupCreatedId(), WorkflowConstants.STATUS_APPROVED, 
-						evaluationTitle, evaluationTitle, EvaluationLearningActivityTypeFactory.getType(), null, null, 0, 0, 0, 0, null, null, null, 0, 0, serviceContext);*/
-			}	
-		}
 	}
 	
 	@Override

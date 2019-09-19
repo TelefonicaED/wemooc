@@ -14,8 +14,8 @@
 
 package com.ted.lms.learning.activity.p2p.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -30,34 +31,39 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.CompanyProvider;
 import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.learning.activity.p2p.exception.NoSuchP2PActivityException;
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.impl.P2PActivityImpl;
 import com.ted.lms.learning.activity.p2p.model.impl.P2PActivityModelImpl;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityPersistence;
+import com.ted.lms.learning.activity.p2p.service.persistence.impl.constants.PTPPersistenceConstants;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the p2p activity service.
@@ -67,51 +73,33 @@ import java.util.Set;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see P2PActivityPersistence
- * @see com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityUtil
  * @generated
  */
+@Component(service = P2PActivityPersistence.class)
 @ProviderType
-public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
-	implements P2PActivityPersistence {
+public class P2PActivityPersistenceImpl
+	extends BasePersistenceImpl<P2PActivity> implements P2PActivityPersistence {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link P2PActivityUtil} to access the p2p activity persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify or reference this class directly. Always use <code>P2PActivityUtil</code> to access the p2p activity persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static final String FINDER_CLASS_NAME_ENTITY = P2PActivityImpl.class.getName();
-	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List1";
-	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] { String.class.getName() },
-			P2PActivityModelImpl.UUID_COLUMN_BITMASK |
-			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] { String.class.getName() });
+	public static final String FINDER_CLASS_NAME_ENTITY =
+		P2PActivityImpl.class.getName();
+
+	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List1";
+
+	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List2";
+
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByUuid;
+	private FinderPath _finderPathWithoutPaginationFindByUuid;
+	private FinderPath _finderPathCountByUuid;
 
 	/**
 	 * Returns all the p2p activities where uuid = &#63;.
@@ -128,7 +116,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns a range of all the p2p activities where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -145,7 +133,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -155,8 +143,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUuid(String uuid, int start, int end,
+	public List<P2PActivity> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator) {
+
 		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
@@ -164,7 +154,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -175,9 +165,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUuid(String uuid, int start, int end,
+	public List<P2PActivity> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -185,21 +177,22 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid };
+			finderPath = _finderPathWithoutPaginationFindByUuid;
+			finderArgs = new Object[] {uuid};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByUuid;
+			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<P2PActivity> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivity>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<P2PActivity>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
@@ -216,8 +209,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -237,11 +230,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			}
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(P2PActivityModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -261,16 +253,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				}
 
 				if (!pagination) {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -299,9 +291,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByUuid_First(String uuid,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByUuid_First(
+			String uuid, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByUuid_First(uuid, orderByComparator);
 
 		if (p2pActivity != null) {
@@ -328,8 +321,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the first matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUuid_First(String uuid,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public P2PActivity fetchByUuid_First(
+		String uuid, OrderByComparator<P2PActivity> orderByComparator) {
+
 		List<P2PActivity> list = findByUuid(uuid, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -348,9 +342,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByUuid_Last(String uuid,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByUuid_Last(
+			String uuid, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByUuid_Last(uuid, orderByComparator);
 
 		if (p2pActivity != null) {
@@ -377,16 +372,17 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the last matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUuid_Last(String uuid,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public P2PActivity fetchByUuid_Last(
+		String uuid, OrderByComparator<P2PActivity> orderByComparator) {
+
 		int count = countByUuid(uuid);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<P2PActivity> list = findByUuid(uuid, count - 1, count,
-				orderByComparator);
+		List<P2PActivity> list = findByUuid(
+			uuid, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -405,9 +401,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a p2p activity with the primary key could not be found
 	 */
 	@Override
-	public P2PActivity[] findByUuid_PrevAndNext(long p2pActivityId,
-		String uuid, OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity[] findByUuid_PrevAndNext(
+			long p2pActivityId, String uuid,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		uuid = Objects.toString(uuid, "");
 
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
@@ -419,13 +417,13 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			P2PActivity[] array = new P2PActivityImpl[3];
 
-			array[0] = getByUuid_PrevAndNext(session, p2pActivity, uuid,
-					orderByComparator, true);
+			array[0] = getByUuid_PrevAndNext(
+				session, p2pActivity, uuid, orderByComparator, true);
 
 			array[1] = p2pActivity;
 
-			array[2] = getByUuid_PrevAndNext(session, p2pActivity, uuid,
-					orderByComparator, false);
+			array[2] = getByUuid_PrevAndNext(
+				session, p2pActivity, uuid, orderByComparator, false);
 
 			return array;
 		}
@@ -437,14 +435,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		}
 	}
 
-	protected P2PActivity getByUuid_PrevAndNext(Session session,
-		P2PActivity p2pActivity, String uuid,
+	protected P2PActivity getByUuid_PrevAndNext(
+		Session session, P2PActivity p2pActivity, String uuid,
 		OrderByComparator<P2PActivity> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -465,7 +464,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		}
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -537,10 +537,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		}
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivity);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(p2pActivity)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -561,8 +561,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (P2PActivity p2pActivity : findByUuid(uuid, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null)) {
+		for (P2PActivity p2pActivity :
+				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(p2pActivity);
 		}
 	}
@@ -577,9 +578,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public int countByUuid(String uuid) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
+		FinderPath finderPath = _finderPathCountByUuid;
 
-		Object[] finderArgs = new Object[] { uuid };
+		Object[] finderArgs = new Object[] {uuid};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -631,22 +632,17 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_1 = "p2pActivity.uuid IS NULL";
-	private static final String _FINDER_COLUMN_UUID_UUID_2 = "p2pActivity.uuid = ?";
-	private static final String _FINDER_COLUMN_UUID_UUID_3 = "(p2pActivity.uuid IS NULL OR p2pActivity.uuid = '')";
-	public static final FinderPath FINDER_PATH_FETCH_BY_UUID_G = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
-			new String[] { String.class.getName(), Long.class.getName() },
-			P2PActivityModelImpl.UUID_COLUMN_BITMASK |
-			P2PActivityModelImpl.GROUPID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID_G = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
-			new String[] { String.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_UUID_2 =
+		"p2pActivity.uuid = ?";
+
+	private static final String _FINDER_COLUMN_UUID_UUID_3 =
+		"(p2pActivity.uuid IS NULL OR p2pActivity.uuid = '')";
+
+	private FinderPath _finderPathFetchByUUID_G;
+	private FinderPath _finderPathCountByUUID_G;
 
 	/**
-	 * Returns the p2p activity where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchP2PActivityException} if it could not be found.
+	 * Returns the p2p activity where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchP2PActivityException</code> if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
@@ -656,6 +652,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity findByUUID_G(String uuid, long groupId)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByUUID_G(uuid, groupId);
 
 		if (p2pActivity == null) {
@@ -702,24 +699,26 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUUID_G(String uuid, long groupId,
-		boolean retrieveFromCache) {
+	public P2PActivity fetchByUUID_G(
+		String uuid, long groupId, boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
-		Object[] finderArgs = new Object[] { uuid, groupId };
+		Object[] finderArgs = new Object[] {uuid, groupId};
 
 		Object result = null;
 
 		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_UUID_G,
-					finderArgs, this);
+			result = finderCache.getResult(
+				_finderPathFetchByUUID_G, finderArgs, this);
 		}
 
 		if (result instanceof P2PActivity) {
 			P2PActivity p2pActivity = (P2PActivity)result;
 
 			if (!Objects.equals(uuid, p2pActivity.getUuid()) ||
-					(groupId != p2pActivity.getGroupId())) {
+				(groupId != p2pActivity.getGroupId())) {
+
 				result = null;
 			}
 		}
@@ -762,8 +761,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				List<P2PActivity> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-						finderArgs, list);
+					finderCache.putResult(
+						_finderPathFetchByUUID_G, finderArgs, list);
 				}
 				else {
 					P2PActivity p2pActivity = list.get(0);
@@ -774,7 +773,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, finderArgs);
+				finderCache.removeResult(_finderPathFetchByUUID_G, finderArgs);
 
 				throw processException(e);
 			}
@@ -801,6 +800,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity removeByUUID_G(String uuid, long groupId)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = findByUUID_G(uuid, groupId);
 
 		return remove(p2pActivity);
@@ -817,9 +817,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public int countByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_G;
+		FinderPath finderPath = _finderPathCountByUUID_G;
 
-		Object[] finderArgs = new Object[] { uuid, groupId };
+		Object[] finderArgs = new Object[] {uuid, groupId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -875,31 +875,18 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_1 = "p2pActivity.uuid IS NULL AND ";
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 = "p2pActivity.uuid = ? AND ";
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 = "(p2pActivity.uuid IS NULL OR p2pActivity.uuid = '') AND ";
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 = "p2pActivity.groupId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID_C = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C =
-		new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] { String.class.getName(), Long.class.getName() },
-			P2PActivityModelImpl.UUID_COLUMN_BITMASK |
-			P2PActivityModelImpl.COMPANYID_COLUMN_BITMASK |
-			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID_C = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] { String.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
+		"p2pActivity.uuid = ? AND ";
+
+	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
+		"(p2pActivity.uuid IS NULL OR p2pActivity.uuid = '') AND ";
+
+	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
+		"p2pActivity.groupId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByUuid_C;
+	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
+	private FinderPath _finderPathCountByUuid_C;
 
 	/**
 	 * Returns all the p2p activities where uuid = &#63; and companyId = &#63;.
@@ -910,15 +897,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public List<P2PActivity> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(uuid, companyId, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
+		return findByUuid_C(
+			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the p2p activities where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -928,8 +915,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUuid_C(String uuid, long companyId,
-		int start, int end) {
+	public List<P2PActivity> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
 		return findByUuid_C(uuid, companyId, start, end, null);
 	}
 
@@ -937,7 +925,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -948,16 +936,19 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUuid_C(String uuid, long companyId,
-		int start, int end, OrderByComparator<P2PActivity> orderByComparator) {
-		return findByUuid_C(uuid, companyId, start, end, orderByComparator, true);
+	public List<P2PActivity> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<P2PActivity> orderByComparator) {
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the p2p activities where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -969,9 +960,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUuid_C(String uuid, long companyId,
-		int start, int end, OrderByComparator<P2PActivity> orderByComparator,
+	public List<P2PActivity> findByUuid_C(
+		String uuid, long companyId, int start, int end,
+		OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -979,30 +972,30 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C;
-			finderArgs = new Object[] { uuid, companyId };
+			finderPath = _finderPathWithoutPaginationFindByUuid_C;
+			finderArgs = new Object[] {uuid, companyId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID_C;
+			finderPath = _finderPathWithPaginationFindByUuid_C;
 			finderArgs = new Object[] {
-					uuid, companyId,
-					
-					start, end, orderByComparator
-				};
+				uuid, companyId, start, end, orderByComparator
+			};
 		}
 
 		List<P2PActivity> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivity>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<P2PActivity>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
 					if (!uuid.equals(p2pActivity.getUuid()) ||
-							(companyId != p2pActivity.getCompanyId())) {
+						(companyId != p2pActivity.getCompanyId())) {
+
 						list = null;
 
 						break;
@@ -1015,8 +1008,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1038,11 +1031,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			query.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(P2PActivityModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1064,16 +1056,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				qPos.add(companyId);
 
 				if (!pagination) {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -1103,11 +1095,13 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByUuid_C_First(String uuid, long companyId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByUuid_C_First(
+			String uuid, long companyId,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
-		P2PActivity p2pActivity = fetchByUuid_C_First(uuid, companyId,
-				orderByComparator);
+
+		P2PActivity p2pActivity = fetchByUuid_C_First(
+			uuid, companyId, orderByComparator);
 
 		if (p2pActivity != null) {
 			return p2pActivity;
@@ -1137,10 +1131,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the first matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUuid_C_First(String uuid, long companyId,
+	public P2PActivity fetchByUuid_C_First(
+		String uuid, long companyId,
 		OrderByComparator<P2PActivity> orderByComparator) {
-		List<P2PActivity> list = findByUuid_C(uuid, companyId, 0, 1,
-				orderByComparator);
+
+		List<P2PActivity> list = findByUuid_C(
+			uuid, companyId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1159,11 +1155,13 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByUuid_C_Last(String uuid, long companyId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByUuid_C_Last(
+			String uuid, long companyId,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
-		P2PActivity p2pActivity = fetchByUuid_C_Last(uuid, companyId,
-				orderByComparator);
+
+		P2PActivity p2pActivity = fetchByUuid_C_Last(
+			uuid, companyId, orderByComparator);
 
 		if (p2pActivity != null) {
 			return p2pActivity;
@@ -1193,16 +1191,18 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the last matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUuid_C_Last(String uuid, long companyId,
+	public P2PActivity fetchByUuid_C_Last(
+		String uuid, long companyId,
 		OrderByComparator<P2PActivity> orderByComparator) {
+
 		int count = countByUuid_C(uuid, companyId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<P2PActivity> list = findByUuid_C(uuid, companyId, count - 1,
-				count, orderByComparator);
+		List<P2PActivity> list = findByUuid_C(
+			uuid, companyId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1222,10 +1222,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a p2p activity with the primary key could not be found
 	 */
 	@Override
-	public P2PActivity[] findByUuid_C_PrevAndNext(long p2pActivityId,
-		String uuid, long companyId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity[] findByUuid_C_PrevAndNext(
+			long p2pActivityId, String uuid, long companyId,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		uuid = Objects.toString(uuid, "");
 
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
@@ -1237,13 +1238,14 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			P2PActivity[] array = new P2PActivityImpl[3];
 
-			array[0] = getByUuid_C_PrevAndNext(session, p2pActivity, uuid,
-					companyId, orderByComparator, true);
+			array[0] = getByUuid_C_PrevAndNext(
+				session, p2pActivity, uuid, companyId, orderByComparator, true);
 
 			array[1] = p2pActivity;
 
-			array[2] = getByUuid_C_PrevAndNext(session, p2pActivity, uuid,
-					companyId, orderByComparator, false);
+			array[2] = getByUuid_C_PrevAndNext(
+				session, p2pActivity, uuid, companyId, orderByComparator,
+				false);
 
 			return array;
 		}
@@ -1255,14 +1257,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		}
 	}
 
-	protected P2PActivity getByUuid_C_PrevAndNext(Session session,
-		P2PActivity p2pActivity, String uuid, long companyId,
+	protected P2PActivity getByUuid_C_PrevAndNext(
+		Session session, P2PActivity p2pActivity, String uuid, long companyId,
 		OrderByComparator<P2PActivity> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1285,7 +1288,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		query.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1359,10 +1363,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		qPos.add(companyId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivity);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(p2pActivity)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1384,8 +1388,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (P2PActivity p2pActivity : findByUuid_C(uuid, companyId,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (P2PActivity p2pActivity :
+				findByUuid_C(
+					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(p2pActivity);
 		}
 	}
@@ -1401,9 +1408,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public int countByUuid_C(String uuid, long companyId) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_C;
+		FinderPath finderPath = _finderPathCountByUuid_C;
 
-		Object[] finderArgs = new Object[] { uuid, companyId };
+		Object[] finderArgs = new Object[] {uuid, companyId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1459,23 +1466,20 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_1 = "p2pActivity.uuid IS NULL AND ";
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "p2pActivity.uuid = ? AND ";
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(p2pActivity.uuid IS NULL OR p2pActivity.uuid = '') AND ";
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "p2pActivity.companyId = ?";
-	public static final FinderPath FINDER_PATH_FETCH_BY_ACTIDUSERID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_ENTITY, "fetchByActIdUserId",
-			new String[] { Long.class.getName(), Long.class.getName() },
-			P2PActivityModelImpl.ACTID_COLUMN_BITMASK |
-			P2PActivityModelImpl.USERID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ACTIDUSERID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActIdUserId",
-			new String[] { Long.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
+		"p2pActivity.uuid = ? AND ";
+
+	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
+		"(p2pActivity.uuid IS NULL OR p2pActivity.uuid = '') AND ";
+
+	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
+		"p2pActivity.companyId = ?";
+
+	private FinderPath _finderPathFetchByActIdUserId;
+	private FinderPath _finderPathCountByActIdUserId;
 
 	/**
-	 * Returns the p2p activity where actId = &#63; and userId = &#63; or throws a {@link NoSuchP2PActivityException} if it could not be found.
+	 * Returns the p2p activity where actId = &#63; and userId = &#63; or throws a <code>NoSuchP2PActivityException</code> if it could not be found.
 	 *
 	 * @param actId the act ID
 	 * @param userId the user ID
@@ -1485,6 +1489,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity findByActIdUserId(long actId, long userId)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByActIdUserId(actId, userId);
 
 		if (p2pActivity == null) {
@@ -1531,22 +1536,24 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByActIdUserId(long actId, long userId,
-		boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] { actId, userId };
+	public P2PActivity fetchByActIdUserId(
+		long actId, long userId, boolean retrieveFromCache) {
+
+		Object[] finderArgs = new Object[] {actId, userId};
 
 		Object result = null;
 
 		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-					finderArgs, this);
+			result = finderCache.getResult(
+				_finderPathFetchByActIdUserId, finderArgs, this);
 		}
 
 		if (result instanceof P2PActivity) {
 			P2PActivity p2pActivity = (P2PActivity)result;
 
 			if ((actId != p2pActivity.getActId()) ||
-					(userId != p2pActivity.getUserId())) {
+				(userId != p2pActivity.getUserId())) {
+
 				result = null;
 			}
 		}
@@ -1578,8 +1585,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				List<P2PActivity> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-						finderArgs, list);
+					finderCache.putResult(
+						_finderPathFetchByActIdUserId, finderArgs, list);
 				}
 				else {
 					P2PActivity p2pActivity = list.get(0);
@@ -1590,8 +1597,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-					finderArgs);
+				finderCache.removeResult(
+					_finderPathFetchByActIdUserId, finderArgs);
 
 				throw processException(e);
 			}
@@ -1618,6 +1625,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity removeByActIdUserId(long actId, long userId)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = findByActIdUserId(actId, userId);
 
 		return remove(p2pActivity);
@@ -1632,9 +1640,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByActIdUserId(long actId, long userId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTIDUSERID;
+		FinderPath finderPath = _finderPathCountByActIdUserId;
 
-		Object[] finderArgs = new Object[] { actId, userId };
+		Object[] finderArgs = new Object[] {actId, userId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1679,27 +1687,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ACTIDUSERID_ACTID_2 = "p2pActivity.actId = ? AND ";
-	private static final String _FINDER_COLUMN_ACTIDUSERID_USERID_2 = "p2pActivity.userId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByActId",
-			new String[] { Long.class.getName() },
-			P2PActivityModelImpl.ACTID_COLUMN_BITMASK |
-			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ACTID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActId",
-			new String[] { Long.class.getName() });
+	private static final String _FINDER_COLUMN_ACTIDUSERID_ACTID_2 =
+		"p2pActivity.actId = ? AND ";
+
+	private static final String _FINDER_COLUMN_ACTIDUSERID_USERID_2 =
+		"p2pActivity.userId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByActId;
+	private FinderPath _finderPathWithoutPaginationFindByActId;
+	private FinderPath _finderPathCountByActId;
 
 	/**
 	 * Returns all the p2p activities where actId = &#63;.
@@ -1716,7 +1712,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns a range of all the p2p activities where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1733,7 +1729,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1743,8 +1739,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByActId(long actId, int start, int end,
+	public List<P2PActivity> findByActId(
+		long actId, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator) {
+
 		return findByActId(actId, start, end, orderByComparator, true);
 	}
 
@@ -1752,7 +1750,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1763,29 +1761,32 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByActId(long actId, int start, int end,
+	public List<P2PActivity> findByActId(
+		long actId, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID;
-			finderArgs = new Object[] { actId };
+			finderPath = _finderPathWithoutPaginationFindByActId;
+			finderArgs = new Object[] {actId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTID;
-			finderArgs = new Object[] { actId, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByActId;
+			finderArgs = new Object[] {actId, start, end, orderByComparator};
 		}
 
 		List<P2PActivity> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivity>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<P2PActivity>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
@@ -1802,8 +1803,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1814,11 +1815,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			query.append(_FINDER_COLUMN_ACTID_ACTID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(P2PActivityModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1836,16 +1836,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				qPos.add(actId);
 
 				if (!pagination) {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -1874,9 +1874,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByActId_First(long actId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByActId_First(
+			long actId, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByActId_First(actId, orderByComparator);
 
 		if (p2pActivity != null) {
@@ -1903,8 +1904,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the first matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByActId_First(long actId,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public P2PActivity fetchByActId_First(
+		long actId, OrderByComparator<P2PActivity> orderByComparator) {
+
 		List<P2PActivity> list = findByActId(actId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1923,9 +1925,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByActId_Last(long actId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByActId_Last(
+			long actId, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByActId_Last(actId, orderByComparator);
 
 		if (p2pActivity != null) {
@@ -1952,16 +1955,17 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the last matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByActId_Last(long actId,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public P2PActivity fetchByActId_Last(
+		long actId, OrderByComparator<P2PActivity> orderByComparator) {
+
 		int count = countByActId(actId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<P2PActivity> list = findByActId(actId, count - 1, count,
-				orderByComparator);
+		List<P2PActivity> list = findByActId(
+			actId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1980,9 +1984,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a p2p activity with the primary key could not be found
 	 */
 	@Override
-	public P2PActivity[] findByActId_PrevAndNext(long p2pActivityId,
-		long actId, OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity[] findByActId_PrevAndNext(
+			long p2pActivityId, long actId,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
 
 		Session session = null;
@@ -1992,13 +1998,13 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			P2PActivity[] array = new P2PActivityImpl[3];
 
-			array[0] = getByActId_PrevAndNext(session, p2pActivity, actId,
-					orderByComparator, true);
+			array[0] = getByActId_PrevAndNext(
+				session, p2pActivity, actId, orderByComparator, true);
 
 			array[1] = p2pActivity;
 
-			array[2] = getByActId_PrevAndNext(session, p2pActivity, actId,
-					orderByComparator, false);
+			array[2] = getByActId_PrevAndNext(
+				session, p2pActivity, actId, orderByComparator, false);
 
 			return array;
 		}
@@ -2010,14 +2016,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		}
 	}
 
-	protected P2PActivity getByActId_PrevAndNext(Session session,
-		P2PActivity p2pActivity, long actId,
+	protected P2PActivity getByActId_PrevAndNext(
+		Session session, P2PActivity p2pActivity, long actId,
 		OrderByComparator<P2PActivity> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -2029,7 +2036,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		query.append(_FINDER_COLUMN_ACTID_ACTID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -2099,10 +2107,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		qPos.add(actId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivity);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(p2pActivity)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -2123,8 +2131,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public void removeByActId(long actId) {
-		for (P2PActivity p2pActivity : findByActId(actId, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null)) {
+		for (P2PActivity p2pActivity :
+				findByActId(
+					actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(p2pActivity);
 		}
 	}
@@ -2137,9 +2147,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByActId(long actId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTID;
+		FinderPath finderPath = _finderPathCountByActId;
 
-		Object[] finderArgs = new Object[] { actId };
+		Object[] finderArgs = new Object[] {actId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -2180,27 +2190,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ACTID_ACTID_2 = "p2pActivity.actId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID =
-		new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
-			new String[] { Long.class.getName() },
-			P2PActivityModelImpl.USERID_COLUMN_BITMASK |
-			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_USERID = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
-			new String[] { Long.class.getName() });
+	private static final String _FINDER_COLUMN_ACTID_ACTID_2 =
+		"p2pActivity.actId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByUserId;
+	private FinderPath _finderPathWithoutPaginationFindByUserId;
+	private FinderPath _finderPathCountByUserId;
 
 	/**
 	 * Returns all the p2p activities where userId = &#63;.
@@ -2217,7 +2212,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns a range of all the p2p activities where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2234,7 +2229,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2244,8 +2239,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUserId(long userId, int start, int end,
+	public List<P2PActivity> findByUserId(
+		long userId, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator) {
+
 		return findByUserId(userId, start, end, orderByComparator, true);
 	}
 
@@ -2253,7 +2250,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -2264,29 +2261,32 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of matching p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findByUserId(long userId, int start, int end,
+	public List<P2PActivity> findByUserId(
+		long userId, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID;
-			finderArgs = new Object[] { userId };
+			finderPath = _finderPathWithoutPaginationFindByUserId;
+			finderArgs = new Object[] {userId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID;
-			finderArgs = new Object[] { userId, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByUserId;
+			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
 		List<P2PActivity> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivity>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<P2PActivity>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
@@ -2303,8 +2303,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -2315,11 +2315,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			query.append(_FINDER_COLUMN_USERID_USERID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(P2PActivityModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -2337,16 +2336,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				qPos.add(userId);
 
 				if (!pagination) {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -2375,10 +2374,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByUserId_First(long userId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByUserId_First(
+			long userId, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
-		P2PActivity p2pActivity = fetchByUserId_First(userId, orderByComparator);
+
+		P2PActivity p2pActivity = fetchByUserId_First(
+			userId, orderByComparator);
 
 		if (p2pActivity != null) {
 			return p2pActivity;
@@ -2404,8 +2405,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the first matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUserId_First(long userId,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public P2PActivity fetchByUserId_First(
+		long userId, OrderByComparator<P2PActivity> orderByComparator) {
+
 		List<P2PActivity> list = findByUserId(userId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -2424,9 +2426,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity findByUserId_Last(long userId,
-		OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity findByUserId_Last(
+			long userId, OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByUserId_Last(userId, orderByComparator);
 
 		if (p2pActivity != null) {
@@ -2453,16 +2456,17 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the last matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	@Override
-	public P2PActivity fetchByUserId_Last(long userId,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public P2PActivity fetchByUserId_Last(
+		long userId, OrderByComparator<P2PActivity> orderByComparator) {
+
 		int count = countByUserId(userId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<P2PActivity> list = findByUserId(userId, count - 1, count,
-				orderByComparator);
+		List<P2PActivity> list = findByUserId(
+			userId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2481,9 +2485,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @throws NoSuchP2PActivityException if a p2p activity with the primary key could not be found
 	 */
 	@Override
-	public P2PActivity[] findByUserId_PrevAndNext(long p2pActivityId,
-		long userId, OrderByComparator<P2PActivity> orderByComparator)
+	public P2PActivity[] findByUserId_PrevAndNext(
+			long p2pActivityId, long userId,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
 
 		Session session = null;
@@ -2493,13 +2499,13 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			P2PActivity[] array = new P2PActivityImpl[3];
 
-			array[0] = getByUserId_PrevAndNext(session, p2pActivity, userId,
-					orderByComparator, true);
+			array[0] = getByUserId_PrevAndNext(
+				session, p2pActivity, userId, orderByComparator, true);
 
 			array[1] = p2pActivity;
 
-			array[2] = getByUserId_PrevAndNext(session, p2pActivity, userId,
-					orderByComparator, false);
+			array[2] = getByUserId_PrevAndNext(
+				session, p2pActivity, userId, orderByComparator, false);
 
 			return array;
 		}
@@ -2511,14 +2517,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		}
 	}
 
-	protected P2PActivity getByUserId_PrevAndNext(Session session,
-		P2PActivity p2pActivity, long userId,
+	protected P2PActivity getByUserId_PrevAndNext(
+		Session session, P2PActivity p2pActivity, long userId,
 		OrderByComparator<P2PActivity> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -2530,7 +2537,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		query.append(_FINDER_COLUMN_USERID_USERID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -2600,10 +2608,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		qPos.add(userId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivity);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(p2pActivity)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -2624,8 +2632,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public void removeByUserId(long userId) {
-		for (P2PActivity p2pActivity : findByUserId(userId, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null)) {
+		for (P2PActivity p2pActivity :
+				findByUserId(
+					userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(p2pActivity);
 		}
 	}
@@ -2638,9 +2648,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByUserId(long userId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_USERID;
+		FinderPath finderPath = _finderPathCountByUserId;
 
-		Object[] finderArgs = new Object[] { userId };
+		Object[] finderArgs = new Object[] {userId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -2681,31 +2691,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_USERID_USERID_2 = "p2pActivity.userId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED =
-		new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByAsignationsCompleted",
-			new String[] {
-				Boolean.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED =
-		new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, P2PActivityImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByAsignationsCompleted",
-			new String[] { Boolean.class.getName() },
-			P2PActivityModelImpl.ASIGNATIONSCOMPLETED_COLUMN_BITMASK |
-			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ASIGNATIONSCOMPLETED = new FinderPath(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByAsignationsCompleted",
-			new String[] { Boolean.class.getName() });
+	private static final String _FINDER_COLUMN_USERID_USERID_2 =
+		"p2pActivity.userId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByAsignationsCompleted;
+	private FinderPath _finderPathWithoutPaginationFindByAsignationsCompleted;
+	private FinderPath _finderPathCountByAsignationsCompleted;
 
 	/**
 	 * Returns all the p2p activities where asignationsCompleted = &#63;.
@@ -2716,15 +2707,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public List<P2PActivity> findByAsignationsCompleted(
 		boolean asignationsCompleted) {
-		return findByAsignationsCompleted(asignationsCompleted,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		return findByAsignationsCompleted(
+			asignationsCompleted, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the p2p activities where asignationsCompleted = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param asignationsCompleted the asignations completed
@@ -2735,14 +2727,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public List<P2PActivity> findByAsignationsCompleted(
 		boolean asignationsCompleted, int start, int end) {
-		return findByAsignationsCompleted(asignationsCompleted, start, end, null);
+
+		return findByAsignationsCompleted(
+			asignationsCompleted, start, end, null);
 	}
 
 	/**
 	 * Returns an ordered range of all the p2p activities where asignationsCompleted = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param asignationsCompleted the asignations completed
@@ -2755,15 +2749,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public List<P2PActivity> findByAsignationsCompleted(
 		boolean asignationsCompleted, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator) {
-		return findByAsignationsCompleted(asignationsCompleted, start, end,
-			orderByComparator, true);
+
+		return findByAsignationsCompleted(
+			asignationsCompleted, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the p2p activities where asignationsCompleted = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param asignationsCompleted the asignations completed
@@ -2778,34 +2773,36 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		boolean asignationsCompleted, int start, int end,
 		OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED;
-			finderArgs = new Object[] { asignationsCompleted };
+			finderPath = _finderPathWithoutPaginationFindByAsignationsCompleted;
+			finderArgs = new Object[] {asignationsCompleted};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED;
+			finderPath = _finderPathWithPaginationFindByAsignationsCompleted;
 			finderArgs = new Object[] {
-					asignationsCompleted,
-					
-					start, end, orderByComparator
-				};
+				asignationsCompleted, start, end, orderByComparator
+			};
 		}
 
 		List<P2PActivity> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivity>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<P2PActivity>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (P2PActivity p2pActivity : list) {
-					if ((asignationsCompleted != p2pActivity.isAsignationsCompleted())) {
+					if ((asignationsCompleted !=
+							p2pActivity.isAsignationsCompleted())) {
+
 						list = null;
 
 						break;
@@ -2818,8 +2815,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -2827,14 +2824,14 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			query.append(_SQL_SELECT_P2PACTIVITY_WHERE);
 
-			query.append(_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2);
+			query.append(
+				_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(P2PActivityModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -2852,16 +2849,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				qPos.add(asignationsCompleted);
 
 				if (!pagination) {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -2891,11 +2888,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public P2PActivity findByAsignationsCompleted_First(
-		boolean asignationsCompleted,
-		OrderByComparator<P2PActivity> orderByComparator)
+			boolean asignationsCompleted,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
-		P2PActivity p2pActivity = fetchByAsignationsCompleted_First(asignationsCompleted,
-				orderByComparator);
+
+		P2PActivity p2pActivity = fetchByAsignationsCompleted_First(
+			asignationsCompleted, orderByComparator);
 
 		if (p2pActivity != null) {
 			return p2pActivity;
@@ -2924,8 +2922,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public P2PActivity fetchByAsignationsCompleted_First(
 		boolean asignationsCompleted,
 		OrderByComparator<P2PActivity> orderByComparator) {
-		List<P2PActivity> list = findByAsignationsCompleted(asignationsCompleted,
-				0, 1, orderByComparator);
+
+		List<P2PActivity> list = findByAsignationsCompleted(
+			asignationsCompleted, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2944,11 +2943,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public P2PActivity findByAsignationsCompleted_Last(
-		boolean asignationsCompleted,
-		OrderByComparator<P2PActivity> orderByComparator)
+			boolean asignationsCompleted,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
-		P2PActivity p2pActivity = fetchByAsignationsCompleted_Last(asignationsCompleted,
-				orderByComparator);
+
+		P2PActivity p2pActivity = fetchByAsignationsCompleted_Last(
+			asignationsCompleted, orderByComparator);
 
 		if (p2pActivity != null) {
 			return p2pActivity;
@@ -2977,14 +2977,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public P2PActivity fetchByAsignationsCompleted_Last(
 		boolean asignationsCompleted,
 		OrderByComparator<P2PActivity> orderByComparator) {
+
 		int count = countByAsignationsCompleted(asignationsCompleted);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<P2PActivity> list = findByAsignationsCompleted(asignationsCompleted,
-				count - 1, count, orderByComparator);
+		List<P2PActivity> list = findByAsignationsCompleted(
+			asignationsCompleted, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -3004,9 +3005,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public P2PActivity[] findByAsignationsCompleted_PrevAndNext(
-		long p2pActivityId, boolean asignationsCompleted,
-		OrderByComparator<P2PActivity> orderByComparator)
+			long p2pActivityId, boolean asignationsCompleted,
+			OrderByComparator<P2PActivity> orderByComparator)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = findByPrimaryKey(p2pActivityId);
 
 		Session session = null;
@@ -3016,13 +3018,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			P2PActivity[] array = new P2PActivityImpl[3];
 
-			array[0] = getByAsignationsCompleted_PrevAndNext(session,
-					p2pActivity, asignationsCompleted, orderByComparator, true);
+			array[0] = getByAsignationsCompleted_PrevAndNext(
+				session, p2pActivity, asignationsCompleted, orderByComparator,
+				true);
 
 			array[1] = p2pActivity;
 
-			array[2] = getByAsignationsCompleted_PrevAndNext(session,
-					p2pActivity, asignationsCompleted, orderByComparator, false);
+			array[2] = getByAsignationsCompleted_PrevAndNext(
+				session, p2pActivity, asignationsCompleted, orderByComparator,
+				false);
 
 			return array;
 		}
@@ -3037,11 +3041,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	protected P2PActivity getByAsignationsCompleted_PrevAndNext(
 		Session session, P2PActivity p2pActivity, boolean asignationsCompleted,
 		OrderByComparator<P2PActivity> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -3050,10 +3055,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 		query.append(_SQL_SELECT_P2PACTIVITY_WHERE);
 
-		query.append(_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2);
+		query.append(
+			_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -3123,10 +3130,10 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		qPos.add(asignationsCompleted);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(p2pActivity);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(p2pActivity)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -3147,8 +3154,11 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public void removeByAsignationsCompleted(boolean asignationsCompleted) {
-		for (P2PActivity p2pActivity : findByAsignationsCompleted(
-				asignationsCompleted, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (P2PActivity p2pActivity :
+				findByAsignationsCompleted(
+					asignationsCompleted, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(p2pActivity);
 		}
 	}
@@ -3161,9 +3171,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countByAsignationsCompleted(boolean asignationsCompleted) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ASIGNATIONSCOMPLETED;
+		FinderPath finderPath = _finderPathCountByAsignationsCompleted;
 
-		Object[] finderArgs = new Object[] { asignationsCompleted };
+		Object[] finderArgs = new Object[] {asignationsCompleted};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -3172,7 +3182,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 			query.append(_SQL_COUNT_P2PACTIVITY_WHERE);
 
-			query.append(_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2);
+			query.append(
+				_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2);
 
 			String sql = query.toString();
 
@@ -3204,30 +3215,22 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2 =
-		"p2pActivity.asignationsCompleted = ?";
+	private static final String
+		_FINDER_COLUMN_ASIGNATIONSCOMPLETED_ASIGNATIONSCOMPLETED_2 =
+			"p2pActivity.asignationsCompleted = ?";
 
 	public P2PActivityPersistenceImpl() {
 		setModelClass(P2PActivity.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		setModelImplClass(P2PActivityImpl.class);
+		setModelPKClass(long.class);
 
-			field.setAccessible(true);
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
+		dbColumnNames.put("uuid", "uuid_");
+		dbColumnNames.put("date", "date_");
 
-			dbColumnNames.put("uuid", "uuid_");
-			dbColumnNames.put("date", "date_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	/**
@@ -3237,15 +3240,18 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public void cacheResult(P2PActivity p2pActivity) {
-		entityCache.putResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityImpl.class, p2pActivity.getPrimaryKey(), p2pActivity);
+		entityCache.putResult(
+			entityCacheEnabled, P2PActivityImpl.class,
+			p2pActivity.getPrimaryKey(), p2pActivity);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-			new Object[] { p2pActivity.getUuid(), p2pActivity.getGroupId() },
+		finderCache.putResult(
+			_finderPathFetchByUUID_G,
+			new Object[] {p2pActivity.getUuid(), p2pActivity.getGroupId()},
 			p2pActivity);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-			new Object[] { p2pActivity.getActId(), p2pActivity.getUserId() },
+		finderCache.putResult(
+			_finderPathFetchByActIdUserId,
+			new Object[] {p2pActivity.getActId(), p2pActivity.getUserId()},
 			p2pActivity);
 
 		p2pActivity.resetOriginalValues();
@@ -3260,8 +3266,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	public void cacheResult(List<P2PActivity> p2pActivities) {
 		for (P2PActivity p2pActivity : p2pActivities) {
 			if (entityCache.getResult(
-						P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-						P2PActivityImpl.class, p2pActivity.getPrimaryKey()) == null) {
+					entityCacheEnabled, P2PActivityImpl.class,
+					p2pActivity.getPrimaryKey()) == null) {
+
 				cacheResult(p2pActivity);
 			}
 			else {
@@ -3274,7 +3281,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Clears the cache for all p2p activities.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
@@ -3290,13 +3297,14 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Clears the cache for the p2p activity.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
 	public void clearCache(P2PActivity p2pActivity) {
-		entityCache.removeResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityImpl.class, p2pActivity.getPrimaryKey());
+		entityCache.removeResult(
+			entityCacheEnabled, P2PActivityImpl.class,
+			p2pActivity.getPrimaryKey());
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
@@ -3310,8 +3318,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
 		for (P2PActivity p2pActivity : p2pActivities) {
-			entityCache.removeResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-				P2PActivityImpl.class, p2pActivity.getPrimaryKey());
+			entityCache.removeResult(
+				entityCacheEnabled, P2PActivityImpl.class,
+				p2pActivity.getPrimaryKey());
 
 			clearUniqueFindersCache((P2PActivityModelImpl)p2pActivity, true);
 		}
@@ -3319,69 +3328,71 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 	protected void cacheUniqueFindersCache(
 		P2PActivityModelImpl p2pActivityModelImpl) {
-		Object[] args = new Object[] {
-				p2pActivityModelImpl.getUuid(),
-				p2pActivityModelImpl.getGroupId()
-			};
 
-		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-			p2pActivityModelImpl, false);
+		Object[] args = new Object[] {
+			p2pActivityModelImpl.getUuid(), p2pActivityModelImpl.getGroupId()
+		};
+
+		finderCache.putResult(
+			_finderPathCountByUUID_G, args, Long.valueOf(1), false);
+		finderCache.putResult(
+			_finderPathFetchByUUID_G, args, p2pActivityModelImpl, false);
 
 		args = new Object[] {
-				p2pActivityModelImpl.getActId(),
-				p2pActivityModelImpl.getUserId()
-			};
+			p2pActivityModelImpl.getActId(), p2pActivityModelImpl.getUserId()
+		};
 
-		finderCache.putResult(FINDER_PATH_COUNT_BY_ACTIDUSERID, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_ACTIDUSERID, args,
-			p2pActivityModelImpl, false);
+		finderCache.putResult(
+			_finderPathCountByActIdUserId, args, Long.valueOf(1), false);
+		finderCache.putResult(
+			_finderPathFetchByActIdUserId, args, p2pActivityModelImpl, false);
 	}
 
 	protected void clearUniqueFindersCache(
 		P2PActivityModelImpl p2pActivityModelImpl, boolean clearCurrent) {
-		if (clearCurrent) {
-			Object[] args = new Object[] {
-					p2pActivityModelImpl.getUuid(),
-					p2pActivityModelImpl.getGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
-
-		if ((p2pActivityModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
-					p2pActivityModelImpl.getOriginalUuid(),
-					p2pActivityModelImpl.getOriginalGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
 
 		if (clearCurrent) {
 			Object[] args = new Object[] {
-					p2pActivityModelImpl.getActId(),
-					p2pActivityModelImpl.getUserId()
-				};
+				p2pActivityModelImpl.getUuid(),
+				p2pActivityModelImpl.getGroupId()
+			};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIDUSERID, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_ACTIDUSERID, args);
+			finderCache.removeResult(_finderPathCountByUUID_G, args);
+			finderCache.removeResult(_finderPathFetchByUUID_G, args);
 		}
 
 		if ((p2pActivityModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_ACTIDUSERID.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
-					p2pActivityModelImpl.getOriginalActId(),
-					p2pActivityModelImpl.getOriginalUserId()
-				};
+			 _finderPathFetchByUUID_G.getColumnBitmask()) != 0) {
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIDUSERID, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_ACTIDUSERID, args);
+			Object[] args = new Object[] {
+				p2pActivityModelImpl.getOriginalUuid(),
+				p2pActivityModelImpl.getOriginalGroupId()
+			};
+
+			finderCache.removeResult(_finderPathCountByUUID_G, args);
+			finderCache.removeResult(_finderPathFetchByUUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+				p2pActivityModelImpl.getActId(),
+				p2pActivityModelImpl.getUserId()
+			};
+
+			finderCache.removeResult(_finderPathCountByActIdUserId, args);
+			finderCache.removeResult(_finderPathFetchByActIdUserId, args);
+		}
+
+		if ((p2pActivityModelImpl.getColumnBitmask() &
+			 _finderPathFetchByActIdUserId.getColumnBitmask()) != 0) {
+
+			Object[] args = new Object[] {
+				p2pActivityModelImpl.getOriginalActId(),
+				p2pActivityModelImpl.getOriginalUserId()
+			};
+
+			finderCache.removeResult(_finderPathCountByActIdUserId, args);
+			finderCache.removeResult(_finderPathFetchByActIdUserId, args);
 		}
 	}
 
@@ -3417,6 +3428,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity remove(long p2pActivityId)
 		throws NoSuchP2PActivityException {
+
 		return remove((Serializable)p2pActivityId);
 	}
 
@@ -3430,21 +3442,22 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity remove(Serializable primaryKey)
 		throws NoSuchP2PActivityException {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			P2PActivity p2pActivity = (P2PActivity)session.get(P2PActivityImpl.class,
-					primaryKey);
+			P2PActivity p2pActivity = (P2PActivity)session.get(
+				P2PActivityImpl.class, primaryKey);
 
 			if (p2pActivity == null) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
-				throw new NoSuchP2PActivityException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+				throw new NoSuchP2PActivityException(
+					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			return remove(p2pActivity);
@@ -3468,8 +3481,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			session = openSession();
 
 			if (!session.contains(p2pActivity)) {
-				p2pActivity = (P2PActivity)session.get(P2PActivityImpl.class,
-						p2pActivity.getPrimaryKeyObj());
+				p2pActivity = (P2PActivity)session.get(
+					P2PActivityImpl.class, p2pActivity.getPrimaryKeyObj());
 			}
 
 			if (p2pActivity != null) {
@@ -3502,15 +3515,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 				throw new IllegalArgumentException(
 					"Implement ModelWrapper in p2pActivity proxy " +
-					invocationHandler.getClass());
+						invocationHandler.getClass());
 			}
 
 			throw new IllegalArgumentException(
 				"Implement ModelWrapper in custom P2PActivity implementation " +
-				p2pActivity.getClass());
+					p2pActivity.getClass());
 		}
 
-		P2PActivityModelImpl p2pActivityModelImpl = (P2PActivityModelImpl)p2pActivity;
+		P2PActivityModelImpl p2pActivityModelImpl =
+			(P2PActivityModelImpl)p2pActivity;
 
 		if (Validator.isNull(p2pActivity.getUuid())) {
 			String uuid = PortalUUIDUtil.generate();
@@ -3518,7 +3532,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			p2pActivity.setUuid(uuid);
 		}
 
-		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
 
 		Date now = new Date();
 
@@ -3536,7 +3551,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				p2pActivity.setModifiedDate(now);
 			}
 			else {
-				p2pActivity.setModifiedDate(serviceContext.getModifiedDate(now));
+				p2pActivity.setModifiedDate(
+					serviceContext.getModifiedDate(now));
 			}
 		}
 
@@ -3563,148 +3579,158 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!P2PActivityModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!_columnBitmaskEnabled) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
-		else
-		 if (isNew) {
-			Object[] args = new Object[] { p2pActivityModelImpl.getUuid() };
+		else if (isNew) {
+			Object[] args = new Object[] {p2pActivityModelImpl.getUuid()};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
+			finderCache.removeResult(_finderPathCountByUuid, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid, args);
 
 			args = new Object[] {
+				p2pActivityModelImpl.getUuid(),
+				p2pActivityModelImpl.getCompanyId()
+			};
+
+			finderCache.removeResult(_finderPathCountByUuid_C, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid_C, args);
+
+			args = new Object[] {p2pActivityModelImpl.getActId()};
+
+			finderCache.removeResult(_finderPathCountByActId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByActId, args);
+
+			args = new Object[] {p2pActivityModelImpl.getUserId()};
+
+			finderCache.removeResult(_finderPathCountByUserId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUserId, args);
+
+			args = new Object[] {p2pActivityModelImpl.isAsignationsCompleted()};
+
+			finderCache.removeResult(
+				_finderPathCountByAsignationsCompleted, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByAsignationsCompleted, args);
+
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
+		}
+		else {
+			if ((p2pActivityModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUuid.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					p2pActivityModelImpl.getOriginalUuid()
+				};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+
+				args = new Object[] {p2pActivityModelImpl.getUuid()};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+			}
+
+			if ((p2pActivityModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUuid_C.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					p2pActivityModelImpl.getOriginalUuid(),
+					p2pActivityModelImpl.getOriginalCompanyId()
+				};
+
+				finderCache.removeResult(_finderPathCountByUuid_C, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid_C, args);
+
+				args = new Object[] {
 					p2pActivityModelImpl.getUuid(),
 					p2pActivityModelImpl.getCompanyId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-				args);
-
-			args = new Object[] { p2pActivityModelImpl.getActId() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-				args);
-
-			args = new Object[] { p2pActivityModelImpl.getUserId() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
-				args);
-
-			args = new Object[] { p2pActivityModelImpl.isAsignationsCompleted() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ASIGNATIONSCOMPLETED,
-				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
-		}
-
-		else {
-			if ((p2pActivityModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						p2pActivityModelImpl.getOriginalUuid()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
-
-				args = new Object[] { p2pActivityModelImpl.getUuid() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
+				finderCache.removeResult(_finderPathCountByUuid_C, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid_C, args);
 			}
 
 			if ((p2pActivityModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						p2pActivityModelImpl.getOriginalUuid(),
-						p2pActivityModelImpl.getOriginalCompanyId()
-					};
+				 _finderPathWithoutPaginationFindByActId.getColumnBitmask()) !=
+					 0) {
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
+				Object[] args = new Object[] {
+					p2pActivityModelImpl.getOriginalActId()
+				};
+
+				finderCache.removeResult(_finderPathCountByActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByActId, args);
+
+				args = new Object[] {p2pActivityModelImpl.getActId()};
+
+				finderCache.removeResult(_finderPathCountByActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByActId, args);
+			}
+
+			if ((p2pActivityModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUserId.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					p2pActivityModelImpl.getOriginalUserId()
+				};
+
+				finderCache.removeResult(_finderPathCountByUserId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserId, args);
+
+				args = new Object[] {p2pActivityModelImpl.getUserId()};
+
+				finderCache.removeResult(_finderPathCountByUserId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserId, args);
+			}
+
+			if ((p2pActivityModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByAsignationsCompleted.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					p2pActivityModelImpl.getOriginalAsignationsCompleted()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByAsignationsCompleted, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByAsignationsCompleted,
 					args);
 
 				args = new Object[] {
-						p2pActivityModelImpl.getUuid(),
-						p2pActivityModelImpl.getCompanyId()
-					};
+					p2pActivityModelImpl.isAsignationsCompleted()
+				};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-					args);
-			}
-
-			if ((p2pActivityModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						p2pActivityModelImpl.getOriginalActId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-					args);
-
-				args = new Object[] { p2pActivityModelImpl.getActId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-					args);
-			}
-
-			if ((p2pActivityModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						p2pActivityModelImpl.getOriginalUserId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
-					args);
-
-				args = new Object[] { p2pActivityModelImpl.getUserId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
-					args);
-			}
-
-			if ((p2pActivityModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						p2pActivityModelImpl.getOriginalAsignationsCompleted()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ASIGNATIONSCOMPLETED,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED,
-					args);
-
-				args = new Object[] {
-						p2pActivityModelImpl.isAsignationsCompleted()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ASIGNATIONSCOMPLETED,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ASIGNATIONSCOMPLETED,
+				finderCache.removeResult(
+					_finderPathCountByAsignationsCompleted, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByAsignationsCompleted,
 					args);
 			}
 		}
 
-		entityCache.putResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-			P2PActivityImpl.class, p2pActivity.getPrimaryKey(), p2pActivity,
-			false);
+		entityCache.putResult(
+			entityCacheEnabled, P2PActivityImpl.class,
+			p2pActivity.getPrimaryKey(), p2pActivity, false);
 
 		clearUniqueFindersCache(p2pActivityModelImpl, false);
 		cacheUniqueFindersCache(p2pActivityModelImpl);
@@ -3715,7 +3741,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	}
 
 	/**
-	 * Returns the p2p activity with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
+	 * Returns the p2p activity with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the p2p activity
 	 * @return the p2p activity
@@ -3724,6 +3750,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity findByPrimaryKey(Serializable primaryKey)
 		throws NoSuchP2PActivityException {
+
 		P2PActivity p2pActivity = fetchByPrimaryKey(primaryKey);
 
 		if (p2pActivity == null) {
@@ -3731,15 +3758,15 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
-			throw new NoSuchP2PActivityException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-				primaryKey);
+			throw new NoSuchP2PActivityException(
+				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 		}
 
 		return p2pActivity;
 	}
 
 	/**
-	 * Returns the p2p activity with the primary key or throws a {@link NoSuchP2PActivityException} if it could not be found.
+	 * Returns the p2p activity with the primary key or throws a <code>NoSuchP2PActivityException</code> if it could not be found.
 	 *
 	 * @param p2pActivityId the primary key of the p2p activity
 	 * @return the p2p activity
@@ -3748,55 +3775,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity findByPrimaryKey(long p2pActivityId)
 		throws NoSuchP2PActivityException {
+
 		return findByPrimaryKey((Serializable)p2pActivityId);
-	}
-
-	/**
-	 * Returns the p2p activity with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the p2p activity
-	 * @return the p2p activity, or <code>null</code> if a p2p activity with the primary key could not be found
-	 */
-	@Override
-	public P2PActivity fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-				P2PActivityImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		P2PActivity p2pActivity = (P2PActivity)serializable;
-
-		if (p2pActivity == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				p2pActivity = (P2PActivity)session.get(P2PActivityImpl.class,
-						primaryKey);
-
-				if (p2pActivity != null) {
-					cacheResult(p2pActivity);
-				}
-				else {
-					entityCache.putResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-						P2PActivityImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-					P2PActivityImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return p2pActivity;
 	}
 
 	/**
@@ -3808,100 +3788,6 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	@Override
 	public P2PActivity fetchByPrimaryKey(long p2pActivityId) {
 		return fetchByPrimaryKey((Serializable)p2pActivityId);
-	}
-
-	@Override
-	public Map<Serializable, P2PActivity> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, P2PActivity> map = new HashMap<Serializable, P2PActivity>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			P2PActivity p2pActivity = fetchByPrimaryKey(primaryKey);
-
-			if (p2pActivity != null) {
-				map.put(primaryKey, p2pActivity);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-					P2PActivityImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (P2PActivity)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler((uncachedPrimaryKeys.size() * 2) +
-				1);
-
-		query.append(_SQL_SELECT_P2PACTIVITY_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (P2PActivity p2pActivity : (List<P2PActivity>)q.list()) {
-				map.put(p2pActivity.getPrimaryKeyObj(), p2pActivity);
-
-				cacheResult(p2pActivity);
-
-				uncachedPrimaryKeys.remove(p2pActivity.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(P2PActivityModelImpl.ENTITY_CACHE_ENABLED,
-					P2PActivityImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -3918,7 +3804,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns a range of all the p2p activities.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of p2p activities
@@ -3934,7 +3820,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of p2p activities
@@ -3943,8 +3829,9 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findAll(int start, int end,
-		OrderByComparator<P2PActivity> orderByComparator) {
+	public List<P2PActivity> findAll(
+		int start, int end, OrderByComparator<P2PActivity> orderByComparator) {
+
 		return findAll(start, end, orderByComparator, true);
 	}
 
@@ -3952,7 +3839,7 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * Returns an ordered range of all the p2p activities.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link P2PActivityModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>P2PActivityModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of p2p activities
@@ -3962,29 +3849,31 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 * @return the ordered range of p2p activities
 	 */
 	@Override
-	public List<P2PActivity> findAll(int start, int end,
-		OrderByComparator<P2PActivity> orderByComparator,
+	public List<P2PActivity> findAll(
+		int start, int end, OrderByComparator<P2PActivity> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithoutPaginationFindAll;
 			finderArgs = FINDER_ARGS_EMPTY;
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
-			finderArgs = new Object[] { start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindAll;
+			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<P2PActivity> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<P2PActivity>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<P2PActivity>)finderCache.getResult(
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -3992,13 +3881,13 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					2 + (orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_P2PACTIVITY);
 
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
 				sql = query.toString();
 			}
@@ -4018,16 +3907,16 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 				Query q = session.createQuery(sql);
 
 				if (!pagination) {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<P2PActivity>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<P2PActivity>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -4065,8 +3954,8 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
-				FINDER_ARGS_EMPTY, this);
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -4078,12 +3967,12 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
-					count);
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -4101,6 +3990,21 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "p2pActivityId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_P2PACTIVITY;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return P2PActivityModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -4108,32 +4012,230 @@ public class P2PActivityPersistenceImpl extends BasePersistenceImpl<P2PActivity>
 	/**
 	 * Initializes the p2p activity persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		P2PActivityModelImpl.setEntityCacheEnabled(entityCacheEnabled);
+		P2PActivityModelImpl.setFinderCacheEnabled(finderCacheEnabled);
+
+		_finderPathWithPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+			new String[0]);
+
+		_finderPathCountAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+			new String[0]);
+
+		_finderPathWithPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+			new String[] {
+				String.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+			new String[] {String.class.getName()},
+			P2PActivityModelImpl.UUID_COLUMN_BITMASK |
+			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
+
+		_finderPathCountByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+			new String[] {String.class.getName()});
+
+		_finderPathFetchByUUID_G = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByUUID_G",
+			new String[] {String.class.getName(), Long.class.getName()},
+			P2PActivityModelImpl.UUID_COLUMN_BITMASK |
+			P2PActivityModelImpl.GROUPID_COLUMN_BITMASK);
+
+		_finderPathCountByUUID_G = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
+			new String[] {String.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByUuid_C = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+			new String[] {
+				String.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+			new String[] {String.class.getName(), Long.class.getName()},
+			P2PActivityModelImpl.UUID_COLUMN_BITMASK |
+			P2PActivityModelImpl.COMPANYID_COLUMN_BITMASK |
+			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
+
+		_finderPathCountByUuid_C = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+			new String[] {String.class.getName(), Long.class.getName()});
+
+		_finderPathFetchByActIdUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_ENTITY, "fetchByActIdUserId",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			P2PActivityModelImpl.ACTID_COLUMN_BITMASK |
+			P2PActivityModelImpl.USERID_COLUMN_BITMASK);
+
+		_finderPathCountByActIdUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActIdUserId",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByActId",
+			new String[] {Long.class.getName()},
+			P2PActivityModelImpl.ACTID_COLUMN_BITMASK |
+			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
+
+		_finderPathCountByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
+			new String[] {Long.class.getName()},
+			P2PActivityModelImpl.USERID_COLUMN_BITMASK |
+			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
+
+		_finderPathCountByUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByAsignationsCompleted = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+			"findByAsignationsCompleted",
+			new String[] {
+				Boolean.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByAsignationsCompleted = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, P2PActivityImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByAsignationsCompleted",
+			new String[] {Boolean.class.getName()},
+			P2PActivityModelImpl.ASIGNATIONSCOMPLETED_COLUMN_BITMASK |
+			P2PActivityModelImpl.COUNTCORRECTIONS_COLUMN_BITMASK);
+
+		_finderPathCountByAsignationsCompleted = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByAsignationsCompleted",
+			new String[] {Boolean.class.getName()});
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
 		entityCache.removeCache(P2PActivityImpl.class.getName());
 		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = CompanyProviderWrapper.class)
+	@Override
+	@Reference(
+		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
+
+		_columnBitmaskEnabled = GetterUtil.getBoolean(
+			configuration.get(
+				"value.object.column.bitmask.enabled.com.ted.lms.learning.activity.p2p.model.P2PActivity"),
+			true);
+	}
+
+	@Override
+	@Reference(
+		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	private boolean _columnBitmaskEnabled;
+
+	@Reference(service = CompanyProviderWrapper.class)
 	protected CompanyProvider companyProvider;
-	@ServiceReference(type = EntityCache.class)
+
+	@Reference
 	protected EntityCache entityCache;
-	@ServiceReference(type = FinderCache.class)
+
+	@Reference
 	protected FinderCache finderCache;
-	private static final String _SQL_SELECT_P2PACTIVITY = "SELECT p2pActivity FROM P2PActivity p2pActivity";
-	private static final String _SQL_SELECT_P2PACTIVITY_WHERE_PKS_IN = "SELECT p2pActivity FROM P2PActivity p2pActivity WHERE p2pActivityId IN (";
-	private static final String _SQL_SELECT_P2PACTIVITY_WHERE = "SELECT p2pActivity FROM P2PActivity p2pActivity WHERE ";
-	private static final String _SQL_COUNT_P2PACTIVITY = "SELECT COUNT(p2pActivity) FROM P2PActivity p2pActivity";
-	private static final String _SQL_COUNT_P2PACTIVITY_WHERE = "SELECT COUNT(p2pActivity) FROM P2PActivity p2pActivity WHERE ";
+
+	private static final String _SQL_SELECT_P2PACTIVITY =
+		"SELECT p2pActivity FROM P2PActivity p2pActivity";
+
+	private static final String _SQL_SELECT_P2PACTIVITY_WHERE =
+		"SELECT p2pActivity FROM P2PActivity p2pActivity WHERE ";
+
+	private static final String _SQL_COUNT_P2PACTIVITY =
+		"SELECT COUNT(p2pActivity) FROM P2PActivity p2pActivity";
+
+	private static final String _SQL_COUNT_P2PACTIVITY_WHERE =
+		"SELECT COUNT(p2pActivity) FROM P2PActivity p2pActivity WHERE ";
+
 	private static final String _ORDER_BY_ENTITY_ALIAS = "p2pActivity.";
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No P2PActivity exists with the primary key ";
-	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No P2PActivity exists with the key {";
-	private static final Log _log = LogFactoryUtil.getLog(P2PActivityPersistenceImpl.class);
-	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid", "date"
-			});
+
+	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
+		"No P2PActivity exists with the primary key ";
+
+	private static final String _NO_SUCH_ENTITY_WITH_KEY =
+		"No P2PActivity exists with the key {";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		P2PActivityPersistenceImpl.class);
+
+	private static final Set<String> _badColumnNames = SetUtil.fromArray(
+		new String[] {"uuid", "date"});
+
 }

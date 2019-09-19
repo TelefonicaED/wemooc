@@ -14,11 +14,18 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
+import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
+import com.ted.postcondition.model.Postcondition;
+import com.ted.postcondition.service.PostconditionRelationLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.ted.audit.api.AuditFactory;
+import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.exception.NoSuchCourseResultException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseEval;
@@ -26,18 +33,18 @@ import com.ted.lms.model.CourseEvalFactory;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.Module;
 import com.ted.lms.model.ModuleResult;
-import com.ted.lms.model.Postcondition;
 import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
-import com.ted.lms.registry.PostconditionRegistryUtil;
-import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The implementation of the course result local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.CourseResultLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.CourseResultLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -45,17 +52,21 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see CourseResultLocalServiceBaseImpl
- * @see com.ted.lms.service.CourseResultLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.CourseResult",
+	service = AopService.class
+)
 public class CourseResultLocalServiceImpl
 	extends CourseResultLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseResultLocalServiceUtil} to access the course result local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.CourseResultLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.CourseResultLocalServiceUtil</code>.
 	 */
 	
-	public List<CourseResult> getCourseResults(long courseId){
+public List<CourseResult> getCourseResults(long courseId){
 		
 		return courseResultPersistence.findByCourseId(courseId);
 		
@@ -82,7 +93,7 @@ public class CourseResultLocalServiceImpl
 		
 		try {
 			User userModified = userLocalService.getUser(userId);
-			Course course = courseLocalService.getCourse(courseId);
+			Course course = coursePersistence.fetchByPrimaryKey(courseId);
 			
 			courseResult = courseResultPersistence.create(counterLocalService.increment(CourseResult.class.getName()));
 			courseResult.setCourseId(courseId);
@@ -96,6 +107,9 @@ public class CourseResultLocalServiceImpl
 			courseResult.setUserModifiedName(userModified.getFullName());
 			
 			courseResultPersistence.update(courseResult);
+			
+			AuditFactory.audit(course.getCompanyId(), course.getGroupId(), LMSAuditConstants.COURSE_RESULT_ADD, CourseResult.class.getName(), courseResult.getCrId(), 
+					userId, userModified.getFullName(), null);
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -117,19 +131,21 @@ public class CourseResultLocalServiceImpl
 	public CourseResult updateCourseResult(CourseResult courseResult) {
 		//Si ha finalizado el curso llamamos a las postcondiciones
 		if(Validator.isNotNull(courseResult.getPassedDate())) {
-			List<Postcondition> listPostcondition = PostconditionRegistryUtil.getPostconditions(courseResult.getCompanyId());
-			for(Postcondition postcondition: listPostcondition) {
+			List<Postcondition> postconditions = postconditionRelationLocalService.getPostconditions(PortalUtil.getClassNameId(Course.class), courseResult.getCourseId());
+			for(Postcondition postcondition: postconditions) {
+				postcondition.completed(courseResult.getUserId());
 				if(courseResult.isPassed()) {
-					postcondition.passedCourseResult(courseResult);
+					postcondition.passed(courseResult.getUserId());
 				}else {
-					postcondition.failedCourseResult(courseResult);
+					postcondition.failed(courseResult.getUserId());
 				}
 			}
 		}
+		
 		return super.updateCourseResult(courseResult);
 	}
 	
-	public CourseResult updateCourseResult(ModuleResult moduleResult, ServiceContext serviceContext) {
+	public CourseResult updateCourseResult(ModuleResult moduleResult) throws PortalException {
 		
 		CourseResult courseResult = null;
 		
@@ -139,20 +155,22 @@ public class CourseResultLocalServiceImpl
 		if(course!=null){
 			
 			courseResult=courseResultLocalService.fetchCourseResult(course.getCourseId(), moduleResult.getUserId());
+			
 			if(courseResult==null) {
 				courseResult=courseResultLocalService.addCourseResult(moduleResult.getUserModifiedId(), course.getCourseId(), moduleResult.getUserId());
 			}
 			
 			CourseEvalFactory courseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactoryByType(course.getCourseEvalId());
-			try {
-				CourseEval courseEval = courseEvalFactory.getCourseEval(course);
-				courseResult = courseEval.updateCourseResult(courseResult);
-			} catch (PortalException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			CourseEval courseEval = courseEvalFactory.getCourseEval(course);
+			courseResult = courseEval.updateCourseResult(courseResult);
 			
 			courseResult = courseResultLocalService.updateCourseResult(courseResult);
+			
+			User user = userLocalService.getUser(moduleResult.getUserId());
+			
+			AuditFactory.audit(course.getCompanyId(), course.getGroupId(), LMSAuditConstants.COURSE_RESULT_UPDATE, CourseResult.class.getName(), courseResult.getCrId(), 
+					user.getUserId(), user.getFullName(), null);
 		}
 		
 		return courseResult;
@@ -171,4 +189,7 @@ public class CourseResultLocalServiceImpl
 		return courseResultFinder.doCountByU_G(userId, inProgress, completed, expired, groupId, true);
 		
 	}
+	
+	@Reference
+	protected PostconditionRelationLocalService postconditionRelationLocalService;
 }

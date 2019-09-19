@@ -353,7 +353,7 @@
 				}
 			);
 		</script>
-		<aui:button name="saveButtonAndView" type="submit-and-view" value="save" />
+		<aui:button name="saveButtonAndView" type="submit-and-view" value="save-and-view" />
 		<script>
 			$('#<portlet:namespace />saveButtonAndView').on(
 				'click',

@@ -14,11 +14,9 @@
 
 package com.ted.audit.db.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.audit.db.model.AuditEntry;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing AuditEntry in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see AuditEntry
  * @generated
  */
 @ProviderType
-public class AuditEntryCacheModel implements CacheModel<AuditEntry>,
-	Externalizable {
+public class AuditEntryCacheModel
+	implements CacheModel<AuditEntry>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -167,8 +167,7 @@ public class AuditEntryCacheModel implements CacheModel<AuditEntry>,
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(auditId);
 
 		objectOutput.writeLong(companyId);
@@ -215,4 +214,5 @@ public class AuditEntryCacheModel implements CacheModel<AuditEntry>,
 	public long endDate;
 	public int actionId;
 	public String extradata;
+
 }

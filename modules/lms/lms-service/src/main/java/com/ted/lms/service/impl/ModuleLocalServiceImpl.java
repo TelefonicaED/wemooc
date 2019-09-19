@@ -14,9 +14,12 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.base.ModuleLocalServiceBaseImpl;
+
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
-import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
@@ -29,11 +32,14 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
@@ -44,12 +50,14 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.trash.exception.TrashEntryException;
 import com.liferay.trash.service.TrashEntryLocalService;
+import com.ted.audit.api.AuditFactory;
+import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.DLAppConstants;
 import com.ted.lms.constants.LMSActivityKeys;
+import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
 import com.ted.lms.copy.permission.ResourceCopy;
@@ -57,9 +65,9 @@ import com.ted.lms.exception.ModuleEndDateException;
 import com.ted.lms.exception.ModuleStartDateException;
 import com.ted.lms.exception.NoSuchNextModuleException;
 import com.ted.lms.exception.NoSuchPreviousModuleException;
+import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
-import com.ted.lms.service.base.ModuleLocalServiceBaseImpl;
 import com.ted.lms.service.util.SmallImageHelper;
 import com.ted.lms.settings.ModulesGroupServiceSettings;
 import com.ted.lms.util.LMSPrefsPropsValues;
@@ -75,11 +83,15 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the module local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.ModuleLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.ModuleLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -87,13 +99,17 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Brian Wing Shun Chan
  * @see ModuleLocalServiceBaseImpl
- * @see com.ted.lms.service.ModuleLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.Module",
+	service = AopService.class
+)
 public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.ModuleLocalServiceUtil} to access the module local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.ModuleLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.ModuleLocalServiceUtil</code>.
 	 */
 	
 	private static final Log log = LogFactoryUtil.getLog(ModuleLocalServiceImpl.class);
@@ -147,7 +163,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		module.setTitleMap(titleMap);
 		module.setDescriptionMap(descriptionMap);
 		
-		module.setOrder(module.getModuleId());
+		module.setPriority(module.getModuleId());
 		module.setStartDate(startDate);
 		module.setEndDate(endDate);
 		module.setAllowedTime(allowedTime);
@@ -183,6 +199,9 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		updateAsset(userId, module, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), serviceContext.getAssetLinkEntryIds(), 
 				serviceContext.getAssetPriority());
+		
+		AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_ADD, Module.class.getName(), module.getModuleId(), 
+				userId, user.getFullName(), null);
 		
 		return module;
 	}
@@ -237,8 +256,14 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	}
 	
 	@Override
-	public Module updateOrder(Module module, long order) {
-		module.setOrder(order);
+	public Module updateOrder(long userId, Module module, long priority) throws PortalException {
+		module.setPriority(priority);
+		
+		User user = userLocalService.getUser(userId);
+		
+		AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), module.getModuleId(), 
+				userId, user.getFullName(), null);
+		
 		return modulePersistence.update(module);
 	}
 	
@@ -299,6 +324,9 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 			PortletFileRepositoryUtil.deletePortletFileEntry(deletePreviousSmallImageId);
 		}
 		
+		AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), module.getModuleId(), 
+				userId, user.getFullName(), null);
+		
 		return module;
 	}
 	
@@ -337,15 +365,28 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	public Module deleteModule(Module module) {
 		//Primero eliminamos las actividades
 		learningActivityLocalService.deleteLearningActivities(module.getModuleId());
+		
+		try {
+			long userId = PrincipalThreadLocal.getUserId();
+			User user = userLocalService.getUser(userId);
+			
+			AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), module.getModuleId(), 
+					userId, user.getFullName(), null);
+		} catch (PortalException e) {
+			e.printStackTrace();
+			AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), module.getModuleId(), 
+					0, "", e.getMessage());
+		}
+		
 		return super.deleteModule(module);
 	}
 	
 	@Override
 	@Indexable(type = IndexableType.DELETE)
 	public Module deleteModule(long moduleId) throws PortalException {
-		//Primero eliminamos las actividades
-		learningActivityLocalService.deleteLearningActivities(moduleId);
-		return super.deleteModule(moduleId);
+		Module module = modulePersistence.findByPrimaryKey(moduleId);
+		
+		return deleteModule(module);
 	}
 	
 	@Indexable(type = IndexableType.REINDEX)
@@ -379,6 +420,11 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		if (oldStatus == WorkflowConstants.STATUS_PENDING) {
 			workflowInstanceLinkLocalService.deleteWorkflowInstanceLink(module.getCompanyId(), module.getGroupId(), Module.class.getName(), module.getModuleId());
 		}
+		
+		User user = userLocalService.getUser(userId);
+		
+		AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_TO_TRASH, Module.class.getName(), module.getModuleId(), 
+				userId, user.getFullName(), null);
 
 		return module;
 	}
@@ -452,6 +498,9 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 				trashEntryLocalService.deleteEntry(Module.class.getName(), moduleId);
 			}
 		}
+		
+		AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE_STATUS, Module.class.getName(), module.getModuleId(), 
+				userId, user.getFullName(), null);
 
 		return module;
 	}
@@ -475,18 +524,23 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 			User user = userLocalService.getUser(userId);
 			
 			//Se actualiza el orden
-			long order = module.getOrder();
+			long priority = module.getPriority();
 			
-			module.setOrder(nextModule.getOrder());
+			module.setPriority(nextModule.getPriority());
 			module.setUserId(userId);
 			module.setUserName(user.getFullName());
 			
-			nextModule.setOrder(order);
+			nextModule.setPriority(priority);
 			nextModule.setUserId(userId);
 			nextModule.setUserName(user.getFullName());
 			
 			modulePersistence.update(module);			
 			modulePersistence.update(nextModule);
+			
+			AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), module.getModuleId(), 
+					userId, user.getFullName(), null);
+			AuditFactory.audit(nextModule.getCompanyId(), nextModule.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), nextModule.getModuleId(), 
+					userId, user.getFullName(), null);
 		}
 		
 		return module;
@@ -502,17 +556,22 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		if(previousModule!=null) {
 			User user = userLocalService.getUser(userId);
 			
-			long order=module.getOrder();
-			module.setOrder(previousModule.getOrder());
+			long priority=module.getPriority();
+			module.setPriority(previousModule.getPriority());
 			module.setUserId(userId);
 			module.setUserName(user.getFullName());
 			
-			previousModule.setOrder(order);
+			previousModule.setPriority(priority);
 			previousModule.setUserId(userId);
 			previousModule.setUserName(user.getFullName());
 			
 			modulePersistence.update(module);			
 			modulePersistence.update(previousModule);
+			
+			AuditFactory.audit(module.getCompanyId(), module.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), module.getModuleId(), 
+					userId, user.getFullName(), null);
+			AuditFactory.audit(previousModule.getCompanyId(), previousModule.getGroupId(), LMSAuditConstants.MODULE_UPDATE, Module.class.getName(), previousModule.getModuleId(), 
+					userId, user.getFullName(), null);
 		}
 		
 		return module;
@@ -520,7 +579,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	
 	@Override
 	public Module getNextModule(Module module) throws PortalException {
-		List<Module> listNextModules = modulePersistence.findByGroupIdNextModules(module.getGroupId(), module.getOrder());
+		List<Module> listNextModules = modulePersistence.findByGroupIdNextModules(module.getGroupId(), module.getPriority());
 		Module nextModule = null;
 		if(listNextModules != null && listNextModules.size() > 0) {
 			nextModule = listNextModules.get(0);
@@ -532,7 +591,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	
 	@Override
 	public Module getPreviousModule(Module module) throws PortalException {
-		List<Module> listPreviousModules = modulePersistence.findByGroupIdPreviousModules(module.getGroupId(), module.getOrder());
+		List<Module> listPreviousModules = modulePersistence.findByGroupIdPreviousModules(module.getGroupId(), module.getPriority());
 		Module previousModule = null;
 		if(listPreviousModules != null && listPreviousModules.size() > 0) {
 			previousModule = listPreviousModules.get(0);
@@ -629,7 +688,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		}
 		
 		//Duplicamos los prerequisitos
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteModules(newModule.getCompanyId());
+		String[] classNamePrerequisites = getPrerequisiteModules(newModule.getCompanyId());
 		PrerequisiteFactory prerequisiteFactory = null;
 		
 		long moduleClassNameId = PortalUtil.getClassNameId(Module.class);
@@ -643,6 +702,17 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		
 		return newModule;
 		
+	}
+	
+	public String[] getPrerequisiteModules(long companyId) {
+		String[] prerequisiteModules = null;
+		try {
+			CourseServiceConfiguration courseServiceConfiguration = configurationProvider.getCompanyConfiguration(CourseServiceConfiguration.class, companyId);
+			prerequisiteModules = courseServiceConfiguration.prerequisitesModules();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		return prerequisiteModules;
 	}
 
 	protected String copyModuleImages(String description, long oldGroupId, long newGroupId, long userId) throws Exception {
@@ -663,17 +733,21 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 	
 	private static final int UNIQUE_FILE_NAME_TRIES = 50;
 	
-	@ServiceReference(type = CommentManager.class)
+	@Reference
 	protected CommentManager commentManager;
 	
-	@ServiceReference(type = TrashEntryLocalService.class)
+	@Reference
 	protected TrashEntryLocalService trashEntryLocalService;
 	
-	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	@Reference
 	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
 	
-	@ServiceReference(type = ResourceCopy.class)
+	@Reference
 	protected ResourceCopy resourceCopy;
 	
+	@Reference
+	LearningActivityLocalService learningActivityLocalService;
 	
+	@Reference
+	protected ConfigurationProvider configurationProvider;
 }

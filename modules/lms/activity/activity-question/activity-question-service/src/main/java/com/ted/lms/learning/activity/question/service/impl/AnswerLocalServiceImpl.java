@@ -14,21 +14,24 @@
 
 package com.ted.lms.learning.activity.question.service.impl;
 
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
 import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.service.base.AnswerLocalServiceBaseImpl;
 
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the answer local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.question.service.AnswerLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.question.service.AnswerLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -36,13 +39,17 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see AnswerLocalServiceBaseImpl
- * @see com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.learning.activity.question.model.Answer",
+	service = AopService.class
+)
 public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil} to access the answer local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.learning.activity.question.service.AnswerLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil</code>.
 	 */
 	
 	public List<Answer> getAnswersByQuestionId(long questionId){
@@ -101,8 +108,7 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 	public void copyAnswerImages(Answer oldAnswer, Answer newAnswer) throws Exception {
 		newAnswer.setAnswer(dlReferencesCopyContentProcessor.replaceExportDLReferences(newAnswer.getAnswer(), oldAnswer.getGroupId(), newAnswer.getGroupId(), newAnswer.getUserId()));
 	}
-
 	
-	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	@Reference
 	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
 }

@@ -14,6 +14,9 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
+import com.ted.lms.service.base.ModuleServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
@@ -32,11 +35,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the module remote service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.ModuleService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.ModuleService</code> interface.
  *
  * <p>
  * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
@@ -44,13 +49,20 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see ModuleServiceBaseImpl
- * @see com.ted.lms.service.ModuleServiceUtil
  */
+@Component(
+	property = {
+		"json.web.service.context.name=lms",
+		"json.web.service.context.path=Module"
+	},
+	service = AopService.class
+)
 public class ModuleServiceImpl extends ModuleServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.ModuleServiceUtil} to access the module remote service.
+	 * Never reference this class directly. Always use <code>com.ted.lms.service.ModuleServiceUtil</code> to access the module remote service.
 	 */
 	
 	private static volatile ModelResourcePermission<Module>
@@ -60,20 +72,20 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 	        "moduleModelResourcePermission", Module.class);
 	
 	private static volatile PortletResourcePermission portletResourcePermission =
-        PortletResourcePermissionFactory.getInstance(
-            ModuleServiceImpl.class, "portletResourcePermission",
-            LMSConstants.RESOURCE_NAME);
+	    PortletResourcePermissionFactory.getInstance(
+	        ModuleServiceImpl.class, "portletResourcePermission",
+	        LMSConstants.RESOURCE_NAME);
 	
 	@Override
 	public Module addModule(long groupId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap, boolean startDate, int startDateMonth, 
 			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean endDate, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, ServiceContext serviceContext) throws PortalException {
-
+	
 		portletResourcePermission.check(
 			getPermissionChecker(), serviceContext.getScopeGroupId(),
 			LMSActionKeys.ADD_MODULE);
-
+	
 		return moduleLocalService.addModule(
 			getUserId(), groupId, titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
 			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
@@ -85,9 +97,9 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 			int startDateDay, int startDateYear, int startDateHour, int startDateMinute, boolean endDate, int endDateMonth, int endDateDay,
 			int endDateYear, int endDateHour, int endDateMinute, int allowedHours, int allowedMinutes, ImageSelector smallImageImageSelector, 
 			long moduleEvalId, ServiceContext serviceContext)  throws PortalException {
-
+	
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.UPDATE);
-
+	
 		return moduleLocalService.updateModule(getUserId(), moduleId, titleMap, descriptionMap, startDate, startDateMonth, startDateDay, startDateYear,
 			startDateHour, startDateMinute, endDate, endDateMonth, endDateDay, endDateYear, endDateHour, endDateMinute,
 			allowedHours, allowedMinutes, smallImageImageSelector, moduleEvalId, null, serviceContext);
@@ -95,9 +107,9 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 	
 	@Override
 	public Module updateModule(Module module) throws PortalException {
-
+	
 		moduleModelResourcePermission.check(getPermissionChecker(), module.getModuleId(), ActionKeys.UPDATE);
-
+	
 		return moduleLocalService.updateModule(module);
 	}
 	
@@ -119,33 +131,20 @@ public class ModuleServiceImpl extends ModuleServiceBaseImpl {
 	public Module moveModuleToTrash(long moduleId) throws PortalException {
 		moduleModelResourcePermission.check(
 			getPermissionChecker(), moduleId, ActionKeys.DELETE);
-
+	
 		return moduleLocalService.moveModuleToTrash(getUserId(), moduleId);
 	}
 	
 	@Override
 	public void deleteModule(long moduleId) throws PortalException {
 		moduleModelResourcePermission.check(getPermissionChecker(), moduleId, ActionKeys.DELETE);
-
+	
 		moduleLocalService.deleteModule(moduleId);
 	}
 	
 	@Override
 	public List<Module> getGroupModules(long groupId){
-		List<Module> modules = new ArrayList<Module>();
 		
-		List<Module> listModules = moduleLocalService.findAllInGroup(groupId);
-		for(Module module: listModules) {
-			try {
-				if(moduleModelResourcePermission.contains(getPermissionChecker(), module, ActionKeys.VIEW)) {
-					modules.add(module);
-				}
-			} catch (PortalException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return modules;
+		return modulePersistence.filterFindByGroupId(groupId);
 	}
-
 }

@@ -14,30 +14,31 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the CourseResult service. Represents a row in the &quot;LMS_CourseResult&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see CourseResultModel
- * @see com.ted.lms.model.impl.CourseResultImpl
- * @see com.ted.lms.model.impl.CourseResultModelImpl
  * @generated
  */
 @ImplementationClassName("com.ted.lms.model.impl.CourseResultImpl")
 @ProviderType
 public interface CourseResult extends CourseResultModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.model.impl.CourseResultImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.model.impl.CourseResultImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<CourseResult, Long> CR_ID_ACCESSOR = new Accessor<CourseResult, Long>() {
+	public static final Accessor<CourseResult, Long> CR_ID_ACCESSOR =
+		new Accessor<CourseResult, Long>() {
+
 			@Override
 			public Long get(CourseResult courseResult) {
 				return courseResult.getCrId();
@@ -52,9 +53,15 @@ public interface CourseResult extends CourseResultModel, PersistedModel {
 			public Class<CourseResult> getTypeClass() {
 				return CourseResult.class;
 			}
+
 		};
 
 	public Course getCourse();
 
 	public double getProgress();
+
+	public boolean isFinished();
+
+	public String getCourseStatus(java.util.Locale locale);
+
 }

@@ -14,21 +14,15 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
-
 import com.liferay.exportimport.kernel.lar.StagedModelType;
-
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <p>
@@ -40,21 +34,14 @@ import java.util.Objects;
  * @generated
  */
 @ProviderType
-public class LearningActivityResultWrapper implements LearningActivityResult,
-	ModelWrapper<LearningActivityResult> {
+public class LearningActivityResultWrapper
+	extends BaseModelWrapper<LearningActivityResult>
+	implements LearningActivityResult, ModelWrapper<LearningActivityResult> {
+
 	public LearningActivityResultWrapper(
 		LearningActivityResult learningActivityResult) {
-		_learningActivityResult = learningActivityResult;
-	}
 
-	@Override
-	public Class<?> getModelClass() {
-		return LearningActivityResult.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return LearningActivityResult.class.getName();
+		super(learningActivityResult);
 	}
 
 	@Override
@@ -180,526 +167,406 @@ public class LearningActivityResultWrapper implements LearningActivityResult,
 		}
 	}
 
-	@Override
-	public Object clone() {
-		return new LearningActivityResultWrapper((LearningActivityResult)_learningActivityResult.clone());
-	}
-
-	@Override
-	public int compareTo(LearningActivityResult learningActivityResult) {
-		return _learningActivityResult.compareTo(learningActivityResult);
-	}
-
 	/**
-	* Returns the act ID of this learning activity result.
-	*
-	* @return the act ID of this learning activity result
-	*/
+	 * Returns the act ID of this learning activity result.
+	 *
+	 * @return the act ID of this learning activity result
+	 */
 	@Override
 	public long getActId() {
-		return _learningActivityResult.getActId();
+		return model.getActId();
+	}
+
+	@Override
+	public String getActivityStatus(java.util.Locale locale) {
+		return model.getActivityStatus(locale);
 	}
 
 	/**
-	* Returns the comments of this learning activity result.
-	*
-	* @return the comments of this learning activity result
-	*/
+	 * Returns the comments of this learning activity result.
+	 *
+	 * @return the comments of this learning activity result
+	 */
 	@Override
 	public String getComments() {
-		return _learningActivityResult.getComments();
+		return model.getComments();
 	}
 
 	/**
-	* Returns the company ID of this learning activity result.
-	*
-	* @return the company ID of this learning activity result
-	*/
+	 * Returns the company ID of this learning activity result.
+	 *
+	 * @return the company ID of this learning activity result
+	 */
 	@Override
 	public long getCompanyId() {
-		return _learningActivityResult.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	/**
-	* Returns the create date of this learning activity result.
-	*
-	* @return the create date of this learning activity result
-	*/
+	 * Returns the create date of this learning activity result.
+	 *
+	 * @return the create date of this learning activity result
+	 */
 	@Override
 	public Date getCreateDate() {
-		return _learningActivityResult.getCreateDate();
+		return model.getCreateDate();
 	}
 
 	/**
-	* Returns the end date of this learning activity result.
-	*
-	* @return the end date of this learning activity result
-	*/
+	 * Returns the end date of this learning activity result.
+	 *
+	 * @return the end date of this learning activity result
+	 */
 	@Override
 	public Date getEndDate() {
-		return _learningActivityResult.getEndDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _learningActivityResult.getExpandoBridge();
+		return model.getEndDate();
 	}
 
 	/**
-	* Returns the extra data of this learning activity result.
-	*
-	* @return the extra data of this learning activity result
-	*/
+	 * Returns the extra data of this learning activity result.
+	 *
+	 * @return the extra data of this learning activity result
+	 */
 	@Override
 	public String getExtraData() {
-		return _learningActivityResult.getExtraData();
+		return model.getExtraData();
 	}
 
 	/**
-	* Returns the group ID of this learning activity result.
-	*
-	* @return the group ID of this learning activity result
-	*/
+	 * Returns the group ID of this learning activity result.
+	 *
+	 * @return the group ID of this learning activity result
+	 */
 	@Override
 	public long getGroupId() {
-		return _learningActivityResult.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
-	* Returns the lar ID of this learning activity result.
-	*
-	* @return the lar ID of this learning activity result
-	*/
+	 * Returns the lar ID of this learning activity result.
+	 *
+	 * @return the lar ID of this learning activity result
+	 */
 	@Override
 	public long getLarId() {
-		return _learningActivityResult.getLarId();
+		return model.getLarId();
 	}
 
 	/**
-	* Returns the modified date of this learning activity result.
-	*
-	* @return the modified date of this learning activity result
-	*/
+	 * Returns the modified date of this learning activity result.
+	 *
+	 * @return the modified date of this learning activity result
+	 */
 	@Override
 	public Date getModifiedDate() {
-		return _learningActivityResult.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
-	* Returns the passed of this learning activity result.
-	*
-	* @return the passed of this learning activity result
-	*/
+	 * Returns the passed of this learning activity result.
+	 *
+	 * @return the passed of this learning activity result
+	 */
 	@Override
 	public boolean getPassed() {
-		return _learningActivityResult.getPassed();
+		return model.getPassed();
 	}
 
 	/**
-	* Returns the primary key of this learning activity result.
-	*
-	* @return the primary key of this learning activity result
-	*/
+	 * Returns the primary key of this learning activity result.
+	 *
+	 * @return the primary key of this learning activity result
+	 */
 	@Override
 	public long getPrimaryKey() {
-		return _learningActivityResult.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _learningActivityResult.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
-	* Returns the result of this learning activity result.
-	*
-	* @return the result of this learning activity result
-	*/
+	 * Returns the result of this learning activity result.
+	 *
+	 * @return the result of this learning activity result
+	 */
 	@Override
 	public double getResult() {
-		return _learningActivityResult.getResult();
+		return model.getResult();
 	}
 
 	/**
-	* Returns the start date of this learning activity result.
-	*
-	* @return the start date of this learning activity result
-	*/
+	 * Returns the start date of this learning activity result.
+	 *
+	 * @return the start date of this learning activity result
+	 */
 	@Override
 	public Date getStartDate() {
-		return _learningActivityResult.getStartDate();
+		return model.getStartDate();
 	}
 
 	@Override
 	public String getStatusProperties() {
-		return _learningActivityResult.getStatusProperties();
+		return model.getStatusProperties();
 	}
 
 	/**
-	* Returns the user ID of this learning activity result.
-	*
-	* @return the user ID of this learning activity result
-	*/
+	 * Returns the user ID of this learning activity result.
+	 *
+	 * @return the user ID of this learning activity result
+	 */
 	@Override
 	public long getUserId() {
-		return _learningActivityResult.getUserId();
+		return model.getUserId();
 	}
 
 	/**
-	* Returns the user modified ID of this learning activity result.
-	*
-	* @return the user modified ID of this learning activity result
-	*/
+	 * Returns the user modified ID of this learning activity result.
+	 *
+	 * @return the user modified ID of this learning activity result
+	 */
 	@Override
 	public long getUserModifiedId() {
-		return _learningActivityResult.getUserModifiedId();
+		return model.getUserModifiedId();
 	}
 
 	/**
-	* Returns the user modified name of this learning activity result.
-	*
-	* @return the user modified name of this learning activity result
-	*/
+	 * Returns the user modified name of this learning activity result.
+	 *
+	 * @return the user modified name of this learning activity result
+	 */
 	@Override
 	public String getUserModifiedName() {
-		return _learningActivityResult.getUserModifiedName();
+		return model.getUserModifiedName();
 	}
 
 	/**
-	* Returns the user uuid of this learning activity result.
-	*
-	* @return the user uuid of this learning activity result
-	*/
+	 * Returns the user uuid of this learning activity result.
+	 *
+	 * @return the user uuid of this learning activity result
+	 */
 	@Override
 	public String getUserUuid() {
-		return _learningActivityResult.getUserUuid();
+		return model.getUserUuid();
 	}
 
 	/**
-	* Returns the uuid of this learning activity result.
-	*
-	* @return the uuid of this learning activity result
-	*/
+	 * Returns the uuid of this learning activity result.
+	 *
+	 * @return the uuid of this learning activity result
+	 */
 	@Override
 	public String getUuid() {
-		return _learningActivityResult.getUuid();
+		return model.getUuid();
 	}
 
 	@Override
-	public int hashCode() {
-		return _learningActivityResult.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _learningActivityResult.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _learningActivityResult.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _learningActivityResult.isNew();
+	public boolean isFinished() {
+		return model.isFinished();
 	}
 
 	/**
-	* Returns <code>true</code> if this learning activity result is passed.
-	*
-	* @return <code>true</code> if this learning activity result is passed; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this learning activity result is passed.
+	 *
+	 * @return <code>true</code> if this learning activity result is passed; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isPassed() {
-		return _learningActivityResult.isPassed();
+		return model.isPassed();
 	}
 
 	@Override
 	public void persist() {
-		_learningActivityResult.persist();
+		model.persist();
 	}
 
 	/**
-	* Sets the act ID of this learning activity result.
-	*
-	* @param actId the act ID of this learning activity result
-	*/
+	 * Sets the act ID of this learning activity result.
+	 *
+	 * @param actId the act ID of this learning activity result
+	 */
 	@Override
 	public void setActId(long actId) {
-		_learningActivityResult.setActId(actId);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_learningActivityResult.setCachedModel(cachedModel);
+		model.setActId(actId);
 	}
 
 	/**
-	* Sets the comments of this learning activity result.
-	*
-	* @param comments the comments of this learning activity result
-	*/
+	 * Sets the comments of this learning activity result.
+	 *
+	 * @param comments the comments of this learning activity result
+	 */
 	@Override
 	public void setComments(String comments) {
-		_learningActivityResult.setComments(comments);
+		model.setComments(comments);
 	}
 
 	/**
-	* Sets the company ID of this learning activity result.
-	*
-	* @param companyId the company ID of this learning activity result
-	*/
+	 * Sets the company ID of this learning activity result.
+	 *
+	 * @param companyId the company ID of this learning activity result
+	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_learningActivityResult.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
-	* Sets the create date of this learning activity result.
-	*
-	* @param createDate the create date of this learning activity result
-	*/
+	 * Sets the create date of this learning activity result.
+	 *
+	 * @param createDate the create date of this learning activity result
+	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_learningActivityResult.setCreateDate(createDate);
+		model.setCreateDate(createDate);
 	}
 
 	/**
-	* Sets the end date of this learning activity result.
-	*
-	* @param endDate the end date of this learning activity result
-	*/
+	 * Sets the end date of this learning activity result.
+	 *
+	 * @param endDate the end date of this learning activity result
+	 */
 	@Override
 	public void setEndDate(Date endDate) {
-		_learningActivityResult.setEndDate(endDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_learningActivityResult.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_learningActivityResult.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_learningActivityResult.setExpandoBridgeAttributes(serviceContext);
+		model.setEndDate(endDate);
 	}
 
 	/**
-	* Sets the extra data of this learning activity result.
-	*
-	* @param extraData the extra data of this learning activity result
-	*/
+	 * Sets the extra data of this learning activity result.
+	 *
+	 * @param extraData the extra data of this learning activity result
+	 */
 	@Override
 	public void setExtraData(String extraData) {
-		_learningActivityResult.setExtraData(extraData);
+		model.setExtraData(extraData);
 	}
 
 	/**
-	* Sets the group ID of this learning activity result.
-	*
-	* @param groupId the group ID of this learning activity result
-	*/
+	 * Sets the group ID of this learning activity result.
+	 *
+	 * @param groupId the group ID of this learning activity result
+	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_learningActivityResult.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	/**
-	* Sets the lar ID of this learning activity result.
-	*
-	* @param larId the lar ID of this learning activity result
-	*/
+	 * Sets the lar ID of this learning activity result.
+	 *
+	 * @param larId the lar ID of this learning activity result
+	 */
 	@Override
 	public void setLarId(long larId) {
-		_learningActivityResult.setLarId(larId);
+		model.setLarId(larId);
 	}
 
 	/**
-	* Sets the modified date of this learning activity result.
-	*
-	* @param modifiedDate the modified date of this learning activity result
-	*/
+	 * Sets the modified date of this learning activity result.
+	 *
+	 * @param modifiedDate the modified date of this learning activity result
+	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_learningActivityResult.setModifiedDate(modifiedDate);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_learningActivityResult.setNew(n);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
-	* Sets whether this learning activity result is passed.
-	*
-	* @param passed the passed of this learning activity result
-	*/
+	 * Sets whether this learning activity result is passed.
+	 *
+	 * @param passed the passed of this learning activity result
+	 */
 	@Override
 	public void setPassed(boolean passed) {
-		_learningActivityResult.setPassed(passed);
+		model.setPassed(passed);
 	}
 
 	/**
-	* Sets the primary key of this learning activity result.
-	*
-	* @param primaryKey the primary key of this learning activity result
-	*/
+	 * Sets the primary key of this learning activity result.
+	 *
+	 * @param primaryKey the primary key of this learning activity result
+	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_learningActivityResult.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_learningActivityResult.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Sets the result of this learning activity result.
-	*
-	* @param result the result of this learning activity result
-	*/
+	 * Sets the result of this learning activity result.
+	 *
+	 * @param result the result of this learning activity result
+	 */
 	@Override
 	public void setResult(double result) {
-		_learningActivityResult.setResult(result);
+		model.setResult(result);
 	}
 
 	/**
-	* Sets the start date of this learning activity result.
-	*
-	* @param startDate the start date of this learning activity result
-	*/
+	 * Sets the start date of this learning activity result.
+	 *
+	 * @param startDate the start date of this learning activity result
+	 */
 	@Override
 	public void setStartDate(Date startDate) {
-		_learningActivityResult.setStartDate(startDate);
+		model.setStartDate(startDate);
 	}
 
 	/**
-	* Sets the user ID of this learning activity result.
-	*
-	* @param userId the user ID of this learning activity result
-	*/
+	 * Sets the user ID of this learning activity result.
+	 *
+	 * @param userId the user ID of this learning activity result
+	 */
 	@Override
 	public void setUserId(long userId) {
-		_learningActivityResult.setUserId(userId);
+		model.setUserId(userId);
 	}
 
 	/**
-	* Sets the user modified ID of this learning activity result.
-	*
-	* @param userModifiedId the user modified ID of this learning activity result
-	*/
+	 * Sets the user modified ID of this learning activity result.
+	 *
+	 * @param userModifiedId the user modified ID of this learning activity result
+	 */
 	@Override
 	public void setUserModifiedId(long userModifiedId) {
-		_learningActivityResult.setUserModifiedId(userModifiedId);
+		model.setUserModifiedId(userModifiedId);
 	}
 
 	/**
-	* Sets the user modified name of this learning activity result.
-	*
-	* @param userModifiedName the user modified name of this learning activity result
-	*/
+	 * Sets the user modified name of this learning activity result.
+	 *
+	 * @param userModifiedName the user modified name of this learning activity result
+	 */
 	@Override
 	public void setUserModifiedName(String userModifiedName) {
-		_learningActivityResult.setUserModifiedName(userModifiedName);
+		model.setUserModifiedName(userModifiedName);
 	}
 
 	/**
-	* Sets the user uuid of this learning activity result.
-	*
-	* @param userUuid the user uuid of this learning activity result
-	*/
+	 * Sets the user uuid of this learning activity result.
+	 *
+	 * @param userUuid the user uuid of this learning activity result
+	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		_learningActivityResult.setUserUuid(userUuid);
+		model.setUserUuid(userUuid);
 	}
 
 	/**
-	* Sets the uuid of this learning activity result.
-	*
-	* @param uuid the uuid of this learning activity result
-	*/
+	 * Sets the uuid of this learning activity result.
+	 *
+	 * @param uuid the uuid of this learning activity result
+	 */
 	@Override
 	public void setUuid(String uuid) {
-		_learningActivityResult.setUuid(uuid);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<LearningActivityResult> toCacheModel() {
-		return _learningActivityResult.toCacheModel();
-	}
-
-	@Override
-	public LearningActivityResult toEscapedModel() {
-		return new LearningActivityResultWrapper(_learningActivityResult.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _learningActivityResult.toString();
-	}
-
-	@Override
-	public LearningActivityResult toUnescapedModel() {
-		return new LearningActivityResultWrapper(_learningActivityResult.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _learningActivityResult.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof LearningActivityResultWrapper)) {
-			return false;
-		}
-
-		LearningActivityResultWrapper learningActivityResultWrapper = (LearningActivityResultWrapper)obj;
-
-		if (Objects.equals(_learningActivityResult,
-					learningActivityResultWrapper._learningActivityResult)) {
-			return true;
-		}
-
-		return false;
+		model.setUuid(uuid);
 	}
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return _learningActivityResult.getStagedModelType();
+		return model.getStagedModelType();
 	}
 
 	@Override
-	public LearningActivityResult getWrappedModel() {
-		return _learningActivityResult;
+	protected LearningActivityResultWrapper wrap(
+		LearningActivityResult learningActivityResult) {
+
+		return new LearningActivityResultWrapper(learningActivityResult);
 	}
 
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _learningActivityResult.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _learningActivityResult.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_learningActivityResult.resetOriginalValues();
-	}
-
-	private final LearningActivityResult _learningActivityResult;
 }

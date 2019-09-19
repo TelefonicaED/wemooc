@@ -14,21 +14,15 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
-
 import com.liferay.exportimport.kernel.lar.StagedModelType;
-
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <p>
@@ -40,19 +34,11 @@ import java.util.Objects;
  * @generated
  */
 @ProviderType
-public class ModuleWrapper implements Module, ModelWrapper<Module> {
+public class ModuleWrapper
+	extends BaseModelWrapper<Module> implements Module, ModelWrapper<Module> {
+
 	public ModuleWrapper(Module module) {
-		_module = module;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return Module.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return Module.class.getName();
+		super(module);
 	}
 
 	@Override
@@ -71,7 +57,7 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 		attributes.put("title", getTitle());
 		attributes.put("description", getDescription());
 		attributes.put("smallImageId", getSmallImageId());
-		attributes.put("order", getOrder());
+		attributes.put("priority", getPriority());
 		attributes.put("startDate", getStartDate());
 		attributes.put("endDate", getEndDate());
 		attributes.put("allowedTime", getAllowedTime());
@@ -159,10 +145,10 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 			setSmallImageId(smallImageId);
 		}
 
-		Long order = (Long)attributes.get("order");
+		Long priority = (Long)attributes.get("priority");
 
-		if (order != null) {
-			setOrder(order);
+		if (priority != null) {
+			setPriority(priority);
 		}
 
 		Date startDate = (Date)attributes.get("startDate");
@@ -223,1165 +209,1063 @@ public class ModuleWrapper implements Module, ModelWrapper<Module> {
 	@Override
 	public com.liferay.portal.kernel.repository.model.Folder addImagesFolder()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _module.addImagesFolder();
-	}
 
-	@Override
-	public Object clone() {
-		return new ModuleWrapper((Module)_module.clone());
-	}
-
-	@Override
-	public int compareTo(Module module) {
-		return _module.compareTo(module);
+		return model.addImagesFolder();
 	}
 
 	/**
-	* Returns the allowed time of this module.
-	*
-	* @return the allowed time of this module
-	*/
+	 * Returns the allowed time of this module.
+	 *
+	 * @return the allowed time of this module
+	 */
 	@Override
 	public long getAllowedTime() {
-		return _module.getAllowedTime();
+		return model.getAllowedTime();
 	}
 
 	@Override
 	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry() {
-		return _module.getAssetEntry();
+		return model.getAssetEntry();
 	}
 
 	@Override
 	public String[] getAvailableLanguageIds() {
-		return _module.getAvailableLanguageIds();
+		return model.getAvailableLanguageIds();
 	}
 
 	/**
-	* Returns the company ID of this module.
-	*
-	* @return the company ID of this module
-	*/
+	 * Returns the company ID of this module.
+	 *
+	 * @return the company ID of this module
+	 */
 	@Override
 	public long getCompanyId() {
-		return _module.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	/**
-	* Returns the create date of this module.
-	*
-	* @return the create date of this module
-	*/
+	 * Returns the create date of this module.
+	 *
+	 * @return the create date of this module
+	 */
 	@Override
 	public Date getCreateDate() {
-		return _module.getCreateDate();
+		return model.getCreateDate();
 	}
 
 	@Override
 	public String getDefaultLanguageId() {
-		return _module.getDefaultLanguageId();
+		return model.getDefaultLanguageId();
 	}
 
 	/**
-	* Returns the description of this module.
-	*
-	* @return the description of this module
-	*/
+	 * Returns the description of this module.
+	 *
+	 * @return the description of this module
+	 */
 	@Override
 	public String getDescription() {
-		return _module.getDescription();
+		return model.getDescription();
 	}
 
 	/**
-	* Returns the localized description of this module in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized description of this module
-	*/
+	 * Returns the localized description of this module in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized description of this module
+	 */
 	@Override
 	public String getDescription(java.util.Locale locale) {
-		return _module.getDescription(locale);
+		return model.getDescription(locale);
 	}
 
 	/**
-	* Returns the localized description of this module in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized description of this module. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized description of this module in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized description of this module. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
 	public String getDescription(java.util.Locale locale, boolean useDefault) {
-		return _module.getDescription(locale, useDefault);
+		return model.getDescription(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized description of this module in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized description of this module
-	*/
+	 * Returns the localized description of this module in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized description of this module
+	 */
 	@Override
 	public String getDescription(String languageId) {
-		return _module.getDescription(languageId);
+		return model.getDescription(languageId);
 	}
 
 	/**
-	* Returns the localized description of this module in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized description of this module
-	*/
+	 * Returns the localized description of this module in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized description of this module
+	 */
 	@Override
 	public String getDescription(String languageId, boolean useDefault) {
-		return _module.getDescription(languageId, useDefault);
+		return model.getDescription(languageId, useDefault);
 	}
 
 	@Override
 	public String getDescriptionCurrentLanguageId() {
-		return _module.getDescriptionCurrentLanguageId();
+		return model.getDescriptionCurrentLanguageId();
 	}
 
 	@Override
 	public String getDescriptionCurrentValue() {
-		return _module.getDescriptionCurrentValue();
+		return model.getDescriptionCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized descriptions of this module.
-	*
-	* @return the locales and localized descriptions of this module
-	*/
+	 * Returns a map of the locales and localized descriptions of this module.
+	 *
+	 * @return the locales and localized descriptions of this module
+	 */
 	@Override
 	public Map<java.util.Locale, String> getDescriptionMap() {
-		return _module.getDescriptionMap();
+		return model.getDescriptionMap();
 	}
 
 	@Override
 	public String getDescriptionMapAsXML() {
-		return _module.getDescriptionMapAsXML();
+		return model.getDescriptionMapAsXML();
 	}
 
 	/**
-	* Returns the end date of this module.
-	*
-	* @return the end date of this module
-	*/
+	 * Returns the end date of this module.
+	 *
+	 * @return the end date of this module
+	 */
 	@Override
 	public Date getEndDate() {
-		return _module.getEndDate();
+		return model.getEndDate();
 	}
 
 	@Override
 	public java.util.Calendar getEndDateCalendar() {
-		return _module.getEndDateCalendar();
+		return model.getEndDateCalendar();
 	}
 
 	@Override
-	public String getEndDateFormat(java.util.Locale locale,
-		java.util.TimeZone timeZone) {
-		return _module.getEndDateFormat(locale, timeZone);
-	}
+	public String getEndDateFormat(
+		java.util.Locale locale, java.util.TimeZone timeZone) {
 
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _module.getExpandoBridge();
+		return model.getEndDateFormat(locale, timeZone);
 	}
 
 	/**
-	* Returns the group ID of this module.
-	*
-	* @return the group ID of this module
-	*/
+	 * Returns the group ID of this module.
+	 *
+	 * @return the group ID of this module
+	 */
 	@Override
 	public long getGroupId() {
-		return _module.getGroupId();
+		return model.getGroupId();
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries()
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry>
+			getImagesFileEntries()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _module.getImagesFileEntries();
+
+		return model.getImagesFileEntries();
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries(
-		int start, int end)
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry>
+			getImagesFileEntries(int start, int end)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _module.getImagesFileEntries(start, end);
+
+		return model.getImagesFileEntries(start, end);
 	}
 
 	@Override
-	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry> getImagesFileEntries(
-		int start, int end, com.liferay.portal.kernel.util.OrderByComparator obc)
+	public java.util.List<com.liferay.portal.kernel.repository.model.FileEntry>
+			getImagesFileEntries(
+				int start, int end,
+				com.liferay.portal.kernel.util.OrderByComparator obc)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _module.getImagesFileEntries(start, end, obc);
+
+		return model.getImagesFileEntries(start, end, obc);
 	}
 
 	@Override
 	public long getImagesFolderId() {
-		return _module.getImagesFolderId();
+		return model.getImagesFolderId();
 	}
 
 	/**
-	* Returns the last publish date of this module.
-	*
-	* @return the last publish date of this module
-	*/
+	 * Returns the last publish date of this module.
+	 *
+	 * @return the last publish date of this module
+	 */
 	@Override
 	public Date getLastPublishDate() {
-		return _module.getLastPublishDate();
+		return model.getLastPublishDate();
 	}
 
 	/**
-	* Returns the modified date of this module.
-	*
-	* @return the modified date of this module
-	*/
+	 * Returns the modified date of this module.
+	 *
+	 * @return the modified date of this module
+	 */
 	@Override
 	public Date getModifiedDate() {
-		return _module.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
-	* Returns the module eval ID of this module.
-	*
-	* @return the module eval ID of this module
-	*/
+	 * Returns the module eval ID of this module.
+	 *
+	 * @return the module eval ID of this module
+	 */
 	@Override
 	public long getModuleEvalId() {
-		return _module.getModuleEvalId();
+		return model.getModuleEvalId();
 	}
 
 	/**
-	* Returns the module extra data of this module.
-	*
-	* @return the module extra data of this module
-	*/
+	 * Returns the module extra data of this module.
+	 *
+	 * @return the module extra data of this module
+	 */
 	@Override
 	public String getModuleExtraData() {
-		return _module.getModuleExtraData();
+		return model.getModuleExtraData();
 	}
 
 	/**
-	* Returns the module ID of this module.
-	*
-	* @return the module ID of this module
-	*/
+	 * Returns the module ID of this module.
+	 *
+	 * @return the module ID of this module
+	 */
 	@Override
 	public long getModuleId() {
-		return _module.getModuleId();
-	}
-
-	/**
-	* Returns the order of this module.
-	*
-	* @return the order of this module
-	*/
-	@Override
-	public long getOrder() {
-		return _module.getOrder();
+		return model.getModuleId();
 	}
 
 	@Override
-	public com.ted.prerequisite.model.PrerequisiteRelation getPrerequisiteRelation(
-		long classNameFactoryId) {
-		return _module.getPrerequisiteRelation(classNameFactoryId);
+	public com.ted.prerequisite.model.PrerequisiteRelation
+		getPrerequisiteRelation(long classNameFactoryId) {
+
+		return model.getPrerequisiteRelation(classNameFactoryId);
 	}
 
 	/**
-	* Returns the primary key of this module.
-	*
-	* @return the primary key of this module
-	*/
+	 * Returns the primary key of this module.
+	 *
+	 * @return the primary key of this module
+	 */
 	@Override
 	public long getPrimaryKey() {
-		return _module.getPrimaryKey();
+		return model.getPrimaryKey();
 	}
 
+	/**
+	 * Returns the priority of this module.
+	 *
+	 * @return the priority of this module
+	 */
 	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _module.getPrimaryKeyObj();
+	public long getPriority() {
+		return model.getPriority();
 	}
 
 	@Override
 	public java.util.List<LearningActivity> getRequiredLearningActivities() {
-		return _module.getRequiredLearningActivities();
+		return model.getRequiredLearningActivities();
 	}
 
 	/**
-	* Returns the small image ID of this module.
-	*
-	* @return the small image ID of this module
-	*/
+	 * Returns the small image ID of this module.
+	 *
+	 * @return the small image ID of this module
+	 */
 	@Override
 	public long getSmallImageId() {
-		return _module.getSmallImageId();
+		return model.getSmallImageId();
 	}
 
 	@Override
 	public String getSmallImageType()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _module.getSmallImageType();
+
+		return model.getSmallImageType();
 	}
 
 	/**
-	* Returns the start date of this module.
-	*
-	* @return the start date of this module
-	*/
+	 * Returns the start date of this module.
+	 *
+	 * @return the start date of this module
+	 */
 	@Override
 	public Date getStartDate() {
-		return _module.getStartDate();
+		return model.getStartDate();
 	}
 
 	@Override
 	public java.util.Calendar getStartDateCalendar() {
-		return _module.getStartDateCalendar();
+		return model.getStartDateCalendar();
 	}
 
 	@Override
-	public String getStartDateFormat(java.util.Locale locale,
-		java.util.TimeZone timeZone) {
-		return _module.getStartDateFormat(locale, timeZone);
+	public String getStartDateFormat(
+		java.util.Locale locale, java.util.TimeZone timeZone) {
+
+		return model.getStartDateFormat(locale, timeZone);
 	}
 
 	/**
-	* Returns the status of this module.
-	*
-	* @return the status of this module
-	*/
+	 * Returns the status of this module.
+	 *
+	 * @return the status of this module
+	 */
 	@Override
 	public int getStatus() {
-		return _module.getStatus();
+		return model.getStatus();
 	}
 
 	/**
-	* Returns the status by user ID of this module.
-	*
-	* @return the status by user ID of this module
-	*/
+	 * Returns the status by user ID of this module.
+	 *
+	 * @return the status by user ID of this module
+	 */
 	@Override
 	public long getStatusByUserId() {
-		return _module.getStatusByUserId();
+		return model.getStatusByUserId();
 	}
 
 	/**
-	* Returns the status by user name of this module.
-	*
-	* @return the status by user name of this module
-	*/
+	 * Returns the status by user name of this module.
+	 *
+	 * @return the status by user name of this module
+	 */
 	@Override
 	public String getStatusByUserName() {
-		return _module.getStatusByUserName();
+		return model.getStatusByUserName();
 	}
 
 	/**
-	* Returns the status by user uuid of this module.
-	*
-	* @return the status by user uuid of this module
-	*/
+	 * Returns the status by user uuid of this module.
+	 *
+	 * @return the status by user uuid of this module
+	 */
 	@Override
 	public String getStatusByUserUuid() {
-		return _module.getStatusByUserUuid();
+		return model.getStatusByUserUuid();
 	}
 
 	/**
-	* Returns the status date of this module.
-	*
-	* @return the status date of this module
-	*/
+	 * Returns the status date of this module.
+	 *
+	 * @return the status date of this module
+	 */
 	@Override
 	public Date getStatusDate() {
-		return _module.getStatusDate();
+		return model.getStatusDate();
 	}
 
 	/**
-	* Returns the title of this module.
-	*
-	* @return the title of this module
-	*/
+	 * Returns the title of this module.
+	 *
+	 * @return the title of this module
+	 */
 	@Override
 	public String getTitle() {
-		return _module.getTitle();
+		return model.getTitle();
 	}
 
 	/**
-	* Returns the localized title of this module in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized title of this module
-	*/
+	 * Returns the localized title of this module in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized title of this module
+	 */
 	@Override
 	public String getTitle(java.util.Locale locale) {
-		return _module.getTitle(locale);
+		return model.getTitle(locale);
 	}
 
 	/**
-	* Returns the localized title of this module in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized title of this module. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized title of this module in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized title of this module. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
 	public String getTitle(java.util.Locale locale, boolean useDefault) {
-		return _module.getTitle(locale, useDefault);
+		return model.getTitle(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized title of this module in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized title of this module
-	*/
+	 * Returns the localized title of this module in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized title of this module
+	 */
 	@Override
 	public String getTitle(String languageId) {
-		return _module.getTitle(languageId);
+		return model.getTitle(languageId);
 	}
 
 	/**
-	* Returns the localized title of this module in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized title of this module
-	*/
+	 * Returns the localized title of this module in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized title of this module
+	 */
 	@Override
 	public String getTitle(String languageId, boolean useDefault) {
-		return _module.getTitle(languageId, useDefault);
+		return model.getTitle(languageId, useDefault);
 	}
 
 	@Override
 	public String getTitleCurrentLanguageId() {
-		return _module.getTitleCurrentLanguageId();
+		return model.getTitleCurrentLanguageId();
 	}
 
 	@Override
 	public String getTitleCurrentValue() {
-		return _module.getTitleCurrentValue();
+		return model.getTitleCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized titles of this module.
-	*
-	* @return the locales and localized titles of this module
-	*/
+	 * Returns a map of the locales and localized titles of this module.
+	 *
+	 * @return the locales and localized titles of this module
+	 */
 	@Override
 	public Map<java.util.Locale, String> getTitleMap() {
-		return _module.getTitleMap();
+		return model.getTitleMap();
 	}
 
 	/**
-	* Returns the trash entry created when this module was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this module.
-	*
-	* @return the trash entry created when this module was moved to the Recycle Bin
-	*/
+	 * Returns the trash entry created when this module was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this module.
+	 *
+	 * @return the trash entry created when this module was moved to the Recycle Bin
+	 */
 	@Override
 	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _module.getTrashEntry();
+
+		return model.getTrashEntry();
 	}
 
 	/**
-	* Returns the class primary key of the trash entry for this module.
-	*
-	* @return the class primary key of the trash entry for this module
-	*/
+	 * Returns the class primary key of the trash entry for this module.
+	 *
+	 * @return the class primary key of the trash entry for this module
+	 */
 	@Override
 	public long getTrashEntryClassPK() {
-		return _module.getTrashEntryClassPK();
+		return model.getTrashEntryClassPK();
 	}
 
 	/**
-	* Returns the trash handler for this module.
-	*
-	* @return the trash handler for this module
-	* @deprecated As of Judson (7.1.x), with no direct replacement
-	*/
+	 * Returns the trash handler for this module.
+	 *
+	 * @return the trash handler for this module
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
 	@Deprecated
 	@Override
 	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler() {
-		return _module.getTrashHandler();
+		return model.getTrashHandler();
 	}
 
 	@Override
 	public String getURLEdit(
 		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
-		return _module.getURLEdit(themeDisplay);
+
+		return model.getURLEdit(themeDisplay);
 	}
 
 	@Override
 	public String getURLNewActivity(
-		com.liferay.portal.kernel.portlet.PortletLayoutFinder activityPortletLayoutFinder,
+		com.liferay.portal.kernel.portlet.PortletLayoutFinder
+			activityPortletLayoutFinder,
 		javax.portlet.RenderRequest renderRequest,
 		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
-		return _module.getURLNewActivity(activityPortletLayoutFinder,
-			renderRequest, themeDisplay);
+
+		return model.getURLNewActivity(
+			activityPortletLayoutFinder, renderRequest, themeDisplay);
 	}
 
 	@Override
 	public String getURLView(
 		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay) {
-		return _module.getURLView(themeDisplay);
+
+		return model.getURLView(themeDisplay);
 	}
 
 	/**
-	* Returns the user ID of this module.
-	*
-	* @return the user ID of this module
-	*/
+	 * Returns the user ID of this module.
+	 *
+	 * @return the user ID of this module
+	 */
 	@Override
 	public long getUserId() {
-		return _module.getUserId();
+		return model.getUserId();
 	}
 
 	/**
-	* Returns the user name of this module.
-	*
-	* @return the user name of this module
-	*/
+	 * Returns the user name of this module.
+	 *
+	 * @return the user name of this module
+	 */
 	@Override
 	public String getUserName() {
-		return _module.getUserName();
+		return model.getUserName();
 	}
 
 	/**
-	* Returns the user uuid of this module.
-	*
-	* @return the user uuid of this module
-	*/
+	 * Returns the user uuid of this module.
+	 *
+	 * @return the user uuid of this module
+	 */
 	@Override
 	public String getUserUuid() {
-		return _module.getUserUuid();
+		return model.getUserUuid();
 	}
 
 	/**
-	* Returns the uuid of this module.
-	*
-	* @return the uuid of this module
-	*/
+	 * Returns the uuid of this module.
+	 *
+	 * @return the uuid of this module
+	 */
 	@Override
 	public String getUuid() {
-		return _module.getUuid();
-	}
-
-	@Override
-	public int hashCode() {
-		return _module.hashCode();
+		return model.getUuid();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is approved.
-	*
-	* @return <code>true</code> if this module is approved; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is approved.
+	 *
+	 * @return <code>true</code> if this module is approved; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isApproved() {
-		return _module.isApproved();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _module.isCachedModel();
+		return model.isApproved();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is denied.
-	*
-	* @return <code>true</code> if this module is denied; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is denied.
+	 *
+	 * @return <code>true</code> if this module is denied; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isDenied() {
-		return _module.isDenied();
+		return model.isDenied();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is a draft.
-	*
-	* @return <code>true</code> if this module is a draft; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is a draft.
+	 *
+	 * @return <code>true</code> if this module is a draft; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isDraft() {
-		return _module.isDraft();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _module.isEscapedModel();
+		return model.isDraft();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is expired.
-	*
-	* @return <code>true</code> if this module is expired; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is expired.
+	 *
+	 * @return <code>true</code> if this module is expired; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isExpired() {
-		return _module.isExpired();
+		return model.isExpired();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is inactive.
-	*
-	* @return <code>true</code> if this module is inactive; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is inactive.
+	 *
+	 * @return <code>true</code> if this module is inactive; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isInactive() {
-		return _module.isInactive();
+		return model.isInactive();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is incomplete.
-	*
-	* @return <code>true</code> if this module is incomplete; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is incomplete.
+	 *
+	 * @return <code>true</code> if this module is incomplete; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isIncomplete() {
-		return _module.isIncomplete();
+		return model.isIncomplete();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is in the Recycle Bin.
-	*
-	* @return <code>true</code> if this module is in the Recycle Bin; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if this module is in the Recycle Bin; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isInTrash() {
-		return _module.isInTrash();
+		return model.isInTrash();
 	}
 
 	/**
-	* Returns <code>true</code> if the parent of this module is in the Recycle Bin.
-	*
-	* @return <code>true</code> if the parent of this module is in the Recycle Bin; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if the parent of this module is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if the parent of this module is in the Recycle Bin; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isInTrashContainer() {
-		return _module.isInTrashContainer();
+		return model.isInTrashContainer();
 	}
 
 	@Override
 	public boolean isInTrashExplicitly() {
-		return _module.isInTrashExplicitly();
+		return model.isInTrashExplicitly();
 	}
 
 	@Override
 	public boolean isInTrashImplicitly() {
-		return _module.isInTrashImplicitly();
+		return model.isInTrashImplicitly();
 	}
 
 	@Override
-	public boolean isLocked(long userId,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker) {
-		return _module.isLocked(userId, permissionChecker);
-	}
+	public boolean isLocked(
+		long userId,
+		com.liferay.portal.kernel.security.permission.PermissionChecker
+			permissionChecker) {
 
-	@Override
-	public boolean isNew() {
-		return _module.isNew();
+		return model.isLocked(userId, permissionChecker);
 	}
 
 	/**
-	* Returns <code>true</code> if this module is pending.
-	*
-	* @return <code>true</code> if this module is pending; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is pending.
+	 *
+	 * @return <code>true</code> if this module is pending; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isPending() {
-		return _module.isPending();
+		return model.isPending();
 	}
 
 	/**
-	* Returns <code>true</code> if this module is scheduled.
-	*
-	* @return <code>true</code> if this module is scheduled; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module is scheduled.
+	 *
+	 * @return <code>true</code> if this module is scheduled; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isScheduled() {
-		return _module.isScheduled();
+		return model.isScheduled();
 	}
 
 	@Override
 	public void persist() {
-		_module.persist();
+		model.persist();
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport()
 		throws com.liferay.portal.kernel.exception.LocaleException {
-		_module.prepareLocalizedFieldsForImport();
+
+		model.prepareLocalizedFieldsForImport();
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport(
-		java.util.Locale defaultImportLocale)
+			java.util.Locale defaultImportLocale)
 		throws com.liferay.portal.kernel.exception.LocaleException {
-		_module.prepareLocalizedFieldsForImport(defaultImportLocale);
+
+		model.prepareLocalizedFieldsForImport(defaultImportLocale);
 	}
 
 	/**
-	* Sets the allowed time of this module.
-	*
-	* @param allowedTime the allowed time of this module
-	*/
+	 * Sets the allowed time of this module.
+	 *
+	 * @param allowedTime the allowed time of this module
+	 */
 	@Override
 	public void setAllowedTime(long allowedTime) {
-		_module.setAllowedTime(allowedTime);
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_module.setCachedModel(cachedModel);
+		model.setAllowedTime(allowedTime);
 	}
 
 	/**
-	* Sets the company ID of this module.
-	*
-	* @param companyId the company ID of this module
-	*/
+	 * Sets the company ID of this module.
+	 *
+	 * @param companyId the company ID of this module
+	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_module.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
-	* Sets the create date of this module.
-	*
-	* @param createDate the create date of this module
-	*/
+	 * Sets the create date of this module.
+	 *
+	 * @param createDate the create date of this module
+	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_module.setCreateDate(createDate);
+		model.setCreateDate(createDate);
 	}
 
 	/**
-	* Sets the description of this module.
-	*
-	* @param description the description of this module
-	*/
+	 * Sets the description of this module.
+	 *
+	 * @param description the description of this module
+	 */
 	@Override
 	public void setDescription(String description) {
-		_module.setDescription(description);
+		model.setDescription(description);
 	}
 
 	/**
-	* Sets the localized description of this module in the language.
-	*
-	* @param description the localized description of this module
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized description of this module in the language.
+	 *
+	 * @param description the localized description of this module
+	 * @param locale the locale of the language
+	 */
 	@Override
 	public void setDescription(String description, java.util.Locale locale) {
-		_module.setDescription(description, locale);
+		model.setDescription(description, locale);
 	}
 
 	/**
-	* Sets the localized description of this module in the language, and sets the default locale.
-	*
-	* @param description the localized description of this module
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized description of this module in the language, and sets the default locale.
+	 *
+	 * @param description the localized description of this module
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setDescription(String description, java.util.Locale locale,
+	public void setDescription(
+		String description, java.util.Locale locale,
 		java.util.Locale defaultLocale) {
-		_module.setDescription(description, locale, defaultLocale);
+
+		model.setDescription(description, locale, defaultLocale);
 	}
 
 	@Override
 	public void setDescriptionCurrentLanguageId(String languageId) {
-		_module.setDescriptionCurrentLanguageId(languageId);
+		model.setDescriptionCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized descriptions of this module from the map of locales and localized descriptions.
-	*
-	* @param descriptionMap the locales and localized descriptions of this module
-	*/
+	 * Sets the localized descriptions of this module from the map of locales and localized descriptions.
+	 *
+	 * @param descriptionMap the locales and localized descriptions of this module
+	 */
 	@Override
-	public void setDescriptionMap(Map<java.util.Locale, String> descriptionMap) {
-		_module.setDescriptionMap(descriptionMap);
+	public void setDescriptionMap(
+		Map<java.util.Locale, String> descriptionMap) {
+
+		model.setDescriptionMap(descriptionMap);
 	}
 
 	/**
-	* Sets the localized descriptions of this module from the map of locales and localized descriptions, and sets the default locale.
-	*
-	* @param descriptionMap the locales and localized descriptions of this module
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized descriptions of this module from the map of locales and localized descriptions, and sets the default locale.
+	 *
+	 * @param descriptionMap the locales and localized descriptions of this module
+	 * @param defaultLocale the default locale
+	 */
 	@Override
 	public void setDescriptionMap(
 		Map<java.util.Locale, String> descriptionMap,
 		java.util.Locale defaultLocale) {
-		_module.setDescriptionMap(descriptionMap, defaultLocale);
+
+		model.setDescriptionMap(descriptionMap, defaultLocale);
 	}
 
 	/**
-	* Sets the end date of this module.
-	*
-	* @param endDate the end date of this module
-	*/
+	 * Sets the end date of this module.
+	 *
+	 * @param endDate the end date of this module
+	 */
 	@Override
 	public void setEndDate(Date endDate) {
-		_module.setEndDate(endDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_module.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_module.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_module.setExpandoBridgeAttributes(serviceContext);
+		model.setEndDate(endDate);
 	}
 
 	/**
-	* Sets the group ID of this module.
-	*
-	* @param groupId the group ID of this module
-	*/
+	 * Sets the group ID of this module.
+	 *
+	 * @param groupId the group ID of this module
+	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_module.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	@Override
 	public void setImagesFolderId(long imagesFolderId) {
-		_module.setImagesFolderId(imagesFolderId);
+		model.setImagesFolderId(imagesFolderId);
 	}
 
 	/**
-	* Sets the last publish date of this module.
-	*
-	* @param lastPublishDate the last publish date of this module
-	*/
+	 * Sets the last publish date of this module.
+	 *
+	 * @param lastPublishDate the last publish date of this module
+	 */
 	@Override
 	public void setLastPublishDate(Date lastPublishDate) {
-		_module.setLastPublishDate(lastPublishDate);
+		model.setLastPublishDate(lastPublishDate);
 	}
 
 	/**
-	* Sets the modified date of this module.
-	*
-	* @param modifiedDate the modified date of this module
-	*/
+	 * Sets the modified date of this module.
+	 *
+	 * @param modifiedDate the modified date of this module
+	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_module.setModifiedDate(modifiedDate);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
-	* Sets the module eval ID of this module.
-	*
-	* @param moduleEvalId the module eval ID of this module
-	*/
+	 * Sets the module eval ID of this module.
+	 *
+	 * @param moduleEvalId the module eval ID of this module
+	 */
 	@Override
 	public void setModuleEvalId(long moduleEvalId) {
-		_module.setModuleEvalId(moduleEvalId);
+		model.setModuleEvalId(moduleEvalId);
 	}
 
 	/**
-	* Sets the module extra data of this module.
-	*
-	* @param moduleExtraData the module extra data of this module
-	*/
+	 * Sets the module extra data of this module.
+	 *
+	 * @param moduleExtraData the module extra data of this module
+	 */
 	@Override
 	public void setModuleExtraData(String moduleExtraData) {
-		_module.setModuleExtraData(moduleExtraData);
+		model.setModuleExtraData(moduleExtraData);
 	}
 
 	/**
-	* Sets the module ID of this module.
-	*
-	* @param moduleId the module ID of this module
-	*/
+	 * Sets the module ID of this module.
+	 *
+	 * @param moduleId the module ID of this module
+	 */
 	@Override
 	public void setModuleId(long moduleId) {
-		_module.setModuleId(moduleId);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_module.setNew(n);
+		model.setModuleId(moduleId);
 	}
 
 	/**
-	* Sets the order of this module.
-	*
-	* @param order the order of this module
-	*/
-	@Override
-	public void setOrder(long order) {
-		_module.setOrder(order);
-	}
-
-	/**
-	* Sets the primary key of this module.
-	*
-	* @param primaryKey the primary key of this module
-	*/
+	 * Sets the primary key of this module.
+	 *
+	 * @param primaryKey the primary key of this module
+	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_module.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_module.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Sets the small image ID of this module.
-	*
-	* @param smallImageId the small image ID of this module
-	*/
+	 * Sets the priority of this module.
+	 *
+	 * @param priority the priority of this module
+	 */
+	@Override
+	public void setPriority(long priority) {
+		model.setPriority(priority);
+	}
+
+	/**
+	 * Sets the small image ID of this module.
+	 *
+	 * @param smallImageId the small image ID of this module
+	 */
 	@Override
 	public void setSmallImageId(long smallImageId) {
-		_module.setSmallImageId(smallImageId);
+		model.setSmallImageId(smallImageId);
 	}
 
 	@Override
 	public void setSmallImageType(String smallImageType) {
-		_module.setSmallImageType(smallImageType);
+		model.setSmallImageType(smallImageType);
 	}
 
 	/**
-	* Sets the start date of this module.
-	*
-	* @param startDate the start date of this module
-	*/
+	 * Sets the start date of this module.
+	 *
+	 * @param startDate the start date of this module
+	 */
 	@Override
 	public void setStartDate(Date startDate) {
-		_module.setStartDate(startDate);
+		model.setStartDate(startDate);
 	}
 
 	/**
-	* Sets the status of this module.
-	*
-	* @param status the status of this module
-	*/
+	 * Sets the status of this module.
+	 *
+	 * @param status the status of this module
+	 */
 	@Override
 	public void setStatus(int status) {
-		_module.setStatus(status);
+		model.setStatus(status);
 	}
 
 	/**
-	* Sets the status by user ID of this module.
-	*
-	* @param statusByUserId the status by user ID of this module
-	*/
+	 * Sets the status by user ID of this module.
+	 *
+	 * @param statusByUserId the status by user ID of this module
+	 */
 	@Override
 	public void setStatusByUserId(long statusByUserId) {
-		_module.setStatusByUserId(statusByUserId);
+		model.setStatusByUserId(statusByUserId);
 	}
 
 	/**
-	* Sets the status by user name of this module.
-	*
-	* @param statusByUserName the status by user name of this module
-	*/
+	 * Sets the status by user name of this module.
+	 *
+	 * @param statusByUserName the status by user name of this module
+	 */
 	@Override
 	public void setStatusByUserName(String statusByUserName) {
-		_module.setStatusByUserName(statusByUserName);
+		model.setStatusByUserName(statusByUserName);
 	}
 
 	/**
-	* Sets the status by user uuid of this module.
-	*
-	* @param statusByUserUuid the status by user uuid of this module
-	*/
+	 * Sets the status by user uuid of this module.
+	 *
+	 * @param statusByUserUuid the status by user uuid of this module
+	 */
 	@Override
 	public void setStatusByUserUuid(String statusByUserUuid) {
-		_module.setStatusByUserUuid(statusByUserUuid);
+		model.setStatusByUserUuid(statusByUserUuid);
 	}
 
 	/**
-	* Sets the status date of this module.
-	*
-	* @param statusDate the status date of this module
-	*/
+	 * Sets the status date of this module.
+	 *
+	 * @param statusDate the status date of this module
+	 */
 	@Override
 	public void setStatusDate(Date statusDate) {
-		_module.setStatusDate(statusDate);
+		model.setStatusDate(statusDate);
 	}
 
 	/**
-	* Sets the title of this module.
-	*
-	* @param title the title of this module
-	*/
+	 * Sets the title of this module.
+	 *
+	 * @param title the title of this module
+	 */
 	@Override
 	public void setTitle(String title) {
-		_module.setTitle(title);
+		model.setTitle(title);
 	}
 
 	/**
-	* Sets the localized title of this module in the language.
-	*
-	* @param title the localized title of this module
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized title of this module in the language.
+	 *
+	 * @param title the localized title of this module
+	 * @param locale the locale of the language
+	 */
 	@Override
 	public void setTitle(String title, java.util.Locale locale) {
-		_module.setTitle(title, locale);
+		model.setTitle(title, locale);
 	}
 
 	/**
-	* Sets the localized title of this module in the language, and sets the default locale.
-	*
-	* @param title the localized title of this module
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized title of this module in the language, and sets the default locale.
+	 *
+	 * @param title the localized title of this module
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setTitle(String title, java.util.Locale locale,
-		java.util.Locale defaultLocale) {
-		_module.setTitle(title, locale, defaultLocale);
+	public void setTitle(
+		String title, java.util.Locale locale, java.util.Locale defaultLocale) {
+
+		model.setTitle(title, locale, defaultLocale);
 	}
 
 	@Override
 	public void setTitleCurrentLanguageId(String languageId) {
-		_module.setTitleCurrentLanguageId(languageId);
+		model.setTitleCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized titles of this module from the map of locales and localized titles.
-	*
-	* @param titleMap the locales and localized titles of this module
-	*/
+	 * Sets the localized titles of this module from the map of locales and localized titles.
+	 *
+	 * @param titleMap the locales and localized titles of this module
+	 */
 	@Override
 	public void setTitleMap(Map<java.util.Locale, String> titleMap) {
-		_module.setTitleMap(titleMap);
+		model.setTitleMap(titleMap);
 	}
 
 	/**
-	* Sets the localized titles of this module from the map of locales and localized titles, and sets the default locale.
-	*
-	* @param titleMap the locales and localized titles of this module
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized titles of this module from the map of locales and localized titles, and sets the default locale.
+	 *
+	 * @param titleMap the locales and localized titles of this module
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setTitleMap(Map<java.util.Locale, String> titleMap,
+	public void setTitleMap(
+		Map<java.util.Locale, String> titleMap,
 		java.util.Locale defaultLocale) {
-		_module.setTitleMap(titleMap, defaultLocale);
+
+		model.setTitleMap(titleMap, defaultLocale);
 	}
 
 	/**
-	* Sets the user ID of this module.
-	*
-	* @param userId the user ID of this module
-	*/
+	 * Sets the user ID of this module.
+	 *
+	 * @param userId the user ID of this module
+	 */
 	@Override
 	public void setUserId(long userId) {
-		_module.setUserId(userId);
+		model.setUserId(userId);
 	}
 
 	/**
-	* Sets the user name of this module.
-	*
-	* @param userName the user name of this module
-	*/
+	 * Sets the user name of this module.
+	 *
+	 * @param userName the user name of this module
+	 */
 	@Override
 	public void setUserName(String userName) {
-		_module.setUserName(userName);
+		model.setUserName(userName);
 	}
 
 	/**
-	* Sets the user uuid of this module.
-	*
-	* @param userUuid the user uuid of this module
-	*/
+	 * Sets the user uuid of this module.
+	 *
+	 * @param userUuid the user uuid of this module
+	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		_module.setUserUuid(userUuid);
+		model.setUserUuid(userUuid);
 	}
 
 	/**
-	* Sets the uuid of this module.
-	*
-	* @param uuid the uuid of this module
-	*/
+	 * Sets the uuid of this module.
+	 *
+	 * @param uuid the uuid of this module
+	 */
 	@Override
 	public void setUuid(String uuid) {
-		_module.setUuid(uuid);
-	}
-
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<Module> toCacheModel() {
-		return _module.toCacheModel();
-	}
-
-	@Override
-	public Module toEscapedModel() {
-		return new ModuleWrapper(_module.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _module.toString();
-	}
-
-	@Override
-	public Module toUnescapedModel() {
-		return new ModuleWrapper(_module.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _module.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof ModuleWrapper)) {
-			return false;
-		}
-
-		ModuleWrapper moduleWrapper = (ModuleWrapper)obj;
-
-		if (Objects.equals(_module, moduleWrapper._module)) {
-			return true;
-		}
-
-		return false;
+		model.setUuid(uuid);
 	}
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return _module.getStagedModelType();
+		return model.getStagedModelType();
 	}
 
 	@Override
-	public Module getWrappedModel() {
-		return _module;
+	protected ModuleWrapper wrap(Module module) {
+		return new ModuleWrapper(module);
 	}
 
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _module.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _module.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_module.resetOriginalValues();
-	}
-
-	private final Module _module;
 }

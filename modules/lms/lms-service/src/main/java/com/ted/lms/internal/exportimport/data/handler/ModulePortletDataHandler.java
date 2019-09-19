@@ -1,21 +1,31 @@
 package com.ted.lms.internal.exportimport.data.handler;
 
+import com.liferay.changeset.model.ChangesetCollection;
+import com.liferay.changeset.service.ChangesetCollectionLocalService;
+import com.liferay.changeset.service.ChangesetEntryLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.exportimport.kernel.lar.BasePortletDataHandler;
+import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportHelper;
+import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandler;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.exportimport.portlet.data.handler.helper.PortletDataHandlerHelper;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.constants.LMSPortletKeys;
+import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
@@ -182,6 +192,22 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 	@Override
 	protected void doPrepareManifestSummary(PortletDataContext portletDataContext, PortletPreferences portletPreferences) throws Exception {
 		
+		if (ExportImportDateUtil.isRangeFromLastPublishDate(
+				portletDataContext)) {
+
+			staging.populateLastPublishDateCounts(
+				portletDataContext,
+				new StagedModelType[] {
+					new StagedModelType(
+						Module.class.getName()),
+					new StagedModelType(LearningActivity.class.getName())
+				});
+
+			populateModuleLastPublishDateCounts(portletDataContext);
+
+			return;
+		}
+		
 		ActionableDynamicQuery moduleExportActionableDynamicQuery =
 		        moduleLocalService.getExportActionableDynamicQuery(portletDataContext);
 
@@ -191,6 +217,46 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 		        learningActivityLocalService.getExportActionableDynamicQuery(portletDataContext);
 
 	    activityExportActionableDynamicQuery.performCount();
+	}
+	
+	private void populateModuleLastPublishDateCounts(
+			PortletDataContext portletDataContext)
+		throws PortalException {
+
+		ManifestSummary manifestSummary =
+			portletDataContext.getManifestSummary();
+
+		StagedModelType moduleStagedModelType = new StagedModelType(
+			Module.class);
+
+		long modelAdditionCount = manifestSummary.getModelAdditionCount(
+				moduleStagedModelType);
+
+		if (modelAdditionCount > -1) {
+			return;
+		}
+
+		ChangesetCollection changesetCollection =
+			changesetCollectionLocalService.fetchChangesetCollection(
+				portletDataContext.getScopeGroupId(),
+				StagingConstants.RANGE_FROM_LAST_PUBLISH_DATE_CHANGESET_NAME);
+
+		if (changesetCollection != null) {
+			modelAdditionCount =
+				changesetEntryLocalService.getChangesetEntriesCount(
+					changesetCollection.getChangesetCollectionId(),
+					_portal.getClassNameId(Course.class));
+
+			manifestSummary.addModelAdditionCount(
+					moduleStagedModelType, modelAdditionCount);
+		}
+
+		long modelDeletionCount = _exportImportHelper.getModelDeletionCount(
+			portletDataContext, moduleStagedModelType);
+
+		
+		manifestSummary.addModelDeletionCount(
+				moduleStagedModelType, modelDeletionCount);
 	}
 	
 	public static final String SCHEMA_VERSION = "1.0.0";
@@ -241,4 +307,16 @@ public class ModulePortletDataHandler extends BasePortletDataHandler {
 	
 	@Reference
 	private Staging staging;
+	
+	@Reference
+	private Portal _portal;
+	
+	@Reference
+	private ChangesetCollectionLocalService changesetCollectionLocalService;
+	
+	@Reference
+	private ChangesetEntryLocalService changesetEntryLocalService;
+	
+	@Reference
+	private ExportImportHelper _exportImportHelper;
 }

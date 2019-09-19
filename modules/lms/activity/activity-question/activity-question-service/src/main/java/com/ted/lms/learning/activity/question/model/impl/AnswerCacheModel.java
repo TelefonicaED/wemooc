@@ -14,11 +14,9 @@
 
 package com.ted.lms.learning.activity.question.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.learning.activity.question.model.Answer;
 
@@ -29,15 +27,17 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing Answer in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see Answer
  * @generated
  */
 @ProviderType
 public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -203,8 +203,7 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -274,4 +273,5 @@ public class AnswerCacheModel implements CacheModel<Answer>, Externalizable {
 	public boolean correct;
 	public String feedbackCorrect;
 	public String feedbackIncorrect;
+
 }

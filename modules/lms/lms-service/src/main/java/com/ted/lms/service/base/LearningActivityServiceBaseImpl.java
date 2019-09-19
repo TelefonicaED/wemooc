@@ -14,15 +14,7 @@
 
 package com.ted.lms.service.base;
 
-import com.liferay.asset.kernel.service.persistence.AssetCategoryPersistence;
-import com.liferay.asset.kernel.service.persistence.AssetEntryPersistence;
-import com.liferay.asset.kernel.service.persistence.AssetLinkPersistence;
-import com.liferay.asset.kernel.service.persistence.AssetTagPersistence;
-
-import com.liferay.expando.kernel.service.persistence.ExpandoRowPersistence;
-import com.liferay.expando.kernel.service.persistence.ExpandoValuePersistence;
-
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
@@ -30,16 +22,7 @@ import com.liferay.portal.kernel.dao.jdbc.SqlUpdateFactoryUtil;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiService;
 import com.liferay.portal.kernel.service.BaseServiceImpl;
-import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
-import com.liferay.portal.kernel.service.persistence.CompanyPersistence;
-import com.liferay.portal.kernel.service.persistence.GroupPersistence;
-import com.liferay.portal.kernel.service.persistence.UserPersistence;
-import com.liferay.portal.kernel.service.persistence.WorkflowDefinitionLinkPersistence;
-import com.liferay.portal.kernel.service.persistence.WorkflowInstanceLinkPersistence;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
-
-import com.liferay.ratings.kernel.service.persistence.RatingsStatsPersistence;
 
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityService;
@@ -59,6 +42,8 @@ import com.ted.lms.service.persistence.ModuleResultPersistence;
 
 import javax.sql.DataSource;
 
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * Provides the base implementation for the learning activity remote service.
  *
@@ -68,1247 +53,27 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.ted.lms.service.impl.LearningActivityServiceImpl
- * @see com.ted.lms.service.LearningActivityServiceUtil
  * @generated
  */
-public abstract class LearningActivityServiceBaseImpl extends BaseServiceImpl
-	implements LearningActivityService, IdentifiableOSGiService {
+public abstract class LearningActivityServiceBaseImpl
+	extends BaseServiceImpl
+	implements LearningActivityService, AopService, IdentifiableOSGiService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link com.ted.lms.service.LearningActivityServiceUtil} to access the learning activity remote service.
+	 * Never modify or reference this class directly. Use <code>LearningActivityService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.LearningActivityServiceUtil</code>.
 	 */
-
-	/**
-	 * Returns the course local service.
-	 *
-	 * @return the course local service
-	 */
-	public com.ted.lms.service.CourseLocalService getCourseLocalService() {
-		return courseLocalService;
-	}
-
-	/**
-	 * Sets the course local service.
-	 *
-	 * @param courseLocalService the course local service
-	 */
-	public void setCourseLocalService(
-		com.ted.lms.service.CourseLocalService courseLocalService) {
-		this.courseLocalService = courseLocalService;
-	}
-
-	/**
-	 * Returns the course remote service.
-	 *
-	 * @return the course remote service
-	 */
-	public com.ted.lms.service.CourseService getCourseService() {
-		return courseService;
-	}
-
-	/**
-	 * Sets the course remote service.
-	 *
-	 * @param courseService the course remote service
-	 */
-	public void setCourseService(
-		com.ted.lms.service.CourseService courseService) {
-		this.courseService = courseService;
-	}
-
-	/**
-	 * Returns the course persistence.
-	 *
-	 * @return the course persistence
-	 */
-	public CoursePersistence getCoursePersistence() {
-		return coursePersistence;
-	}
-
-	/**
-	 * Sets the course persistence.
-	 *
-	 * @param coursePersistence the course persistence
-	 */
-	public void setCoursePersistence(CoursePersistence coursePersistence) {
-		this.coursePersistence = coursePersistence;
-	}
-
-	/**
-	 * Returns the course finder.
-	 *
-	 * @return the course finder
-	 */
-	public CourseFinder getCourseFinder() {
-		return courseFinder;
-	}
-
-	/**
-	 * Sets the course finder.
-	 *
-	 * @param courseFinder the course finder
-	 */
-	public void setCourseFinder(CourseFinder courseFinder) {
-		this.courseFinder = courseFinder;
-	}
-
-	/**
-	 * Returns the course result local service.
-	 *
-	 * @return the course result local service
-	 */
-	public com.ted.lms.service.CourseResultLocalService getCourseResultLocalService() {
-		return courseResultLocalService;
-	}
-
-	/**
-	 * Sets the course result local service.
-	 *
-	 * @param courseResultLocalService the course result local service
-	 */
-	public void setCourseResultLocalService(
-		com.ted.lms.service.CourseResultLocalService courseResultLocalService) {
-		this.courseResultLocalService = courseResultLocalService;
-	}
-
-	/**
-	 * Returns the course result persistence.
-	 *
-	 * @return the course result persistence
-	 */
-	public CourseResultPersistence getCourseResultPersistence() {
-		return courseResultPersistence;
-	}
-
-	/**
-	 * Sets the course result persistence.
-	 *
-	 * @param courseResultPersistence the course result persistence
-	 */
-	public void setCourseResultPersistence(
-		CourseResultPersistence courseResultPersistence) {
-		this.courseResultPersistence = courseResultPersistence;
-	}
-
-	/**
-	 * Returns the course result finder.
-	 *
-	 * @return the course result finder
-	 */
-	public CourseResultFinder getCourseResultFinder() {
-		return courseResultFinder;
-	}
-
-	/**
-	 * Sets the course result finder.
-	 *
-	 * @param courseResultFinder the course result finder
-	 */
-	public void setCourseResultFinder(CourseResultFinder courseResultFinder) {
-		this.courseResultFinder = courseResultFinder;
-	}
-
-	/**
-	 * Returns the course type local service.
-	 *
-	 * @return the course type local service
-	 */
-	public com.ted.lms.service.CourseTypeLocalService getCourseTypeLocalService() {
-		return courseTypeLocalService;
-	}
-
-	/**
-	 * Sets the course type local service.
-	 *
-	 * @param courseTypeLocalService the course type local service
-	 */
-	public void setCourseTypeLocalService(
-		com.ted.lms.service.CourseTypeLocalService courseTypeLocalService) {
-		this.courseTypeLocalService = courseTypeLocalService;
-	}
-
-	/**
-	 * Returns the course type remote service.
-	 *
-	 * @return the course type remote service
-	 */
-	public com.ted.lms.service.CourseTypeService getCourseTypeService() {
-		return courseTypeService;
-	}
-
-	/**
-	 * Sets the course type remote service.
-	 *
-	 * @param courseTypeService the course type remote service
-	 */
-	public void setCourseTypeService(
-		com.ted.lms.service.CourseTypeService courseTypeService) {
-		this.courseTypeService = courseTypeService;
-	}
-
-	/**
-	 * Returns the course type persistence.
-	 *
-	 * @return the course type persistence
-	 */
-	public CourseTypePersistence getCourseTypePersistence() {
-		return courseTypePersistence;
-	}
-
-	/**
-	 * Sets the course type persistence.
-	 *
-	 * @param courseTypePersistence the course type persistence
-	 */
-	public void setCourseTypePersistence(
-		CourseTypePersistence courseTypePersistence) {
-		this.courseTypePersistence = courseTypePersistence;
-	}
-
-	/**
-	 * Returns the course type relation local service.
-	 *
-	 * @return the course type relation local service
-	 */
-	public com.ted.lms.service.CourseTypeRelationLocalService getCourseTypeRelationLocalService() {
-		return courseTypeRelationLocalService;
-	}
-
-	/**
-	 * Sets the course type relation local service.
-	 *
-	 * @param courseTypeRelationLocalService the course type relation local service
-	 */
-	public void setCourseTypeRelationLocalService(
-		com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService) {
-		this.courseTypeRelationLocalService = courseTypeRelationLocalService;
-	}
-
-	/**
-	 * Returns the course type relation persistence.
-	 *
-	 * @return the course type relation persistence
-	 */
-	public CourseTypeRelationPersistence getCourseTypeRelationPersistence() {
-		return courseTypeRelationPersistence;
-	}
-
-	/**
-	 * Sets the course type relation persistence.
-	 *
-	 * @param courseTypeRelationPersistence the course type relation persistence
-	 */
-	public void setCourseTypeRelationPersistence(
-		CourseTypeRelationPersistence courseTypeRelationPersistence) {
-		this.courseTypeRelationPersistence = courseTypeRelationPersistence;
-	}
-
-	/**
-	 * Returns the learning activity local service.
-	 *
-	 * @return the learning activity local service
-	 */
-	public com.ted.lms.service.LearningActivityLocalService getLearningActivityLocalService() {
-		return learningActivityLocalService;
-	}
-
-	/**
-	 * Sets the learning activity local service.
-	 *
-	 * @param learningActivityLocalService the learning activity local service
-	 */
-	public void setLearningActivityLocalService(
-		com.ted.lms.service.LearningActivityLocalService learningActivityLocalService) {
-		this.learningActivityLocalService = learningActivityLocalService;
-	}
-
-	/**
-	 * Returns the learning activity remote service.
-	 *
-	 * @return the learning activity remote service
-	 */
-	public LearningActivityService getLearningActivityService() {
-		return learningActivityService;
-	}
-
-	/**
-	 * Sets the learning activity remote service.
-	 *
-	 * @param learningActivityService the learning activity remote service
-	 */
-	public void setLearningActivityService(
-		LearningActivityService learningActivityService) {
-		this.learningActivityService = learningActivityService;
-	}
-
-	/**
-	 * Returns the learning activity persistence.
-	 *
-	 * @return the learning activity persistence
-	 */
-	public LearningActivityPersistence getLearningActivityPersistence() {
-		return learningActivityPersistence;
-	}
-
-	/**
-	 * Sets the learning activity persistence.
-	 *
-	 * @param learningActivityPersistence the learning activity persistence
-	 */
-	public void setLearningActivityPersistence(
-		LearningActivityPersistence learningActivityPersistence) {
-		this.learningActivityPersistence = learningActivityPersistence;
-	}
-
-	/**
-	 * Returns the learning activity result local service.
-	 *
-	 * @return the learning activity result local service
-	 */
-	public com.ted.lms.service.LearningActivityResultLocalService getLearningActivityResultLocalService() {
-		return learningActivityResultLocalService;
-	}
-
-	/**
-	 * Sets the learning activity result local service.
-	 *
-	 * @param learningActivityResultLocalService the learning activity result local service
-	 */
-	public void setLearningActivityResultLocalService(
-		com.ted.lms.service.LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-
-	/**
-	 * Returns the learning activity result persistence.
-	 *
-	 * @return the learning activity result persistence
-	 */
-	public LearningActivityResultPersistence getLearningActivityResultPersistence() {
-		return learningActivityResultPersistence;
-	}
-
-	/**
-	 * Sets the learning activity result persistence.
-	 *
-	 * @param learningActivityResultPersistence the learning activity result persistence
-	 */
-	public void setLearningActivityResultPersistence(
-		LearningActivityResultPersistence learningActivityResultPersistence) {
-		this.learningActivityResultPersistence = learningActivityResultPersistence;
-	}
-
-	/**
-	 * Returns the learning activity result finder.
-	 *
-	 * @return the learning activity result finder
-	 */
-	public LearningActivityResultFinder getLearningActivityResultFinder() {
-		return learningActivityResultFinder;
-	}
-
-	/**
-	 * Sets the learning activity result finder.
-	 *
-	 * @param learningActivityResultFinder the learning activity result finder
-	 */
-	public void setLearningActivityResultFinder(
-		LearningActivityResultFinder learningActivityResultFinder) {
-		this.learningActivityResultFinder = learningActivityResultFinder;
-	}
-
-	/**
-	 * Returns the learning activity try local service.
-	 *
-	 * @return the learning activity try local service
-	 */
-	public com.ted.lms.service.LearningActivityTryLocalService getLearningActivityTryLocalService() {
-		return learningActivityTryLocalService;
-	}
-
-	/**
-	 * Sets the learning activity try local service.
-	 *
-	 * @param learningActivityTryLocalService the learning activity try local service
-	 */
-	public void setLearningActivityTryLocalService(
-		com.ted.lms.service.LearningActivityTryLocalService learningActivityTryLocalService) {
-		this.learningActivityTryLocalService = learningActivityTryLocalService;
-	}
-
-	/**
-	 * Returns the learning activity try persistence.
-	 *
-	 * @return the learning activity try persistence
-	 */
-	public LearningActivityTryPersistence getLearningActivityTryPersistence() {
-		return learningActivityTryPersistence;
-	}
-
-	/**
-	 * Sets the learning activity try persistence.
-	 *
-	 * @param learningActivityTryPersistence the learning activity try persistence
-	 */
-	public void setLearningActivityTryPersistence(
-		LearningActivityTryPersistence learningActivityTryPersistence) {
-		this.learningActivityTryPersistence = learningActivityTryPersistence;
-	}
-
-	/**
-	 * Returns the module local service.
-	 *
-	 * @return the module local service
-	 */
-	public com.ted.lms.service.ModuleLocalService getModuleLocalService() {
-		return moduleLocalService;
-	}
-
-	/**
-	 * Sets the module local service.
-	 *
-	 * @param moduleLocalService the module local service
-	 */
-	public void setModuleLocalService(
-		com.ted.lms.service.ModuleLocalService moduleLocalService) {
-		this.moduleLocalService = moduleLocalService;
-	}
-
-	/**
-	 * Returns the module remote service.
-	 *
-	 * @return the module remote service
-	 */
-	public com.ted.lms.service.ModuleService getModuleService() {
-		return moduleService;
-	}
-
-	/**
-	 * Sets the module remote service.
-	 *
-	 * @param moduleService the module remote service
-	 */
-	public void setModuleService(
-		com.ted.lms.service.ModuleService moduleService) {
-		this.moduleService = moduleService;
-	}
-
-	/**
-	 * Returns the module persistence.
-	 *
-	 * @return the module persistence
-	 */
-	public ModulePersistence getModulePersistence() {
-		return modulePersistence;
-	}
-
-	/**
-	 * Sets the module persistence.
-	 *
-	 * @param modulePersistence the module persistence
-	 */
-	public void setModulePersistence(ModulePersistence modulePersistence) {
-		this.modulePersistence = modulePersistence;
-	}
-
-	/**
-	 * Returns the module result local service.
-	 *
-	 * @return the module result local service
-	 */
-	public com.ted.lms.service.ModuleResultLocalService getModuleResultLocalService() {
-		return moduleResultLocalService;
-	}
-
-	/**
-	 * Sets the module result local service.
-	 *
-	 * @param moduleResultLocalService the module result local service
-	 */
-	public void setModuleResultLocalService(
-		com.ted.lms.service.ModuleResultLocalService moduleResultLocalService) {
-		this.moduleResultLocalService = moduleResultLocalService;
-	}
-
-	/**
-	 * Returns the module result persistence.
-	 *
-	 * @return the module result persistence
-	 */
-	public ModuleResultPersistence getModuleResultPersistence() {
-		return moduleResultPersistence;
-	}
-
-	/**
-	 * Sets the module result persistence.
-	 *
-	 * @param moduleResultPersistence the module result persistence
-	 */
-	public void setModuleResultPersistence(
-		ModuleResultPersistence moduleResultPersistence) {
-		this.moduleResultPersistence = moduleResultPersistence;
-	}
-
-	/**
-	 * Returns the module result finder.
-	 *
-	 * @return the module result finder
-	 */
-	public ModuleResultFinder getModuleResultFinder() {
-		return moduleResultFinder;
-	}
-
-	/**
-	 * Sets the module result finder.
-	 *
-	 * @param moduleResultFinder the module result finder
-	 */
-	public void setModuleResultFinder(ModuleResultFinder moduleResultFinder) {
-		this.moduleResultFinder = moduleResultFinder;
-	}
-
-	/**
-	 * Returns the student local service.
-	 *
-	 * @return the student local service
-	 */
-	public com.ted.lms.service.StudentLocalService getStudentLocalService() {
-		return studentLocalService;
-	}
-
-	/**
-	 * Sets the student local service.
-	 *
-	 * @param studentLocalService the student local service
-	 */
-	public void setStudentLocalService(
-		com.ted.lms.service.StudentLocalService studentLocalService) {
-		this.studentLocalService = studentLocalService;
-	}
-
-	/**
-	 * Returns the counter local service.
-	 *
-	 * @return the counter local service
-	 */
-	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
-		return counterLocalService;
-	}
-
-	/**
-	 * Sets the counter local service.
-	 *
-	 * @param counterLocalService the counter local service
-	 */
-	public void setCounterLocalService(
-		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
-		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name remote service.
-	 *
-	 * @return the class name remote service
-	 */
-	public com.liferay.portal.kernel.service.ClassNameService getClassNameService() {
-		return classNameService;
-	}
-
-	/**
-	 * Sets the class name remote service.
-	 *
-	 * @param classNameService the class name remote service
-	 */
-	public void setClassNameService(
-		com.liferay.portal.kernel.service.ClassNameService classNameService) {
-		this.classNameService = classNameService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
-	}
-
-	/**
-	 * Returns the company local service.
-	 *
-	 * @return the company local service
-	 */
-	public com.liferay.portal.kernel.service.CompanyLocalService getCompanyLocalService() {
-		return companyLocalService;
-	}
-
-	/**
-	 * Sets the company local service.
-	 *
-	 * @param companyLocalService the company local service
-	 */
-	public void setCompanyLocalService(
-		com.liferay.portal.kernel.service.CompanyLocalService companyLocalService) {
-		this.companyLocalService = companyLocalService;
-	}
-
-	/**
-	 * Returns the company remote service.
-	 *
-	 * @return the company remote service
-	 */
-	public com.liferay.portal.kernel.service.CompanyService getCompanyService() {
-		return companyService;
-	}
-
-	/**
-	 * Sets the company remote service.
-	 *
-	 * @param companyService the company remote service
-	 */
-	public void setCompanyService(
-		com.liferay.portal.kernel.service.CompanyService companyService) {
-		this.companyService = companyService;
-	}
-
-	/**
-	 * Returns the company persistence.
-	 *
-	 * @return the company persistence
-	 */
-	public CompanyPersistence getCompanyPersistence() {
-		return companyPersistence;
-	}
-
-	/**
-	 * Sets the company persistence.
-	 *
-	 * @param companyPersistence the company persistence
-	 */
-	public void setCompanyPersistence(CompanyPersistence companyPersistence) {
-		this.companyPersistence = companyPersistence;
-	}
-
-	/**
-	 * Returns the group local service.
-	 *
-	 * @return the group local service
-	 */
-	public com.liferay.portal.kernel.service.GroupLocalService getGroupLocalService() {
-		return groupLocalService;
-	}
-
-	/**
-	 * Sets the group local service.
-	 *
-	 * @param groupLocalService the group local service
-	 */
-	public void setGroupLocalService(
-		com.liferay.portal.kernel.service.GroupLocalService groupLocalService) {
-		this.groupLocalService = groupLocalService;
-	}
-
-	/**
-	 * Returns the group remote service.
-	 *
-	 * @return the group remote service
-	 */
-	public com.liferay.portal.kernel.service.GroupService getGroupService() {
-		return groupService;
-	}
-
-	/**
-	 * Sets the group remote service.
-	 *
-	 * @param groupService the group remote service
-	 */
-	public void setGroupService(
-		com.liferay.portal.kernel.service.GroupService groupService) {
-		this.groupService = groupService;
-	}
-
-	/**
-	 * Returns the group persistence.
-	 *
-	 * @return the group persistence
-	 */
-	public GroupPersistence getGroupPersistence() {
-		return groupPersistence;
-	}
-
-	/**
-	 * Sets the group persistence.
-	 *
-	 * @param groupPersistence the group persistence
-	 */
-	public void setGroupPersistence(GroupPersistence groupPersistence) {
-		this.groupPersistence = groupPersistence;
-	}
-
-	/**
-	 * Returns the resource local service.
-	 *
-	 * @return the resource local service
-	 */
-	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
-		return resourceLocalService;
-	}
-
-	/**
-	 * Sets the resource local service.
-	 *
-	 * @param resourceLocalService the resource local service
-	 */
-	public void setResourceLocalService(
-		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
-		this.resourceLocalService = resourceLocalService;
-	}
-
-	/**
-	 * Returns the user local service.
-	 *
-	 * @return the user local service
-	 */
-	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
-		return userLocalService;
-	}
-
-	/**
-	 * Sets the user local service.
-	 *
-	 * @param userLocalService the user local service
-	 */
-	public void setUserLocalService(
-		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
-
-	/**
-	 * Returns the user remote service.
-	 *
-	 * @return the user remote service
-	 */
-	public com.liferay.portal.kernel.service.UserService getUserService() {
-		return userService;
-	}
-
-	/**
-	 * Sets the user remote service.
-	 *
-	 * @param userService the user remote service
-	 */
-	public void setUserService(
-		com.liferay.portal.kernel.service.UserService userService) {
-		this.userService = userService;
-	}
-
-	/**
-	 * Returns the user persistence.
-	 *
-	 * @return the user persistence
-	 */
-	public UserPersistence getUserPersistence() {
-		return userPersistence;
-	}
-
-	/**
-	 * Sets the user persistence.
-	 *
-	 * @param userPersistence the user persistence
-	 */
-	public void setUserPersistence(UserPersistence userPersistence) {
-		this.userPersistence = userPersistence;
-	}
-
-	/**
-	 * Returns the workflow definition link local service.
-	 *
-	 * @return the workflow definition link local service
-	 */
-	public com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService getWorkflowDefinitionLinkLocalService() {
-		return workflowDefinitionLinkLocalService;
-	}
-
-	/**
-	 * Sets the workflow definition link local service.
-	 *
-	 * @param workflowDefinitionLinkLocalService the workflow definition link local service
-	 */
-	public void setWorkflowDefinitionLinkLocalService(
-		com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService) {
-		this.workflowDefinitionLinkLocalService = workflowDefinitionLinkLocalService;
-	}
-
-	/**
-	 * Returns the workflow definition link persistence.
-	 *
-	 * @return the workflow definition link persistence
-	 */
-	public WorkflowDefinitionLinkPersistence getWorkflowDefinitionLinkPersistence() {
-		return workflowDefinitionLinkPersistence;
-	}
-
-	/**
-	 * Sets the workflow definition link persistence.
-	 *
-	 * @param workflowDefinitionLinkPersistence the workflow definition link persistence
-	 */
-	public void setWorkflowDefinitionLinkPersistence(
-		WorkflowDefinitionLinkPersistence workflowDefinitionLinkPersistence) {
-		this.workflowDefinitionLinkPersistence = workflowDefinitionLinkPersistence;
-	}
-
-	/**
-	 * Returns the workflow instance link local service.
-	 *
-	 * @return the workflow instance link local service
-	 */
-	public com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService getWorkflowInstanceLinkLocalService() {
-		return workflowInstanceLinkLocalService;
-	}
-
-	/**
-	 * Sets the workflow instance link local service.
-	 *
-	 * @param workflowInstanceLinkLocalService the workflow instance link local service
-	 */
-	public void setWorkflowInstanceLinkLocalService(
-		com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService workflowInstanceLinkLocalService) {
-		this.workflowInstanceLinkLocalService = workflowInstanceLinkLocalService;
-	}
-
-	/**
-	 * Returns the workflow instance link persistence.
-	 *
-	 * @return the workflow instance link persistence
-	 */
-	public WorkflowInstanceLinkPersistence getWorkflowInstanceLinkPersistence() {
-		return workflowInstanceLinkPersistence;
-	}
-
-	/**
-	 * Sets the workflow instance link persistence.
-	 *
-	 * @param workflowInstanceLinkPersistence the workflow instance link persistence
-	 */
-	public void setWorkflowInstanceLinkPersistence(
-		WorkflowInstanceLinkPersistence workflowInstanceLinkPersistence) {
-		this.workflowInstanceLinkPersistence = workflowInstanceLinkPersistence;
-	}
-
-	/**
-	 * Returns the asset category local service.
-	 *
-	 * @return the asset category local service
-	 */
-	public com.liferay.asset.kernel.service.AssetCategoryLocalService getAssetCategoryLocalService() {
-		return assetCategoryLocalService;
-	}
-
-	/**
-	 * Sets the asset category local service.
-	 *
-	 * @param assetCategoryLocalService the asset category local service
-	 */
-	public void setAssetCategoryLocalService(
-		com.liferay.asset.kernel.service.AssetCategoryLocalService assetCategoryLocalService) {
-		this.assetCategoryLocalService = assetCategoryLocalService;
-	}
-
-	/**
-	 * Returns the asset category remote service.
-	 *
-	 * @return the asset category remote service
-	 */
-	public com.liferay.asset.kernel.service.AssetCategoryService getAssetCategoryService() {
-		return assetCategoryService;
-	}
-
-	/**
-	 * Sets the asset category remote service.
-	 *
-	 * @param assetCategoryService the asset category remote service
-	 */
-	public void setAssetCategoryService(
-		com.liferay.asset.kernel.service.AssetCategoryService assetCategoryService) {
-		this.assetCategoryService = assetCategoryService;
-	}
-
-	/**
-	 * Returns the asset category persistence.
-	 *
-	 * @return the asset category persistence
-	 */
-	public AssetCategoryPersistence getAssetCategoryPersistence() {
-		return assetCategoryPersistence;
-	}
-
-	/**
-	 * Sets the asset category persistence.
-	 *
-	 * @param assetCategoryPersistence the asset category persistence
-	 */
-	public void setAssetCategoryPersistence(
-		AssetCategoryPersistence assetCategoryPersistence) {
-		this.assetCategoryPersistence = assetCategoryPersistence;
-	}
-
-	/**
-	 * Returns the asset entry local service.
-	 *
-	 * @return the asset entry local service
-	 */
-	public com.liferay.asset.kernel.service.AssetEntryLocalService getAssetEntryLocalService() {
-		return assetEntryLocalService;
-	}
-
-	/**
-	 * Sets the asset entry local service.
-	 *
-	 * @param assetEntryLocalService the asset entry local service
-	 */
-	public void setAssetEntryLocalService(
-		com.liferay.asset.kernel.service.AssetEntryLocalService assetEntryLocalService) {
-		this.assetEntryLocalService = assetEntryLocalService;
-	}
-
-	/**
-	 * Returns the asset entry remote service.
-	 *
-	 * @return the asset entry remote service
-	 */
-	public com.liferay.asset.kernel.service.AssetEntryService getAssetEntryService() {
-		return assetEntryService;
-	}
-
-	/**
-	 * Sets the asset entry remote service.
-	 *
-	 * @param assetEntryService the asset entry remote service
-	 */
-	public void setAssetEntryService(
-		com.liferay.asset.kernel.service.AssetEntryService assetEntryService) {
-		this.assetEntryService = assetEntryService;
-	}
-
-	/**
-	 * Returns the asset entry persistence.
-	 *
-	 * @return the asset entry persistence
-	 */
-	public AssetEntryPersistence getAssetEntryPersistence() {
-		return assetEntryPersistence;
-	}
-
-	/**
-	 * Sets the asset entry persistence.
-	 *
-	 * @param assetEntryPersistence the asset entry persistence
-	 */
-	public void setAssetEntryPersistence(
-		AssetEntryPersistence assetEntryPersistence) {
-		this.assetEntryPersistence = assetEntryPersistence;
-	}
-
-	/**
-	 * Returns the asset link local service.
-	 *
-	 * @return the asset link local service
-	 */
-	public com.liferay.asset.kernel.service.AssetLinkLocalService getAssetLinkLocalService() {
-		return assetLinkLocalService;
-	}
-
-	/**
-	 * Sets the asset link local service.
-	 *
-	 * @param assetLinkLocalService the asset link local service
-	 */
-	public void setAssetLinkLocalService(
-		com.liferay.asset.kernel.service.AssetLinkLocalService assetLinkLocalService) {
-		this.assetLinkLocalService = assetLinkLocalService;
-	}
-
-	/**
-	 * Returns the asset link persistence.
-	 *
-	 * @return the asset link persistence
-	 */
-	public AssetLinkPersistence getAssetLinkPersistence() {
-		return assetLinkPersistence;
-	}
-
-	/**
-	 * Sets the asset link persistence.
-	 *
-	 * @param assetLinkPersistence the asset link persistence
-	 */
-	public void setAssetLinkPersistence(
-		AssetLinkPersistence assetLinkPersistence) {
-		this.assetLinkPersistence = assetLinkPersistence;
-	}
-
-	/**
-	 * Returns the asset tag local service.
-	 *
-	 * @return the asset tag local service
-	 */
-	public com.liferay.asset.kernel.service.AssetTagLocalService getAssetTagLocalService() {
-		return assetTagLocalService;
-	}
-
-	/**
-	 * Sets the asset tag local service.
-	 *
-	 * @param assetTagLocalService the asset tag local service
-	 */
-	public void setAssetTagLocalService(
-		com.liferay.asset.kernel.service.AssetTagLocalService assetTagLocalService) {
-		this.assetTagLocalService = assetTagLocalService;
-	}
-
-	/**
-	 * Returns the asset tag remote service.
-	 *
-	 * @return the asset tag remote service
-	 */
-	public com.liferay.asset.kernel.service.AssetTagService getAssetTagService() {
-		return assetTagService;
-	}
-
-	/**
-	 * Sets the asset tag remote service.
-	 *
-	 * @param assetTagService the asset tag remote service
-	 */
-	public void setAssetTagService(
-		com.liferay.asset.kernel.service.AssetTagService assetTagService) {
-		this.assetTagService = assetTagService;
-	}
-
-	/**
-	 * Returns the asset tag persistence.
-	 *
-	 * @return the asset tag persistence
-	 */
-	public AssetTagPersistence getAssetTagPersistence() {
-		return assetTagPersistence;
-	}
-
-	/**
-	 * Sets the asset tag persistence.
-	 *
-	 * @param assetTagPersistence the asset tag persistence
-	 */
-	public void setAssetTagPersistence(AssetTagPersistence assetTagPersistence) {
-		this.assetTagPersistence = assetTagPersistence;
-	}
-
-	/**
-	 * Returns the dl app local service.
-	 *
-	 * @return the dl app local service
-	 */
-	public com.liferay.document.library.kernel.service.DLAppLocalService getDLAppLocalService() {
-		return dlAppLocalService;
-	}
-
-	/**
-	 * Sets the dl app local service.
-	 *
-	 * @param dlAppLocalService the dl app local service
-	 */
-	public void setDLAppLocalService(
-		com.liferay.document.library.kernel.service.DLAppLocalService dlAppLocalService) {
-		this.dlAppLocalService = dlAppLocalService;
-	}
-
-	/**
-	 * Returns the dl app remote service.
-	 *
-	 * @return the dl app remote service
-	 */
-	public com.liferay.document.library.kernel.service.DLAppService getDLAppService() {
-		return dlAppService;
-	}
-
-	/**
-	 * Sets the dl app remote service.
-	 *
-	 * @param dlAppService the dl app remote service
-	 */
-	public void setDLAppService(
-		com.liferay.document.library.kernel.service.DLAppService dlAppService) {
-		this.dlAppService = dlAppService;
-	}
-
-	/**
-	 * Returns the expando row local service.
-	 *
-	 * @return the expando row local service
-	 */
-	public com.liferay.expando.kernel.service.ExpandoRowLocalService getExpandoRowLocalService() {
-		return expandoRowLocalService;
-	}
-
-	/**
-	 * Sets the expando row local service.
-	 *
-	 * @param expandoRowLocalService the expando row local service
-	 */
-	public void setExpandoRowLocalService(
-		com.liferay.expando.kernel.service.ExpandoRowLocalService expandoRowLocalService) {
-		this.expandoRowLocalService = expandoRowLocalService;
-	}
-
-	/**
-	 * Returns the expando row persistence.
-	 *
-	 * @return the expando row persistence
-	 */
-	public ExpandoRowPersistence getExpandoRowPersistence() {
-		return expandoRowPersistence;
-	}
-
-	/**
-	 * Sets the expando row persistence.
-	 *
-	 * @param expandoRowPersistence the expando row persistence
-	 */
-	public void setExpandoRowPersistence(
-		ExpandoRowPersistence expandoRowPersistence) {
-		this.expandoRowPersistence = expandoRowPersistence;
-	}
-
-	/**
-	 * Returns the expando value local service.
-	 *
-	 * @return the expando value local service
-	 */
-	public com.liferay.expando.kernel.service.ExpandoValueLocalService getExpandoValueLocalService() {
-		return expandoValueLocalService;
-	}
-
-	/**
-	 * Sets the expando value local service.
-	 *
-	 * @param expandoValueLocalService the expando value local service
-	 */
-	public void setExpandoValueLocalService(
-		com.liferay.expando.kernel.service.ExpandoValueLocalService expandoValueLocalService) {
-		this.expandoValueLocalService = expandoValueLocalService;
-	}
-
-	/**
-	 * Returns the expando value remote service.
-	 *
-	 * @return the expando value remote service
-	 */
-	public com.liferay.expando.kernel.service.ExpandoValueService getExpandoValueService() {
-		return expandoValueService;
-	}
-
-	/**
-	 * Sets the expando value remote service.
-	 *
-	 * @param expandoValueService the expando value remote service
-	 */
-	public void setExpandoValueService(
-		com.liferay.expando.kernel.service.ExpandoValueService expandoValueService) {
-		this.expandoValueService = expandoValueService;
-	}
-
-	/**
-	 * Returns the expando value persistence.
-	 *
-	 * @return the expando value persistence
-	 */
-	public ExpandoValuePersistence getExpandoValuePersistence() {
-		return expandoValuePersistence;
-	}
-
-	/**
-	 * Sets the expando value persistence.
-	 *
-	 * @param expandoValuePersistence the expando value persistence
-	 */
-	public void setExpandoValuePersistence(
-		ExpandoValuePersistence expandoValuePersistence) {
-		this.expandoValuePersistence = expandoValuePersistence;
-	}
-
-	/**
-	 * Returns the ratings stats local service.
-	 *
-	 * @return the ratings stats local service
-	 */
-	public com.liferay.ratings.kernel.service.RatingsStatsLocalService getRatingsStatsLocalService() {
-		return ratingsStatsLocalService;
-	}
-
-	/**
-	 * Sets the ratings stats local service.
-	 *
-	 * @param ratingsStatsLocalService the ratings stats local service
-	 */
-	public void setRatingsStatsLocalService(
-		com.liferay.ratings.kernel.service.RatingsStatsLocalService ratingsStatsLocalService) {
-		this.ratingsStatsLocalService = ratingsStatsLocalService;
-	}
-
-	/**
-	 * Returns the ratings stats persistence.
-	 *
-	 * @return the ratings stats persistence
-	 */
-	public RatingsStatsPersistence getRatingsStatsPersistence() {
-		return ratingsStatsPersistence;
-	}
-
-	/**
-	 * Sets the ratings stats persistence.
-	 *
-	 * @param ratingsStatsPersistence the ratings stats persistence
-	 */
-	public void setRatingsStatsPersistence(
-		RatingsStatsPersistence ratingsStatsPersistence) {
-		this.ratingsStatsPersistence = ratingsStatsPersistence;
-	}
-
-	public void afterPropertiesSet() {
+	@Override
+	public Class<?>[] getAopInterfaces() {
+		return new Class<?>[] {
+			LearningActivityService.class, IdentifiableOSGiService.class
+		};
 	}
 
-	public void destroy() {
+	@Override
+	public void setAopProxy(Object aopProxy) {
+		learningActivityService = (LearningActivityService)aopProxy;
 	}
 
 	/**
@@ -1343,8 +108,8 @@ public abstract class LearningActivityServiceBaseImpl extends BaseServiceImpl
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
 
-			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
-					sql);
+			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(
+				dataSource, sql);
 
 			sqlUpdate.update();
 		}
@@ -1353,134 +118,162 @@ public abstract class LearningActivityServiceBaseImpl extends BaseServiceImpl
 		}
 	}
 
-	@BeanReference(type = com.ted.lms.service.CourseLocalService.class)
-	protected com.ted.lms.service.CourseLocalService courseLocalService;
-	@BeanReference(type = com.ted.lms.service.CourseService.class)
-	protected com.ted.lms.service.CourseService courseService;
-	@BeanReference(type = CoursePersistence.class)
+	@Reference
 	protected CoursePersistence coursePersistence;
-	@BeanReference(type = CourseFinder.class)
+
+	@Reference
 	protected CourseFinder courseFinder;
-	@BeanReference(type = com.ted.lms.service.CourseResultLocalService.class)
-	protected com.ted.lms.service.CourseResultLocalService courseResultLocalService;
-	@BeanReference(type = CourseResultPersistence.class)
+
+	@Reference
 	protected CourseResultPersistence courseResultPersistence;
-	@BeanReference(type = CourseResultFinder.class)
+
+	@Reference
 	protected CourseResultFinder courseResultFinder;
-	@BeanReference(type = com.ted.lms.service.CourseTypeLocalService.class)
-	protected com.ted.lms.service.CourseTypeLocalService courseTypeLocalService;
-	@BeanReference(type = com.ted.lms.service.CourseTypeService.class)
-	protected com.ted.lms.service.CourseTypeService courseTypeService;
-	@BeanReference(type = CourseTypePersistence.class)
+
+	@Reference
 	protected CourseTypePersistence courseTypePersistence;
-	@BeanReference(type = com.ted.lms.service.CourseTypeRelationLocalService.class)
-	protected com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService;
-	@BeanReference(type = CourseTypeRelationPersistence.class)
+
+	@Reference
 	protected CourseTypeRelationPersistence courseTypeRelationPersistence;
-	@BeanReference(type = com.ted.lms.service.LearningActivityLocalService.class)
-	protected com.ted.lms.service.LearningActivityLocalService learningActivityLocalService;
-	@BeanReference(type = LearningActivityService.class)
+
+	@Reference
+	protected com.ted.lms.service.LearningActivityLocalService
+		learningActivityLocalService;
+
 	protected LearningActivityService learningActivityService;
-	@BeanReference(type = LearningActivityPersistence.class)
+
+	@Reference
 	protected LearningActivityPersistence learningActivityPersistence;
-	@BeanReference(type = com.ted.lms.service.LearningActivityResultLocalService.class)
-	protected com.ted.lms.service.LearningActivityResultLocalService learningActivityResultLocalService;
-	@BeanReference(type = LearningActivityResultPersistence.class)
-	protected LearningActivityResultPersistence learningActivityResultPersistence;
-	@BeanReference(type = LearningActivityResultFinder.class)
+
+	@Reference
+	protected LearningActivityResultPersistence
+		learningActivityResultPersistence;
+
+	@Reference
 	protected LearningActivityResultFinder learningActivityResultFinder;
-	@BeanReference(type = com.ted.lms.service.LearningActivityTryLocalService.class)
-	protected com.ted.lms.service.LearningActivityTryLocalService learningActivityTryLocalService;
-	@BeanReference(type = LearningActivityTryPersistence.class)
+
+	@Reference
 	protected LearningActivityTryPersistence learningActivityTryPersistence;
-	@BeanReference(type = com.ted.lms.service.ModuleLocalService.class)
-	protected com.ted.lms.service.ModuleLocalService moduleLocalService;
-	@BeanReference(type = com.ted.lms.service.ModuleService.class)
-	protected com.ted.lms.service.ModuleService moduleService;
-	@BeanReference(type = ModulePersistence.class)
+
+	@Reference
 	protected ModulePersistence modulePersistence;
-	@BeanReference(type = com.ted.lms.service.ModuleResultLocalService.class)
-	protected com.ted.lms.service.ModuleResultLocalService moduleResultLocalService;
-	@BeanReference(type = ModuleResultPersistence.class)
+
+	@Reference
 	protected ModuleResultPersistence moduleResultPersistence;
-	@BeanReference(type = ModuleResultFinder.class)
+
+	@Reference
 	protected ModuleResultFinder moduleResultFinder;
-	@BeanReference(type = com.ted.lms.service.StudentLocalService.class)
-	protected com.ted.lms.service.StudentLocalService studentLocalService;
-	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
-	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
-	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameService.class)
-	protected com.liferay.portal.kernel.service.ClassNameService classNameService;
-	@ServiceReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.CompanyLocalService.class)
-	protected com.liferay.portal.kernel.service.CompanyLocalService companyLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.CompanyService.class)
+
+	@Reference
+	protected com.liferay.counter.kernel.service.CounterLocalService
+		counterLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ClassNameLocalService
+		classNameLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ClassNameService
+		classNameService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.CompanyLocalService
+		companyLocalService;
+
+	@Reference
 	protected com.liferay.portal.kernel.service.CompanyService companyService;
-	@ServiceReference(type = CompanyPersistence.class)
-	protected CompanyPersistence companyPersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.GroupLocalService.class)
-	protected com.liferay.portal.kernel.service.GroupLocalService groupLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.GroupService.class)
+
+	@Reference
+	protected com.liferay.portal.kernel.service.GroupLocalService
+		groupLocalService;
+
+	@Reference
 	protected com.liferay.portal.kernel.service.GroupService groupService;
-	@ServiceReference(type = GroupPersistence.class)
-	protected GroupPersistence groupPersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
-	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
-	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.UserService.class)
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourceLocalService
+		resourceLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourcePermissionLocalService
+		resourcePermissionLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourcePermissionService
+		resourcePermissionService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.RoleLocalService
+		roleLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.RoleService roleService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.UserLocalService
+		userLocalService;
+
+	@Reference
 	protected com.liferay.portal.kernel.service.UserService userService;
-	@ServiceReference(type = UserPersistence.class)
-	protected UserPersistence userPersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService.class)
-	protected com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService;
-	@ServiceReference(type = WorkflowDefinitionLinkPersistence.class)
-	protected WorkflowDefinitionLinkPersistence workflowDefinitionLinkPersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService.class)
-	protected com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService workflowInstanceLinkLocalService;
-	@ServiceReference(type = WorkflowInstanceLinkPersistence.class)
-	protected WorkflowInstanceLinkPersistence workflowInstanceLinkPersistence;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetCategoryLocalService.class)
-	protected com.liferay.asset.kernel.service.AssetCategoryLocalService assetCategoryLocalService;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetCategoryService.class)
-	protected com.liferay.asset.kernel.service.AssetCategoryService assetCategoryService;
-	@ServiceReference(type = AssetCategoryPersistence.class)
-	protected AssetCategoryPersistence assetCategoryPersistence;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetEntryLocalService.class)
-	protected com.liferay.asset.kernel.service.AssetEntryLocalService assetEntryLocalService;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetEntryService.class)
-	protected com.liferay.asset.kernel.service.AssetEntryService assetEntryService;
-	@ServiceReference(type = AssetEntryPersistence.class)
-	protected AssetEntryPersistence assetEntryPersistence;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetLinkLocalService.class)
-	protected com.liferay.asset.kernel.service.AssetLinkLocalService assetLinkLocalService;
-	@ServiceReference(type = AssetLinkPersistence.class)
-	protected AssetLinkPersistence assetLinkPersistence;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetTagLocalService.class)
-	protected com.liferay.asset.kernel.service.AssetTagLocalService assetTagLocalService;
-	@ServiceReference(type = com.liferay.asset.kernel.service.AssetTagService.class)
+
+	@Reference
+	protected
+		com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService
+			workflowDefinitionLinkLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.WorkflowInstanceLinkLocalService
+		workflowInstanceLinkLocalService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetCategoryLocalService
+		assetCategoryLocalService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetCategoryService
+		assetCategoryService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetEntryLocalService
+		assetEntryLocalService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetEntryService
+		assetEntryService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetLinkLocalService
+		assetLinkLocalService;
+
+	@Reference
+	protected com.liferay.asset.kernel.service.AssetTagLocalService
+		assetTagLocalService;
+
+	@Reference
 	protected com.liferay.asset.kernel.service.AssetTagService assetTagService;
-	@ServiceReference(type = AssetTagPersistence.class)
-	protected AssetTagPersistence assetTagPersistence;
-	@ServiceReference(type = com.liferay.document.library.kernel.service.DLAppLocalService.class)
-	protected com.liferay.document.library.kernel.service.DLAppLocalService dlAppLocalService;
-	@ServiceReference(type = com.liferay.document.library.kernel.service.DLAppService.class)
-	protected com.liferay.document.library.kernel.service.DLAppService dlAppService;
-	@ServiceReference(type = com.liferay.expando.kernel.service.ExpandoRowLocalService.class)
-	protected com.liferay.expando.kernel.service.ExpandoRowLocalService expandoRowLocalService;
-	@ServiceReference(type = ExpandoRowPersistence.class)
-	protected ExpandoRowPersistence expandoRowPersistence;
-	@ServiceReference(type = com.liferay.expando.kernel.service.ExpandoValueLocalService.class)
-	protected com.liferay.expando.kernel.service.ExpandoValueLocalService expandoValueLocalService;
-	@ServiceReference(type = com.liferay.expando.kernel.service.ExpandoValueService.class)
-	protected com.liferay.expando.kernel.service.ExpandoValueService expandoValueService;
-	@ServiceReference(type = ExpandoValuePersistence.class)
-	protected ExpandoValuePersistence expandoValuePersistence;
-	@ServiceReference(type = com.liferay.ratings.kernel.service.RatingsStatsLocalService.class)
-	protected com.liferay.ratings.kernel.service.RatingsStatsLocalService ratingsStatsLocalService;
-	@ServiceReference(type = RatingsStatsPersistence.class)
-	protected RatingsStatsPersistence ratingsStatsPersistence;
+
+	@Reference
+	protected com.liferay.document.library.kernel.service.DLAppLocalService
+		dlAppLocalService;
+
+	@Reference
+	protected com.liferay.document.library.kernel.service.DLAppService
+		dlAppService;
+
+	@Reference
+	protected com.liferay.expando.kernel.service.ExpandoRowLocalService
+		expandoRowLocalService;
+
+	@Reference
+	protected com.liferay.expando.kernel.service.ExpandoValueLocalService
+		expandoValueLocalService;
+
+	@Reference
+	protected com.liferay.expando.kernel.service.ExpandoValueService
+		expandoValueService;
+
+	@Reference
+	protected com.liferay.ratings.kernel.service.RatingsStatsLocalService
+		ratingsStatsLocalService;
+
 }

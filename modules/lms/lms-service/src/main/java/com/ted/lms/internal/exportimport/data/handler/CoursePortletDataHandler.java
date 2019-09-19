@@ -1,14 +1,24 @@
 package com.ted.lms.internal.exportimport.data.handler;
 
+import com.liferay.changeset.model.ChangesetCollection;
+import com.liferay.changeset.service.ChangesetCollectionLocalService;
+import com.liferay.changeset.service.ChangesetEntryLocalService;
 import com.liferay.exportimport.kernel.lar.BasePortletDataHandler;
+import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportHelper;
+import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.PortletDataHandler;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerBoolean;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.exportimport.portlet.data.handler.helper.PortletDataHandlerHelper;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LMSPortletKeys;
@@ -198,6 +208,8 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 	        return portletPreferences;
 	    }
 
+	    
+	    
 	    courseLocalService.deleteCourses(
 	        portletDataContext.getScopeGroupId());
 
@@ -212,6 +224,24 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 	        PortletDataContext portletDataContext,
 	        PortletPreferences portletPreferences)
 	    throws Exception {
+		
+		if (ExportImportDateUtil.isRangeFromLastPublishDate(
+				portletDataContext)) {
+
+			_staging.populateLastPublishDateCounts(
+				portletDataContext,
+				new StagedModelType[] {
+					new StagedModelType(
+						Course.class.getName()),
+					new StagedModelType(
+						Module.class.getName()),
+					new StagedModelType(LearningActivity.class.getName())
+				});
+
+			populateCourseLastPublishDateCounts(portletDataContext);
+
+			return;
+		}
 
 	    ActionableDynamicQuery courseExportActionableDynamicQuery =
 	        courseLocalService.
@@ -228,6 +258,45 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 		        learningActivityLocalService.getExportActionableDynamicQuery(portletDataContext);
 
 	    activityExportActionableDynamicQuery.performCount();
+	}
+	
+	private void populateCourseLastPublishDateCounts(
+			PortletDataContext portletDataContext)
+		throws PortalException {
+
+		ManifestSummary manifestSummary =
+			portletDataContext.getManifestSummary();
+
+		StagedModelType courseStagedModelType = new StagedModelType(
+			Course.class);
+
+		long modelAdditionCount = manifestSummary.getModelAdditionCount(
+			courseStagedModelType);
+
+		if (modelAdditionCount > -1) {
+			return;
+		}
+
+		ChangesetCollection changesetCollection =
+			changesetCollectionLocalService.fetchChangesetCollection(
+				portletDataContext.getScopeGroupId(),
+				StagingConstants.RANGE_FROM_LAST_PUBLISH_DATE_CHANGESET_NAME);
+
+		if (changesetCollection != null) {
+			modelAdditionCount =
+				changesetEntryLocalService.getChangesetEntriesCount(
+					changesetCollection.getChangesetCollectionId(),
+					_portal.getClassNameId(Course.class));
+
+			manifestSummary.addModelAdditionCount(
+				courseStagedModelType, modelAdditionCount);
+		}
+
+		long modelDeletionCount = _exportImportHelper.getModelDeletionCount(
+			portletDataContext, courseStagedModelType);
+
+		manifestSummary.addModelDeletionCount(
+				courseStagedModelType, modelDeletionCount);
 	}
 	
 	public static final String SCHEMA_VERSION = "1.0.0";
@@ -277,4 +346,19 @@ public class CoursePortletDataHandler extends BasePortletDataHandler {
 	
 	@Reference
 	private PortletDataHandlerHelper portletDataHandlerHelper;
+	
+	@Reference
+	private Staging _staging;
+	
+	@Reference
+	private Portal _portal;
+	
+	@Reference
+	private ChangesetCollectionLocalService changesetCollectionLocalService;
+	
+	@Reference
+	private ChangesetEntryLocalService changesetEntryLocalService;
+	
+	@Reference
+	private ExportImportHelper _exportImportHelper;
 }

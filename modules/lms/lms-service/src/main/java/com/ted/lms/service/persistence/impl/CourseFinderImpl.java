@@ -5,8 +5,11 @@ import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
+import com.liferay.portal.dao.orm.hibernate.SessionFactoryImpl;
+import com.liferay.portal.kernel.bean.BeanLocator;
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.dao.orm.CustomSQLParam;
+import com.liferay.portal.kernel.dao.orm.ORMException;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.SQLQuery;
@@ -23,12 +26,13 @@ import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.persistence.UserFinder;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.model.impl.UserImpl;
-import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.liferay.portal.service.persistence.impl.UserFinderImpl;
 import com.ted.lms.constants.CourseParams;
 import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.constants.StudentParams;
@@ -44,7 +48,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component(service = CourseFinder.class)
 public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFinder{
+	
+	@Reference
+	private CustomSQL customSQL;
 	
 	public static final String GET_DISTINCT_COURSE_GROUPS = 
 			CourseFinder.class.getName() + ".getDistinctCourseGroups";
@@ -967,7 +978,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		
 		try{
 			
-			/** Para la query es necesario si no es null o vacío que añade los porcentajes, y si es vacío ponerlo a null*/
+			// Para la query es necesario si no es null o vacío que añade los porcentajes, y si es vacío ponerlo a null
 			if(log.isDebugEnabled()){
 				log.debug("ScreenName:"+screenName);
 				log.debug("firstName:"+firstName);
@@ -978,7 +989,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 				log.debug("order: " + (obc != null ? obc.toString() : "null"));
 			}
 			
-			session = sessionFactory.openSession();
+			session = openSessionUser();
 			
 			String sql = customSQL.get(getClass(), FIND_STUDENTS);
 			
@@ -1026,7 +1037,7 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		} catch (Exception e) {
 	       e.printStackTrace();
 	    } finally {
-	    	closeSession(session);
+	    	closeSessionUser(session);
 	    }
 	
 	    return new ArrayList<User>();
@@ -1202,16 +1213,23 @@ public class CourseFinderImpl extends CourseFinderBaseImpl implements CourseFind
 		return qPos;
 	}	
 	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
+	private SessionFactory getUserSessionFactory() {
+		return (SessionFactory) PortalBeanLocatorUtil.locate(SESSION_FACTORY);
+	}
+
+	public void closeSessionUser(Session session) {
+		getUserSessionFactory().closeSession(session);
+	}
+
+	public Session openSessionUser() throws ORMException {
+		return getUserSessionFactory().openSession();
+	}
 	
 	private static final String PARAM_TITLE_DESCRIPTION = "title";
 	private static final String PARAM_GROUP_ID = "groupId";
 	private static final String PARAM_STATUS = "status";
 	private static final String PARAM_PARENT_COURSE_ID = "parentCourseId";
 	
-	private SessionFactory sessionFactory = (SessionFactory) PortalBeanLocatorUtil.locate(SESSION_FACTORY);
-	
-	private static final String SESSION_FACTORY = "liferaySessionFactory";
+	private static final String SESSION_FACTORY = UserFinder.class.getName();
 
 }

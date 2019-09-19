@@ -14,30 +14,33 @@
 
 package com.ted.lms.inscription.teams.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the Schedule service. Represents a row in the &quot;iteam_Schedule&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see ScheduleModel
- * @see com.ted.lms.inscription.teams.model.impl.ScheduleImpl
- * @see com.ted.lms.inscription.teams.model.impl.ScheduleModelImpl
  * @generated
  */
-@ImplementationClassName("com.ted.lms.inscription.teams.model.impl.ScheduleImpl")
+@ImplementationClassName(
+	"com.ted.lms.inscription.teams.model.impl.ScheduleImpl"
+)
 @ProviderType
-public interface Schedule extends ScheduleModel, PersistedModel {
+public interface Schedule extends PersistedModel, ScheduleModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.inscription.teams.model.impl.ScheduleImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.inscription.teams.model.impl.ScheduleImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<Schedule, Long> SCHEDULE_ID_ACCESSOR = new Accessor<Schedule, Long>() {
+	public static final Accessor<Schedule, Long> SCHEDULE_ID_ACCESSOR =
+		new Accessor<Schedule, Long>() {
+
 			@Override
 			public Long get(Schedule schedule) {
 				return schedule.getScheduleId();
@@ -52,5 +55,7 @@ public interface Schedule extends ScheduleModel, PersistedModel {
 			public Class<Schedule> getTypeClass() {
 				return Schedule.class;
 			}
+
 		};
+
 }

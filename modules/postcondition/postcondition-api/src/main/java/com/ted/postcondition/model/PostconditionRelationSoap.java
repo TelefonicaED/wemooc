@@ -14,12 +14,12 @@
 
 package com.ted.postcondition.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -29,13 +29,17 @@ import java.util.List;
  */
 @ProviderType
 public class PostconditionRelationSoap implements Serializable {
+
 	public static PostconditionRelationSoap toSoapModel(
 		PostconditionRelation model) {
+
 		PostconditionRelationSoap soapModel = new PostconditionRelationSoap();
 
 		soapModel.setUuid(model.getUuid());
-		soapModel.setPostconditionRelationId(model.getPostconditionRelationId());
-		soapModel.setClassNamePostconditionId(model.getClassNamePostconditionId());
+		soapModel.setPostconditionRelationId(
+			model.getPostconditionRelationId());
+		soapModel.setClassNamePostconditionId(
+			model.getClassNamePostconditionId());
 		soapModel.setClassNameId(model.getClassNameId());
 		soapModel.setClassPK(model.getClassPK());
 		soapModel.setExtraData(model.getExtraData());
@@ -45,7 +49,9 @@ public class PostconditionRelationSoap implements Serializable {
 
 	public static PostconditionRelationSoap[] toSoapModels(
 		PostconditionRelation[] models) {
-		PostconditionRelationSoap[] soapModels = new PostconditionRelationSoap[models.length];
+
+		PostconditionRelationSoap[] soapModels =
+			new PostconditionRelationSoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -56,10 +62,12 @@ public class PostconditionRelationSoap implements Serializable {
 
 	public static PostconditionRelationSoap[][] toSoapModels(
 		PostconditionRelation[][] models) {
+
 		PostconditionRelationSoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new PostconditionRelationSoap[models.length][models[0].length];
+			soapModels =
+				new PostconditionRelationSoap[models.length][models[0].length];
 		}
 		else {
 			soapModels = new PostconditionRelationSoap[0][0];
@@ -74,13 +82,16 @@ public class PostconditionRelationSoap implements Serializable {
 
 	public static PostconditionRelationSoap[] toSoapModels(
 		List<PostconditionRelation> models) {
-		List<PostconditionRelationSoap> soapModels = new ArrayList<PostconditionRelationSoap>(models.size());
+
+		List<PostconditionRelationSoap> soapModels =
+			new ArrayList<PostconditionRelationSoap>(models.size());
 
 		for (PostconditionRelation model : models) {
 			soapModels.add(toSoapModel(model));
 		}
 
-		return soapModels.toArray(new PostconditionRelationSoap[soapModels.size()]);
+		return soapModels.toArray(
+			new PostconditionRelationSoap[soapModels.size()]);
 	}
 
 	public PostconditionRelationSoap() {
@@ -148,4 +159,5 @@ public class PostconditionRelationSoap implements Serializable {
 	private long _classNameId;
 	private long _classPK;
 	private String _extraData;
+
 }

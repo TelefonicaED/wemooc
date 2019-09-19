@@ -14,7 +14,7 @@
 
 package com.ted.lms.learning.activity.p2p.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Brian Wing Shun Chan
@@ -22,9 +22,13 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface P2PActivityCorrectionsFinder {
-	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections> findCorrectionsFinished(
-		long actId, long userId);
 
-	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections> findCorrectionsDoneByP2PActivityId(
-		long p2pActivityId);
+	public java.util.List
+		<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections>
+			findCorrectionsFinished(long actId, long userId);
+
+	public java.util.List
+		<com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections>
+			findCorrectionsDoneByP2PActivityId(long p2pActivityId);
+
 }

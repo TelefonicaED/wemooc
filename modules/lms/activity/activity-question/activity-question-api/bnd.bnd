@@ -9,4 +9,5 @@ Export-Package: \
 	com.ted.lms.learning.activity.question.registry,\
 	com.ted.lms.learning.activity.question.constants,\
 	com.ted.lms.learning.activity.question.util
+-check: EXPORTS
 -includeresource: META-INF/service.xml=../activity-question-service/service.xml

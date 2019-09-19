@@ -22,5 +22,15 @@ public class LMSPortletKeys {
 			"com_ted_lms_web_portlet_CourseTypeAdminPortlet";
 	public static final String MY_COURSES = 
 			"com_ted_lms_web_portlet_MyCoursesPortlet";
+	public static final String NAVIGATOR = 
+			"com_ted_lms_web_portlet_NavigatorPortlet";
+	public static final String MY_RESULTS = 
+			"com_ted_lms_web_portlet_MyResultsPortlet";
+	public static final String EDIT_COURSE_RESULTS = 
+			"com_ted_lms_web_portlet_EditCourseResultsPortlet";
+	public static final String STUDENT_RESULTS = 
+			"com_ted_lms_web_portlet_StudentResultsPortlet";
+	public static final String MODULE_TIMER = 
+			"com_ted_lms_web_portlet_ModuleTimerPortlet";
 	
 }

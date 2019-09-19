@@ -14,13 +14,13 @@
 
 package com.ted.audit.db.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -30,6 +30,7 @@ import java.util.List;
  */
 @ProviderType
 public class AuditEntrySoap implements Serializable {
+
 	public static AuditEntrySoap toSoapModel(AuditEntry model) {
 		AuditEntrySoap soapModel = new AuditEntrySoap();
 
@@ -77,7 +78,8 @@ public class AuditEntrySoap implements Serializable {
 	}
 
 	public static AuditEntrySoap[] toSoapModels(List<AuditEntry> models) {
-		List<AuditEntrySoap> soapModels = new ArrayList<AuditEntrySoap>(models.size());
+		List<AuditEntrySoap> soapModels = new ArrayList<AuditEntrySoap>(
+			models.size());
 
 		for (AuditEntry model : models) {
 			soapModels.add(toSoapModel(model));
@@ -205,4 +207,5 @@ public class AuditEntrySoap implements Serializable {
 	private Date _endDate;
 	private int _actionId;
 	private String _extradata;
+
 }

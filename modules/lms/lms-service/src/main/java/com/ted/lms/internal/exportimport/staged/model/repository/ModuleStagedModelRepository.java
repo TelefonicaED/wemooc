@@ -44,7 +44,7 @@ public class ModuleStagedModelRepository
 
 		Module newModule = moduleLocalService.addModule(userId, module.getGroupId(), module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
 				module.getAllowedTime(), null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
-		newModule = moduleLocalService.updateOrder(newModule, module.getOrder());	
+		newModule = moduleLocalService.updateOrder(userId, newModule, module.getPriority());	
 		
 		return newModule;
 	}
@@ -171,7 +171,7 @@ public class ModuleStagedModelRepository
 				module.getStartDate(), module.getEndDate(), module.getAllowedTime(), null, module.getModuleEvalId(), module.getModuleExtraData(), 
 				serviceContext);
 		
-		return moduleLocalService.updateOrder(updateModule, module.getOrder());
+		return moduleLocalService.updateOrder(userId, updateModule, module.getPriority());
 	}
 
 	@Reference

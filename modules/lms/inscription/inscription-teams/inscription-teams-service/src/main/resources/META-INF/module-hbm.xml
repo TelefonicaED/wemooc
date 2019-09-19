@@ -4,11 +4,11 @@
 <hibernate-mapping auto-import="false" default-lazy="false">
 	<import class="com.ted.lms.inscription.teams.model.Schedule" />
 	<class name="com.ted.lms.inscription.teams.model.impl.ScheduleImpl" table="iteam_Schedule">
-		<id name="scheduleId" type="long">
+		<id access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="scheduleId" type="long">
 			<generator class="assigned" />
 		</id>
-		<property name="teamId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
-		<property name="startDate" type="org.hibernate.type.TimestampType" />
-		<property name="endDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="teamId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="startDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="endDate" type="org.hibernate.type.TimestampType" />
 	</class>
 </hibernate-mapping>

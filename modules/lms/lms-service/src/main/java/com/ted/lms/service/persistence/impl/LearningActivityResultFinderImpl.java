@@ -9,7 +9,6 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.impl.LearningActivityResultImpl;
@@ -18,11 +17,21 @@ import com.ted.lms.service.persistence.LearningActivityResultFinder;
 import java.util.Iterator;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component(service = LearningActivityResultFinder.class)
 public class LearningActivityResultFinderImpl extends LearningActivityResultFinderBaseImpl implements LearningActivityResultFinder{
 	
-	public static final String FIND_REQUIRED_LEARNING_ACTIVITY_RESULTS = LearningActivityResultFinder.class.getName() + ".findRequiredLearningActivityResults";
-	public static final String COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS_BY_MODULE = LearningActivityResultFinder.class.getName() + ".countRequiredLearningActivityResultsByModule";
-	public static final String COUNT_STUDENTS_FINISHED = LearningActivityResultFinder.class.getName() + ".countStudentsFinished";
+	@Reference
+	private CustomSQL customSQL;
+	
+	public static final String FIND_REQUIRED_LEARNING_ACTIVITY_RESULTS = 
+			LearningActivityResultFinder.class.getName() + ".findRequiredLearningActivityResults";
+	public static final String COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS_BY_MODULE = 
+			LearningActivityResultFinder.class.getName() + ".countRequiredLearningActivityResultsByModule";
+	public static final String COUNT_STUDENTS_FINISHED = 
+			LearningActivityResultFinder.class.getName() + ".countStudentsFinished";
 	
 	private static final Log log = LogFactoryUtil.getLog(LearningActivityResultFinderImpl.class);
 	
@@ -139,7 +148,4 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 	
 		return countStartedOnlyStudents;
 	}
-	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
 }

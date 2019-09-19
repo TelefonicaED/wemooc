@@ -14,23 +14,23 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * This class is used by SOAP remote services, specifically {@link com.ted.lms.service.http.CourseTypeServiceSoap}.
  *
  * @author Brian Wing Shun Chan
- * @see com.ted.lms.service.http.CourseTypeServiceSoap
  * @generated
  */
 @ProviderType
 public class CourseTypeSoap implements Serializable {
+
 	public static CourseTypeSoap toSoapModel(CourseType model) {
 		CourseTypeSoap soapModel = new CourseTypeSoap();
 
@@ -77,7 +77,8 @@ public class CourseTypeSoap implements Serializable {
 	}
 
 	public static CourseTypeSoap[] toSoapModels(List<CourseType> models) {
-		List<CourseTypeSoap> soapModels = new ArrayList<CourseTypeSoap>(models.size());
+		List<CourseTypeSoap> soapModels = new ArrayList<CourseTypeSoap>(
+			models.size());
 
 		for (CourseType model : models) {
 			soapModels.add(toSoapModel(model));
@@ -196,4 +197,5 @@ public class CourseTypeSoap implements Serializable {
 	private String _description;
 	private long _iconId;
 	private Date _lastPublishDate;
+
 }

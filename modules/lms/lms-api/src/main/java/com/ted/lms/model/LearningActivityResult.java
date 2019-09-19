@@ -14,31 +14,32 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the LearningActivityResult service. Represents a row in the &quot;LMS_LearningActivityResult&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see LearningActivityResultModel
- * @see com.ted.lms.model.impl.LearningActivityResultImpl
- * @see com.ted.lms.model.impl.LearningActivityResultModelImpl
  * @generated
  */
 @ImplementationClassName("com.ted.lms.model.impl.LearningActivityResultImpl")
 @ProviderType
-public interface LearningActivityResult extends LearningActivityResultModel,
-	PersistedModel {
+public interface LearningActivityResult
+	extends LearningActivityResultModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.model.impl.LearningActivityResultImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.model.impl.LearningActivityResultImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<LearningActivityResult, Long> LAR_ID_ACCESSOR = new Accessor<LearningActivityResult, Long>() {
+	public static final Accessor<LearningActivityResult, Long> LAR_ID_ACCESSOR =
+		new Accessor<LearningActivityResult, Long>() {
+
 			@Override
 			public Long get(LearningActivityResult learningActivityResult) {
 				return learningActivityResult.getLarId();
@@ -53,7 +54,13 @@ public interface LearningActivityResult extends LearningActivityResultModel,
 			public Class<LearningActivityResult> getTypeClass() {
 				return LearningActivityResult.class;
 			}
+
 		};
 
 	public String getStatusProperties();
+
+	public boolean isFinished();
+
+	public String getActivityStatus(java.util.Locale locale);
+
 }

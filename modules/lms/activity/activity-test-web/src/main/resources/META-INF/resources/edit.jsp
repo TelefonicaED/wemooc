@@ -215,7 +215,6 @@ timeNumberFormat.setMinimumIntegerDigits(2);
 	$('#<portlet:namespace />triesToggle').on(
 		'change',
 		function() {
-			alert("tries: " + $('#<portlet:namespace />triesToggle').prop("checked") + " - " + $('#<portlet:namespace />showFeedback').prop("checked") + " - " + $('#<portlet:namespace />showCorrectAnswer').prop("checked"));
 			if(!$('#<portlet:namespace />triesToggle').prop("checked")){
 				$('#<portlet:namespace />showCorrectAnswerOnlyOnFinalTry').prop("disabled",true);
 				$('#<portlet:namespace />showCorrectAnswerOnlyOnFinalTry').prop("checked",false);

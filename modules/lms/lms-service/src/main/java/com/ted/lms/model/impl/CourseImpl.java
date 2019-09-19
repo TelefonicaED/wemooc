@@ -65,26 +65,26 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model implementation for the Course service. Represents a row in the &quot;LMS_Course&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.model.Course} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.model.Course<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class CourseImpl extends CourseBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. All methods that expect a course model instance should use the {@link com.ted.lms.model.Course} interface instead.
 	 */
-	
-	private static Log log = LogFactoryUtil.getLog(CourseImpl.class);
+private static Log log = LogFactoryUtil.getLog(CourseImpl.class);
 	
 	private Group _group;
 	private JSONObject extraData = null;
@@ -450,7 +450,7 @@ public class CourseImpl extends CourseBaseImpl {
 	}
 	
 	public int getCountEditions() {
-		return CourseLocalServiceUtil.countCourses(getCompanyId(), null, null, null, getCourseId(), 0, null);
+		return 0; //CourseLocalServiceUtil.countCourses(getCompanyId(), null, null, null, getCourseId(), 0, null);
 	}
 	
 	@Override

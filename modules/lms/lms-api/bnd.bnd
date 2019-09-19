@@ -2,10 +2,6 @@ Bundle-Name: lms-api
 Bundle-SymbolicName: com.ted.lms.api
 Bundle-Version: 1.0.0
 Export-Package: \
-	com.ted.lms.exception,\
-	com.ted.lms.model,\
-	com.ted.lms.service,\
-	com.ted.lms.service.persistence,\
 	com.ted.lms.constants,\
 	com.ted.lms.settings,\
 	com.ted.lms.registry,\
@@ -13,6 +9,10 @@ Export-Package: \
 	com.ted.lms.util,\
 	com.ted.lms.configuration,\
 	com.ted.lms.copy.content.processor,\
-	com.ted.lms.copy.permission
+	com.ted.lms.copy.permission,\
+	com.ted.lms.exception,\
+	com.ted.lms.model,\
+	com.ted.lms.service,\
+	com.ted.lms.service.persistence
+-check: EXPORTS
 -includeresource: META-INF/service.xml=../lms-service/service.xml
--metatype: *

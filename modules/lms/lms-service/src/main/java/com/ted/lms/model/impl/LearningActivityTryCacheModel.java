@@ -14,11 +14,9 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.model.LearningActivityTry;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing LearningActivityTry in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see LearningActivityTry
  * @generated
  */
 @ProviderType
-public class LearningActivityTryCacheModel implements CacheModel<LearningActivityTry>,
-	Externalizable {
+public class LearningActivityTryCacheModel
+	implements CacheModel<LearningActivityTry>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -49,7 +49,8 @@ public class LearningActivityTryCacheModel implements CacheModel<LearningActivit
 			return false;
 		}
 
-		LearningActivityTryCacheModel learningActivityTryCacheModel = (LearningActivityTryCacheModel)obj;
+		LearningActivityTryCacheModel learningActivityTryCacheModel =
+			(LearningActivityTryCacheModel)obj;
 
 		if (latId == learningActivityTryCacheModel.latId) {
 			return true;
@@ -106,7 +107,8 @@ public class LearningActivityTryCacheModel implements CacheModel<LearningActivit
 
 	@Override
 	public LearningActivityTry toEntityModel() {
-		LearningActivityTryImpl learningActivityTryImpl = new LearningActivityTryImpl();
+		LearningActivityTryImpl learningActivityTryImpl =
+			new LearningActivityTryImpl();
 
 		if (uuid == null) {
 			learningActivityTryImpl.setUuid("");
@@ -213,8 +215,7 @@ public class LearningActivityTryCacheModel implements CacheModel<LearningActivit
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -281,4 +282,5 @@ public class LearningActivityTryCacheModel implements CacheModel<LearningActivit
 	public long endDate;
 	public long endUserDate;
 	public String tryResultData;
+
 }

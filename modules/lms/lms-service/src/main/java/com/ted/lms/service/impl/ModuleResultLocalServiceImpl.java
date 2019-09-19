@@ -14,9 +14,14 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+import com.ted.lms.service.CourseResultLocalService;
+import com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.ted.audit.api.AuditFactory;
+import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.Module;
@@ -29,11 +34,14 @@ import com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the module result local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.ModuleResultLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.ModuleResultLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -41,14 +49,18 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see ModuleResultLocalServiceBaseImpl
- * @see com.ted.lms.service.ModuleResultLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.ModuleResult",
+	service = AopService.class
+)
 public class ModuleResultLocalServiceImpl
 	extends ModuleResultLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.ModuleResultLocalServiceUtil} to access the module result local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.ModuleResultLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.ModuleResultLocalServiceUtil</code>.
 	 */
 	
 	public List<ModuleResult> getModuleResults(long moduleId){
@@ -76,16 +88,18 @@ public class ModuleResultLocalServiceImpl
 		moduleResult.setModifiedDate(moduleResult.getCreateDate());
 		moduleResult.setUserModifiedId(serviceContext.getUserId());
 		User user = userLocalService.fetchUser(serviceContext.getUserId());
-		if(user != null) {
-			moduleResult.setUserModifiedName(user.getFullName());
-		}
+		moduleResult.setUserModifiedName(user.getFullName());
+		
+		AuditFactory.audit(moduleResult.getCompanyId(), moduleResult.getGroupId(), LMSAuditConstants.MODULE_RESULT_ADD, ModuleResult.class.getName(), moduleResult.getMrId(), 
+				userId, user.getFullName(), null);
+		
 		return moduleResultPersistence.update(moduleResult);
 	}
 	
-	public ModuleResult updateModuleResult(LearningActivityResult learningActivityResult, ServiceContext serviceContext) throws PortalException {
+	public ModuleResult updateModuleResult(LearningActivityResult learningActivityResult) throws PortalException {
 		ModuleResult moduleResult = null;
 		
-		LearningActivity learningActivity = learningActivityLocalService.getLearningActivity(learningActivityResult.getActId());
+		LearningActivity learningActivity = learningActivityPersistence.fetchByPrimaryKey(learningActivityResult.getActId());
 		
 		Module module = modulePersistence.fetchByPrimaryKey(learningActivity.getModuleId());
 		
@@ -104,23 +118,27 @@ public class ModuleResultLocalServiceImpl
 				moduleResult.setStartDate(learningActivityResult.getStartDate());
 			}
 			
-			User user = userLocalService.getUser(serviceContext.getUserId());
-			moduleResult.setUserModifiedId(user.getUserId());
-			moduleResult.setUserModifiedName(user.getFullName());
+			moduleResult.setUserModifiedId(learningActivityResult.getUserModifiedId());
+			moduleResult.setUserModifiedName(learningActivityResult.getUserModifiedName());
 			moduleResult.setModifiedDate(now);
 			
 			ModuleEvalFactory moduleEvalFactory = ModuleEvalFactoryRegistryUtil.getModuleEvalFactoryByType(module.getModuleEvalId());
-			ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module, serviceContext);
+			ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module);
 			moduleResult = moduleEval.updateModuleResult(moduleResult);
 			
 			//Update en la bd
 			moduleResult = moduleResultPersistence.update(moduleResult);
 			
 			//Actualizar el resultado del curso.
-			courseResultLocalService.updateCourseResult(moduleResult, serviceContext);
+			courseResultLocalService.updateCourseResult(moduleResult);
+			
+			AuditFactory.audit(moduleResult.getCompanyId(), moduleResult.getGroupId(), LMSAuditConstants.MODULE_RESULT_UPDATE, ModuleResult.class.getName(), moduleResult.getMrId(), 
+					learningActivityResult.getUserModifiedId(), learningActivityResult.getUserModifiedName(), null);
 		}
 		
 		return moduleResult;
 	}
 	
+	@Reference
+	protected CourseResultLocalService courseResultLocalService;
 }

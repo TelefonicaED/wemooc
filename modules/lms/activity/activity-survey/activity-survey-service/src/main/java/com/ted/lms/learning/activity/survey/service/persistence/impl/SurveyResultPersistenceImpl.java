@@ -14,8 +14,8 @@
 
 package com.ted.lms.learning.activity.survey.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,36 +23,42 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.learning.activity.survey.exception.NoSuchResultException;
 import com.ted.lms.learning.activity.survey.model.SurveyResult;
 import com.ted.lms.learning.activity.survey.model.impl.SurveyResultImpl;
 import com.ted.lms.learning.activity.survey.model.impl.SurveyResultModelImpl;
 import com.ted.lms.learning.activity.survey.service.persistence.SurveyResultPersistence;
+import com.ted.lms.learning.activity.survey.service.persistence.impl.constants.SurveyPersistenceConstants;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the survey result service.
@@ -62,50 +68,34 @@ import java.util.Set;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see SurveyResultPersistence
- * @see com.ted.lms.learning.activity.survey.service.persistence.SurveyResultUtil
  * @generated
  */
+@Component(service = SurveyResultPersistence.class)
 @ProviderType
-public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResult>
+public class SurveyResultPersistenceImpl
+	extends BasePersistenceImpl<SurveyResult>
 	implements SurveyResultPersistence {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link SurveyResultUtil} to access the survey result persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify or reference this class directly. Always use <code>SurveyResultUtil</code> to access the survey result persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static final String FINDER_CLASS_NAME_ENTITY = SurveyResultImpl.class.getName();
-	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List1";
-	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] { String.class.getName() },
-			SurveyResultModelImpl.UUID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] { String.class.getName() });
+	public static final String FINDER_CLASS_NAME_ENTITY =
+		SurveyResultImpl.class.getName();
+
+	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List1";
+
+	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List2";
+
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByUuid;
+	private FinderPath _finderPathWithoutPaginationFindByUuid;
+	private FinderPath _finderPathCountByUuid;
 
 	/**
 	 * Returns all the survey results where uuid = &#63;.
@@ -122,7 +112,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns a range of all the survey results where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -139,7 +129,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -149,8 +139,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByUuid(String uuid, int start, int end,
+	public List<SurveyResult> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator) {
+
 		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
@@ -158,7 +150,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -169,9 +161,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByUuid(String uuid, int start, int end,
+	public List<SurveyResult> findByUuid(
+		String uuid, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -179,21 +173,22 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid };
+			finderPath = _finderPathWithoutPaginationFindByUuid;
+			finderArgs = new Object[] {uuid};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByUuid;
+			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SurveyResult surveyResult : list) {
@@ -210,8 +205,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -231,11 +226,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			}
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(SurveyResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -255,16 +249,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				}
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -293,9 +287,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByUuid_First(String uuid,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByUuid_First(
+			String uuid, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = fetchByUuid_First(uuid, orderByComparator);
 
 		if (surveyResult != null) {
@@ -322,8 +317,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the first matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByUuid_First(String uuid,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByUuid_First(
+		String uuid, OrderByComparator<SurveyResult> orderByComparator) {
+
 		List<SurveyResult> list = findByUuid(uuid, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -342,9 +338,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByUuid_Last(String uuid,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByUuid_Last(
+			String uuid, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = fetchByUuid_Last(uuid, orderByComparator);
 
 		if (surveyResult != null) {
@@ -371,16 +368,17 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the last matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByUuid_Last(String uuid,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByUuid_Last(
+		String uuid, OrderByComparator<SurveyResult> orderByComparator) {
+
 		int count = countByUuid(uuid);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<SurveyResult> list = findByUuid(uuid, count - 1, count,
-				orderByComparator);
+		List<SurveyResult> list = findByUuid(
+			uuid, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -399,9 +397,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a survey result with the primary key could not be found
 	 */
 	@Override
-	public SurveyResult[] findByUuid_PrevAndNext(long surveyResultId,
-		String uuid, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult[] findByUuid_PrevAndNext(
+			long surveyResultId, String uuid,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		uuid = Objects.toString(uuid, "");
 
 		SurveyResult surveyResult = findByPrimaryKey(surveyResultId);
@@ -413,13 +413,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 			SurveyResult[] array = new SurveyResultImpl[3];
 
-			array[0] = getByUuid_PrevAndNext(session, surveyResult, uuid,
-					orderByComparator, true);
+			array[0] = getByUuid_PrevAndNext(
+				session, surveyResult, uuid, orderByComparator, true);
 
 			array[1] = surveyResult;
 
-			array[2] = getByUuid_PrevAndNext(session, surveyResult, uuid,
-					orderByComparator, false);
+			array[2] = getByUuid_PrevAndNext(
+				session, surveyResult, uuid, orderByComparator, false);
 
 			return array;
 		}
@@ -431,14 +431,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 	}
 
-	protected SurveyResult getByUuid_PrevAndNext(Session session,
-		SurveyResult surveyResult, String uuid,
+	protected SurveyResult getByUuid_PrevAndNext(
+		Session session, SurveyResult surveyResult, String uuid,
 		OrderByComparator<SurveyResult> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -459,7 +460,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -531,10 +533,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(surveyResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(surveyResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -555,8 +557,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (SurveyResult surveyResult : findByUuid(uuid, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null)) {
+		for (SurveyResult surveyResult :
+				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(surveyResult);
 		}
 	}
@@ -571,9 +574,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	public int countByUuid(String uuid) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
+		FinderPath finderPath = _finderPathCountByUuid;
 
-		Object[] finderArgs = new Object[] { uuid };
+		Object[] finderArgs = new Object[] {uuid};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -625,28 +628,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_1 = "surveyResult.uuid IS NULL";
-	private static final String _FINDER_COLUMN_UUID_UUID_2 = "surveyResult.uuid = ?";
-	private static final String _FINDER_COLUMN_UUID_UUID_3 = "(surveyResult.uuid IS NULL OR surveyResult.uuid = '')";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
-			new String[] { Long.class.getName() },
-			SurveyResultModelImpl.USERID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_USERID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
-			new String[] { Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_UUID_2 =
+		"surveyResult.uuid = ?";
+
+	private static final String _FINDER_COLUMN_UUID_UUID_3 =
+		"(surveyResult.uuid IS NULL OR surveyResult.uuid = '')";
+
+	private FinderPath _finderPathWithPaginationFindByUserId;
+	private FinderPath _finderPathWithoutPaginationFindByUserId;
+	private FinderPath _finderPathCountByUserId;
 
 	/**
 	 * Returns all the survey results where userId = &#63;.
@@ -663,7 +653,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns a range of all the survey results where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -680,7 +670,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -690,8 +680,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByUserId(long userId, int start, int end,
+	public List<SurveyResult> findByUserId(
+		long userId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator) {
+
 		return findByUserId(userId, start, end, orderByComparator, true);
 	}
 
@@ -699,7 +691,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where userId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param userId the user ID
@@ -710,29 +702,32 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByUserId(long userId, int start, int end,
+	public List<SurveyResult> findByUserId(
+		long userId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID;
-			finderArgs = new Object[] { userId };
+			finderPath = _finderPathWithoutPaginationFindByUserId;
+			finderArgs = new Object[] {userId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_USERID;
-			finderArgs = new Object[] { userId, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByUserId;
+			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SurveyResult surveyResult : list) {
@@ -749,8 +744,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -761,11 +756,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			query.append(_FINDER_COLUMN_USERID_USERID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(SurveyResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -783,16 +777,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				qPos.add(userId);
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -821,11 +815,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByUserId_First(long userId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByUserId_First(
+			long userId, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByUserId_First(userId,
-				orderByComparator);
+
+		SurveyResult surveyResult = fetchByUserId_First(
+			userId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -851,8 +846,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the first matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByUserId_First(long userId,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByUserId_First(
+		long userId, OrderByComparator<SurveyResult> orderByComparator) {
+
 		List<SurveyResult> list = findByUserId(userId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -871,10 +867,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByUserId_Last(long userId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByUserId_Last(
+			long userId, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByUserId_Last(userId, orderByComparator);
+
+		SurveyResult surveyResult = fetchByUserId_Last(
+			userId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -900,16 +898,17 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the last matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByUserId_Last(long userId,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByUserId_Last(
+		long userId, OrderByComparator<SurveyResult> orderByComparator) {
+
 		int count = countByUserId(userId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<SurveyResult> list = findByUserId(userId, count - 1, count,
-				orderByComparator);
+		List<SurveyResult> list = findByUserId(
+			userId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -928,9 +927,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a survey result with the primary key could not be found
 	 */
 	@Override
-	public SurveyResult[] findByUserId_PrevAndNext(long surveyResultId,
-		long userId, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult[] findByUserId_PrevAndNext(
+			long surveyResultId, long userId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = findByPrimaryKey(surveyResultId);
 
 		Session session = null;
@@ -940,13 +941,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 			SurveyResult[] array = new SurveyResultImpl[3];
 
-			array[0] = getByUserId_PrevAndNext(session, surveyResult, userId,
-					orderByComparator, true);
+			array[0] = getByUserId_PrevAndNext(
+				session, surveyResult, userId, orderByComparator, true);
 
 			array[1] = surveyResult;
 
-			array[2] = getByUserId_PrevAndNext(session, surveyResult, userId,
-					orderByComparator, false);
+			array[2] = getByUserId_PrevAndNext(
+				session, surveyResult, userId, orderByComparator, false);
 
 			return array;
 		}
@@ -958,14 +959,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 	}
 
-	protected SurveyResult getByUserId_PrevAndNext(Session session,
-		SurveyResult surveyResult, long userId,
+	protected SurveyResult getByUserId_PrevAndNext(
+		Session session, SurveyResult surveyResult, long userId,
 		OrderByComparator<SurveyResult> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -977,7 +979,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		query.append(_FINDER_COLUMN_USERID_USERID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1047,10 +1050,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		qPos.add(userId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(surveyResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(surveyResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1071,8 +1074,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void removeByUserId(long userId) {
-		for (SurveyResult surveyResult : findByUserId(userId,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (SurveyResult surveyResult :
+				findByUserId(
+					userId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(surveyResult);
 		}
 	}
@@ -1085,9 +1090,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public int countByUserId(long userId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_USERID;
+		FinderPath finderPath = _finderPathCountByUserId;
 
-		Object[] finderArgs = new Object[] { userId };
+		Object[] finderArgs = new Object[] {userId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1128,25 +1133,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_USERID_USERID_2 = "surveyResult.userId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByActId",
-			new String[] { Long.class.getName() },
-			SurveyResultModelImpl.ACTID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ACTID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActId",
-			new String[] { Long.class.getName() });
+	private static final String _FINDER_COLUMN_USERID_USERID_2 =
+		"surveyResult.userId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByActId;
+	private FinderPath _finderPathWithoutPaginationFindByActId;
+	private FinderPath _finderPathCountByActId;
 
 	/**
 	 * Returns all the survey results where actId = &#63;.
@@ -1163,7 +1155,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns a range of all the survey results where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1180,7 +1172,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1190,8 +1182,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByActId(long actId, int start, int end,
+	public List<SurveyResult> findByActId(
+		long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator) {
+
 		return findByActId(actId, start, end, orderByComparator, true);
 	}
 
@@ -1199,7 +1193,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1210,29 +1204,32 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByActId(long actId, int start, int end,
+	public List<SurveyResult> findByActId(
+		long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID;
-			finderArgs = new Object[] { actId };
+			finderPath = _finderPathWithoutPaginationFindByActId;
+			finderArgs = new Object[] {actId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTID;
-			finderArgs = new Object[] { actId, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByActId;
+			finderArgs = new Object[] {actId, start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SurveyResult surveyResult : list) {
@@ -1249,8 +1246,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1261,11 +1258,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			query.append(_FINDER_COLUMN_ACTID_ACTID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(SurveyResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1283,16 +1279,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				qPos.add(actId);
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -1321,10 +1317,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByActId_First(long actId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByActId_First(
+			long actId, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByActId_First(actId, orderByComparator);
+
+		SurveyResult surveyResult = fetchByActId_First(
+			actId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -1350,8 +1348,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the first matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByActId_First(long actId,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByActId_First(
+		long actId, OrderByComparator<SurveyResult> orderByComparator) {
+
 		List<SurveyResult> list = findByActId(actId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
@@ -1370,9 +1369,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByActId_Last(long actId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByActId_Last(
+			long actId, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = fetchByActId_Last(actId, orderByComparator);
 
 		if (surveyResult != null) {
@@ -1399,16 +1399,17 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the last matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByActId_Last(long actId,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByActId_Last(
+		long actId, OrderByComparator<SurveyResult> orderByComparator) {
+
 		int count = countByActId(actId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<SurveyResult> list = findByActId(actId, count - 1, count,
-				orderByComparator);
+		List<SurveyResult> list = findByActId(
+			actId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1427,9 +1428,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a survey result with the primary key could not be found
 	 */
 	@Override
-	public SurveyResult[] findByActId_PrevAndNext(long surveyResultId,
-		long actId, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult[] findByActId_PrevAndNext(
+			long surveyResultId, long actId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = findByPrimaryKey(surveyResultId);
 
 		Session session = null;
@@ -1439,13 +1442,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 			SurveyResult[] array = new SurveyResultImpl[3];
 
-			array[0] = getByActId_PrevAndNext(session, surveyResult, actId,
-					orderByComparator, true);
+			array[0] = getByActId_PrevAndNext(
+				session, surveyResult, actId, orderByComparator, true);
 
 			array[1] = surveyResult;
 
-			array[2] = getByActId_PrevAndNext(session, surveyResult, actId,
-					orderByComparator, false);
+			array[2] = getByActId_PrevAndNext(
+				session, surveyResult, actId, orderByComparator, false);
 
 			return array;
 		}
@@ -1457,14 +1460,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 	}
 
-	protected SurveyResult getByActId_PrevAndNext(Session session,
-		SurveyResult surveyResult, long actId,
+	protected SurveyResult getByActId_PrevAndNext(
+		Session session, SurveyResult surveyResult, long actId,
 		OrderByComparator<SurveyResult> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1476,7 +1480,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		query.append(_FINDER_COLUMN_ACTID_ACTID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1546,10 +1551,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		qPos.add(actId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(surveyResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(surveyResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1570,8 +1575,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void removeByActId(long actId) {
-		for (SurveyResult surveyResult : findByActId(actId, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS, null)) {
+		for (SurveyResult surveyResult :
+				findByActId(
+					actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(surveyResult);
 		}
 	}
@@ -1584,9 +1591,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public int countByActId(long actId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTID;
+		FinderPath finderPath = _finderPathCountByActId;
 
-		Object[] finderArgs = new Object[] { actId };
+		Object[] finderArgs = new Object[] {actId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1627,29 +1634,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ACTID_ACTID_2 = "surveyResult.actId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_QUESTIONIDACTID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByQuestionIdActId",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONIDACTID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByQuestionIdActId",
-			new String[] { Long.class.getName(), Long.class.getName() },
-			SurveyResultModelImpl.QUESTIONID_COLUMN_BITMASK |
-			SurveyResultModelImpl.ACTID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_QUESTIONIDACTID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByQuestionIdActId",
-			new String[] { Long.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_ACTID_ACTID_2 =
+		"surveyResult.actId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByQuestionIdActId;
+	private FinderPath _finderPathWithoutPaginationFindByQuestionIdActId;
+	private FinderPath _finderPathCountByQuestionIdActId;
 
 	/**
 	 * Returns all the survey results where questionId = &#63; and actId = &#63;.
@@ -1659,16 +1649,18 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionIdActId(long questionId, long actId) {
-		return findByQuestionIdActId(questionId, actId, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
+	public List<SurveyResult> findByQuestionIdActId(
+		long questionId, long actId) {
+
+		return findByQuestionIdActId(
+			questionId, actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the survey results where questionId = &#63; and actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param questionId the question ID
@@ -1678,8 +1670,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionIdActId(long questionId,
-		long actId, int start, int end) {
+	public List<SurveyResult> findByQuestionIdActId(
+		long questionId, long actId, int start, int end) {
+
 		return findByQuestionIdActId(questionId, actId, start, end, null);
 	}
 
@@ -1687,7 +1680,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where questionId = &#63; and actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param questionId the question ID
@@ -1698,18 +1691,19 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionIdActId(long questionId,
-		long actId, int start, int end,
+	public List<SurveyResult> findByQuestionIdActId(
+		long questionId, long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator) {
-		return findByQuestionIdActId(questionId, actId, start, end,
-			orderByComparator, true);
+
+		return findByQuestionIdActId(
+			questionId, actId, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the survey results where questionId = &#63; and actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param questionId the question ID
@@ -1721,39 +1715,40 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionIdActId(long questionId,
-		long actId, int start, int end,
+	public List<SurveyResult> findByQuestionIdActId(
+		long questionId, long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONIDACTID;
-			finderArgs = new Object[] { questionId, actId };
+			finderPath = _finderPathWithoutPaginationFindByQuestionIdActId;
+			finderArgs = new Object[] {questionId, actId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_QUESTIONIDACTID;
+			finderPath = _finderPathWithPaginationFindByQuestionIdActId;
 			finderArgs = new Object[] {
-					questionId, actId,
-					
-					start, end, orderByComparator
-				};
+				questionId, actId, start, end, orderByComparator
+			};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SurveyResult surveyResult : list) {
 					if ((questionId != surveyResult.getQuestionId()) ||
-							(actId != surveyResult.getActId())) {
+						(actId != surveyResult.getActId())) {
+
 						list = null;
 
 						break;
@@ -1766,8 +1761,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1780,11 +1775,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			query.append(_FINDER_COLUMN_QUESTIONIDACTID_ACTID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(SurveyResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1804,16 +1798,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				qPos.add(actId);
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -1843,11 +1837,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByQuestionIdActId_First(long questionId,
-		long actId, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByQuestionIdActId_First(
+			long questionId, long actId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByQuestionIdActId_First(questionId,
-				actId, orderByComparator);
+
+		SurveyResult surveyResult = fetchByQuestionIdActId_First(
+			questionId, actId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -1877,10 +1873,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the first matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByQuestionIdActId_First(long questionId,
-		long actId, OrderByComparator<SurveyResult> orderByComparator) {
-		List<SurveyResult> list = findByQuestionIdActId(questionId, actId, 0,
-				1, orderByComparator);
+	public SurveyResult fetchByQuestionIdActId_First(
+		long questionId, long actId,
+		OrderByComparator<SurveyResult> orderByComparator) {
+
+		List<SurveyResult> list = findByQuestionIdActId(
+			questionId, actId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1899,11 +1897,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByQuestionIdActId_Last(long questionId, long actId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByQuestionIdActId_Last(
+			long questionId, long actId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByQuestionIdActId_Last(questionId,
-				actId, orderByComparator);
+
+		SurveyResult surveyResult = fetchByQuestionIdActId_Last(
+			questionId, actId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -1933,16 +1933,18 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the last matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByQuestionIdActId_Last(long questionId,
-		long actId, OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByQuestionIdActId_Last(
+		long questionId, long actId,
+		OrderByComparator<SurveyResult> orderByComparator) {
+
 		int count = countByQuestionIdActId(questionId, actId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<SurveyResult> list = findByQuestionIdActId(questionId, actId,
-				count - 1, count, orderByComparator);
+		List<SurveyResult> list = findByQuestionIdActId(
+			questionId, actId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1963,9 +1965,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public SurveyResult[] findByQuestionIdActId_PrevAndNext(
-		long surveyResultId, long questionId, long actId,
-		OrderByComparator<SurveyResult> orderByComparator)
+			long surveyResultId, long questionId, long actId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = findByPrimaryKey(surveyResultId);
 
 		Session session = null;
@@ -1975,13 +1978,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 			SurveyResult[] array = new SurveyResultImpl[3];
 
-			array[0] = getByQuestionIdActId_PrevAndNext(session, surveyResult,
-					questionId, actId, orderByComparator, true);
+			array[0] = getByQuestionIdActId_PrevAndNext(
+				session, surveyResult, questionId, actId, orderByComparator,
+				true);
 
 			array[1] = surveyResult;
 
-			array[2] = getByQuestionIdActId_PrevAndNext(session, surveyResult,
-					questionId, actId, orderByComparator, false);
+			array[2] = getByQuestionIdActId_PrevAndNext(
+				session, surveyResult, questionId, actId, orderByComparator,
+				false);
 
 			return array;
 		}
@@ -1993,14 +1998,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 	}
 
-	protected SurveyResult getByQuestionIdActId_PrevAndNext(Session session,
-		SurveyResult surveyResult, long questionId, long actId,
+	protected SurveyResult getByQuestionIdActId_PrevAndNext(
+		Session session, SurveyResult surveyResult, long questionId, long actId,
 		OrderByComparator<SurveyResult> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -2014,7 +2020,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		query.append(_FINDER_COLUMN_QUESTIONIDACTID_ACTID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -2086,10 +2093,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		qPos.add(actId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(surveyResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(surveyResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -2111,8 +2118,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void removeByQuestionIdActId(long questionId, long actId) {
-		for (SurveyResult surveyResult : findByQuestionIdActId(questionId,
-				actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (SurveyResult surveyResult :
+				findByQuestionIdActId(
+					questionId, actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(surveyResult);
 		}
 	}
@@ -2126,9 +2136,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public int countByQuestionIdActId(long questionId, long actId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_QUESTIONIDACTID;
+		FinderPath finderPath = _finderPathCountByQuestionIdActId;
 
-		Object[] finderArgs = new Object[] { questionId, actId };
+		Object[] finderArgs = new Object[] {questionId, actId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -2173,28 +2183,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_QUESTIONIDACTID_QUESTIONID_2 = "surveyResult.questionId = ? AND ";
-	private static final String _FINDER_COLUMN_QUESTIONIDACTID_ACTID_2 = "surveyResult.actId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_QUESTIONID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByQuestionId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByQuestionId",
-			new String[] { Long.class.getName() },
-			SurveyResultModelImpl.QUESTIONID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_QUESTIONID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByQuestionId",
-			new String[] { Long.class.getName() });
+	private static final String _FINDER_COLUMN_QUESTIONIDACTID_QUESTIONID_2 =
+		"surveyResult.questionId = ? AND ";
+
+	private static final String _FINDER_COLUMN_QUESTIONIDACTID_ACTID_2 =
+		"surveyResult.actId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByQuestionId;
+	private FinderPath _finderPathWithoutPaginationFindByQuestionId;
+	private FinderPath _finderPathCountByQuestionId;
 
 	/**
 	 * Returns all the survey results where questionId = &#63;.
@@ -2204,15 +2201,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public List<SurveyResult> findByQuestionId(long questionId) {
-		return findByQuestionId(questionId, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
+		return findByQuestionId(
+			questionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the survey results where questionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param questionId the question ID
@@ -2221,8 +2218,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionId(long questionId, int start,
-		int end) {
+	public List<SurveyResult> findByQuestionId(
+		long questionId, int start, int end) {
+
 		return findByQuestionId(questionId, start, end, null);
 	}
 
@@ -2230,7 +2228,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where questionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param questionId the question ID
@@ -2240,16 +2238,19 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionId(long questionId, int start,
-		int end, OrderByComparator<SurveyResult> orderByComparator) {
-		return findByQuestionId(questionId, start, end, orderByComparator, true);
+	public List<SurveyResult> findByQuestionId(
+		long questionId, int start, int end,
+		OrderByComparator<SurveyResult> orderByComparator) {
+
+		return findByQuestionId(
+			questionId, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the survey results where questionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param questionId the question ID
@@ -2260,29 +2261,34 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByQuestionId(long questionId, int start,
-		int end, OrderByComparator<SurveyResult> orderByComparator,
+	public List<SurveyResult> findByQuestionId(
+		long questionId, int start, int end,
+		OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONID;
-			finderArgs = new Object[] { questionId };
+			finderPath = _finderPathWithoutPaginationFindByQuestionId;
+			finderArgs = new Object[] {questionId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_QUESTIONID;
-			finderArgs = new Object[] { questionId, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByQuestionId;
+			finderArgs = new Object[] {
+				questionId, start, end, orderByComparator
+			};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SurveyResult surveyResult : list) {
@@ -2299,8 +2305,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -2311,11 +2317,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			query.append(_FINDER_COLUMN_QUESTIONID_QUESTIONID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(SurveyResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -2333,16 +2338,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				qPos.add(questionId);
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -2371,11 +2376,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByQuestionId_First(long questionId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByQuestionId_First(
+			long questionId, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByQuestionId_First(questionId,
-				orderByComparator);
+
+		SurveyResult surveyResult = fetchByQuestionId_First(
+			questionId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -2401,10 +2407,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the first matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByQuestionId_First(long questionId,
-		OrderByComparator<SurveyResult> orderByComparator) {
-		List<SurveyResult> list = findByQuestionId(questionId, 0, 1,
-				orderByComparator);
+	public SurveyResult fetchByQuestionId_First(
+		long questionId, OrderByComparator<SurveyResult> orderByComparator) {
+
+		List<SurveyResult> list = findByQuestionId(
+			questionId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2422,11 +2429,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByQuestionId_Last(long questionId,
-		OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByQuestionId_Last(
+			long questionId, OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByQuestionId_Last(questionId,
-				orderByComparator);
+
+		SurveyResult surveyResult = fetchByQuestionId_Last(
+			questionId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -2452,16 +2460,17 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the last matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByQuestionId_Last(long questionId,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByQuestionId_Last(
+		long questionId, OrderByComparator<SurveyResult> orderByComparator) {
+
 		int count = countByQuestionId(questionId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<SurveyResult> list = findByQuestionId(questionId, count - 1,
-				count, orderByComparator);
+		List<SurveyResult> list = findByQuestionId(
+			questionId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2480,9 +2489,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a survey result with the primary key could not be found
 	 */
 	@Override
-	public SurveyResult[] findByQuestionId_PrevAndNext(long surveyResultId,
-		long questionId, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult[] findByQuestionId_PrevAndNext(
+			long surveyResultId, long questionId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = findByPrimaryKey(surveyResultId);
 
 		Session session = null;
@@ -2492,13 +2503,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 			SurveyResult[] array = new SurveyResultImpl[3];
 
-			array[0] = getByQuestionId_PrevAndNext(session, surveyResult,
-					questionId, orderByComparator, true);
+			array[0] = getByQuestionId_PrevAndNext(
+				session, surveyResult, questionId, orderByComparator, true);
 
 			array[1] = surveyResult;
 
-			array[2] = getByQuestionId_PrevAndNext(session, surveyResult,
-					questionId, orderByComparator, false);
+			array[2] = getByQuestionId_PrevAndNext(
+				session, surveyResult, questionId, orderByComparator, false);
 
 			return array;
 		}
@@ -2510,14 +2521,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		}
 	}
 
-	protected SurveyResult getByQuestionId_PrevAndNext(Session session,
-		SurveyResult surveyResult, long questionId,
+	protected SurveyResult getByQuestionId_PrevAndNext(
+		Session session, SurveyResult surveyResult, long questionId,
 		OrderByComparator<SurveyResult> orderByComparator, boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -2529,7 +2541,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		query.append(_FINDER_COLUMN_QUESTIONID_QUESTIONID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -2599,10 +2612,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		qPos.add(questionId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(surveyResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(surveyResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -2623,8 +2636,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void removeByQuestionId(long questionId) {
-		for (SurveyResult surveyResult : findByQuestionId(questionId,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (SurveyResult surveyResult :
+				findByQuestionId(
+					questionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(surveyResult);
 		}
 	}
@@ -2637,9 +2652,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public int countByQuestionId(long questionId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_QUESTIONID;
+		FinderPath finderPath = _finderPathCountByQuestionId;
 
-		Object[] finderArgs = new Object[] { questionId };
+		Object[] finderArgs = new Object[] {questionId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -2680,30 +2695,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_QUESTIONID_QUESTIONID_2 = "surveyResult.questionId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ANSWERIDQUESTIONID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAnswerIdQuestionId",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ANSWERIDQUESTIONID =
-		new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, SurveyResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByAnswerIdQuestionId",
-			new String[] { Long.class.getName(), Long.class.getName() },
-			SurveyResultModelImpl.ANSWERID_COLUMN_BITMASK |
-			SurveyResultModelImpl.QUESTIONID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ANSWERIDQUESTIONID = new FinderPath(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByAnswerIdQuestionId",
-			new String[] { Long.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_QUESTIONID_QUESTIONID_2 =
+		"surveyResult.questionId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByAnswerIdQuestionId;
+	private FinderPath _finderPathWithoutPaginationFindByAnswerIdQuestionId;
+	private FinderPath _finderPathCountByAnswerIdQuestionId;
 
 	/**
 	 * Returns all the survey results where answerId = &#63; and questionId = &#63;.
@@ -2713,17 +2710,18 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByAnswerIdQuestionId(long answerId,
-		long questionId) {
-		return findByAnswerIdQuestionId(answerId, questionId,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<SurveyResult> findByAnswerIdQuestionId(
+		long answerId, long questionId) {
+
+		return findByAnswerIdQuestionId(
+			answerId, questionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the survey results where answerId = &#63; and questionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param answerId the answer ID
@@ -2733,8 +2731,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByAnswerIdQuestionId(long answerId,
-		long questionId, int start, int end) {
+	public List<SurveyResult> findByAnswerIdQuestionId(
+		long answerId, long questionId, int start, int end) {
+
 		return findByAnswerIdQuestionId(answerId, questionId, start, end, null);
 	}
 
@@ -2742,7 +2741,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results where answerId = &#63; and questionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param answerId the answer ID
@@ -2753,18 +2752,19 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByAnswerIdQuestionId(long answerId,
-		long questionId, int start, int end,
+	public List<SurveyResult> findByAnswerIdQuestionId(
+		long answerId, long questionId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator) {
-		return findByAnswerIdQuestionId(answerId, questionId, start, end,
-			orderByComparator, true);
+
+		return findByAnswerIdQuestionId(
+			answerId, questionId, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the survey results where answerId = &#63; and questionId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param answerId the answer ID
@@ -2776,39 +2776,40 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
-	public List<SurveyResult> findByAnswerIdQuestionId(long answerId,
-		long questionId, int start, int end,
+	public List<SurveyResult> findByAnswerIdQuestionId(
+		long answerId, long questionId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ANSWERIDQUESTIONID;
-			finderArgs = new Object[] { answerId, questionId };
+			finderPath = _finderPathWithoutPaginationFindByAnswerIdQuestionId;
+			finderArgs = new Object[] {answerId, questionId};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ANSWERIDQUESTIONID;
+			finderPath = _finderPathWithPaginationFindByAnswerIdQuestionId;
 			finderArgs = new Object[] {
-					answerId, questionId,
-					
-					start, end, orderByComparator
-				};
+				answerId, questionId, start, end, orderByComparator
+			};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (SurveyResult surveyResult : list) {
 					if ((answerId != surveyResult.getAnswerId()) ||
-							(questionId != surveyResult.getQuestionId())) {
+						(questionId != surveyResult.getQuestionId())) {
+
 						list = null;
 
 						break;
@@ -2821,8 +2822,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -2835,11 +2836,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			query.append(_FINDER_COLUMN_ANSWERIDQUESTIONID_QUESTIONID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(SurveyResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -2859,16 +2859,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				qPos.add(questionId);
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -2898,11 +2898,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByAnswerIdQuestionId_First(long answerId,
-		long questionId, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByAnswerIdQuestionId_First(
+			long answerId, long questionId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByAnswerIdQuestionId_First(answerId,
-				questionId, orderByComparator);
+
+		SurveyResult surveyResult = fetchByAnswerIdQuestionId_First(
+			answerId, questionId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -2932,10 +2934,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the first matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByAnswerIdQuestionId_First(long answerId,
-		long questionId, OrderByComparator<SurveyResult> orderByComparator) {
-		List<SurveyResult> list = findByAnswerIdQuestionId(answerId,
-				questionId, 0, 1, orderByComparator);
+	public SurveyResult fetchByAnswerIdQuestionId_First(
+		long answerId, long questionId,
+		OrderByComparator<SurveyResult> orderByComparator) {
+
+		List<SurveyResult> list = findByAnswerIdQuestionId(
+			answerId, questionId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -2954,11 +2958,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @throws NoSuchResultException if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult findByAnswerIdQuestionId_Last(long answerId,
-		long questionId, OrderByComparator<SurveyResult> orderByComparator)
+	public SurveyResult findByAnswerIdQuestionId_Last(
+			long answerId, long questionId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
-		SurveyResult surveyResult = fetchByAnswerIdQuestionId_Last(answerId,
-				questionId, orderByComparator);
+
+		SurveyResult surveyResult = fetchByAnswerIdQuestionId_Last(
+			answerId, questionId, orderByComparator);
 
 		if (surveyResult != null) {
 			return surveyResult;
@@ -2988,16 +2994,18 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the last matching survey result, or <code>null</code> if a matching survey result could not be found
 	 */
 	@Override
-	public SurveyResult fetchByAnswerIdQuestionId_Last(long answerId,
-		long questionId, OrderByComparator<SurveyResult> orderByComparator) {
+	public SurveyResult fetchByAnswerIdQuestionId_Last(
+		long answerId, long questionId,
+		OrderByComparator<SurveyResult> orderByComparator) {
+
 		int count = countByAnswerIdQuestionId(answerId, questionId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<SurveyResult> list = findByAnswerIdQuestionId(answerId,
-				questionId, count - 1, count, orderByComparator);
+		List<SurveyResult> list = findByAnswerIdQuestionId(
+			answerId, questionId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -3018,9 +3026,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public SurveyResult[] findByAnswerIdQuestionId_PrevAndNext(
-		long surveyResultId, long answerId, long questionId,
-		OrderByComparator<SurveyResult> orderByComparator)
+			long surveyResultId, long answerId, long questionId,
+			OrderByComparator<SurveyResult> orderByComparator)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = findByPrimaryKey(surveyResultId);
 
 		Session session = null;
@@ -3030,13 +3039,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 			SurveyResult[] array = new SurveyResultImpl[3];
 
-			array[0] = getByAnswerIdQuestionId_PrevAndNext(session,
-					surveyResult, answerId, questionId, orderByComparator, true);
+			array[0] = getByAnswerIdQuestionId_PrevAndNext(
+				session, surveyResult, answerId, questionId, orderByComparator,
+				true);
 
 			array[1] = surveyResult;
 
-			array[2] = getByAnswerIdQuestionId_PrevAndNext(session,
-					surveyResult, answerId, questionId, orderByComparator, false);
+			array[2] = getByAnswerIdQuestionId_PrevAndNext(
+				session, surveyResult, answerId, questionId, orderByComparator,
+				false);
 
 			return array;
 		}
@@ -3052,11 +3063,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		Session session, SurveyResult surveyResult, long answerId,
 		long questionId, OrderByComparator<SurveyResult> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -3070,7 +3082,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		query.append(_FINDER_COLUMN_ANSWERIDQUESTIONID_QUESTIONID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -3142,10 +3155,10 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		qPos.add(questionId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(surveyResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(surveyResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -3167,8 +3180,11 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void removeByAnswerIdQuestionId(long answerId, long questionId) {
-		for (SurveyResult surveyResult : findByAnswerIdQuestionId(answerId,
-				questionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (SurveyResult surveyResult :
+				findByAnswerIdQuestionId(
+					answerId, questionId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(surveyResult);
 		}
 	}
@@ -3182,9 +3198,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public int countByAnswerIdQuestionId(long answerId, long questionId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ANSWERIDQUESTIONID;
+		FinderPath finderPath = _finderPathCountByAnswerIdQuestionId;
 
-		Object[] finderArgs = new Object[] { answerId, questionId };
+		Object[] finderArgs = new Object[] {answerId, questionId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -3229,29 +3245,23 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ANSWERIDQUESTIONID_ANSWERID_2 = "surveyResult.answerId = ? AND ";
-	private static final String _FINDER_COLUMN_ANSWERIDQUESTIONID_QUESTIONID_2 = "surveyResult.questionId = ?";
+	private static final String _FINDER_COLUMN_ANSWERIDQUESTIONID_ANSWERID_2 =
+		"surveyResult.answerId = ? AND ";
+
+	private static final String _FINDER_COLUMN_ANSWERIDQUESTIONID_QUESTIONID_2 =
+		"surveyResult.questionId = ?";
 
 	public SurveyResultPersistenceImpl() {
 		setModelClass(SurveyResult.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		setModelImplClass(SurveyResultImpl.class);
+		setModelPKClass(long.class);
 
-			field.setAccessible(true);
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
+		dbColumnNames.put("uuid", "uuid_");
 
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	/**
@@ -3261,8 +3271,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public void cacheResult(SurveyResult surveyResult) {
-		entityCache.putResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultImpl.class, surveyResult.getPrimaryKey(), surveyResult);
+		entityCache.putResult(
+			entityCacheEnabled, SurveyResultImpl.class,
+			surveyResult.getPrimaryKey(), surveyResult);
 
 		surveyResult.resetOriginalValues();
 	}
@@ -3276,8 +3287,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	public void cacheResult(List<SurveyResult> surveyResults) {
 		for (SurveyResult surveyResult : surveyResults) {
 			if (entityCache.getResult(
-						SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-						SurveyResultImpl.class, surveyResult.getPrimaryKey()) == null) {
+					entityCacheEnabled, SurveyResultImpl.class,
+					surveyResult.getPrimaryKey()) == null) {
+
 				cacheResult(surveyResult);
 			}
 			else {
@@ -3290,7 +3302,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Clears the cache for all survey results.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
@@ -3306,13 +3318,14 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Clears the cache for the survey result.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
 	public void clearCache(SurveyResult surveyResult) {
-		entityCache.removeResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultImpl.class, surveyResult.getPrimaryKey());
+		entityCache.removeResult(
+			entityCacheEnabled, SurveyResultImpl.class,
+			surveyResult.getPrimaryKey());
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
@@ -3324,8 +3337,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
 		for (SurveyResult surveyResult : surveyResults) {
-			entityCache.removeResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-				SurveyResultImpl.class, surveyResult.getPrimaryKey());
+			entityCache.removeResult(
+				entityCacheEnabled, SurveyResultImpl.class,
+				surveyResult.getPrimaryKey());
 		}
 	}
 
@@ -3359,6 +3373,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	@Override
 	public SurveyResult remove(long surveyResultId)
 		throws NoSuchResultException {
+
 		return remove((Serializable)surveyResultId);
 	}
 
@@ -3372,21 +3387,22 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	@Override
 	public SurveyResult remove(Serializable primaryKey)
 		throws NoSuchResultException {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			SurveyResult surveyResult = (SurveyResult)session.get(SurveyResultImpl.class,
-					primaryKey);
+			SurveyResult surveyResult = (SurveyResult)session.get(
+				SurveyResultImpl.class, primaryKey);
 
 			if (surveyResult == null) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
-				throw new NoSuchResultException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+				throw new NoSuchResultException(
+					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			return remove(surveyResult);
@@ -3410,8 +3426,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			session = openSession();
 
 			if (!session.contains(surveyResult)) {
-				surveyResult = (SurveyResult)session.get(SurveyResultImpl.class,
-						surveyResult.getPrimaryKeyObj());
+				surveyResult = (SurveyResult)session.get(
+					SurveyResultImpl.class, surveyResult.getPrimaryKeyObj());
 			}
 
 			if (surveyResult != null) {
@@ -3440,19 +3456,21 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			InvocationHandler invocationHandler = null;
 
 			if (ProxyUtil.isProxyClass(surveyResult.getClass())) {
-				invocationHandler = ProxyUtil.getInvocationHandler(surveyResult);
+				invocationHandler = ProxyUtil.getInvocationHandler(
+					surveyResult);
 
 				throw new IllegalArgumentException(
 					"Implement ModelWrapper in surveyResult proxy " +
-					invocationHandler.getClass());
+						invocationHandler.getClass());
 			}
 
 			throw new IllegalArgumentException(
 				"Implement ModelWrapper in custom SurveyResult implementation " +
-				surveyResult.getClass());
+					surveyResult.getClass());
 		}
 
-		SurveyResultModelImpl surveyResultModelImpl = (SurveyResultModelImpl)surveyResult;
+		SurveyResultModelImpl surveyResultModelImpl =
+			(SurveyResultModelImpl)surveyResult;
 
 		if (Validator.isNull(surveyResult.getUuid())) {
 			String uuid = PortalUUIDUtil.generate();
@@ -3483,178 +3501,188 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!SurveyResultModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!_columnBitmaskEnabled) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
-		else
-		 if (isNew) {
-			Object[] args = new Object[] { surveyResultModelImpl.getUuid() };
+		else if (isNew) {
+			Object[] args = new Object[] {surveyResultModelImpl.getUuid()};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
+			finderCache.removeResult(_finderPathCountByUuid, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid, args);
 
-			args = new Object[] { surveyResultModelImpl.getUserId() };
+			args = new Object[] {surveyResultModelImpl.getUserId()};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
-				args);
+			finderCache.removeResult(_finderPathCountByUserId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUserId, args);
 
-			args = new Object[] { surveyResultModelImpl.getActId() };
+			args = new Object[] {surveyResultModelImpl.getActId()};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-				args);
+			finderCache.removeResult(_finderPathCountByActId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByActId, args);
 
 			args = new Object[] {
+				surveyResultModelImpl.getQuestionId(),
+				surveyResultModelImpl.getActId()
+			};
+
+			finderCache.removeResult(_finderPathCountByQuestionIdActId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByQuestionIdActId, args);
+
+			args = new Object[] {surveyResultModelImpl.getQuestionId()};
+
+			finderCache.removeResult(_finderPathCountByQuestionId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByQuestionId, args);
+
+			args = new Object[] {
+				surveyResultModelImpl.getAnswerId(),
+				surveyResultModelImpl.getQuestionId()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByAnswerIdQuestionId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByAnswerIdQuestionId, args);
+
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
+		}
+		else {
+			if ((surveyResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUuid.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					surveyResultModelImpl.getOriginalUuid()
+				};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+
+				args = new Object[] {surveyResultModelImpl.getUuid()};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+			}
+
+			if ((surveyResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUserId.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					surveyResultModelImpl.getOriginalUserId()
+				};
+
+				finderCache.removeResult(_finderPathCountByUserId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserId, args);
+
+				args = new Object[] {surveyResultModelImpl.getUserId()};
+
+				finderCache.removeResult(_finderPathCountByUserId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUserId, args);
+			}
+
+			if ((surveyResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByActId.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					surveyResultModelImpl.getOriginalActId()
+				};
+
+				finderCache.removeResult(_finderPathCountByActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByActId, args);
+
+				args = new Object[] {surveyResultModelImpl.getActId()};
+
+				finderCache.removeResult(_finderPathCountByActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByActId, args);
+			}
+
+			if ((surveyResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByQuestionIdActId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					surveyResultModelImpl.getOriginalQuestionId(),
+					surveyResultModelImpl.getOriginalActId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByQuestionIdActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByQuestionIdActId, args);
+
+				args = new Object[] {
 					surveyResultModelImpl.getQuestionId(),
 					surveyResultModelImpl.getActId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_QUESTIONIDACTID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONIDACTID,
-				args);
+				finderCache.removeResult(
+					_finderPathCountByQuestionIdActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByQuestionIdActId, args);
+			}
 
-			args = new Object[] { surveyResultModelImpl.getQuestionId() };
+			if ((surveyResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByQuestionId.
+					 getColumnBitmask()) != 0) {
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_QUESTIONID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONID,
-				args);
+				Object[] args = new Object[] {
+					surveyResultModelImpl.getOriginalQuestionId()
+				};
 
-			args = new Object[] {
+				finderCache.removeResult(_finderPathCountByQuestionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByQuestionId, args);
+
+				args = new Object[] {surveyResultModelImpl.getQuestionId()};
+
+				finderCache.removeResult(_finderPathCountByQuestionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByQuestionId, args);
+			}
+
+			if ((surveyResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByAnswerIdQuestionId.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					surveyResultModelImpl.getOriginalAnswerId(),
+					surveyResultModelImpl.getOriginalQuestionId()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByAnswerIdQuestionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByAnswerIdQuestionId, args);
+
+				args = new Object[] {
 					surveyResultModelImpl.getAnswerId(),
 					surveyResultModelImpl.getQuestionId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ANSWERIDQUESTIONID,
-				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ANSWERIDQUESTIONID,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
-		}
-
-		else {
-			if ((surveyResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						surveyResultModelImpl.getOriginalUuid()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
-
-				args = new Object[] { surveyResultModelImpl.getUuid() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
-			}
-
-			if ((surveyResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						surveyResultModelImpl.getOriginalUserId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
-					args);
-
-				args = new Object[] { surveyResultModelImpl.getUserId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_USERID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_USERID,
-					args);
-			}
-
-			if ((surveyResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						surveyResultModelImpl.getOriginalActId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-					args);
-
-				args = new Object[] { surveyResultModelImpl.getActId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-					args);
-			}
-
-			if ((surveyResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONIDACTID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						surveyResultModelImpl.getOriginalQuestionId(),
-						surveyResultModelImpl.getOriginalActId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_QUESTIONIDACTID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONIDACTID,
-					args);
-
-				args = new Object[] {
-						surveyResultModelImpl.getQuestionId(),
-						surveyResultModelImpl.getActId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_QUESTIONIDACTID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONIDACTID,
-					args);
-			}
-
-			if ((surveyResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						surveyResultModelImpl.getOriginalQuestionId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_QUESTIONID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONID,
-					args);
-
-				args = new Object[] { surveyResultModelImpl.getQuestionId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_QUESTIONID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_QUESTIONID,
-					args);
-			}
-
-			if ((surveyResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ANSWERIDQUESTIONID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						surveyResultModelImpl.getOriginalAnswerId(),
-						surveyResultModelImpl.getOriginalQuestionId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ANSWERIDQUESTIONID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ANSWERIDQUESTIONID,
-					args);
-
-				args = new Object[] {
-						surveyResultModelImpl.getAnswerId(),
-						surveyResultModelImpl.getQuestionId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ANSWERIDQUESTIONID,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ANSWERIDQUESTIONID,
-					args);
+				finderCache.removeResult(
+					_finderPathCountByAnswerIdQuestionId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByAnswerIdQuestionId, args);
 			}
 		}
 
-		entityCache.putResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-			SurveyResultImpl.class, surveyResult.getPrimaryKey(), surveyResult,
-			false);
+		entityCache.putResult(
+			entityCacheEnabled, SurveyResultImpl.class,
+			surveyResult.getPrimaryKey(), surveyResult, false);
 
 		surveyResult.resetOriginalValues();
 
@@ -3662,7 +3690,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	}
 
 	/**
-	 * Returns the survey result with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
+	 * Returns the survey result with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the survey result
 	 * @return the survey result
@@ -3671,6 +3699,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	@Override
 	public SurveyResult findByPrimaryKey(Serializable primaryKey)
 		throws NoSuchResultException {
+
 		SurveyResult surveyResult = fetchByPrimaryKey(primaryKey);
 
 		if (surveyResult == null) {
@@ -3678,15 +3707,15 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
-			throw new NoSuchResultException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-				primaryKey);
+			throw new NoSuchResultException(
+				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 		}
 
 		return surveyResult;
 	}
 
 	/**
-	 * Returns the survey result with the primary key or throws a {@link NoSuchResultException} if it could not be found.
+	 * Returns the survey result with the primary key or throws a <code>NoSuchResultException</code> if it could not be found.
 	 *
 	 * @param surveyResultId the primary key of the survey result
 	 * @return the survey result
@@ -3695,55 +3724,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	@Override
 	public SurveyResult findByPrimaryKey(long surveyResultId)
 		throws NoSuchResultException {
+
 		return findByPrimaryKey((Serializable)surveyResultId);
-	}
-
-	/**
-	 * Returns the survey result with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the survey result
-	 * @return the survey result, or <code>null</code> if a survey result with the primary key could not be found
-	 */
-	@Override
-	public SurveyResult fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-				SurveyResultImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		SurveyResult surveyResult = (SurveyResult)serializable;
-
-		if (surveyResult == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				surveyResult = (SurveyResult)session.get(SurveyResultImpl.class,
-						primaryKey);
-
-				if (surveyResult != null) {
-					cacheResult(surveyResult);
-				}
-				else {
-					entityCache.putResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-						SurveyResultImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-					SurveyResultImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return surveyResult;
 	}
 
 	/**
@@ -3755,100 +3737,6 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	@Override
 	public SurveyResult fetchByPrimaryKey(long surveyResultId) {
 		return fetchByPrimaryKey((Serializable)surveyResultId);
-	}
-
-	@Override
-	public Map<Serializable, SurveyResult> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, SurveyResult> map = new HashMap<Serializable, SurveyResult>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			SurveyResult surveyResult = fetchByPrimaryKey(primaryKey);
-
-			if (surveyResult != null) {
-				map.put(primaryKey, surveyResult);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-					SurveyResultImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (SurveyResult)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler((uncachedPrimaryKeys.size() * 2) +
-				1);
-
-		query.append(_SQL_SELECT_SURVEYRESULT_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (SurveyResult surveyResult : (List<SurveyResult>)q.list()) {
-				map.put(surveyResult.getPrimaryKeyObj(), surveyResult);
-
-				cacheResult(surveyResult);
-
-				uncachedPrimaryKeys.remove(surveyResult.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(SurveyResultModelImpl.ENTITY_CACHE_ENABLED,
-					SurveyResultImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -3865,7 +3753,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns a range of all the survey results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of survey results
@@ -3881,7 +3769,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of survey results
@@ -3890,8 +3778,9 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of survey results
 	 */
 	@Override
-	public List<SurveyResult> findAll(int start, int end,
-		OrderByComparator<SurveyResult> orderByComparator) {
+	public List<SurveyResult> findAll(
+		int start, int end, OrderByComparator<SurveyResult> orderByComparator) {
+
 		return findAll(start, end, orderByComparator, true);
 	}
 
@@ -3899,7 +3788,7 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * Returns an ordered range of all the survey results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link SurveyResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>SurveyResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of survey results
@@ -3909,29 +3798,31 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 * @return the ordered range of survey results
 	 */
 	@Override
-	public List<SurveyResult> findAll(int start, int end,
-		OrderByComparator<SurveyResult> orderByComparator,
+	public List<SurveyResult> findAll(
+		int start, int end, OrderByComparator<SurveyResult> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithoutPaginationFindAll;
 			finderArgs = FINDER_ARGS_EMPTY;
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
-			finderArgs = new Object[] { start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindAll;
+			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<SurveyResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<SurveyResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -3939,13 +3830,13 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					2 + (orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_SURVEYRESULT);
 
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
 				sql = query.toString();
 			}
@@ -3965,16 +3856,16 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 				Query q = session.createQuery(sql);
 
 				if (!pagination) {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end, false);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<SurveyResult>)QueryUtil.list(q, getDialect(),
-							start, end);
+					list = (List<SurveyResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -4012,8 +3903,8 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
-				FINDER_ARGS_EMPTY, this);
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -4025,12 +3916,12 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
-					count);
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -4048,6 +3939,21 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "surveyResultId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_SURVEYRESULT;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return SurveyResultModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -4055,30 +3961,218 @@ public class SurveyResultPersistenceImpl extends BasePersistenceImpl<SurveyResul
 	/**
 	 * Initializes the survey result persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		SurveyResultModelImpl.setEntityCacheEnabled(entityCacheEnabled);
+		SurveyResultModelImpl.setFinderCacheEnabled(finderCacheEnabled);
+
+		_finderPathWithPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+			new String[0]);
+
+		_finderPathCountAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+			new String[0]);
+
+		_finderPathWithPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+			new String[] {
+				String.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+			new String[] {String.class.getName()},
+			SurveyResultModelImpl.UUID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+			new String[] {String.class.getName()});
+
+		_finderPathWithPaginationFindByUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUserId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUserId",
+			new String[] {Long.class.getName()},
+			SurveyResultModelImpl.USERID_COLUMN_BITMASK);
+
+		_finderPathCountByUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUserId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByActId",
+			new String[] {Long.class.getName()},
+			SurveyResultModelImpl.ACTID_COLUMN_BITMASK);
+
+		_finderPathCountByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByQuestionIdActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByQuestionIdActId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByQuestionIdActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByQuestionIdActId",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			SurveyResultModelImpl.QUESTIONID_COLUMN_BITMASK |
+			SurveyResultModelImpl.ACTID_COLUMN_BITMASK);
+
+		_finderPathCountByQuestionIdActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByQuestionIdActId",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByQuestionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByQuestionId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByQuestionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByQuestionId",
+			new String[] {Long.class.getName()},
+			SurveyResultModelImpl.QUESTIONID_COLUMN_BITMASK);
+
+		_finderPathCountByQuestionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByQuestionId",
+			new String[] {Long.class.getName()});
+
+		_finderPathWithPaginationFindByAnswerIdQuestionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByAnswerIdQuestionId",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByAnswerIdQuestionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, SurveyResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByAnswerIdQuestionId",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			SurveyResultModelImpl.ANSWERID_COLUMN_BITMASK |
+			SurveyResultModelImpl.QUESTIONID_COLUMN_BITMASK);
+
+		_finderPathCountByAnswerIdQuestionId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByAnswerIdQuestionId",
+			new String[] {Long.class.getName(), Long.class.getName()});
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
 		entityCache.removeCache(SurveyResultImpl.class.getName());
 		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = EntityCache.class)
+	@Override
+	@Reference(
+		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
+
+		_columnBitmaskEnabled = GetterUtil.getBoolean(
+			configuration.get(
+				"value.object.column.bitmask.enabled.com.ted.lms.learning.activity.survey.model.SurveyResult"),
+			true);
+	}
+
+	@Override
+	@Reference(
+		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	private boolean _columnBitmaskEnabled;
+
+	@Reference
 	protected EntityCache entityCache;
-	@ServiceReference(type = FinderCache.class)
+
+	@Reference
 	protected FinderCache finderCache;
-	private static final String _SQL_SELECT_SURVEYRESULT = "SELECT surveyResult FROM SurveyResult surveyResult";
-	private static final String _SQL_SELECT_SURVEYRESULT_WHERE_PKS_IN = "SELECT surveyResult FROM SurveyResult surveyResult WHERE surveyResultId IN (";
-	private static final String _SQL_SELECT_SURVEYRESULT_WHERE = "SELECT surveyResult FROM SurveyResult surveyResult WHERE ";
-	private static final String _SQL_COUNT_SURVEYRESULT = "SELECT COUNT(surveyResult) FROM SurveyResult surveyResult";
-	private static final String _SQL_COUNT_SURVEYRESULT_WHERE = "SELECT COUNT(surveyResult) FROM SurveyResult surveyResult WHERE ";
+
+	private static final String _SQL_SELECT_SURVEYRESULT =
+		"SELECT surveyResult FROM SurveyResult surveyResult";
+
+	private static final String _SQL_SELECT_SURVEYRESULT_WHERE =
+		"SELECT surveyResult FROM SurveyResult surveyResult WHERE ";
+
+	private static final String _SQL_COUNT_SURVEYRESULT =
+		"SELECT COUNT(surveyResult) FROM SurveyResult surveyResult";
+
+	private static final String _SQL_COUNT_SURVEYRESULT_WHERE =
+		"SELECT COUNT(surveyResult) FROM SurveyResult surveyResult WHERE ";
+
 	private static final String _ORDER_BY_ENTITY_ALIAS = "surveyResult.";
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No SurveyResult exists with the primary key ";
-	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No SurveyResult exists with the key {";
-	private static final Log _log = LogFactoryUtil.getLog(SurveyResultPersistenceImpl.class);
-	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid"
-			});
+
+	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
+		"No SurveyResult exists with the primary key ";
+
+	private static final String _NO_SUCH_ENTITY_WITH_KEY =
+		"No SurveyResult exists with the key {";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		SurveyResultPersistenceImpl.class);
+
+	private static final Set<String> _badColumnNames = SetUtil.fromArray(
+		new String[] {"uuid"});
+
 }

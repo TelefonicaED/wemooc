@@ -4,6 +4,7 @@ import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.model.ClassType;
 import com.liferay.asset.kernel.model.ClassTypeReader;
+import com.liferay.asset.util.comparator.AssetRendererFactoryTypeNameComparator;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -18,7 +19,6 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.FriendlyURLNormalizerUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.learning.activity.resource.internal.web.constants.ResourceInternalPortletKeys;
 import com.ted.lms.learning.activity.resource.internal.web.util.ResourceInternalPrefsPropsValues;
@@ -83,20 +83,30 @@ public class InputResourceInternalDisplayContext {
 		return selectorEntries;
 	}
 	
-	private List<AssetRendererFactory<?>> getAssetRendererFactories() {
-		List<AssetRendererFactory<?>> assetRendererFactories = AssetRendererFactoryRegistryUtil.getAssetRendererFactories(themeDisplay.getCompanyId());
+	public List<AssetRendererFactory<?>> getAssetRendererFactories() {
+		List<AssetRendererFactory<?>> assetRendererFactories =
+			AssetRendererFactoryRegistryUtil.getAssetRendererFactories(
+				themeDisplay.getCompanyId());
+		
 		String[] assetTypes = ResourceInternalPrefsPropsValues.getAssetTypes(themeDisplay.getCompanyId());
 
-		assetRendererFactories = ListUtil.filter(assetRendererFactories,
-			new PredicateFilter<AssetRendererFactory<?>>() {
-				@Override
-				public boolean filter(AssetRendererFactory<?> assetRendererFactory) {
-					log.debug("assetRenderer: " + assetRendererFactory.getClassName() + " - " + assetRendererFactory.isLinkable() + " - " + assetRendererFactory.isSelectable());
-					return assetRendererFactory.isLinkable() && assetRendererFactory.isSelectable() && ArrayUtil.contains(assetTypes, assetRendererFactory.getClassName());
+		assetRendererFactories = ListUtil.filter(
+			assetRendererFactories,
+			assetRendererFactory -> {
+				if (assetRendererFactory.isLinkable() &&
+					assetRendererFactory.isSelectable() &&
+					ArrayUtil.contains(assetTypes, assetRendererFactory.getClassName())) {
+
+					return true;
 				}
+
+				return false;
 			});
 
-		return assetRendererFactories;
+		return ListUtil.sort(
+			assetRendererFactories,
+			new AssetRendererFactoryTypeNameComparator(
+				themeDisplay.getLocale()));
 	}
 
 	private Map<String, Object> geSelectorEntryData(AssetRendererFactory<?> assetRendererFactory) throws Exception {

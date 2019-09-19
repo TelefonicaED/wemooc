@@ -1,5 +1,6 @@
 package com.ted.lms.course.eval.mandatory.avg;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -31,7 +32,7 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 
 		if(courseResult.getStartDate() == null){
 			courseResult.setStartDate(new Date());
@@ -53,7 +54,7 @@ public class MandatoryAvgCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 		// Se obtiene el courseresult del usuario en dicho course.
 
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());

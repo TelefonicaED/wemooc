@@ -14,9 +14,7 @@
 
 package com.ted.postcondition.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
@@ -34,13 +32,10 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
-import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
-import com.liferay.portal.kernel.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.postcondition.model.PostconditionRelation;
 import com.ted.postcondition.service.PostconditionRelationLocalService;
@@ -52,6 +47,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * Provides the base implementation for the postcondition relation local service.
  *
@@ -61,17 +59,18 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.ted.postcondition.service.impl.PostconditionRelationLocalServiceImpl
- * @see com.ted.postcondition.service.PostconditionRelationLocalServiceUtil
  * @generated
  */
 @ProviderType
 public abstract class PostconditionRelationLocalServiceBaseImpl
-	extends BaseLocalServiceImpl implements PostconditionRelationLocalService,
-		IdentifiableOSGiService {
+	extends BaseLocalServiceImpl
+	implements PostconditionRelationLocalService, AopService,
+			   IdentifiableOSGiService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link com.ted.postcondition.service.PostconditionRelationLocalServiceUtil} to access the postcondition relation local service.
+	 * Never modify or reference this class directly. Use <code>PostconditionRelationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.postcondition.service.PostconditionRelationLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -84,6 +83,7 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	@Override
 	public PostconditionRelation addPostconditionRelation(
 		PostconditionRelation postconditionRelation) {
+
 		postconditionRelation.setNew(true);
 
 		return postconditionRelationPersistence.update(postconditionRelation);
@@ -99,6 +99,7 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	@Transactional(enabled = false)
 	public PostconditionRelation createPostconditionRelation(
 		long postconditionRelationId) {
+
 		return postconditionRelationPersistence.create(postconditionRelationId);
 	}
 
@@ -112,7 +113,9 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public PostconditionRelation deletePostconditionRelation(
-		long postconditionRelationId) throws PortalException {
+			long postconditionRelationId)
+		throws PortalException {
+
 		return postconditionRelationPersistence.remove(postconditionRelationId);
 	}
 
@@ -126,6 +129,7 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	@Override
 	public PostconditionRelation deletePostconditionRelation(
 		PostconditionRelation postconditionRelation) {
+
 		return postconditionRelationPersistence.remove(postconditionRelation);
 	}
 
@@ -133,8 +137,8 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	public DynamicQuery dynamicQuery() {
 		Class<?> clazz = getClass();
 
-		return DynamicQueryFactoryUtil.forClass(PostconditionRelation.class,
-			clazz.getClassLoader());
+		return DynamicQueryFactoryUtil.forClass(
+			PostconditionRelation.class, clazz.getClassLoader());
 	}
 
 	/**
@@ -145,14 +149,15 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 */
 	@Override
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
-		return postconditionRelationPersistence.findWithDynamicQuery(dynamicQuery);
+		return postconditionRelationPersistence.findWithDynamicQuery(
+			dynamicQuery);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.postcondition.model.impl.PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.postcondition.model.impl.PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -161,17 +166,18 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 * @return the range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
-		return postconditionRelationPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
+
+		return postconditionRelationPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.postcondition.model.impl.PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.postcondition.model.impl.PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -181,10 +187,12 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 * @return the ordered range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
-		return postconditionRelationPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end, orderByComparator);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
+
+		return postconditionRelationPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
@@ -195,7 +203,8 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
-		return postconditionRelationPersistence.countWithDynamicQuery(dynamicQuery);
+		return postconditionRelationPersistence.countWithDynamicQuery(
+			dynamicQuery);
 	}
 
 	/**
@@ -206,16 +215,19 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
-		return postconditionRelationPersistence.countWithDynamicQuery(dynamicQuery,
-			projection);
+	public long dynamicQueryCount(
+		DynamicQuery dynamicQuery, Projection projection) {
+
+		return postconditionRelationPersistence.countWithDynamicQuery(
+			dynamicQuery, projection);
 	}
 
 	@Override
 	public PostconditionRelation fetchPostconditionRelation(
 		long postconditionRelationId) {
-		return postconditionRelationPersistence.fetchByPrimaryKey(postconditionRelationId);
+
+		return postconditionRelationPersistence.fetchByPrimaryKey(
+			postconditionRelationId);
 	}
 
 	/**
@@ -227,15 +239,20 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 */
 	@Override
 	public PostconditionRelation getPostconditionRelation(
-		long postconditionRelationId) throws PortalException {
-		return postconditionRelationPersistence.findByPrimaryKey(postconditionRelationId);
+			long postconditionRelationId)
+		throws PortalException {
+
+		return postconditionRelationPersistence.findByPrimaryKey(
+			postconditionRelationId);
 	}
 
 	@Override
 	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+		ActionableDynamicQuery actionableDynamicQuery =
+			new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(postconditionRelationLocalService);
+		actionableDynamicQuery.setBaseLocalService(
+			postconditionRelationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PostconditionRelation.class);
 
@@ -246,12 +263,17 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	}
 
 	@Override
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+	public IndexableActionableDynamicQuery
+		getIndexableActionableDynamicQuery() {
 
-		indexableActionableDynamicQuery.setBaseLocalService(postconditionRelationLocalService);
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery =
+			new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(
+			postconditionRelationLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
-		indexableActionableDynamicQuery.setModelClass(PostconditionRelation.class);
+		indexableActionableDynamicQuery.setModelClass(
+			PostconditionRelation.class);
 
 		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
 			"postconditionRelationId");
@@ -261,7 +283,9 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(postconditionRelationLocalService);
+
+		actionableDynamicQuery.setBaseLocalService(
+			postconditionRelationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PostconditionRelation.class);
 
@@ -275,12 +299,15 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException {
-		return postconditionRelationLocalService.deletePostconditionRelation((PostconditionRelation)persistedModel);
+
+		return postconditionRelationLocalService.deletePostconditionRelation(
+			(PostconditionRelation)persistedModel);
 	}
 
 	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException {
+
 		return postconditionRelationPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -288,7 +315,7 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 * Returns a range of all the postcondition relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.postcondition.model.impl.PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.postcondition.model.impl.PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of postcondition relations
@@ -296,8 +323,9 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 * @return the range of postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> getPostconditionRelations(int start,
-		int end) {
+	public List<PostconditionRelation> getPostconditionRelations(
+		int start, int end) {
+
 		return postconditionRelationPersistence.findAll(start, end);
 	}
 
@@ -321,168 +349,22 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	@Override
 	public PostconditionRelation updatePostconditionRelation(
 		PostconditionRelation postconditionRelation) {
+
 		return postconditionRelationPersistence.update(postconditionRelation);
 	}
 
-	/**
-	 * Returns the postcondition relation local service.
-	 *
-	 * @return the postcondition relation local service
-	 */
-	public PostconditionRelationLocalService getPostconditionRelationLocalService() {
-		return postconditionRelationLocalService;
+	@Override
+	public Class<?>[] getAopInterfaces() {
+		return new Class<?>[] {
+			PostconditionRelationLocalService.class,
+			IdentifiableOSGiService.class, PersistedModelLocalService.class
+		};
 	}
 
-	/**
-	 * Sets the postcondition relation local service.
-	 *
-	 * @param postconditionRelationLocalService the postcondition relation local service
-	 */
-	public void setPostconditionRelationLocalService(
-		PostconditionRelationLocalService postconditionRelationLocalService) {
-		this.postconditionRelationLocalService = postconditionRelationLocalService;
-	}
-
-	/**
-	 * Returns the postcondition relation persistence.
-	 *
-	 * @return the postcondition relation persistence
-	 */
-	public PostconditionRelationPersistence getPostconditionRelationPersistence() {
-		return postconditionRelationPersistence;
-	}
-
-	/**
-	 * Sets the postcondition relation persistence.
-	 *
-	 * @param postconditionRelationPersistence the postcondition relation persistence
-	 */
-	public void setPostconditionRelationPersistence(
-		PostconditionRelationPersistence postconditionRelationPersistence) {
-		this.postconditionRelationPersistence = postconditionRelationPersistence;
-	}
-
-	/**
-	 * Returns the counter local service.
-	 *
-	 * @return the counter local service
-	 */
-	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
-		return counterLocalService;
-	}
-
-	/**
-	 * Sets the counter local service.
-	 *
-	 * @param counterLocalService the counter local service
-	 */
-	public void setCounterLocalService(
-		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
-		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
-	}
-
-	/**
-	 * Returns the resource local service.
-	 *
-	 * @return the resource local service
-	 */
-	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
-		return resourceLocalService;
-	}
-
-	/**
-	 * Sets the resource local service.
-	 *
-	 * @param resourceLocalService the resource local service
-	 */
-	public void setResourceLocalService(
-		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
-		this.resourceLocalService = resourceLocalService;
-	}
-
-	/**
-	 * Returns the user local service.
-	 *
-	 * @return the user local service
-	 */
-	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
-		return userLocalService;
-	}
-
-	/**
-	 * Sets the user local service.
-	 *
-	 * @param userLocalService the user local service
-	 */
-	public void setUserLocalService(
-		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
-
-	/**
-	 * Returns the user persistence.
-	 *
-	 * @return the user persistence
-	 */
-	public UserPersistence getUserPersistence() {
-		return userPersistence;
-	}
-
-	/**
-	 * Sets the user persistence.
-	 *
-	 * @param userPersistence the user persistence
-	 */
-	public void setUserPersistence(UserPersistence userPersistence) {
-		this.userPersistence = userPersistence;
-	}
-
-	public void afterPropertiesSet() {
-		persistedModelLocalServiceRegistry.register("com.ted.postcondition.model.PostconditionRelation",
-			postconditionRelationLocalService);
-	}
-
-	public void destroy() {
-		persistedModelLocalServiceRegistry.unregister(
-			"com.ted.postcondition.model.PostconditionRelation");
+	@Override
+	public void setAopProxy(Object aopProxy) {
+		postconditionRelationLocalService =
+			(PostconditionRelationLocalService)aopProxy;
 	}
 
 	/**
@@ -510,15 +392,16 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 	 */
 	protected void runSQL(String sql) {
 		try {
-			DataSource dataSource = postconditionRelationPersistence.getDataSource();
+			DataSource dataSource =
+				postconditionRelationPersistence.getDataSource();
 
 			DB db = DBManagerUtil.getDB();
 
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
 
-			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
-					sql);
+			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(
+				dataSource, sql);
 
 			sqlUpdate.update();
 		}
@@ -527,22 +410,26 @@ public abstract class PostconditionRelationLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = PostconditionRelationLocalService.class)
-	protected PostconditionRelationLocalService postconditionRelationLocalService;
-	@BeanReference(type = PostconditionRelationPersistence.class)
+	protected PostconditionRelationLocalService
+		postconditionRelationLocalService;
+
+	@Reference
 	protected PostconditionRelationPersistence postconditionRelationPersistence;
-	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
-	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
-	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
-	@ServiceReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
-	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
-	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
-	@ServiceReference(type = UserPersistence.class)
-	protected UserPersistence userPersistence;
-	@ServiceReference(type = PersistedModelLocalServiceRegistry.class)
-	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
+
+	@Reference
+	protected com.liferay.counter.kernel.service.CounterLocalService
+		counterLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ClassNameLocalService
+		classNameLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourceLocalService
+		resourceLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.UserLocalService
+		userLocalService;
+
 }

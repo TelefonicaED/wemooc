@@ -8,6 +8,7 @@ import org.osgi.service.component.annotations.Component;
 
 @Component
 public class CourseServiceConfigurationBeanDeclaration implements ConfigurationBeanDeclaration {
+	
 	@Override
 	public Class<?> getConfigurationBeanClass() {
 		return CourseServiceConfiguration.class;

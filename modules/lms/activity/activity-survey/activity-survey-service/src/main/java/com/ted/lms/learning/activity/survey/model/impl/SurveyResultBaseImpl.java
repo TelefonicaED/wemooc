@@ -14,10 +14,10 @@
 
 package com.ted.lms.learning.activity.survey.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.learning.activity.survey.model.SurveyResult;
 import com.ted.lms.learning.activity.survey.service.SurveyResultLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the SurveyResult service. Represents a row in the &quot;Survey_SurveyResult&quot; database table, with each column mapped to a property of this class.
@@ -32,12 +32,13 @@ import com.ted.lms.learning.activity.survey.service.SurveyResultLocalServiceUtil
  * @generated
  */
 @ProviderType
-public abstract class SurveyResultBaseImpl extends SurveyResultModelImpl
-	implements SurveyResult {
+public abstract class SurveyResultBaseImpl
+	extends SurveyResultModelImpl implements SurveyResult {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a survey result model instance should use the {@link SurveyResult} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a survey result model instance should use the <code>SurveyResult</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -48,4 +49,5 @@ public abstract class SurveyResultBaseImpl extends SurveyResultModelImpl
 			SurveyResultLocalServiceUtil.updateSurveyResult(this);
 		}
 	}
+
 }

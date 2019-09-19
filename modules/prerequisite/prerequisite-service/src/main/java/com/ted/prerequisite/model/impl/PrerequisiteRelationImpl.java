@@ -22,25 +22,25 @@ import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model implementation for the PrerequisiteRelation service. Represents a row in the &quot;pre_PrerequisiteRelation&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.prerequisite.model.PrerequisiteRelation} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.prerequisite.model.PrerequisiteRelation<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class PrerequisiteRelationImpl extends PrerequisiteRelationBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
 	 * Never reference this class directly. All methods that expect a prerequisite relation model instance should use the {@link com.ted.prerequisite.model.PrerequisiteRelation} interface instead.
 	 */
-	
 	private JSONObject extraData = null;
 	private PrerequisiteFactory prerequisiteFactory = null;
 	private Prerequisite prerequisite = null;

@@ -1,5 +1,6 @@
 package com.ted.lms.course.eval.complete.modules;
 
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -40,9 +41,8 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 		// Se obtiene el courseresult del usuario en dicho course.
-		long courseId = course.getCourseId();
 		
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 		
@@ -60,7 +60,7 @@ public class CompleteModulesCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 		// Se obtiene el courseresult del usuario en dicho course.
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
 

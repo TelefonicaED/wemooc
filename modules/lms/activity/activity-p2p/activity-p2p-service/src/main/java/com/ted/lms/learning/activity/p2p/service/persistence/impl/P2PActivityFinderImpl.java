@@ -8,14 +8,21 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Team;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.impl.P2PActivityImpl;
+import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsFinder;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component(service = P2PActivityFinder.class)
 public class P2PActivityFinderImpl extends P2PActivityFinderBaseImpl implements P2PActivityFinder{
+	
+	@Reference
+	private CustomSQL customSQL;
 	
 	public static final String FIND_BY_TEAM =
 			P2PActivityFinder.class.getName() +
@@ -153,7 +160,4 @@ public class P2PActivityFinderImpl extends P2PActivityFinderBaseImpl implements 
 		return p2pActivities;
 		
 	}
-	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
 }

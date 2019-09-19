@@ -14,6 +14,9 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
+import com.ted.lms.service.base.CourseServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -38,11 +41,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the course remote service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.CourseService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.CourseService</code> interface.
  *
  * <p>
  * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
@@ -50,16 +55,23 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see CourseServiceBaseImpl
- * @see com.ted.lms.service.CourseServiceUtil
  */
+@Component(
+	property = {
+		"json.web.service.context.name=lms",
+		"json.web.service.context.path=Course"
+	},
+	service = AopService.class
+)
 public class CourseServiceImpl extends CourseServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseServiceUtil} to access the course remote service.
+	 * Never reference this class directly. Always use <code>com.ted.lms.service.CourseServiceUtil</code> to access the course remote service.
 	 */
 	
-	private static final Log log = LogFactoryUtil.getLog(CourseLocalServiceImpl.class);
+private static final Log log = LogFactoryUtil.getLog(CourseLocalServiceImpl.class);
 	
 	private static volatile ModelResourcePermission<Course>
     	courseModelResourcePermission =
@@ -246,7 +258,7 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	public void unsetUserCourse(long courseId, long[] removeUserIds, long roleId, ServiceContext serviceContext) throws PortalException {
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.ASSIGN_MEMBERS);
 		
-		courseLocalService.unsetUserCourse(courseId, removeUserIds, roleId, serviceContext);
+		courseLocalService.unsetUserCourse(getUserId(), courseId, removeUserIds, roleId, serviceContext);
 		
 	}
 	
@@ -271,12 +283,12 @@ public class CourseServiceImpl extends CourseServiceBaseImpl {
 	public List<Course> searchCourses(long companyId, String title, String description, String language, int[] status, long parentCourseId, long groupId, 
 			LinkedHashMap<String, Object> params, boolean andOperator, int start, int end,
 			OrderByComparator<Course> obc){
-		return courseFinder.filterByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator, start, end, obc);
+		return courseLocalService.searchCourses(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator, start, end, obc);
 	}
 	
 	public int countCourses(long companyId, String title, String description, String language, int[] status, long parentCourseId, long groupId, LinkedHashMap<String, Object> params, 
 			boolean andOperator){
-		return courseFinder.filterCountByC(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator);
+		return courseLocalService.countCourses(companyId, title, description, language, status, parentCourseId, groupId, params, andOperator);
 	}
 
 	public long executeCopyCourse(long courseId, long parentCourseId, Map<Locale, String> titleMap, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 

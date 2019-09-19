@@ -14,30 +14,33 @@
 
 package com.ted.lms.learning.activity.question.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
- * The extended model interface for the Question service. Represents a row in the &quot;qu_Question&quot; database table, with each column mapped to a property of this class.
+ * The extended model interface for the Question service. Represents a row in the &quot;QU_Question&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see QuestionModel
- * @see com.ted.lms.learning.activity.question.model.impl.QuestionImpl
- * @see com.ted.lms.learning.activity.question.model.impl.QuestionModelImpl
  * @generated
  */
-@ImplementationClassName("com.ted.lms.learning.activity.question.model.impl.QuestionImpl")
+@ImplementationClassName(
+	"com.ted.lms.learning.activity.question.model.impl.QuestionImpl"
+)
 @ProviderType
-public interface Question extends QuestionModel, PersistedModel {
+public interface Question extends PersistedModel, QuestionModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.learning.activity.question.model.impl.QuestionImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.learning.activity.question.model.impl.QuestionImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<Question, Long> QUESTION_ID_ACCESSOR = new Accessor<Question, Long>() {
+	public static final Accessor<Question, Long> QUESTION_ID_ACCESSOR =
+		new Accessor<Question, Long>() {
+
 			@Override
 			public Long get(Question question) {
 				return question.getQuestionId();
@@ -52,6 +55,7 @@ public interface Question extends QuestionModel, PersistedModel {
 			public Class<Question> getTypeClass() {
 				return Question.class;
 			}
+
 		};
 
 	public com.liferay.portal.kernel.json.JSONObject getExtraContentJSON();
@@ -63,4 +67,5 @@ public interface Question extends QuestionModel, PersistedModel {
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public java.util.List<Answer> getAnswers();
+
 }

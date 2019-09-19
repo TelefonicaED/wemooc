@@ -1,4 +1,0 @@
-Bundle-Name: translations-language
-Bundle-SymbolicName: translations.language
-Bundle-Version: 1.0.0
-Export-Package: translations.language.api

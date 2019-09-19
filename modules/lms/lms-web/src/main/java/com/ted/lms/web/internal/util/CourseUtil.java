@@ -128,7 +128,8 @@ public class CourseUtil {
 	
 	public static List<LayoutSetPrototype> getTemplates(CourseServiceConfiguration configuration, long companyId){
 		List<LayoutSetPrototype> listLayoutSetPrototype = null;
-		long[] courseTemplates = Arrays.stream(configuration.courseTemplates()).mapToLong(item -> Long.parseLong(item)).toArray();
+		String[] courseTemplatesStr = configuration.courseTemplates();
+		long[] courseTemplates = courseTemplatesStr != null ? Arrays.stream(configuration.courseTemplates()).mapToLong(item -> Long.parseLong(item)).toArray(): null;
 
 		if(courseTemplates != null && courseTemplates.length > 0 && courseTemplates[0] > 0){
 			

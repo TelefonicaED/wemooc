@@ -8,13 +8,19 @@ import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.learning.activity.survey.service.persistence.SurveyResultFinder;
 
 import java.util.Iterator;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component(service = SurveyResultFinder.class) 
 public class SurveyResultFinderImpl extends SurveyResultFinderBaseImpl implements SurveyResultFinder {
+	
+	@Reference
+	private CustomSQL customSQL;
 	
 	public static final String COUNT_STARTED_ONLY_STUDENTS =
 			SurveyResultFinder.class.getName() +
@@ -173,7 +179,4 @@ public class SurveyResultFinderImpl extends SurveyResultFinderBaseImpl implement
 	
 		return countStudents;
 	}
-	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
 }

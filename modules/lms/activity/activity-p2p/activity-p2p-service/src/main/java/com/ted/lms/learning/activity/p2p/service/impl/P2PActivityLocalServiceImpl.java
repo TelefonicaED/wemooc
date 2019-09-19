@@ -19,6 +19,8 @@ import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
@@ -43,6 +45,7 @@ import com.ted.lms.learning.activity.p2p.exception.P2PFileEntryExtensionExceptio
 import com.ted.lms.learning.activity.p2p.exception.P2PFileEntrySizeException;
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
+import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService;
 import com.ted.lms.learning.activity.p2p.service.base.P2PActivityLocalServiceBaseImpl;
 import com.ted.lms.learning.activity.p2p.util.P2PPrefsPropsValues;
 import com.ted.lms.model.Course;
@@ -66,11 +69,14 @@ import java.util.List;
 
 import javax.mail.internet.InternetAddress;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the p2p activity local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -78,16 +84,19 @@ import javax.mail.internet.InternetAddress;
  *
  * @author Brian Wing Shun Chan
  * @see P2PActivityLocalServiceBaseImpl
- * @see com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil
  */
-public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl {
-	
+@Component(
+	property = "model.class.name=com.ted.lms.learning.activity.p2p.model.P2PActivity",
+	service = AopService.class
+)
+public class P2PActivityLocalServiceImpl
+	extends P2PActivityLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil} to access the p2p activity local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil</code>.
 	 */
-	
 	@Override
 	public boolean hasP2PActivity(long actId) {
 		log.debug("actId: " + actId);
@@ -628,4 +637,7 @@ public class P2PActivityLocalServiceImpl extends P2PActivityLocalServiceBaseImpl
 	}
 	
 	private static Log log = LogFactoryUtil.getLog(P2PActivityLocalServiceImpl.class);
+	
+	@Reference
+	private P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
 }

@@ -4,7 +4,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.model.BaseModuleEvalFactory;
 import com.ted.lms.model.Module;
@@ -34,9 +33,9 @@ public class CompleteActivitiesModuleEvalFactory extends BaseModuleEvalFactory{
 	public static final long TYPE = 0;
 	
 	@Override
-	public ModuleEval getModuleEval(Module module, ServiceContext serviceContext) throws PortalException {	
+	public ModuleEval getModuleEval(Module module) throws PortalException {	
 		log.debug("getModuleEval");
-		return new CompleteActivitiesModuleEval(module, serviceContext, courseResultLocalService,
+		return new CompleteActivitiesModuleEval(module, courseResultLocalService,
 				learningActivityResultLocalService, learningActivityLocalService, 
 				moduleResultLocalService);
 	}

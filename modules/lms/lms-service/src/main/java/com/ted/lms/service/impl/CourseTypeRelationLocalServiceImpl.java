@@ -14,6 +14,10 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
+import com.ted.lms.service.base.CourseTypeRelationLocalServiceBaseImpl;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -32,11 +36,13 @@ import com.ted.lms.service.persistence.CourseTypeRelationPK;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the course type relation local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.CourseTypeRelationLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.CourseTypeRelationLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -44,14 +50,18 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see CourseTypeRelationLocalServiceBaseImpl
- * @see com.ted.lms.service.CourseTypeRelationLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.CourseTypeRelation",
+	service = AopService.class
+)
 public class CourseTypeRelationLocalServiceImpl
 	extends CourseTypeRelationLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseTypeRelationLocalServiceUtil} to access the course type relation local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.CourseTypeRelationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.CourseTypeRelationLocalServiceUtil</code>.
 	 */
 	
 	public void addCourseTypeRelation(long courseTypeId, long classNameId, long[] classPKs) {

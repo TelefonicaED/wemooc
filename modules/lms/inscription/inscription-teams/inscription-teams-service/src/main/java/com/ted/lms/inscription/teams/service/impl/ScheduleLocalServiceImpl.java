@@ -14,6 +14,8 @@
 
 package com.ted.lms.inscription.teams.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.model.User;
@@ -28,11 +30,13 @@ import com.ted.lms.service.CourseResultLocalServiceUtil;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the schedule local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.inscription.teams.service.ScheduleLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.inscription.teams.service.ScheduleLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -40,13 +44,17 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see ScheduleLocalServiceBaseImpl
- * @see com.ted.lms.inscription.teams.service.ScheduleLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.inscription.teams.model.Schedule",
+	service = AopService.class
+)
 public class ScheduleLocalServiceImpl extends ScheduleLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.inscription.teams.service.ScheduleLocalServiceUtil} to access the schedule local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.inscription.teams.service.ScheduleLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.inscription.teams.service.ScheduleLocalServiceUtil</code>.
 	 */
 	
 	public Schedule getScheduleByTeamId(long teamId) {

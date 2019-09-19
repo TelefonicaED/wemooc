@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_2_0.dtd">
 
-<service-builder package-path="com.ted.lms.learning.activity.p2p">
+<service-builder dependency-injector="ds" package-path="com.ted.lms.learning.activity.p2p">
 	<namespace>PTP</namespace>
 
 	<entity name="P2PActivity" uuid="true" local-service="true" remote-service="false" >
@@ -46,6 +46,7 @@
 			<finder-column name="asignationsCompleted"  />
 		</finder>			
 		
+		<reference entity="P2PActivityCorrections" package-path="com.ted.lms.learning.activity.p2p" />
 		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
 		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
@@ -87,5 +88,6 @@
 		<finder name="UserId" return-type="Collection">
 			<finder-column name="userId" />
 		</finder>			
+		<reference entity="P2PActivity" package-path="com.ted.lms.learning.activity.p2p" />
 	</entity>
 </service-builder>

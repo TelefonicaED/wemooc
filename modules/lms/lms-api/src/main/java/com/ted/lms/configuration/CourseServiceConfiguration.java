@@ -2,20 +2,20 @@ package com.ted.lms.configuration;
 
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
-import aQute.bnd.annotation.ProviderType;
 import aQute.bnd.annotation.metatype.Meta;
+import aQute.bnd.annotation.metatype.Meta.OCD;
 
 @ExtendedObjectClassDefinition(
-	category = "course",
+	category = "lms",
 	scope = ExtendedObjectClassDefinition.Scope.COMPANY
 )
-@Meta.OCD(
+@OCD(
 	id = "com.ted.lms.configuration.CourseServiceConfiguration",
 	localization = "content/Language",
 	name = "course-service-configuration-name"
 )
-@ProviderType
-public interface CourseServiceConfiguration {
+public @interface CourseServiceConfiguration {
+	
 	@Meta.AD(
 		description = "specifcy-activities-that-are-allowed-in-courses",
 		name = "activities", required = false

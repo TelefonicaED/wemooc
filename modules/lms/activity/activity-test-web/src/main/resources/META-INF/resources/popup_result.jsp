@@ -12,7 +12,7 @@
 				<div id="actfeedback">${activity.feedbackNoCorrect}</div>
 			</c:if>
 			<div id="score">
-				<b><liferay-ui:message key="learning-activity.test.shared" arguments="${calificationType.translate(themeDisplay.locale, scoreTry)  + calificationType.suffix}"/></b>
+				<b><liferay-ui:message key="learning-activity.test.shared" arguments="${calificationType.translate(themeDisplay.locale, scoreTry).concat(calificationType.suffix)}"/></b>
 			</div>
 		
 		</c:otherwise>

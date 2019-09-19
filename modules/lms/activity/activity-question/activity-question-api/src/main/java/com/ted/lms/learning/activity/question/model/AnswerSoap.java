@@ -14,23 +14,23 @@
 
 package com.ted.lms.learning.activity.question.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
- * This class is used by SOAP remote services, specifically {@link com.ted.lms.learning.activity.question.service.http.AnswerServiceSoap}.
+ * This class is used by SOAP remote services.
  *
  * @author Brian Wing Shun Chan
- * @see com.ted.lms.learning.activity.question.service.http.AnswerServiceSoap
  * @generated
  */
 @ProviderType
 public class AnswerSoap implements Serializable {
+
 	public static AnswerSoap toSoapModel(Answer model) {
 		AnswerSoap soapModel = new AnswerSoap();
 
@@ -240,4 +240,5 @@ public class AnswerSoap implements Serializable {
 	private boolean _correct;
 	private String _feedbackCorrect;
 	private String _feedbackIncorrect;
+
 }

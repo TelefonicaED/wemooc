@@ -26,7 +26,7 @@ long moduleClassNameId = PortalUtil.getClassNameId(Module.class);
 %>
 
 <aui:select name="prerequisiteModuleId" label="prerequisite-module.module" required="<%=required %>">
-	<aui:option label="" value="0" disabled="true" />
+	<aui:option label="" value="0" disabled="true" selected="<%=modulePrerequisiteId == 0 %>"/>
 	<%for(Module modulePrerequisite: listModules){ 
 		if(moduleClassNameId != classNameId || classPK != modulePrerequisite.getModuleId()){%>
 			<aui:option label="<%=modulePrerequisite.getTitle(themeDisplay.getLocale()) %>" value="<%=modulePrerequisite.getModuleId()%>" 

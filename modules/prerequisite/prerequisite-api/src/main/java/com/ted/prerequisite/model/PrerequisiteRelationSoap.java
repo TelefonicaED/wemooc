@@ -14,12 +14,12 @@
 
 package com.ted.prerequisite.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -29,13 +29,16 @@ import java.util.List;
  */
 @ProviderType
 public class PrerequisiteRelationSoap implements Serializable {
+
 	public static PrerequisiteRelationSoap toSoapModel(
 		PrerequisiteRelation model) {
+
 		PrerequisiteRelationSoap soapModel = new PrerequisiteRelationSoap();
 
 		soapModel.setUuid(model.getUuid());
 		soapModel.setPrerequisiteRelationId(model.getPrerequisiteRelationId());
-		soapModel.setClassNamePrerequisiteId(model.getClassNamePrerequisiteId());
+		soapModel.setClassNamePrerequisiteId(
+			model.getClassNamePrerequisiteId());
 		soapModel.setClassNameId(model.getClassNameId());
 		soapModel.setClassPK(model.getClassPK());
 		soapModel.setExtraData(model.getExtraData());
@@ -45,7 +48,9 @@ public class PrerequisiteRelationSoap implements Serializable {
 
 	public static PrerequisiteRelationSoap[] toSoapModels(
 		PrerequisiteRelation[] models) {
-		PrerequisiteRelationSoap[] soapModels = new PrerequisiteRelationSoap[models.length];
+
+		PrerequisiteRelationSoap[] soapModels =
+			new PrerequisiteRelationSoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -56,10 +61,12 @@ public class PrerequisiteRelationSoap implements Serializable {
 
 	public static PrerequisiteRelationSoap[][] toSoapModels(
 		PrerequisiteRelation[][] models) {
+
 		PrerequisiteRelationSoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new PrerequisiteRelationSoap[models.length][models[0].length];
+			soapModels =
+				new PrerequisiteRelationSoap[models.length][models[0].length];
 		}
 		else {
 			soapModels = new PrerequisiteRelationSoap[0][0];
@@ -74,13 +81,16 @@ public class PrerequisiteRelationSoap implements Serializable {
 
 	public static PrerequisiteRelationSoap[] toSoapModels(
 		List<PrerequisiteRelation> models) {
-		List<PrerequisiteRelationSoap> soapModels = new ArrayList<PrerequisiteRelationSoap>(models.size());
+
+		List<PrerequisiteRelationSoap> soapModels =
+			new ArrayList<PrerequisiteRelationSoap>(models.size());
 
 		for (PrerequisiteRelation model : models) {
 			soapModels.add(toSoapModel(model));
 		}
 
-		return soapModels.toArray(new PrerequisiteRelationSoap[soapModels.size()]);
+		return soapModels.toArray(
+			new PrerequisiteRelationSoap[soapModels.size()]);
 	}
 
 	public PrerequisiteRelationSoap() {
@@ -148,4 +158,5 @@ public class PrerequisiteRelationSoap implements Serializable {
 	private long _classNameId;
 	private long _classPK;
 	private String _extraData;
+
 }

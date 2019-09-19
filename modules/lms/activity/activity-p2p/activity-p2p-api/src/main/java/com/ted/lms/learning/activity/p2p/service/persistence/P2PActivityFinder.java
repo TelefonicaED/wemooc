@@ -14,7 +14,7 @@
 
 package com.ted.lms.learning.activity.p2p.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Brian Wing Shun Chan
@@ -22,14 +22,18 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface P2PActivityFinder {
-	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> findByGroup(
-		long actId, long p2pActId, int start, int end);
 
-	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> findByTeam(
-		long actId, long p2pActId,
-		java.util.List<com.liferay.portal.kernel.model.Team> userTeams,
-		int start, int end);
+	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity>
+		findByGroup(long actId, long p2pActId, int start, int end);
 
-	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity> findByUserWithoutTeamActivities(
-		long actId, long p2pActId, long groupId, int start, int end);
+	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity>
+		findByTeam(
+			long actId, long p2pActId,
+			java.util.List<com.liferay.portal.kernel.model.Team> userTeams,
+			int start, int end);
+
+	public java.util.List<com.ted.lms.learning.activity.p2p.model.P2PActivity>
+		findByUserWithoutTeamActivities(
+			long actId, long p2pActId, long groupId, int start, int end);
+
 }

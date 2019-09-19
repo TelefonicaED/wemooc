@@ -14,10 +14,10 @@
 
 package com.ted.lms.learning.activity.p2p.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the P2PActivity service. Represents a row in the &quot;PTP_P2PActivity&quot; database table, with each column mapped to a property of this class.
@@ -32,12 +32,13 @@ import com.ted.lms.learning.activity.p2p.service.P2PActivityLocalServiceUtil;
  * @generated
  */
 @ProviderType
-public abstract class P2PActivityBaseImpl extends P2PActivityModelImpl
-	implements P2PActivity {
+public abstract class P2PActivityBaseImpl
+	extends P2PActivityModelImpl implements P2PActivity {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a p2p activity model instance should use the {@link P2PActivity} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a p2p activity model instance should use the <code>P2PActivity</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -48,4 +49,5 @@ public abstract class P2PActivityBaseImpl extends P2PActivityModelImpl
 			P2PActivityLocalServiceUtil.updateP2PActivity(this);
 		}
 	}
+
 }

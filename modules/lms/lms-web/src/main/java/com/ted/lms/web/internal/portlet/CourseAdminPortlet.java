@@ -1,7 +1,6 @@
 package com.ted.lms.web.internal.portlet;
 
 import com.ted.lms.constants.LMSPortletKeys;
-import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.CourseService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -76,25 +75,19 @@ public class CourseAdminPortlet extends MVCPortlet {
 	
 	public void changeDisplayStyle(ActionRequest actionRequest, ActionResponse actionResponse) {
 
-			hideDefaultSuccessMessage(actionRequest);
+		hideDefaultSuccessMessage(actionRequest);
 
-			String displayStyle = ParamUtil.getString(actionRequest, "displayStyle");
+		String displayStyle = ParamUtil.getString(actionRequest, "displayStyle");
 
-			PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(actionRequest);
+		PortalPreferences portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(actionRequest);
 
-			portalPreferences.setValue(LMSPortletKeys.COURSE, "display-style",displayStyle);
-		}
+		portalPreferences.setValue(LMSPortletKeys.COURSE, "display-style",displayStyle);
+	}
 	
 	@Reference(unbind = "-")
 	protected void setCourseService(CourseService courseService) {
 		this.courseService = courseService;
 	}
 	
-	@Reference(unbind = "-")
-	protected void setCourseLocalService(CourseLocalService courseLocalService) {
-		this.courseLocalService = courseLocalService;
-	}
-	
 	private CourseService courseService;
-	private CourseLocalService courseLocalService;
 }

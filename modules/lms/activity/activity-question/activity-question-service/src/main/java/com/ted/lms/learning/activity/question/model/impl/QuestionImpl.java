@@ -25,22 +25,23 @@ import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
 import com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil;
+
 import java.util.List;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * The extended model implementation for the Question service. Represents a row in the &quot;qu_Question&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the Question service. Represents a row in the &quot;QU_Question&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.question.model.Question} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.question.model.Question<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class QuestionImpl extends QuestionBaseImpl {
-	
+
 	private static final Log log = LogFactoryUtil.getLog(QuestionImpl.class);
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -85,4 +86,5 @@ public class QuestionImpl extends QuestionBaseImpl {
 	public List<Answer> getAnswers(){
 		return AnswerLocalServiceUtil.getAnswersByQuestionId(getQuestionId());
 	}
+
 }

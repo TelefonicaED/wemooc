@@ -116,14 +116,10 @@ public class CourseItemSelectorView implements ItemSelectorView<CourseItemSelect
 		this.servletContext = servletContext;
 	}
 
-	@Reference(unbind = "-")
-	protected void setCourseLocalService(CourseLocalService courseLocalService) {
-		this.courseLocalService = courseLocalService;
-	}
-
 	private static final List<ItemSelectorReturnType> supportedItemSelectorReturnTypes = Collections.unmodifiableList(
 			ListUtil.fromArray(new ItemSelectorReturnType[] {new FileEntryItemSelectorReturnType(), new URLItemSelectorReturnType()}));
 
+	@Reference
 	private CourseLocalService courseLocalService;
 
 	@Reference(

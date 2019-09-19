@@ -71,21 +71,26 @@ import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.WindowState;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model implementation for the Module service. Represents a row in the &quot;LMS_Module&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.model.Module} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.model.Module<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class ModuleImpl extends ModuleBaseImpl {
-	
-	private AssetEntry assetEntry;
+
+	/*
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never reference this class directly. All methods that expect a module model instance should use the {@link com.ted.lms.model.Module} interface instead.
+	 */
+private AssetEntry assetEntry;
 	
 	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
 	/*
@@ -380,4 +385,5 @@ public class ModuleImpl extends ModuleBaseImpl {
 	private long imagesFolderId;
 	
 	private static final Log log = LogFactoryUtil.getLog(ModuleImpl.class);
+
 }

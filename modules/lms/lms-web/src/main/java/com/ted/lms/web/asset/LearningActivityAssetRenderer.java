@@ -3,7 +3,6 @@ package com.ted.lms.web.asset;
 import com.liferay.asset.kernel.model.BaseJSPAssetRenderer;
 import com.liferay.asset.util.AssetHelper;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
@@ -61,11 +60,6 @@ public class LearningActivityAssetRenderer extends BaseJSPAssetRenderer<Learning
 	}
 
 	@Override
-	public String getSummary(Locale locale){
-		return learningActivity.getDescription(locale);
-	}
-
-	@Override
 	public String getTitle(Locale locale){
 		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(locale);
 
@@ -89,6 +83,7 @@ public class LearningActivityAssetRenderer extends BaseJSPAssetRenderer<Learning
 
 	@Override
 	public String getSummary(PortletRequest portletRequest, PortletResponse portletResponse) {
+		
 		int abstractLength = AssetHelper.ASSET_ENTRY_ABSTRACT_LENGTH;
 
 	    if (portletRequest != null) {
@@ -98,11 +93,9 @@ public class LearningActivityAssetRenderer extends BaseJSPAssetRenderer<Learning
 	            AssetHelper.ASSET_ENTRY_ABSTRACT_LENGTH);
 	    }
 		
-		ThemeDisplay themeDisplay = (ThemeDisplay)portletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		Locale locale = getLocale(portletRequest);
 		
-		ResourceBundle resourceBundle = resourceBundleLoader.loadResourceBundle(themeDisplay.getLocale());
-		
-		String summary =  HtmlUtil.stripHtml(StringUtil.shorten(LearningActivityUtil.getDisplayDescription(resourceBundle, learningActivity), abstractLength));
+		String summary =  HtmlUtil.stripHtml(StringUtil.shorten(learningActivity.getDescription(locale), abstractLength));
 		
 		return summary;
 	}

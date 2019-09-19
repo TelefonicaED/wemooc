@@ -14,39 +14,26 @@
 <%@page import="com.ted.lms.security.permission.resource.LearningActivityPermission"%>
 
 <c:if test="<%=LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.UPDATE) %>">							
-	<liferay-ui:icon
-		image="edit"
-		message="edit"
-		url="<%=activity.getURLEdit(themeDisplay)%>"
-	/>	
 	
-	<portlet:actionURL var="moveUpLearningActivityURL">
-		<portlet:param name="mvcRenderCommandName" value="/activities/edit_activity" />
+	<a href="<%=activity.getURLEdit(themeDisplay)%>"><span class="glyphicon glyphicon-pencil" title="<liferay-ui:message key='edit' />"></span></a>
+	
+	<portlet:actionURL var="moveUpLearningActivityURL" name="/activities/edit_activity">
 		<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.MOVE %>" />
 		<portlet:param name="<%= Constants.ACTION %>" value="-1" />
 		<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
 		<portlet:param name="actId" value="<%= String.valueOf(activity.getActId()) %>" />
 	</portlet:actionURL>
 
-	<liferay-ui:icon
-		image="top"
-		message="move-up"
-		url="${moveUpLearningActivityURL }"
-	/>
+	<a href="${moveUpLearningActivityURL }"><span class="glyphicon glyphicon-arrow-up" title="<liferay-ui:message key='move-up' />"></span></a>
 	
-	<portlet:actionURL var="moveDownLearningActivityURL">
-		<portlet:param name="mvcRenderCommandName" value="/activities/edit_activity" />
+	<portlet:actionURL var="moveDownLearningActivityURL" name="/activities/edit_activity">
 		<portlet:param name="<%= Constants.CMD %>" value="<%= Constants.MOVE %>" />
 		<portlet:param name="<%= Constants.ACTION %>" value="1" />
 		<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
 		<portlet:param name="actId" value="<%= String.valueOf(activity.getActId()) %>" />
 	</portlet:actionURL>
-
-	<liferay-ui:icon
-		image="bottom"
-		message="move-down"
-		url="${moveDownLearningActivityURL }"
-	/>
+	
+	<a href="${moveDownLearningActivityURL }"><span class="glyphicon glyphicon-arrow-down" title="<liferay-ui:message key='move-down' />"></span></a>
 </c:if>
 <c:if test="<%=LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.PERMISSIONS) %>">
 	<liferay-security:permissionsURL
@@ -68,8 +55,7 @@
 
 <c:if test="<%=LMSPrefsPropsValues.getLearningActivityChangeVisibility(themeDisplay.getCompanyId()) && LearningActivityPermission.contains(permissionChecker, activity, LMSActionKeys.CHANGE_VISIBILITY)%>">
 
-	<portlet:actionURL var="changeVisibilityURL">
-		<portlet:param name="mvcRenderCommandName" value="/activities/edit_activity" />
+	<portlet:actionURL var="changeVisibilityURL" name="/activities/edit_activity">
 		<portlet:param name="<%= Constants.CMD %>" value="<%= LMSConstants.CHANGE_VISIBILITY %>" />
 		<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
 		<portlet:param name="actId" value="<%= String.valueOf(activity.getActId()) %>" />
@@ -80,28 +66,30 @@
 		boolean visible = ResourcePermissionLocalServiceUtil.hasResourcePermission(student.getCompanyId(), LearningActivity.class.getName(), ResourceConstants.SCOPE_INDIVIDUAL, String.valueOf(activity.getActId()),student.getRoleId(), ActionKeys.VIEW);
 	%>
 	
-	<liferay-ui:icon message="<%=(visible)?\"learning-activity.visible\":\"learning-activity.invisible\" %>"  image="<%=(visible)?\"global\":\"close\" %>" 
-		url="${changeVisibilityURL }"/>
+	<a href="${changeVisibilityURL }">
+		<c:choose>
+			<c:when test="<%=visible %>">
+				<span class="glyphicon glyphicon-eye-open" title="<liferay-ui:message key='learning-activity.visible' />"></span>
+			</c:when>
+			<c:otherwise>
+				<span class="glyphicon glyphicon-eye-close" title="<liferay-ui:message key='invisible' />"></span>
+			</c:otherwise>
+		</c:choose>
+	</a>
 </c:if>
 
 <c:if test="<%=LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.DELETE) %>">
 
 	<portlet:actionURL name="/activities/edit_activity" var="deleteLearningActivityURL">
-			<portlet:param name="<%= Constants.CMD %>" value="<%=Constants.DELETE %>" />
-			<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
-			<portlet:param name="actId" value="<%= String.valueOf(activity.getActId()) %>" />
-		</portlet:actionURL>
-
-		<liferay-ui:icon-delete
-			url="${deleteModuleURL }"
-		/>
-	
+		<portlet:param name="<%= Constants.CMD %>" value="<%=Constants.DELETE %>" />
+		<portlet:param name="redirect" value="<%= portletURL.toString() %>" />
+		<portlet:param name="actId" value="<%= String.valueOf(activity.getActId()) %>" />
+	</portlet:actionURL>
 	<%
 	long numLearningActivityResults = LearningActivityResultLocalServiceUtil.getLearningActivityCountByActId(activity.getActId());			
 	if(numLearningActivityResults>0){%>
-	
-		<liferay-ui:icon image="delete" message="delete" url="#" onClick="javascript: alert(Liferay.Language.get('activity.delete-activity-with-result'));" />
+		<a href="javascript: alert(Liferay.Language.get('activity.delete-activity-with-result'));"><span class="glyphicon glyphicon-trash" title="<liferay-ui:message key='delete' />"></span></a>
 	<%}else{ %>
-		<liferay-ui:icon image="delete" message="delete" onClick="javascript:if(confirm('are-you-sure-you-want-to-delete-this')){location.href='${deleteLearningActivityURL}';}"/>
+		<a href="javascript:if(confirm('are-you-sure-you-want-to-delete-this')){location.href='${deleteLearningActivityURL}';}"><span class="glyphicon glyphicon-trash" title="<liferay-ui:message key='delete' />"></span></a>
 	<%} %> 					 				
 </c:if>

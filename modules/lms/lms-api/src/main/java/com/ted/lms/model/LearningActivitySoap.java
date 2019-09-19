@@ -14,23 +14,23 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * This class is used by SOAP remote services, specifically {@link com.ted.lms.service.http.LearningActivityServiceSoap}.
  *
  * @author Brian Wing Shun Chan
- * @see com.ted.lms.service.http.LearningActivityServiceSoap
  * @generated
  */
 @ProviderType
 public class LearningActivitySoap implements Serializable {
+
 	public static LearningActivitySoap toSoapModel(LearningActivity model) {
 		LearningActivitySoap soapModel = new LearningActivitySoap();
 
@@ -65,8 +65,11 @@ public class LearningActivitySoap implements Serializable {
 		return soapModel;
 	}
 
-	public static LearningActivitySoap[] toSoapModels(LearningActivity[] models) {
-		LearningActivitySoap[] soapModels = new LearningActivitySoap[models.length];
+	public static LearningActivitySoap[] toSoapModels(
+		LearningActivity[] models) {
+
+		LearningActivitySoap[] soapModels =
+			new LearningActivitySoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -77,10 +80,12 @@ public class LearningActivitySoap implements Serializable {
 
 	public static LearningActivitySoap[][] toSoapModels(
 		LearningActivity[][] models) {
+
 		LearningActivitySoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new LearningActivitySoap[models.length][models[0].length];
+			soapModels =
+				new LearningActivitySoap[models.length][models[0].length];
 		}
 		else {
 			soapModels = new LearningActivitySoap[0][0];
@@ -95,7 +100,9 @@ public class LearningActivitySoap implements Serializable {
 
 	public static LearningActivitySoap[] toSoapModels(
 		List<LearningActivity> models) {
-		List<LearningActivitySoap> soapModels = new ArrayList<LearningActivitySoap>(models.size());
+
+		List<LearningActivitySoap> soapModels =
+			new ArrayList<LearningActivitySoap>(models.size());
 
 		for (LearningActivity model : models) {
 			soapModels.add(toSoapModel(model));
@@ -366,4 +373,5 @@ public class LearningActivitySoap implements Serializable {
 	private long _statusByUserId;
 	private String _statusByUserName;
 	private Date _statusDate;
+
 }

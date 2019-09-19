@@ -14,14 +14,15 @@
 
 package com.ted.lms.service.http;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Provides the HTTP utility for the
- * {@link com.ted.lms.service.CourseTypeServiceUtil} service utility. The
+ * <code>com.ted.lms.service.CourseTypeServiceUtil</code> service
+ * utility. The
  * static methods of this class calls the same methods of the service utility.
  * However, the signatures are different because it requires an additional
- * {@link com.liferay.portal.kernel.security.auth.HttpPrincipal} parameter.
+ * <code>com.liferay.portal.kernel.security.auth.HttpPrincipal</code> parameter.
  *
  * <p>
  * The benefits of using the HTTP utility is that it is fast and allows for
@@ -40,8 +41,6 @@ import aQute.bnd.annotation.ProviderType;
  *
  * @author Brian Wing Shun Chan
  * @see CourseTypeServiceSoap
- * @see com.liferay.portal.kernel.security.auth.HttpPrincipal
- * @see com.ted.lms.service.CourseTypeServiceUtil
  * @generated
  */
 @ProviderType

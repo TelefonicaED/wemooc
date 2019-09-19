@@ -14,51 +14,56 @@
 
 package com.ted.prerequisite.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the PrerequisiteRelation service. Represents a row in the &quot;pre_PrerequisiteRelation&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see PrerequisiteRelationModel
- * @see com.ted.prerequisite.model.impl.PrerequisiteRelationImpl
- * @see com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl
  * @generated
  */
-@ImplementationClassName("com.ted.prerequisite.model.impl.PrerequisiteRelationImpl")
+@ImplementationClassName(
+	"com.ted.prerequisite.model.impl.PrerequisiteRelationImpl"
+)
 @ProviderType
-public interface PrerequisiteRelation extends PrerequisiteRelationModel,
-	PersistedModel {
+public interface PrerequisiteRelation
+	extends PersistedModel, PrerequisiteRelationModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.prerequisite.model.impl.PrerequisiteRelationImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.prerequisite.model.impl.PrerequisiteRelationImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<PrerequisiteRelation, Long> PREREQUISITE_RELATION_ID_ACCESSOR =
-		new Accessor<PrerequisiteRelation, Long>() {
-			@Override
-			public Long get(PrerequisiteRelation prerequisiteRelation) {
-				return prerequisiteRelation.getPrerequisiteRelationId();
-			}
+	public static final Accessor<PrerequisiteRelation, Long>
+		PREREQUISITE_RELATION_ID_ACCESSOR =
+			new Accessor<PrerequisiteRelation, Long>() {
 
-			@Override
-			public Class<Long> getAttributeClass() {
-				return Long.class;
-			}
+				@Override
+				public Long get(PrerequisiteRelation prerequisiteRelation) {
+					return prerequisiteRelation.getPrerequisiteRelationId();
+				}
 
-			@Override
-			public Class<PrerequisiteRelation> getTypeClass() {
-				return PrerequisiteRelation.class;
-			}
-		};
+				@Override
+				public Class<Long> getAttributeClass() {
+					return Long.class;
+				}
+
+				@Override
+				public Class<PrerequisiteRelation> getTypeClass() {
+					return PrerequisiteRelation.class;
+				}
+
+			};
 
 	public PrerequisiteFactory getPrerequisiteFactory();
 
 	public Prerequisite getPrerequisite();
 
 	public com.liferay.portal.kernel.json.JSONObject getExtraDataJSON();
+
 }

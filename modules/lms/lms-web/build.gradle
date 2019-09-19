@@ -7,6 +7,7 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.item.selector.criteria.api"
 	compileOnly group: "com.liferay", name: "com.liferay.item.selector.taglib"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.function"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype.api"
 	compileOnly group: "com.liferay", name: "com.liferay.trash.api"
 	compileOnly group: "com.liferay", name: "com.liferay.trash.taglib"
@@ -24,15 +25,16 @@ dependencies {
 	compileOnly group: "javax.portlet", name: "portlet-api"
 	compileOnly group: "javax.servlet", name: "javax.servlet-api"
 	compileOnly group: "jstl", name: "jstl"
+	compileOnly group: "org.osgi", name: "org.osgi.annotation.versioning"
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
 	compileOnly group: "org.osgi", name: "osgi.cmpn"
 	compileOnly project(":modules:lms:lms-api")
 	compileOnly project(":modules:prerequisite:prerequisite-api")
-	compileOnly project(":modules:postcondition:postcondition-api")
 	compileOnly project(":modules:audit:audit-api")
 	compileOnly project(":modules:lms:lms-item-selector-api")
 	compileOnly project(":modules:lms:lms-navigation-control-panel")
 	compile group: 'com.opencsv', name: 'opencsv', version: '4.6'
+	compileOnly project(":modules:postcondition:postcondition-api")
 	
 	compileOnly group: "javax.servlet.jsp", name: "javax.servlet.jsp-api", version: "2.3.1"
 }

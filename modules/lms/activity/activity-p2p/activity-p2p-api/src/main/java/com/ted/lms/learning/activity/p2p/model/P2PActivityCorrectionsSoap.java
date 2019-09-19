@@ -14,13 +14,13 @@
 
 package com.ted.lms.learning.activity.p2p.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -30,12 +30,15 @@ import java.util.List;
  */
 @ProviderType
 public class P2PActivityCorrectionsSoap implements Serializable {
+
 	public static P2PActivityCorrectionsSoap toSoapModel(
 		P2PActivityCorrections model) {
+
 		P2PActivityCorrectionsSoap soapModel = new P2PActivityCorrectionsSoap();
 
 		soapModel.setUuid(model.getUuid());
-		soapModel.setP2pActivityCorrectionsId(model.getP2pActivityCorrectionsId());
+		soapModel.setP2pActivityCorrectionsId(
+			model.getP2pActivityCorrectionsId());
 		soapModel.setGroupId(model.getGroupId());
 		soapModel.setCompanyId(model.getCompanyId());
 		soapModel.setUserCreateId(model.getUserCreateId());
@@ -55,7 +58,9 @@ public class P2PActivityCorrectionsSoap implements Serializable {
 
 	public static P2PActivityCorrectionsSoap[] toSoapModels(
 		P2PActivityCorrections[] models) {
-		P2PActivityCorrectionsSoap[] soapModels = new P2PActivityCorrectionsSoap[models.length];
+
+		P2PActivityCorrectionsSoap[] soapModels =
+			new P2PActivityCorrectionsSoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -66,10 +71,12 @@ public class P2PActivityCorrectionsSoap implements Serializable {
 
 	public static P2PActivityCorrectionsSoap[][] toSoapModels(
 		P2PActivityCorrections[][] models) {
+
 		P2PActivityCorrectionsSoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new P2PActivityCorrectionsSoap[models.length][models[0].length];
+			soapModels =
+				new P2PActivityCorrectionsSoap[models.length][models[0].length];
 		}
 		else {
 			soapModels = new P2PActivityCorrectionsSoap[0][0];
@@ -84,13 +91,16 @@ public class P2PActivityCorrectionsSoap implements Serializable {
 
 	public static P2PActivityCorrectionsSoap[] toSoapModels(
 		List<P2PActivityCorrections> models) {
-		List<P2PActivityCorrectionsSoap> soapModels = new ArrayList<P2PActivityCorrectionsSoap>(models.size());
+
+		List<P2PActivityCorrectionsSoap> soapModels =
+			new ArrayList<P2PActivityCorrectionsSoap>(models.size());
 
 		for (P2PActivityCorrections model : models) {
 			soapModels.add(toSoapModel(model));
 		}
 
-		return soapModels.toArray(new P2PActivityCorrectionsSoap[soapModels.size()]);
+		return soapModels.toArray(
+			new P2PActivityCorrectionsSoap[soapModels.size()]);
 	}
 
 	public P2PActivityCorrectionsSoap() {
@@ -239,4 +249,5 @@ public class P2PActivityCorrectionsSoap implements Serializable {
 	private Date _date;
 	private long _fileEntryId;
 	private long _result;
+
 }

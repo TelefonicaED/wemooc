@@ -7,7 +7,8 @@ import com.liferay.portal.kernel.xml.Element;
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
-import aQute.bnd.annotation.ProviderType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para las postcondiciones que se ejecutan cuando un usuario ha finalizado un curso

@@ -3,7 +3,6 @@ package com.ted.lms.module.eval.complete.activities;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.ted.lms.model.BaseModuleEval;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
@@ -21,10 +20,10 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 
 	private static final Log log = LogFactoryUtil.getLog(CompleteActivitiesModuleEval.class);
 	
-	public CompleteActivitiesModuleEval(Module module, ServiceContext serviceContext, CourseResultLocalService courseResultLocalService,
+	public CompleteActivitiesModuleEval(Module module, CourseResultLocalService courseResultLocalService,
 			LearningActivityResultLocalService learningActivityResultLocalService, LearningActivityLocalService learningActivityLocalService, 
 			ModuleResultLocalService moduleResultLocalService) {
-		super(module, serviceContext, moduleResultLocalService);
+		super(module, moduleResultLocalService);
 		
 		this.courseResultLocalService = courseResultLocalService;
 		this.learningActivityResultLocalService = learningActivityResultLocalService;

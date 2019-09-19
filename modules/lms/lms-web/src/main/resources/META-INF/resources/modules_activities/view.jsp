@@ -41,7 +41,7 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 							</c:choose>
 						</span>
 					</div>
-					<div class="col-md-1">
+					<div class="col-md-1 lms-content-editable">
 						<%@ include file="/modules/module_action.jsp" %>
 					</div>
 				</div>
@@ -51,10 +51,13 @@ LearningActivityService learningActivityService = (LearningActivityService)reque
 						<c:choose>
 							<c:when test="<%=accessLock || (!courseIsLocked && !moduleIsLocked && !activity.isLocked(themeDisplay.getUser(), permissionChecker)) %>">
 								<a href="<%=activity.getURLView(themeDisplay) %>"><%=activity.getTitle(themeDisplay.getLocale()) %></a>
-								<%@ include file="/activities/activity_action.jsp" %>
+								<div class="lms-content-editable">
+									<%@ include file="/activities/activity_action.jsp" %>
+								</div>
 							</c:when>
 							<c:otherwise>
 								<%=activity.getTitle(themeDisplay.getLocale()) %>
+								<span class="glyphicon glyphicon-lock"></span>
 							</c:otherwise>
 						</c:choose>
 					</div>

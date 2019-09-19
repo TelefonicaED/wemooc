@@ -14,32 +14,32 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the CourseTypeRelation service. Represents a row in the &quot;LMS_CourseTypeRelation&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see CourseTypeRelationModel
- * @see com.ted.lms.model.impl.CourseTypeRelationImpl
- * @see com.ted.lms.model.impl.CourseTypeRelationModelImpl
  * @generated
  */
 @ImplementationClassName("com.ted.lms.model.impl.CourseTypeRelationImpl")
 @ProviderType
-public interface CourseTypeRelation extends CourseTypeRelationModel,
-	PersistedModel {
+public interface CourseTypeRelation
+	extends CourseTypeRelationModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.model.impl.CourseTypeRelationImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.model.impl.CourseTypeRelationImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<CourseTypeRelation, Long> COURSE_TYPE_ID_ACCESSOR =
-		new Accessor<CourseTypeRelation, Long>() {
+	public static final Accessor<CourseTypeRelation, Long>
+		COURSE_TYPE_ID_ACCESSOR = new Accessor<CourseTypeRelation, Long>() {
+
 			@Override
 			public Long get(CourseTypeRelation courseTypeRelation) {
 				return courseTypeRelation.getCourseTypeId();
@@ -54,10 +54,11 @@ public interface CourseTypeRelation extends CourseTypeRelationModel,
 			public Class<CourseTypeRelation> getTypeClass() {
 				return CourseTypeRelation.class;
 			}
-		};
 
-	public static final Accessor<CourseTypeRelation, Long> CLASS_NAME_ID_ACCESSOR =
-		new Accessor<CourseTypeRelation, Long>() {
+		};
+	public static final Accessor<CourseTypeRelation, Long>
+		CLASS_NAME_ID_ACCESSOR = new Accessor<CourseTypeRelation, Long>() {
+
 			@Override
 			public Long get(CourseTypeRelation courseTypeRelation) {
 				return courseTypeRelation.getClassNameId();
@@ -72,9 +73,11 @@ public interface CourseTypeRelation extends CourseTypeRelationModel,
 			public Class<CourseTypeRelation> getTypeClass() {
 				return CourseTypeRelation.class;
 			}
-		};
 
-	public static final Accessor<CourseTypeRelation, Long> CLASS_PK_ACCESSOR = new Accessor<CourseTypeRelation, Long>() {
+		};
+	public static final Accessor<CourseTypeRelation, Long> CLASS_PK_ACCESSOR =
+		new Accessor<CourseTypeRelation, Long>() {
+
 			@Override
 			public Long get(CourseTypeRelation courseTypeRelation) {
 				return courseTypeRelation.getClassPK();
@@ -89,5 +92,7 @@ public interface CourseTypeRelation extends CourseTypeRelationModel,
 			public Class<CourseTypeRelation> getTypeClass() {
 				return CourseTypeRelation.class;
 			}
+
 		};
+
 }

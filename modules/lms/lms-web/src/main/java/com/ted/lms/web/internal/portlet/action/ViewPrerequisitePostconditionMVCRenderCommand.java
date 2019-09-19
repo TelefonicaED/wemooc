@@ -117,7 +117,7 @@ public class ViewPrerequisitePostconditionMVCRenderCommand implements MVCRenderC
 							});
 					}
 				}
-			};themeDisplay.get
+			};
 			
 			HttpServletRequest request = portal.getHttpServletRequest(renderRequest);
 			

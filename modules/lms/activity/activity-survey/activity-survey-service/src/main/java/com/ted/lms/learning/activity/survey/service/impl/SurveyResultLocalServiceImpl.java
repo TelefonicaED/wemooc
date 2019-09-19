@@ -14,17 +14,14 @@
 
 package com.ted.lms.learning.activity.survey.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.kernel.zip.ZipWriter;
-import com.liferay.portal.kernel.zip.ZipWriterFactoryUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.survey.model.SurveyResult;
@@ -47,11 +44,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the survey result local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.survey.service.SurveyResultLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.survey.service.SurveyResultLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -59,17 +59,20 @@ import org.apache.poi.ss.usermodel.CellType;
  *
  * @author Brian Wing Shun Chan
  * @see SurveyResultLocalServiceBaseImpl
- * @see com.ted.lms.learning.activity.survey.service.SurveyResultLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.learning.activity.survey.model.SurveyResult",
+	service = AopService.class
+)
 public class SurveyResultLocalServiceImpl
 	extends SurveyResultLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.learning.activity.survey.service.SurveyResultLocalServiceUtil} to access the survey result local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.learning.activity.survey.service.SurveyResultLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.learning.activity.survey.service.SurveyResultLocalServiceUtil</code>.
 	 */
-	
-	public SurveyResult addSurveyResult(long actId, long latId, long userId, long questionId, long answerId, String textAnswer) {
+public SurveyResult addSurveyResult(long actId, long latId, long userId, long questionId, long answerId, String textAnswer) {
 		
 		SurveyResult surveyResult = surveyResultPersistence.create(counterLocalService.increment(SurveyResult.class.getName()));
 		
@@ -217,15 +220,15 @@ public class SurveyResultLocalServiceImpl
 		cell.setCellValue(value);
 	}
 	
-	@ServiceReference(type = CourseLocalService.class)
+	@Reference
 	protected CourseLocalService courseLocalService;
 	
-	@ServiceReference(type = ModuleLocalService.class)
+	@Reference
 	protected ModuleLocalService moduleLocalService;
 	
-	@ServiceReference(type = QuestionLocalService.class)
+	@Reference
 	protected QuestionLocalService questionLocalService;
 	
-	@ServiceReference(type = LearningActivityLocalService.class)
+	@Reference
 	protected LearningActivityLocalService learningActivityLocalService;
 }

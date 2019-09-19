@@ -14,6 +14,7 @@
 
 package com.ted.prerequisite.service.impl;
 
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
@@ -24,11 +25,13 @@ import com.ted.prerequisite.service.base.PrerequisiteRelationLocalServiceBaseImp
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the prerequisite relation local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.prerequisite.service.PrerequisiteRelationLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.prerequisite.service.PrerequisiteRelationLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -36,16 +39,19 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see PrerequisiteRelationLocalServiceBaseImpl
- * @see com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.prerequisite.model.PrerequisiteRelation",
+	service = AopService.class
+)
 public class PrerequisiteRelationLocalServiceImpl
 	extends PrerequisiteRelationLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil} to access the prerequisite relation local service.
+	 * Never reference this class directly. Use <code>com.ted.prerequisite.service.PrerequisiteRelationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil</code>.
 	 */
-	
 	public PrerequisiteRelation addPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK, String extraData) {
 		PrerequisiteRelation prerequisiteRelation = prerequisiteRelationPersistence.create(counterLocalService.increment(PrerequisiteRelation.class.getName()));
 		
@@ -59,6 +65,8 @@ public class PrerequisiteRelationLocalServiceImpl
 	
 	public List<Prerequisite> getPrerequisites(long classNameId, long classPK){
 		List<Prerequisite> listPrerequisites = new ArrayList<Prerequisite>();
+			
+		System.out.println("prerequisiteRelationPersistence: " + prerequisiteRelationPersistence);
 		
 		List<PrerequisiteRelation> listPrerequisiteRelation = prerequisiteRelationPersistence.findByClassNameIdClassPK(classNameId, classPK);
 		

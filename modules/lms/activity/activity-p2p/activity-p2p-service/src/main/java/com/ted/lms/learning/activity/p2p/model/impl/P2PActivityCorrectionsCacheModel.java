@@ -14,11 +14,9 @@
 
 package com.ted.lms.learning.activity.p2p.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing P2PActivityCorrections in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see P2PActivityCorrections
  * @generated
  */
 @ProviderType
-public class P2PActivityCorrectionsCacheModel implements CacheModel<P2PActivityCorrections>,
-	Externalizable {
+public class P2PActivityCorrectionsCacheModel
+	implements CacheModel<P2PActivityCorrections>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -49,9 +49,12 @@ public class P2PActivityCorrectionsCacheModel implements CacheModel<P2PActivityC
 			return false;
 		}
 
-		P2PActivityCorrectionsCacheModel p2pActivityCorrectionsCacheModel = (P2PActivityCorrectionsCacheModel)obj;
+		P2PActivityCorrectionsCacheModel p2pActivityCorrectionsCacheModel =
+			(P2PActivityCorrectionsCacheModel)obj;
 
-		if (p2pActivityCorrectionsId == p2pActivityCorrectionsCacheModel.p2pActivityCorrectionsId) {
+		if (p2pActivityCorrectionsId ==
+				p2pActivityCorrectionsCacheModel.p2pActivityCorrectionsId) {
+
 			return true;
 		}
 
@@ -104,7 +107,8 @@ public class P2PActivityCorrectionsCacheModel implements CacheModel<P2PActivityC
 
 	@Override
 	public P2PActivityCorrections toEntityModel() {
-		P2PActivityCorrectionsImpl p2pActivityCorrectionsImpl = new P2PActivityCorrectionsImpl();
+		P2PActivityCorrectionsImpl p2pActivityCorrectionsImpl =
+			new P2PActivityCorrectionsImpl();
 
 		if (uuid == null) {
 			p2pActivityCorrectionsImpl.setUuid("");
@@ -113,7 +117,8 @@ public class P2PActivityCorrectionsCacheModel implements CacheModel<P2PActivityC
 			p2pActivityCorrectionsImpl.setUuid(uuid);
 		}
 
-		p2pActivityCorrectionsImpl.setP2pActivityCorrectionsId(p2pActivityCorrectionsId);
+		p2pActivityCorrectionsImpl.setP2pActivityCorrectionsId(
+			p2pActivityCorrectionsId);
 		p2pActivityCorrectionsImpl.setGroupId(groupId);
 		p2pActivityCorrectionsImpl.setCompanyId(companyId);
 		p2pActivityCorrectionsImpl.setUserCreateId(userCreateId);
@@ -194,8 +199,7 @@ public class P2PActivityCorrectionsCacheModel implements CacheModel<P2PActivityC
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -256,4 +260,5 @@ public class P2PActivityCorrectionsCacheModel implements CacheModel<P2PActivityC
 	public long date;
 	public long fileEntryId;
 	public long result;
+
 }

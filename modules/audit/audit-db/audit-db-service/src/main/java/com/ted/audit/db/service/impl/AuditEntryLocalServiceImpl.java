@@ -14,17 +14,20 @@
 
 package com.ted.audit.db.service.impl;
 
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.ted.audit.db.model.AuditEntry;
 import com.ted.audit.db.service.base.AuditEntryLocalServiceBaseImpl;
 
 import java.util.Date;
 
+import org.osgi.service.component.annotations.Component;
+
 /**
  * The implementation of the audit entry local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.audit.db.service.AuditEntryLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.audit.db.service.AuditEntryLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -32,13 +35,17 @@ import java.util.Date;
  *
  * @author Brian Wing Shun Chan
  * @see AuditEntryLocalServiceBaseImpl
- * @see com.ted.audit.db.service.AuditEntryLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.audit.db.model.AuditEntry",
+	service = AopService.class
+)
 public class AuditEntryLocalServiceImpl extends AuditEntryLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.audit.db.service.AuditEntryLocalServiceUtil} to access the audit entry local service.
+	 * Never reference this class directly. Use <code>com.ted.audit.db.service.AuditEntryLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.audit.db.service.AuditEntryLocalServiceUtil</code>.
 	 */
 	
 	public void addAuditEntry(long companyId, long groupId, int actionId, String className, long classPK, long userId,

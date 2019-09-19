@@ -14,21 +14,15 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
-
 import com.liferay.exportimport.kernel.lar.StagedModelType;
-
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <p>
@@ -40,19 +34,11 @@ import java.util.Objects;
  * @generated
  */
 @ProviderType
-public class CourseWrapper implements Course, ModelWrapper<Course> {
+public class CourseWrapper
+	extends BaseModelWrapper<Course> implements Course, ModelWrapper<Course> {
+
 	public CourseWrapper(Course course) {
-		_course = course;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return Course.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return Course.class.getName();
+		super(course);
 	}
 
 	@Override
@@ -88,7 +74,8 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		attributes.put("goodbyeSubject", getGoodbyeSubject());
 		attributes.put("goodbyeMsg", getGoodbyeMsg());
 		attributes.put("deniedInscription", isDeniedInscription());
-		attributes.put("deniedInscriptionSubject", getDeniedInscriptionSubject());
+		attributes.put(
+			"deniedInscriptionSubject", getDeniedInscriptionSubject());
 		attributes.put("deniedInscriptionMsg", getDeniedInscriptionMsg());
 		attributes.put("courseExtraData", getCourseExtraData());
 		attributes.put("status", getStatus());
@@ -186,7 +173,7 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 		}
 
 		Date registrationStartDate = (Date)attributes.get(
-				"registrationStartDate");
+			"registrationStartDate");
 
 		if (registrationStartDate != null) {
 			setRegistrationStartDate(registrationStartDate);
@@ -270,21 +257,22 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 			setGoodbyeMsg(goodbyeMsg);
 		}
 
-		Boolean deniedInscription = (Boolean)attributes.get("deniedInscription");
+		Boolean deniedInscription = (Boolean)attributes.get(
+			"deniedInscription");
 
 		if (deniedInscription != null) {
 			setDeniedInscription(deniedInscription);
 		}
 
 		String deniedInscriptionSubject = (String)attributes.get(
-				"deniedInscriptionSubject");
+			"deniedInscriptionSubject");
 
 		if (deniedInscriptionSubject != null) {
 			setDeniedInscriptionSubject(deniedInscriptionSubject);
 		}
 
 		String deniedInscriptionMsg = (String)attributes.get(
-				"deniedInscriptionMsg");
+			"deniedInscriptionMsg");
 
 		if (deniedInscriptionMsg != null) {
 			setDeniedInscriptionMsg(deniedInscriptionMsg);
@@ -323,2252 +311,2189 @@ public class CourseWrapper implements Course, ModelWrapper<Course> {
 
 	@Override
 	public void addCourseExtraDataJSON(String key, Object value) {
-		_course.addCourseExtraDataJSON(key, value);
+		model.addCourseExtraDataJSON(key, value);
 	}
 
 	@Override
-	public boolean canEnroll(long userId, java.util.Locale locale,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+	public boolean canEnroll(
+			long userId, java.util.Locale locale,
+			com.liferay.portal.kernel.security.permission.PermissionChecker
+				permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException,
-			com.ted.lms.exception.InscriptionException {
-		return _course.canEnroll(userId, locale, permissionChecker);
+			   com.ted.lms.exception.InscriptionException {
+
+		return model.canEnroll(userId, locale, permissionChecker);
 	}
 
 	@Override
-	public boolean canUnsubscribe(long userId,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker)
+	public boolean canUnsubscribe(
+			long userId,
+			com.liferay.portal.kernel.security.permission.PermissionChecker
+				permissionChecker)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _course.canUnsubscribe(userId, permissionChecker);
-	}
 
-	@Override
-	public Object clone() {
-		return new CourseWrapper((Course)_course.clone());
-	}
-
-	@Override
-	public int compareTo(Course course) {
-		return _course.compareTo(course);
+		return model.canUnsubscribe(userId, permissionChecker);
 	}
 
 	@Override
 	public com.liferay.asset.kernel.model.AssetEntry getAssetEntry() {
-		return _course.getAssetEntry();
+		return model.getAssetEntry();
 	}
 
 	@Override
 	public String[] getAvailableLanguageIds() {
-		return _course.getAvailableLanguageIds();
+		return model.getAvailableLanguageIds();
 	}
 
 	/**
-	* Returns the calification type of this course.
-	*
-	* @return the calification type of this course
-	*/
+	 * Returns the calification type of this course.
+	 *
+	 * @return the calification type of this course
+	 */
 	@Override
 	public long getCalificationType() {
-		return _course.getCalificationType();
+		return model.getCalificationType();
 	}
 
 	/**
-	* Returns the company ID of this course.
-	*
-	* @return the company ID of this course
-	*/
+	 * Returns the company ID of this course.
+	 *
+	 * @return the company ID of this course
+	 */
 	@Override
 	public long getCompanyId() {
-		return _course.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	@Override
 	public int getCountEditions() {
-		return _course.getCountEditions();
+		return model.getCountEditions();
 	}
 
 	/**
-	* Returns the course eval ID of this course.
-	*
-	* @return the course eval ID of this course
-	*/
+	 * Returns the course eval ID of this course.
+	 *
+	 * @return the course eval ID of this course
+	 */
 	@Override
 	public long getCourseEvalId() {
-		return _course.getCourseEvalId();
+		return model.getCourseEvalId();
 	}
 
 	@Override
 	public com.liferay.portal.kernel.json.JSONObject getCourseEvalJSON() {
-		return _course.getCourseEvalJSON();
+		return model.getCourseEvalJSON();
 	}
 
 	/**
-	* Returns the course extra data of this course.
-	*
-	* @return the course extra data of this course
-	*/
+	 * Returns the course extra data of this course.
+	 *
+	 * @return the course extra data of this course
+	 */
 	@Override
 	public String getCourseExtraData() {
-		return _course.getCourseExtraData();
+		return model.getCourseExtraData();
 	}
 
 	@Override
 	public com.liferay.portal.kernel.json.JSONObject getCourseExtraDataJSON() {
-		return _course.getCourseExtraDataJSON();
+		return model.getCourseExtraDataJSON();
 	}
 
 	/**
-	* Returns the course ID of this course.
-	*
-	* @return the course ID of this course
-	*/
+	 * Returns the course ID of this course.
+	 *
+	 * @return the course ID of this course
+	 */
 	@Override
 	public long getCourseId() {
-		return _course.getCourseId();
+		return model.getCourseId();
 	}
 
 	@Override
 	public long getCourseTypeId() {
-		return _course.getCourseTypeId();
+		return model.getCourseTypeId();
 	}
 
 	/**
-	* Returns the create date of this course.
-	*
-	* @return the create date of this course
-	*/
+	 * Returns the create date of this course.
+	 *
+	 * @return the create date of this course
+	 */
 	@Override
 	public Date getCreateDate() {
-		return _course.getCreateDate();
+		return model.getCreateDate();
 	}
 
 	@Override
 	public String getDefaultLanguageId() {
-		return _course.getDefaultLanguageId();
+		return model.getDefaultLanguageId();
 	}
 
 	/**
-	* Returns the denied inscription of this course.
-	*
-	* @return the denied inscription of this course
-	*/
+	 * Returns the denied inscription of this course.
+	 *
+	 * @return the denied inscription of this course
+	 */
 	@Override
 	public boolean getDeniedInscription() {
-		return _course.getDeniedInscription();
+		return model.getDeniedInscription();
 	}
 
 	/**
-	* Returns the denied inscription msg of this course.
-	*
-	* @return the denied inscription msg of this course
-	*/
+	 * Returns the denied inscription msg of this course.
+	 *
+	 * @return the denied inscription msg of this course
+	 */
 	@Override
 	public String getDeniedInscriptionMsg() {
-		return _course.getDeniedInscriptionMsg();
+		return model.getDeniedInscriptionMsg();
 	}
 
 	/**
-	* Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized denied inscription msg of this course
-	*/
+	 * Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized denied inscription msg of this course
+	 */
 	@Override
 	public String getDeniedInscriptionMsg(java.util.Locale locale) {
-		return _course.getDeniedInscriptionMsg(locale);
+		return model.getDeniedInscriptionMsg(locale);
 	}
 
 	/**
-	* Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized denied inscription msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
-	public String getDeniedInscriptionMsg(java.util.Locale locale,
-		boolean useDefault) {
-		return _course.getDeniedInscriptionMsg(locale, useDefault);
+	public String getDeniedInscriptionMsg(
+		java.util.Locale locale, boolean useDefault) {
+
+		return model.getDeniedInscriptionMsg(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized denied inscription msg of this course
-	*/
+	 * Returns the localized denied inscription msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized denied inscription msg of this course
+	 */
 	@Override
 	public String getDeniedInscriptionMsg(String languageId) {
-		return _course.getDeniedInscriptionMsg(languageId);
+		return model.getDeniedInscriptionMsg(languageId);
 	}
 
 	/**
-	* Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized denied inscription msg of this course
-	*/
+	 * Returns the localized denied inscription msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription msg of this course
+	 */
 	@Override
-	public String getDeniedInscriptionMsg(String languageId, boolean useDefault) {
-		return _course.getDeniedInscriptionMsg(languageId, useDefault);
+	public String getDeniedInscriptionMsg(
+		String languageId, boolean useDefault) {
+
+		return model.getDeniedInscriptionMsg(languageId, useDefault);
 	}
 
 	@Override
 	public String getDeniedInscriptionMsgCurrentLanguageId() {
-		return _course.getDeniedInscriptionMsgCurrentLanguageId();
+		return model.getDeniedInscriptionMsgCurrentLanguageId();
 	}
 
 	@Override
 	public String getDeniedInscriptionMsgCurrentValue() {
-		return _course.getDeniedInscriptionMsgCurrentValue();
+		return model.getDeniedInscriptionMsgCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized denied inscription msgs of this course.
-	*
-	* @return the locales and localized denied inscription msgs of this course
-	*/
+	 * Returns a map of the locales and localized denied inscription msgs of this course.
+	 *
+	 * @return the locales and localized denied inscription msgs of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getDeniedInscriptionMsgMap() {
-		return _course.getDeniedInscriptionMsgMap();
+		return model.getDeniedInscriptionMsgMap();
 	}
 
 	@Override
 	public String getDeniedInscriptionMsgMapAsXML() {
-		return _course.getDeniedInscriptionMsgMapAsXML();
+		return model.getDeniedInscriptionMsgMapAsXML();
 	}
 
 	/**
-	* Returns the denied inscription subject of this course.
-	*
-	* @return the denied inscription subject of this course
-	*/
+	 * Returns the denied inscription subject of this course.
+	 *
+	 * @return the denied inscription subject of this course
+	 */
 	@Override
 	public String getDeniedInscriptionSubject() {
-		return _course.getDeniedInscriptionSubject();
+		return model.getDeniedInscriptionSubject();
 	}
 
 	/**
-	* Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized denied inscription subject of this course
-	*/
+	 * Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized denied inscription subject of this course
+	 */
 	@Override
 	public String getDeniedInscriptionSubject(java.util.Locale locale) {
-		return _course.getDeniedInscriptionSubject(locale);
+		return model.getDeniedInscriptionSubject(locale);
 	}
 
 	/**
-	* Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized denied inscription subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
-	public String getDeniedInscriptionSubject(java.util.Locale locale,
-		boolean useDefault) {
-		return _course.getDeniedInscriptionSubject(locale, useDefault);
+	public String getDeniedInscriptionSubject(
+		java.util.Locale locale, boolean useDefault) {
+
+		return model.getDeniedInscriptionSubject(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized denied inscription subject of this course
-	*/
+	 * Returns the localized denied inscription subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized denied inscription subject of this course
+	 */
 	@Override
 	public String getDeniedInscriptionSubject(String languageId) {
-		return _course.getDeniedInscriptionSubject(languageId);
+		return model.getDeniedInscriptionSubject(languageId);
 	}
 
 	/**
-	* Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized denied inscription subject of this course
-	*/
+	 * Returns the localized denied inscription subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized denied inscription subject of this course
+	 */
 	@Override
-	public String getDeniedInscriptionSubject(String languageId,
-		boolean useDefault) {
-		return _course.getDeniedInscriptionSubject(languageId, useDefault);
+	public String getDeniedInscriptionSubject(
+		String languageId, boolean useDefault) {
+
+		return model.getDeniedInscriptionSubject(languageId, useDefault);
 	}
 
 	@Override
 	public String getDeniedInscriptionSubjectCurrentLanguageId() {
-		return _course.getDeniedInscriptionSubjectCurrentLanguageId();
+		return model.getDeniedInscriptionSubjectCurrentLanguageId();
 	}
 
 	@Override
 	public String getDeniedInscriptionSubjectCurrentValue() {
-		return _course.getDeniedInscriptionSubjectCurrentValue();
+		return model.getDeniedInscriptionSubjectCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized denied inscription subjects of this course.
-	*
-	* @return the locales and localized denied inscription subjects of this course
-	*/
+	 * Returns a map of the locales and localized denied inscription subjects of this course.
+	 *
+	 * @return the locales and localized denied inscription subjects of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getDeniedInscriptionSubjectMap() {
-		return _course.getDeniedInscriptionSubjectMap();
+		return model.getDeniedInscriptionSubjectMap();
 	}
 
 	/**
-	* Returns the description of this course.
-	*
-	* @return the description of this course
-	*/
+	 * Returns the description of this course.
+	 *
+	 * @return the description of this course
+	 */
 	@Override
 	public String getDescription() {
-		return _course.getDescription();
+		return model.getDescription();
 	}
 
 	/**
-	* Returns the localized description of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized description of this course
-	*/
+	 * Returns the localized description of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized description of this course
+	 */
 	@Override
 	public String getDescription(java.util.Locale locale) {
-		return _course.getDescription(locale);
+		return model.getDescription(locale);
 	}
 
 	/**
-	* Returns the localized description of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized description of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized description of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized description of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
 	public String getDescription(java.util.Locale locale, boolean useDefault) {
-		return _course.getDescription(locale, useDefault);
+		return model.getDescription(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized description of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized description of this course
-	*/
+	 * Returns the localized description of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized description of this course
+	 */
 	@Override
 	public String getDescription(String languageId) {
-		return _course.getDescription(languageId);
+		return model.getDescription(languageId);
 	}
 
 	/**
-	* Returns the localized description of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized description of this course
-	*/
+	 * Returns the localized description of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized description of this course
+	 */
 	@Override
 	public String getDescription(String languageId, boolean useDefault) {
-		return _course.getDescription(languageId, useDefault);
+		return model.getDescription(languageId, useDefault);
 	}
 
 	@Override
 	public String getDescriptionCurrentLanguageId() {
-		return _course.getDescriptionCurrentLanguageId();
+		return model.getDescriptionCurrentLanguageId();
 	}
 
 	@Override
 	public String getDescriptionCurrentValue() {
-		return _course.getDescriptionCurrentValue();
+		return model.getDescriptionCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized descriptions of this course.
-	*
-	* @return the locales and localized descriptions of this course
-	*/
+	 * Returns a map of the locales and localized descriptions of this course.
+	 *
+	 * @return the locales and localized descriptions of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getDescriptionMap() {
-		return _course.getDescriptionMap();
+		return model.getDescriptionMap();
 	}
 
 	@Override
 	public String getDescriptionMapAsXML() {
-		return _course.getDescriptionMapAsXML();
+		return model.getDescriptionMapAsXML();
 	}
 
 	/**
-	* Returns the execution end date of this course.
-	*
-	* @return the execution end date of this course
-	*/
+	 * Returns the execution end date of this course.
+	 *
+	 * @return the execution end date of this course
+	 */
 	@Override
 	public Date getExecutionEndDate() {
-		return _course.getExecutionEndDate();
+		return model.getExecutionEndDate();
 	}
 
 	@Override
 	public java.util.Calendar getExecutionEndDateCalendar() {
-		return _course.getExecutionEndDateCalendar();
+		return model.getExecutionEndDateCalendar();
 	}
 
 	@Override
-	public String getExecutionEndDateFormat(java.util.Locale locale,
-		java.util.TimeZone timeZone) {
-		return _course.getExecutionEndDateFormat(locale, timeZone);
+	public String getExecutionEndDateFormat(
+		java.util.Locale locale, java.util.TimeZone timeZone) {
+
+		return model.getExecutionEndDateFormat(locale, timeZone);
 	}
 
 	/**
-	* Returns the execution start date of this course.
-	*
-	* @return the execution start date of this course
-	*/
+	 * Returns the execution start date of this course.
+	 *
+	 * @return the execution start date of this course
+	 */
 	@Override
 	public Date getExecutionStartDate() {
-		return _course.getExecutionStartDate();
+		return model.getExecutionStartDate();
 	}
 
 	@Override
 	public java.util.Calendar getExecutionStartDateCalendar() {
-		return _course.getExecutionStartDateCalendar();
+		return model.getExecutionStartDateCalendar();
 	}
 
 	@Override
-	public String getExecutionStartDateFormat(java.util.Locale locale,
-		java.util.TimeZone timeZone) {
-		return _course.getExecutionStartDateFormat(locale, timeZone);
-	}
+	public String getExecutionStartDateFormat(
+		java.util.Locale locale, java.util.TimeZone timeZone) {
 
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _course.getExpandoBridge();
+		return model.getExecutionStartDateFormat(locale, timeZone);
 	}
 
 	@Override
 	public String getFriendlyURL() {
-		return _course.getFriendlyURL();
+		return model.getFriendlyURL();
 	}
 
 	@Override
 	public Map<java.util.Locale, String> getFriendlyURLMap()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _course.getFriendlyURLMap();
+
+		return model.getFriendlyURLMap();
 	}
 
 	@Override
 	public String getFriendlyURLsXML()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _course.getFriendlyURLsXML();
+
+		return model.getFriendlyURLsXML();
 	}
 
 	/**
-	* Returns the goodbye of this course.
-	*
-	* @return the goodbye of this course
-	*/
+	 * Returns the goodbye of this course.
+	 *
+	 * @return the goodbye of this course
+	 */
 	@Override
 	public boolean getGoodbye() {
-		return _course.getGoodbye();
+		return model.getGoodbye();
 	}
 
 	/**
-	* Returns the goodbye msg of this course.
-	*
-	* @return the goodbye msg of this course
-	*/
+	 * Returns the goodbye msg of this course.
+	 *
+	 * @return the goodbye msg of this course
+	 */
 	@Override
 	public String getGoodbyeMsg() {
-		return _course.getGoodbyeMsg();
+		return model.getGoodbyeMsg();
 	}
 
 	/**
-	* Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized goodbye msg of this course
-	*/
+	 * Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized goodbye msg of this course
+	 */
 	@Override
 	public String getGoodbyeMsg(java.util.Locale locale) {
-		return _course.getGoodbyeMsg(locale);
+		return model.getGoodbyeMsg(locale);
 	}
 
 	/**
-	* Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized goodbye msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
 	public String getGoodbyeMsg(java.util.Locale locale, boolean useDefault) {
-		return _course.getGoodbyeMsg(locale, useDefault);
+		return model.getGoodbyeMsg(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized goodbye msg of this course
-	*/
+	 * Returns the localized goodbye msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized goodbye msg of this course
+	 */
 	@Override
 	public String getGoodbyeMsg(String languageId) {
-		return _course.getGoodbyeMsg(languageId);
+		return model.getGoodbyeMsg(languageId);
 	}
 
 	/**
-	* Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized goodbye msg of this course
-	*/
+	 * Returns the localized goodbye msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye msg of this course
+	 */
 	@Override
 	public String getGoodbyeMsg(String languageId, boolean useDefault) {
-		return _course.getGoodbyeMsg(languageId, useDefault);
+		return model.getGoodbyeMsg(languageId, useDefault);
 	}
 
 	@Override
 	public String getGoodbyeMsgCurrentLanguageId() {
-		return _course.getGoodbyeMsgCurrentLanguageId();
+		return model.getGoodbyeMsgCurrentLanguageId();
 	}
 
 	@Override
 	public String getGoodbyeMsgCurrentValue() {
-		return _course.getGoodbyeMsgCurrentValue();
+		return model.getGoodbyeMsgCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized goodbye msgs of this course.
-	*
-	* @return the locales and localized goodbye msgs of this course
-	*/
+	 * Returns a map of the locales and localized goodbye msgs of this course.
+	 *
+	 * @return the locales and localized goodbye msgs of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getGoodbyeMsgMap() {
-		return _course.getGoodbyeMsgMap();
+		return model.getGoodbyeMsgMap();
 	}
 
 	@Override
 	public String getGoodbyeMsgMapAsXML() {
-		return _course.getGoodbyeMsgMapAsXML();
+		return model.getGoodbyeMsgMapAsXML();
 	}
 
 	/**
-	* Returns the goodbye subject of this course.
-	*
-	* @return the goodbye subject of this course
-	*/
+	 * Returns the goodbye subject of this course.
+	 *
+	 * @return the goodbye subject of this course
+	 */
 	@Override
 	public String getGoodbyeSubject() {
-		return _course.getGoodbyeSubject();
+		return model.getGoodbyeSubject();
 	}
 
 	/**
-	* Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized goodbye subject of this course
-	*/
+	 * Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized goodbye subject of this course
+	 */
 	@Override
 	public String getGoodbyeSubject(java.util.Locale locale) {
-		return _course.getGoodbyeSubject(locale);
+		return model.getGoodbyeSubject(locale);
 	}
 
 	/**
-	* Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized goodbye subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
-	public String getGoodbyeSubject(java.util.Locale locale, boolean useDefault) {
-		return _course.getGoodbyeSubject(locale, useDefault);
+	public String getGoodbyeSubject(
+		java.util.Locale locale, boolean useDefault) {
+
+		return model.getGoodbyeSubject(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized goodbye subject of this course
-	*/
+	 * Returns the localized goodbye subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized goodbye subject of this course
+	 */
 	@Override
 	public String getGoodbyeSubject(String languageId) {
-		return _course.getGoodbyeSubject(languageId);
+		return model.getGoodbyeSubject(languageId);
 	}
 
 	/**
-	* Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized goodbye subject of this course
-	*/
+	 * Returns the localized goodbye subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized goodbye subject of this course
+	 */
 	@Override
 	public String getGoodbyeSubject(String languageId, boolean useDefault) {
-		return _course.getGoodbyeSubject(languageId, useDefault);
+		return model.getGoodbyeSubject(languageId, useDefault);
 	}
 
 	@Override
 	public String getGoodbyeSubjectCurrentLanguageId() {
-		return _course.getGoodbyeSubjectCurrentLanguageId();
+		return model.getGoodbyeSubjectCurrentLanguageId();
 	}
 
 	@Override
 	public String getGoodbyeSubjectCurrentValue() {
-		return _course.getGoodbyeSubjectCurrentValue();
+		return model.getGoodbyeSubjectCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized goodbye subjects of this course.
-	*
-	* @return the locales and localized goodbye subjects of this course
-	*/
+	 * Returns a map of the locales and localized goodbye subjects of this course.
+	 *
+	 * @return the locales and localized goodbye subjects of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getGoodbyeSubjectMap() {
-		return _course.getGoodbyeSubjectMap();
+		return model.getGoodbyeSubjectMap();
 	}
 
 	@Override
 	public com.liferay.portal.kernel.model.Group getGroup() {
-		return _course.getGroup();
+		return model.getGroup();
 	}
 
 	/**
-	* Returns the group created ID of this course.
-	*
-	* @return the group created ID of this course
-	*/
+	 * Returns the group created ID of this course.
+	 *
+	 * @return the group created ID of this course
+	 */
 	@Override
 	public long getGroupCreatedId() {
-		return _course.getGroupCreatedId();
+		return model.getGroupCreatedId();
 	}
 
 	/**
-	* Returns the group ID of this course.
-	*
-	* @return the group ID of this course
-	*/
+	 * Returns the group ID of this course.
+	 *
+	 * @return the group ID of this course
+	 */
 	@Override
 	public long getGroupId() {
-		return _course.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
-	* Returns the inscription type of this course.
-	*
-	* @return the inscription type of this course
-	*/
+	 * Returns the inscription type of this course.
+	 *
+	 * @return the inscription type of this course
+	 */
 	@Override
 	public long getInscriptionType() {
-		return _course.getInscriptionType();
+		return model.getInscriptionType();
 	}
 
 	/**
-	* Returns the last publish date of this course.
-	*
-	* @return the last publish date of this course
-	*/
+	 * Returns the last publish date of this course.
+	 *
+	 * @return the last publish date of this course
+	 */
 	@Override
 	public Date getLastPublishDate() {
-		return _course.getLastPublishDate();
+		return model.getLastPublishDate();
 	}
 
 	@Override
 	public com.liferay.portal.kernel.model.LayoutSet getLayoutSet() {
-		return _course.getLayoutSet();
+		return model.getLayoutSet();
 	}
 
 	@Override
 	public long getLayoutSetPrototypeId() {
-		return _course.getLayoutSetPrototypeId();
+		return model.getLayoutSetPrototypeId();
 	}
 
 	/**
-	* Returns the max users of this course.
-	*
-	* @return the max users of this course
-	*/
+	 * Returns the max users of this course.
+	 *
+	 * @return the max users of this course
+	 */
 	@Override
 	public int getMaxUsers() {
-		return _course.getMaxUsers();
+		return model.getMaxUsers();
 	}
 
 	/**
-	* Returns the modified date of this course.
-	*
-	* @return the modified date of this course
-	*/
+	 * Returns the modified date of this course.
+	 *
+	 * @return the modified date of this course
+	 */
 	@Override
 	public Date getModifiedDate() {
-		return _course.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
-	* Returns the parent course ID of this course.
-	*
-	* @return the parent course ID of this course
-	*/
+	 * Returns the parent course ID of this course.
+	 *
+	 * @return the parent course ID of this course
+	 */
 	@Override
 	public long getParentCourseId() {
-		return _course.getParentCourseId();
+		return model.getParentCourseId();
 	}
 
 	/**
-	* Returns the primary key of this course.
-	*
-	* @return the primary key of this course
-	*/
+	 * Returns the primary key of this course.
+	 *
+	 * @return the primary key of this course
+	 */
 	@Override
 	public long getPrimaryKey() {
-		return _course.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _course.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
-	* Returns the registration end date of this course.
-	*
-	* @return the registration end date of this course
-	*/
+	 * Returns the registration end date of this course.
+	 *
+	 * @return the registration end date of this course
+	 */
 	@Override
 	public Date getRegistrationEndDate() {
-		return _course.getRegistrationEndDate();
+		return model.getRegistrationEndDate();
 	}
 
 	/**
-	* Returns the registration start date of this course.
-	*
-	* @return the registration start date of this course
-	*/
+	 * Returns the registration start date of this course.
+	 *
+	 * @return the registration start date of this course
+	 */
 	@Override
 	public Date getRegistrationStartDate() {
-		return _course.getRegistrationStartDate();
+		return model.getRegistrationStartDate();
 	}
 
 	@Override
 	public CourseResult getResultUser(long userId)
 		throws com.ted.lms.exception.NoSuchCourseResultException {
-		return _course.getResultUser(userId);
+
+		return model.getResultUser(userId);
 	}
 
 	/**
-	* Returns the small image ID of this course.
-	*
-	* @return the small image ID of this course
-	*/
+	 * Returns the small image ID of this course.
+	 *
+	 * @return the small image ID of this course
+	 */
 	@Override
 	public long getSmallImageId() {
-		return _course.getSmallImageId();
+		return model.getSmallImageId();
 	}
 
 	@Override
 	public String getSmallImageURL(
-		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+			com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _course.getSmallImageURL(themeDisplay);
+
+		return model.getSmallImageURL(themeDisplay);
 	}
 
 	/**
-	* Returns the status of this course.
-	*
-	* @return the status of this course
-	*/
+	 * Returns the status of this course.
+	 *
+	 * @return the status of this course
+	 */
 	@Override
 	public int getStatus() {
-		return _course.getStatus();
+		return model.getStatus();
 	}
 
 	/**
-	* Returns the status by user ID of this course.
-	*
-	* @return the status by user ID of this course
-	*/
+	 * Returns the status by user ID of this course.
+	 *
+	 * @return the status by user ID of this course
+	 */
 	@Override
 	public long getStatusByUserId() {
-		return _course.getStatusByUserId();
+		return model.getStatusByUserId();
 	}
 
 	/**
-	* Returns the status by user name of this course.
-	*
-	* @return the status by user name of this course
-	*/
+	 * Returns the status by user name of this course.
+	 *
+	 * @return the status by user name of this course
+	 */
 	@Override
 	public String getStatusByUserName() {
-		return _course.getStatusByUserName();
+		return model.getStatusByUserName();
 	}
 
 	/**
-	* Returns the status by user uuid of this course.
-	*
-	* @return the status by user uuid of this course
-	*/
+	 * Returns the status by user uuid of this course.
+	 *
+	 * @return the status by user uuid of this course
+	 */
 	@Override
 	public String getStatusByUserUuid() {
-		return _course.getStatusByUserUuid();
+		return model.getStatusByUserUuid();
 	}
 
 	/**
-	* Returns the status date of this course.
-	*
-	* @return the status date of this course
-	*/
+	 * Returns the status date of this course.
+	 *
+	 * @return the status date of this course
+	 */
 	@Override
 	public Date getStatusDate() {
-		return _course.getStatusDate();
+		return model.getStatusDate();
 	}
 
 	/**
-	* Returns the title of this course.
-	*
-	* @return the title of this course
-	*/
+	 * Returns the title of this course.
+	 *
+	 * @return the title of this course
+	 */
 	@Override
 	public String getTitle() {
-		return _course.getTitle();
+		return model.getTitle();
 	}
 
 	/**
-	* Returns the localized title of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized title of this course
-	*/
+	 * Returns the localized title of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized title of this course
+	 */
 	@Override
 	public String getTitle(java.util.Locale locale) {
-		return _course.getTitle(locale);
+		return model.getTitle(locale);
 	}
 
 	/**
-	* Returns the localized title of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized title of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized title of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized title of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
 	public String getTitle(java.util.Locale locale, boolean useDefault) {
-		return _course.getTitle(locale, useDefault);
+		return model.getTitle(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized title of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized title of this course
-	*/
+	 * Returns the localized title of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized title of this course
+	 */
 	@Override
 	public String getTitle(String languageId) {
-		return _course.getTitle(languageId);
+		return model.getTitle(languageId);
 	}
 
 	/**
-	* Returns the localized title of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized title of this course
-	*/
+	 * Returns the localized title of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized title of this course
+	 */
 	@Override
 	public String getTitle(String languageId, boolean useDefault) {
-		return _course.getTitle(languageId, useDefault);
+		return model.getTitle(languageId, useDefault);
 	}
 
 	@Override
 	public String getTitleCurrentLanguageId() {
-		return _course.getTitleCurrentLanguageId();
+		return model.getTitleCurrentLanguageId();
 	}
 
 	@Override
 	public String getTitleCurrentValue() {
-		return _course.getTitleCurrentValue();
+		return model.getTitleCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized titles of this course.
-	*
-	* @return the locales and localized titles of this course
-	*/
+	 * Returns a map of the locales and localized titles of this course.
+	 *
+	 * @return the locales and localized titles of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getTitleMap() {
-		return _course.getTitleMap();
+		return model.getTitleMap();
 	}
 
 	/**
-	* Returns the trash entry created when this course was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this course.
-	*
-	* @return the trash entry created when this course was moved to the Recycle Bin
-	*/
+	 * Returns the trash entry created when this course was moved to the Recycle Bin. The trash entry may belong to one of the ancestors of this course.
+	 *
+	 * @return the trash entry created when this course was moved to the Recycle Bin
+	 */
 	@Override
 	public com.liferay.trash.kernel.model.TrashEntry getTrashEntry()
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _course.getTrashEntry();
+
+		return model.getTrashEntry();
 	}
 
 	/**
-	* Returns the class primary key of the trash entry for this course.
-	*
-	* @return the class primary key of the trash entry for this course
-	*/
+	 * Returns the class primary key of the trash entry for this course.
+	 *
+	 * @return the class primary key of the trash entry for this course
+	 */
 	@Override
 	public long getTrashEntryClassPK() {
-		return _course.getTrashEntryClassPK();
+		return model.getTrashEntryClassPK();
 	}
 
 	/**
-	* Returns the trash handler for this course.
-	*
-	* @return the trash handler for this course
-	* @deprecated As of Judson (7.1.x), with no direct replacement
-	*/
+	 * Returns the trash handler for this course.
+	 *
+	 * @return the trash handler for this course
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
 	@Deprecated
 	@Override
 	public com.liferay.portal.kernel.trash.TrashHandler getTrashHandler() {
-		return _course.getTrashHandler();
+		return model.getTrashHandler();
 	}
 
 	@Override
 	public int getTypeSite() {
-		return _course.getTypeSite();
+		return model.getTypeSite();
 	}
 
 	/**
-	* Returns the user ID of this course.
-	*
-	* @return the user ID of this course
-	*/
+	 * Returns the user ID of this course.
+	 *
+	 * @return the user ID of this course
+	 */
 	@Override
 	public long getUserId() {
-		return _course.getUserId();
+		return model.getUserId();
 	}
 
 	/**
-	* Returns the user name of this course.
-	*
-	* @return the user name of this course
-	*/
+	 * Returns the user name of this course.
+	 *
+	 * @return the user name of this course
+	 */
 	@Override
 	public String getUserName() {
-		return _course.getUserName();
+		return model.getUserName();
 	}
 
 	/**
-	* Returns the user uuid of this course.
-	*
-	* @return the user uuid of this course
-	*/
+	 * Returns the user uuid of this course.
+	 *
+	 * @return the user uuid of this course
+	 */
 	@Override
 	public String getUserUuid() {
-		return _course.getUserUuid();
+		return model.getUserUuid();
 	}
 
 	/**
-	* Returns the uuid of this course.
-	*
-	* @return the uuid of this course
-	*/
+	 * Returns the uuid of this course.
+	 *
+	 * @return the uuid of this course
+	 */
 	@Override
 	public String getUuid() {
-		return _course.getUuid();
+		return model.getUuid();
 	}
 
 	/**
-	* Returns the welcome of this course.
-	*
-	* @return the welcome of this course
-	*/
+	 * Returns the welcome of this course.
+	 *
+	 * @return the welcome of this course
+	 */
 	@Override
 	public boolean getWelcome() {
-		return _course.getWelcome();
+		return model.getWelcome();
 	}
 
 	/**
-	* Returns the welcome msg of this course.
-	*
-	* @return the welcome msg of this course
-	*/
+	 * Returns the welcome msg of this course.
+	 *
+	 * @return the welcome msg of this course
+	 */
 	@Override
 	public String getWelcomeMsg() {
-		return _course.getWelcomeMsg();
+		return model.getWelcomeMsg();
 	}
 
 	/**
-	* Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized welcome msg of this course
-	*/
+	 * Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized welcome msg of this course
+	 */
 	@Override
 	public String getWelcomeMsg(java.util.Locale locale) {
-		return _course.getWelcomeMsg(locale);
+		return model.getWelcomeMsg(locale);
 	}
 
 	/**
-	* Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized welcome msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome msg of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
 	public String getWelcomeMsg(java.util.Locale locale, boolean useDefault) {
-		return _course.getWelcomeMsg(locale, useDefault);
+		return model.getWelcomeMsg(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized welcome msg of this course
-	*/
+	 * Returns the localized welcome msg of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized welcome msg of this course
+	 */
 	@Override
 	public String getWelcomeMsg(String languageId) {
-		return _course.getWelcomeMsg(languageId);
+		return model.getWelcomeMsg(languageId);
 	}
 
 	/**
-	* Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized welcome msg of this course
-	*/
+	 * Returns the localized welcome msg of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome msg of this course
+	 */
 	@Override
 	public String getWelcomeMsg(String languageId, boolean useDefault) {
-		return _course.getWelcomeMsg(languageId, useDefault);
+		return model.getWelcomeMsg(languageId, useDefault);
 	}
 
 	@Override
 	public String getWelcomeMsgCurrentLanguageId() {
-		return _course.getWelcomeMsgCurrentLanguageId();
+		return model.getWelcomeMsgCurrentLanguageId();
 	}
 
 	@Override
 	public String getWelcomeMsgCurrentValue() {
-		return _course.getWelcomeMsgCurrentValue();
+		return model.getWelcomeMsgCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized welcome msgs of this course.
-	*
-	* @return the locales and localized welcome msgs of this course
-	*/
+	 * Returns a map of the locales and localized welcome msgs of this course.
+	 *
+	 * @return the locales and localized welcome msgs of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getWelcomeMsgMap() {
-		return _course.getWelcomeMsgMap();
+		return model.getWelcomeMsgMap();
 	}
 
 	@Override
 	public String getWelcomeMsgMapAsXML() {
-		return _course.getWelcomeMsgMapAsXML();
+		return model.getWelcomeMsgMapAsXML();
 	}
 
 	/**
-	* Returns the welcome subject of this course.
-	*
-	* @return the welcome subject of this course
-	*/
+	 * Returns the welcome subject of this course.
+	 *
+	 * @return the welcome subject of this course
+	 */
 	@Override
 	public String getWelcomeSubject() {
-		return _course.getWelcomeSubject();
+		return model.getWelcomeSubject();
 	}
 
 	/**
-	* Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param locale the locale of the language
-	* @return the localized welcome subject of this course
-	*/
+	 * Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized welcome subject of this course
+	 */
 	@Override
 	public String getWelcomeSubject(java.util.Locale locale) {
-		return _course.getWelcomeSubject(locale);
+		return model.getWelcomeSubject(locale);
 	}
 
 	/**
-	* Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param locale the local of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized welcome subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
-	*/
+	 * Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome subject of this course. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
 	@Override
-	public String getWelcomeSubject(java.util.Locale locale, boolean useDefault) {
-		return _course.getWelcomeSubject(locale, useDefault);
+	public String getWelcomeSubject(
+		java.util.Locale locale, boolean useDefault) {
+
+		return model.getWelcomeSubject(locale, useDefault);
 	}
 
 	/**
-	* Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @return the localized welcome subject of this course
-	*/
+	 * Returns the localized welcome subject of this course in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized welcome subject of this course
+	 */
 	@Override
 	public String getWelcomeSubject(String languageId) {
-		return _course.getWelcomeSubject(languageId);
+		return model.getWelcomeSubject(languageId);
 	}
 
 	/**
-	* Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
-	*
-	* @param languageId the ID of the language
-	* @param useDefault whether to use the default language if no localization exists for the requested language
-	* @return the localized welcome subject of this course
-	*/
+	 * Returns the localized welcome subject of this course in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized welcome subject of this course
+	 */
 	@Override
 	public String getWelcomeSubject(String languageId, boolean useDefault) {
-		return _course.getWelcomeSubject(languageId, useDefault);
+		return model.getWelcomeSubject(languageId, useDefault);
 	}
 
 	@Override
 	public String getWelcomeSubjectCurrentLanguageId() {
-		return _course.getWelcomeSubjectCurrentLanguageId();
+		return model.getWelcomeSubjectCurrentLanguageId();
 	}
 
 	@Override
 	public String getWelcomeSubjectCurrentValue() {
-		return _course.getWelcomeSubjectCurrentValue();
+		return model.getWelcomeSubjectCurrentValue();
 	}
 
 	/**
-	* Returns a map of the locales and localized welcome subjects of this course.
-	*
-	* @return the locales and localized welcome subjects of this course
-	*/
+	 * Returns a map of the locales and localized welcome subjects of this course.
+	 *
+	 * @return the locales and localized welcome subjects of this course
+	 */
 	@Override
 	public Map<java.util.Locale, String> getWelcomeSubjectMap() {
-		return _course.getWelcomeSubjectMap();
-	}
-
-	@Override
-	public int hashCode() {
-		return _course.hashCode();
+		return model.getWelcomeSubjectMap();
 	}
 
 	@Override
 	public boolean hasPermissionAccessCourseFinished(long userId)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _course.hasPermissionAccessCourseFinished(userId);
+
+		return model.hasPermissionAccessCourseFinished(userId);
 	}
 
 	/**
-	* Returns <code>true</code> if this course is approved.
-	*
-	* @return <code>true</code> if this course is approved; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is approved.
+	 *
+	 * @return <code>true</code> if this course is approved; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isApproved() {
-		return _course.isApproved();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _course.isCachedModel();
+		return model.isApproved();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is denied.
-	*
-	* @return <code>true</code> if this course is denied; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is denied.
+	 *
+	 * @return <code>true</code> if this course is denied; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isDenied() {
-		return _course.isDenied();
+		return model.isDenied();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is denied inscription.
-	*
-	* @return <code>true</code> if this course is denied inscription; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is denied inscription.
+	 *
+	 * @return <code>true</code> if this course is denied inscription; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isDeniedInscription() {
-		return _course.isDeniedInscription();
+		return model.isDeniedInscription();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is a draft.
-	*
-	* @return <code>true</code> if this course is a draft; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is a draft.
+	 *
+	 * @return <code>true</code> if this course is a draft; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isDraft() {
-		return _course.isDraft();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _course.isEscapedModel();
+		return model.isDraft();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is expired.
-	*
-	* @return <code>true</code> if this course is expired; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is expired.
+	 *
+	 * @return <code>true</code> if this course is expired; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isExpired() {
-		return _course.isExpired();
+		return model.isExpired();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is goodbye.
-	*
-	* @return <code>true</code> if this course is goodbye; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is goodbye.
+	 *
+	 * @return <code>true</code> if this course is goodbye; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isGoodbye() {
-		return _course.isGoodbye();
+		return model.isGoodbye();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is inactive.
-	*
-	* @return <code>true</code> if this course is inactive; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is inactive.
+	 *
+	 * @return <code>true</code> if this course is inactive; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isInactive() {
-		return _course.isInactive();
+		return model.isInactive();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is incomplete.
-	*
-	* @return <code>true</code> if this course is incomplete; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is incomplete.
+	 *
+	 * @return <code>true</code> if this course is incomplete; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isIncomplete() {
-		return _course.isIncomplete();
+		return model.isIncomplete();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is in the Recycle Bin.
-	*
-	* @return <code>true</code> if this course is in the Recycle Bin; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if this course is in the Recycle Bin; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isInTrash() {
-		return _course.isInTrash();
+		return model.isInTrash();
 	}
 
 	/**
-	* Returns <code>true</code> if the parent of this course is in the Recycle Bin.
-	*
-	* @return <code>true</code> if the parent of this course is in the Recycle Bin; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if the parent of this course is in the Recycle Bin.
+	 *
+	 * @return <code>true</code> if the parent of this course is in the Recycle Bin; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isInTrashContainer() {
-		return _course.isInTrashContainer();
+		return model.isInTrashContainer();
 	}
 
 	@Override
 	public boolean isInTrashExplicitly() {
-		return _course.isInTrashExplicitly();
+		return model.isInTrashExplicitly();
 	}
 
 	@Override
 	public boolean isInTrashImplicitly() {
-		return _course.isInTrashImplicitly();
+		return model.isInTrashImplicitly();
 	}
 
 	@Override
-	public boolean isLocked(com.liferay.portal.kernel.model.User user,
-		com.liferay.portal.kernel.security.permission.PermissionChecker permissionChecker) {
-		return _course.isLocked(user, permissionChecker);
-	}
+	public boolean isLocked(
+		com.liferay.portal.kernel.model.User user,
+		com.liferay.portal.kernel.security.permission.PermissionChecker
+			permissionChecker) {
 
-	@Override
-	public boolean isNew() {
-		return _course.isNew();
+		return model.isLocked(user, permissionChecker);
 	}
 
 	/**
-	* Returns <code>true</code> if this course is pending.
-	*
-	* @return <code>true</code> if this course is pending; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is pending.
+	 *
+	 * @return <code>true</code> if this course is pending; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isPending() {
-		return _course.isPending();
+		return model.isPending();
 	}
 
 	@Override
 	public boolean isRegistrationOnDate() {
-		return _course.isRegistrationOnDate();
+		return model.isRegistrationOnDate();
 	}
 
 	@Override
 	public boolean isRegistredUser(long userId) {
-		return _course.isRegistredUser(userId);
+		return model.isRegistredUser(userId);
 	}
 
 	/**
-	* Returns <code>true</code> if this course is scheduled.
-	*
-	* @return <code>true</code> if this course is scheduled; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is scheduled.
+	 *
+	 * @return <code>true</code> if this course is scheduled; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isScheduled() {
-		return _course.isScheduled();
+		return model.isScheduled();
 	}
 
 	@Override
 	public boolean isTypeSiteOpen() {
-		return _course.isTypeSiteOpen();
+		return model.isTypeSiteOpen();
 	}
 
 	@Override
 	public boolean isTypeSitePrivate() {
-		return _course.isTypeSitePrivate();
+		return model.isTypeSitePrivate();
 	}
 
 	@Override
 	public boolean isTypeSiteRestricted() {
-		return _course.isTypeSiteRestricted();
+		return model.isTypeSiteRestricted();
 	}
 
 	/**
-	* Returns <code>true</code> if this course is welcome.
-	*
-	* @return <code>true</code> if this course is welcome; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this course is welcome.
+	 *
+	 * @return <code>true</code> if this course is welcome; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isWelcome() {
-		return _course.isWelcome();
+		return model.isWelcome();
 	}
 
 	@Override
 	public void persist() {
-		_course.persist();
+		model.persist();
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport()
 		throws com.liferay.portal.kernel.exception.LocaleException {
-		_course.prepareLocalizedFieldsForImport();
+
+		model.prepareLocalizedFieldsForImport();
 	}
 
 	@Override
 	public void prepareLocalizedFieldsForImport(
-		java.util.Locale defaultImportLocale)
+			java.util.Locale defaultImportLocale)
 		throws com.liferay.portal.kernel.exception.LocaleException {
-		_course.prepareLocalizedFieldsForImport(defaultImportLocale);
-	}
 
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_course.setCachedModel(cachedModel);
+		model.prepareLocalizedFieldsForImport(defaultImportLocale);
 	}
 
 	/**
-	* Sets the calification type of this course.
-	*
-	* @param calificationType the calification type of this course
-	*/
+	 * Sets the calification type of this course.
+	 *
+	 * @param calificationType the calification type of this course
+	 */
 	@Override
 	public void setCalificationType(long calificationType) {
-		_course.setCalificationType(calificationType);
+		model.setCalificationType(calificationType);
 	}
 
 	/**
-	* Sets the company ID of this course.
-	*
-	* @param companyId the company ID of this course
-	*/
+	 * Sets the company ID of this course.
+	 *
+	 * @param companyId the company ID of this course
+	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_course.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
-	* Sets the course eval ID of this course.
-	*
-	* @param courseEvalId the course eval ID of this course
-	*/
+	 * Sets the course eval ID of this course.
+	 *
+	 * @param courseEvalId the course eval ID of this course
+	 */
 	@Override
 	public void setCourseEvalId(long courseEvalId) {
-		_course.setCourseEvalId(courseEvalId);
+		model.setCourseEvalId(courseEvalId);
 	}
 
 	/**
-	* Sets the course extra data of this course.
-	*
-	* @param courseExtraData the course extra data of this course
-	*/
+	 * Sets the course extra data of this course.
+	 *
+	 * @param courseExtraData the course extra data of this course
+	 */
 	@Override
 	public void setCourseExtraData(String courseExtraData) {
-		_course.setCourseExtraData(courseExtraData);
+		model.setCourseExtraData(courseExtraData);
 	}
 
 	/**
-	* Sets the course ID of this course.
-	*
-	* @param courseId the course ID of this course
-	*/
+	 * Sets the course ID of this course.
+	 *
+	 * @param courseId the course ID of this course
+	 */
 	@Override
 	public void setCourseId(long courseId) {
-		_course.setCourseId(courseId);
+		model.setCourseId(courseId);
 	}
 
 	/**
-	* Sets the create date of this course.
-	*
-	* @param createDate the create date of this course
-	*/
+	 * Sets the create date of this course.
+	 *
+	 * @param createDate the create date of this course
+	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_course.setCreateDate(createDate);
+		model.setCreateDate(createDate);
 	}
 
 	/**
-	* Sets whether this course is denied inscription.
-	*
-	* @param deniedInscription the denied inscription of this course
-	*/
+	 * Sets whether this course is denied inscription.
+	 *
+	 * @param deniedInscription the denied inscription of this course
+	 */
 	@Override
 	public void setDeniedInscription(boolean deniedInscription) {
-		_course.setDeniedInscription(deniedInscription);
+		model.setDeniedInscription(deniedInscription);
 	}
 
 	/**
-	* Sets the denied inscription msg of this course.
-	*
-	* @param deniedInscriptionMsg the denied inscription msg of this course
-	*/
+	 * Sets the denied inscription msg of this course.
+	 *
+	 * @param deniedInscriptionMsg the denied inscription msg of this course
+	 */
 	@Override
 	public void setDeniedInscriptionMsg(String deniedInscriptionMsg) {
-		_course.setDeniedInscriptionMsg(deniedInscriptionMsg);
+		model.setDeniedInscriptionMsg(deniedInscriptionMsg);
 	}
 
 	/**
-	* Sets the localized denied inscription msg of this course in the language.
-	*
-	* @param deniedInscriptionMsg the localized denied inscription msg of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized denied inscription msg of this course in the language.
+	 *
+	 * @param deniedInscriptionMsg the localized denied inscription msg of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
-	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
-		java.util.Locale locale) {
-		_course.setDeniedInscriptionMsg(deniedInscriptionMsg, locale);
+	public void setDeniedInscriptionMsg(
+		String deniedInscriptionMsg, java.util.Locale locale) {
+
+		model.setDeniedInscriptionMsg(deniedInscriptionMsg, locale);
 	}
 
 	/**
-	* Sets the localized denied inscription msg of this course in the language, and sets the default locale.
-	*
-	* @param deniedInscriptionMsg the localized denied inscription msg of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized denied inscription msg of this course in the language, and sets the default locale.
+	 *
+	 * @param deniedInscriptionMsg the localized denied inscription msg of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setDeniedInscriptionMsg(String deniedInscriptionMsg,
-		java.util.Locale locale, java.util.Locale defaultLocale) {
-		_course.setDeniedInscriptionMsg(deniedInscriptionMsg, locale,
-			defaultLocale);
+	public void setDeniedInscriptionMsg(
+		String deniedInscriptionMsg, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+
+		model.setDeniedInscriptionMsg(
+			deniedInscriptionMsg, locale, defaultLocale);
 	}
 
 	@Override
 	public void setDeniedInscriptionMsgCurrentLanguageId(String languageId) {
-		_course.setDeniedInscriptionMsgCurrentLanguageId(languageId);
+		model.setDeniedInscriptionMsgCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs.
-	*
-	* @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
-	*/
+	 * Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs.
+	 *
+	 * @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
+	 */
 	@Override
 	public void setDeniedInscriptionMsgMap(
 		Map<java.util.Locale, String> deniedInscriptionMsgMap) {
-		_course.setDeniedInscriptionMsgMap(deniedInscriptionMsgMap);
+
+		model.setDeniedInscriptionMsgMap(deniedInscriptionMsgMap);
 	}
 
 	/**
-	* Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs, and sets the default locale.
-	*
-	* @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized denied inscription msgs of this course from the map of locales and localized denied inscription msgs, and sets the default locale.
+	 *
+	 * @param deniedInscriptionMsgMap the locales and localized denied inscription msgs of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
 	public void setDeniedInscriptionMsgMap(
 		Map<java.util.Locale, String> deniedInscriptionMsgMap,
 		java.util.Locale defaultLocale) {
-		_course.setDeniedInscriptionMsgMap(deniedInscriptionMsgMap,
-			defaultLocale);
+
+		model.setDeniedInscriptionMsgMap(
+			deniedInscriptionMsgMap, defaultLocale);
 	}
 
 	/**
-	* Sets the denied inscription subject of this course.
-	*
-	* @param deniedInscriptionSubject the denied inscription subject of this course
-	*/
+	 * Sets the denied inscription subject of this course.
+	 *
+	 * @param deniedInscriptionSubject the denied inscription subject of this course
+	 */
 	@Override
 	public void setDeniedInscriptionSubject(String deniedInscriptionSubject) {
-		_course.setDeniedInscriptionSubject(deniedInscriptionSubject);
+		model.setDeniedInscriptionSubject(deniedInscriptionSubject);
 	}
 
 	/**
-	* Sets the localized denied inscription subject of this course in the language.
-	*
-	* @param deniedInscriptionSubject the localized denied inscription subject of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized denied inscription subject of this course in the language.
+	 *
+	 * @param deniedInscriptionSubject the localized denied inscription subject of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
-	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
-		java.util.Locale locale) {
-		_course.setDeniedInscriptionSubject(deniedInscriptionSubject, locale);
+	public void setDeniedInscriptionSubject(
+		String deniedInscriptionSubject, java.util.Locale locale) {
+
+		model.setDeniedInscriptionSubject(deniedInscriptionSubject, locale);
 	}
 
 	/**
-	* Sets the localized denied inscription subject of this course in the language, and sets the default locale.
-	*
-	* @param deniedInscriptionSubject the localized denied inscription subject of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized denied inscription subject of this course in the language, and sets the default locale.
+	 *
+	 * @param deniedInscriptionSubject the localized denied inscription subject of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setDeniedInscriptionSubject(String deniedInscriptionSubject,
-		java.util.Locale locale, java.util.Locale defaultLocale) {
-		_course.setDeniedInscriptionSubject(deniedInscriptionSubject, locale,
-			defaultLocale);
+	public void setDeniedInscriptionSubject(
+		String deniedInscriptionSubject, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+
+		model.setDeniedInscriptionSubject(
+			deniedInscriptionSubject, locale, defaultLocale);
 	}
 
 	@Override
-	public void setDeniedInscriptionSubjectCurrentLanguageId(String languageId) {
-		_course.setDeniedInscriptionSubjectCurrentLanguageId(languageId);
+	public void setDeniedInscriptionSubjectCurrentLanguageId(
+		String languageId) {
+
+		model.setDeniedInscriptionSubjectCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects.
-	*
-	* @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
-	*/
+	 * Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects.
+	 *
+	 * @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
+	 */
 	@Override
 	public void setDeniedInscriptionSubjectMap(
 		Map<java.util.Locale, String> deniedInscriptionSubjectMap) {
-		_course.setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap);
+
+		model.setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap);
 	}
 
 	/**
-	* Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects, and sets the default locale.
-	*
-	* @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized denied inscription subjects of this course from the map of locales and localized denied inscription subjects, and sets the default locale.
+	 *
+	 * @param deniedInscriptionSubjectMap the locales and localized denied inscription subjects of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
 	public void setDeniedInscriptionSubjectMap(
 		Map<java.util.Locale, String> deniedInscriptionSubjectMap,
 		java.util.Locale defaultLocale) {
-		_course.setDeniedInscriptionSubjectMap(deniedInscriptionSubjectMap,
-			defaultLocale);
+
+		model.setDeniedInscriptionSubjectMap(
+			deniedInscriptionSubjectMap, defaultLocale);
 	}
 
 	/**
-	* Sets the description of this course.
-	*
-	* @param description the description of this course
-	*/
+	 * Sets the description of this course.
+	 *
+	 * @param description the description of this course
+	 */
 	@Override
 	public void setDescription(String description) {
-		_course.setDescription(description);
+		model.setDescription(description);
 	}
 
 	/**
-	* Sets the localized description of this course in the language.
-	*
-	* @param description the localized description of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized description of this course in the language.
+	 *
+	 * @param description the localized description of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
 	public void setDescription(String description, java.util.Locale locale) {
-		_course.setDescription(description, locale);
+		model.setDescription(description, locale);
 	}
 
 	/**
-	* Sets the localized description of this course in the language, and sets the default locale.
-	*
-	* @param description the localized description of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized description of this course in the language, and sets the default locale.
+	 *
+	 * @param description the localized description of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setDescription(String description, java.util.Locale locale,
+	public void setDescription(
+		String description, java.util.Locale locale,
 		java.util.Locale defaultLocale) {
-		_course.setDescription(description, locale, defaultLocale);
+
+		model.setDescription(description, locale, defaultLocale);
 	}
 
 	@Override
 	public void setDescriptionCurrentLanguageId(String languageId) {
-		_course.setDescriptionCurrentLanguageId(languageId);
+		model.setDescriptionCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized descriptions of this course from the map of locales and localized descriptions.
-	*
-	* @param descriptionMap the locales and localized descriptions of this course
-	*/
+	 * Sets the localized descriptions of this course from the map of locales and localized descriptions.
+	 *
+	 * @param descriptionMap the locales and localized descriptions of this course
+	 */
 	@Override
-	public void setDescriptionMap(Map<java.util.Locale, String> descriptionMap) {
-		_course.setDescriptionMap(descriptionMap);
+	public void setDescriptionMap(
+		Map<java.util.Locale, String> descriptionMap) {
+
+		model.setDescriptionMap(descriptionMap);
 	}
 
 	/**
-	* Sets the localized descriptions of this course from the map of locales and localized descriptions, and sets the default locale.
-	*
-	* @param descriptionMap the locales and localized descriptions of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized descriptions of this course from the map of locales and localized descriptions, and sets the default locale.
+	 *
+	 * @param descriptionMap the locales and localized descriptions of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
 	public void setDescriptionMap(
 		Map<java.util.Locale, String> descriptionMap,
 		java.util.Locale defaultLocale) {
-		_course.setDescriptionMap(descriptionMap, defaultLocale);
+
+		model.setDescriptionMap(descriptionMap, defaultLocale);
 	}
 
 	/**
-	* Sets the execution end date of this course.
-	*
-	* @param executionEndDate the execution end date of this course
-	*/
+	 * Sets the execution end date of this course.
+	 *
+	 * @param executionEndDate the execution end date of this course
+	 */
 	@Override
 	public void setExecutionEndDate(Date executionEndDate) {
-		_course.setExecutionEndDate(executionEndDate);
+		model.setExecutionEndDate(executionEndDate);
 	}
 
 	/**
-	* Sets the execution start date of this course.
-	*
-	* @param executionStartDate the execution start date of this course
-	*/
+	 * Sets the execution start date of this course.
+	 *
+	 * @param executionStartDate the execution start date of this course
+	 */
 	@Override
 	public void setExecutionStartDate(Date executionStartDate) {
-		_course.setExecutionStartDate(executionStartDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_course.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_course.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_course.setExpandoBridgeAttributes(serviceContext);
+		model.setExecutionStartDate(executionStartDate);
 	}
 
 	/**
-	* Sets whether this course is goodbye.
-	*
-	* @param goodbye the goodbye of this course
-	*/
+	 * Sets whether this course is goodbye.
+	 *
+	 * @param goodbye the goodbye of this course
+	 */
 	@Override
 	public void setGoodbye(boolean goodbye) {
-		_course.setGoodbye(goodbye);
+		model.setGoodbye(goodbye);
 	}
 
 	/**
-	* Sets the goodbye msg of this course.
-	*
-	* @param goodbyeMsg the goodbye msg of this course
-	*/
+	 * Sets the goodbye msg of this course.
+	 *
+	 * @param goodbyeMsg the goodbye msg of this course
+	 */
 	@Override
 	public void setGoodbyeMsg(String goodbyeMsg) {
-		_course.setGoodbyeMsg(goodbyeMsg);
+		model.setGoodbyeMsg(goodbyeMsg);
 	}
 
 	/**
-	* Sets the localized goodbye msg of this course in the language.
-	*
-	* @param goodbyeMsg the localized goodbye msg of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized goodbye msg of this course in the language.
+	 *
+	 * @param goodbyeMsg the localized goodbye msg of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
 	public void setGoodbyeMsg(String goodbyeMsg, java.util.Locale locale) {
-		_course.setGoodbyeMsg(goodbyeMsg, locale);
+		model.setGoodbyeMsg(goodbyeMsg, locale);
 	}
 
 	/**
-	* Sets the localized goodbye msg of this course in the language, and sets the default locale.
-	*
-	* @param goodbyeMsg the localized goodbye msg of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized goodbye msg of this course in the language, and sets the default locale.
+	 *
+	 * @param goodbyeMsg the localized goodbye msg of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setGoodbyeMsg(String goodbyeMsg, java.util.Locale locale,
+	public void setGoodbyeMsg(
+		String goodbyeMsg, java.util.Locale locale,
 		java.util.Locale defaultLocale) {
-		_course.setGoodbyeMsg(goodbyeMsg, locale, defaultLocale);
+
+		model.setGoodbyeMsg(goodbyeMsg, locale, defaultLocale);
 	}
 
 	@Override
 	public void setGoodbyeMsgCurrentLanguageId(String languageId) {
-		_course.setGoodbyeMsgCurrentLanguageId(languageId);
+		model.setGoodbyeMsgCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs.
-	*
-	* @param goodbyeMsgMap the locales and localized goodbye msgs of this course
-	*/
+	 * Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs.
+	 *
+	 * @param goodbyeMsgMap the locales and localized goodbye msgs of this course
+	 */
 	@Override
 	public void setGoodbyeMsgMap(Map<java.util.Locale, String> goodbyeMsgMap) {
-		_course.setGoodbyeMsgMap(goodbyeMsgMap);
+		model.setGoodbyeMsgMap(goodbyeMsgMap);
 	}
 
 	/**
-	* Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs, and sets the default locale.
-	*
-	* @param goodbyeMsgMap the locales and localized goodbye msgs of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized goodbye msgs of this course from the map of locales and localized goodbye msgs, and sets the default locale.
+	 *
+	 * @param goodbyeMsgMap the locales and localized goodbye msgs of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setGoodbyeMsgMap(Map<java.util.Locale, String> goodbyeMsgMap,
+	public void setGoodbyeMsgMap(
+		Map<java.util.Locale, String> goodbyeMsgMap,
 		java.util.Locale defaultLocale) {
-		_course.setGoodbyeMsgMap(goodbyeMsgMap, defaultLocale);
+
+		model.setGoodbyeMsgMap(goodbyeMsgMap, defaultLocale);
 	}
 
 	/**
-	* Sets the goodbye subject of this course.
-	*
-	* @param goodbyeSubject the goodbye subject of this course
-	*/
+	 * Sets the goodbye subject of this course.
+	 *
+	 * @param goodbyeSubject the goodbye subject of this course
+	 */
 	@Override
 	public void setGoodbyeSubject(String goodbyeSubject) {
-		_course.setGoodbyeSubject(goodbyeSubject);
+		model.setGoodbyeSubject(goodbyeSubject);
 	}
 
 	/**
-	* Sets the localized goodbye subject of this course in the language.
-	*
-	* @param goodbyeSubject the localized goodbye subject of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized goodbye subject of this course in the language.
+	 *
+	 * @param goodbyeSubject the localized goodbye subject of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
-	public void setGoodbyeSubject(String goodbyeSubject, java.util.Locale locale) {
-		_course.setGoodbyeSubject(goodbyeSubject, locale);
+	public void setGoodbyeSubject(
+		String goodbyeSubject, java.util.Locale locale) {
+
+		model.setGoodbyeSubject(goodbyeSubject, locale);
 	}
 
 	/**
-	* Sets the localized goodbye subject of this course in the language, and sets the default locale.
-	*
-	* @param goodbyeSubject the localized goodbye subject of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized goodbye subject of this course in the language, and sets the default locale.
+	 *
+	 * @param goodbyeSubject the localized goodbye subject of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setGoodbyeSubject(String goodbyeSubject,
-		java.util.Locale locale, java.util.Locale defaultLocale) {
-		_course.setGoodbyeSubject(goodbyeSubject, locale, defaultLocale);
+	public void setGoodbyeSubject(
+		String goodbyeSubject, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+
+		model.setGoodbyeSubject(goodbyeSubject, locale, defaultLocale);
 	}
 
 	@Override
 	public void setGoodbyeSubjectCurrentLanguageId(String languageId) {
-		_course.setGoodbyeSubjectCurrentLanguageId(languageId);
+		model.setGoodbyeSubjectCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects.
-	*
-	* @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
-	*/
+	 * Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects.
+	 *
+	 * @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
+	 */
 	@Override
 	public void setGoodbyeSubjectMap(
 		Map<java.util.Locale, String> goodbyeSubjectMap) {
-		_course.setGoodbyeSubjectMap(goodbyeSubjectMap);
+
+		model.setGoodbyeSubjectMap(goodbyeSubjectMap);
 	}
 
 	/**
-	* Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects, and sets the default locale.
-	*
-	* @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized goodbye subjects of this course from the map of locales and localized goodbye subjects, and sets the default locale.
+	 *
+	 * @param goodbyeSubjectMap the locales and localized goodbye subjects of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
 	public void setGoodbyeSubjectMap(
 		Map<java.util.Locale, String> goodbyeSubjectMap,
 		java.util.Locale defaultLocale) {
-		_course.setGoodbyeSubjectMap(goodbyeSubjectMap, defaultLocale);
+
+		model.setGoodbyeSubjectMap(goodbyeSubjectMap, defaultLocale);
 	}
 
 	/**
-	* Sets the group created ID of this course.
-	*
-	* @param groupCreatedId the group created ID of this course
-	*/
+	 * Sets the group created ID of this course.
+	 *
+	 * @param groupCreatedId the group created ID of this course
+	 */
 	@Override
 	public void setGroupCreatedId(long groupCreatedId) {
-		_course.setGroupCreatedId(groupCreatedId);
+		model.setGroupCreatedId(groupCreatedId);
 	}
 
 	/**
-	* Sets the group ID of this course.
-	*
-	* @param groupId the group ID of this course
-	*/
+	 * Sets the group ID of this course.
+	 *
+	 * @param groupId the group ID of this course
+	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_course.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	/**
-	* Sets the inscription type of this course.
-	*
-	* @param inscriptionType the inscription type of this course
-	*/
+	 * Sets the inscription type of this course.
+	 *
+	 * @param inscriptionType the inscription type of this course
+	 */
 	@Override
 	public void setInscriptionType(long inscriptionType) {
-		_course.setInscriptionType(inscriptionType);
+		model.setInscriptionType(inscriptionType);
 	}
 
 	/**
-	* Sets the last publish date of this course.
-	*
-	* @param lastPublishDate the last publish date of this course
-	*/
+	 * Sets the last publish date of this course.
+	 *
+	 * @param lastPublishDate the last publish date of this course
+	 */
 	@Override
 	public void setLastPublishDate(Date lastPublishDate) {
-		_course.setLastPublishDate(lastPublishDate);
+		model.setLastPublishDate(lastPublishDate);
 	}
 
 	/**
-	* Sets the max users of this course.
-	*
-	* @param maxUsers the max users of this course
-	*/
+	 * Sets the max users of this course.
+	 *
+	 * @param maxUsers the max users of this course
+	 */
 	@Override
 	public void setMaxUsers(int maxUsers) {
-		_course.setMaxUsers(maxUsers);
+		model.setMaxUsers(maxUsers);
 	}
 
 	/**
-	* Sets the modified date of this course.
-	*
-	* @param modifiedDate the modified date of this course
-	*/
+	 * Sets the modified date of this course.
+	 *
+	 * @param modifiedDate the modified date of this course
+	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_course.setModifiedDate(modifiedDate);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_course.setNew(n);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
-	* Sets the parent course ID of this course.
-	*
-	* @param parentCourseId the parent course ID of this course
-	*/
+	 * Sets the parent course ID of this course.
+	 *
+	 * @param parentCourseId the parent course ID of this course
+	 */
 	@Override
 	public void setParentCourseId(long parentCourseId) {
-		_course.setParentCourseId(parentCourseId);
+		model.setParentCourseId(parentCourseId);
 	}
 
 	/**
-	* Sets the primary key of this course.
-	*
-	* @param primaryKey the primary key of this course
-	*/
+	 * Sets the primary key of this course.
+	 *
+	 * @param primaryKey the primary key of this course
+	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_course.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_course.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Sets the registration end date of this course.
-	*
-	* @param registrationEndDate the registration end date of this course
-	*/
+	 * Sets the registration end date of this course.
+	 *
+	 * @param registrationEndDate the registration end date of this course
+	 */
 	@Override
 	public void setRegistrationEndDate(Date registrationEndDate) {
-		_course.setRegistrationEndDate(registrationEndDate);
+		model.setRegistrationEndDate(registrationEndDate);
 	}
 
 	/**
-	* Sets the registration start date of this course.
-	*
-	* @param registrationStartDate the registration start date of this course
-	*/
+	 * Sets the registration start date of this course.
+	 *
+	 * @param registrationStartDate the registration start date of this course
+	 */
 	@Override
 	public void setRegistrationStartDate(Date registrationStartDate) {
-		_course.setRegistrationStartDate(registrationStartDate);
+		model.setRegistrationStartDate(registrationStartDate);
 	}
 
 	/**
-	* Sets the small image ID of this course.
-	*
-	* @param smallImageId the small image ID of this course
-	*/
+	 * Sets the small image ID of this course.
+	 *
+	 * @param smallImageId the small image ID of this course
+	 */
 	@Override
 	public void setSmallImageId(long smallImageId) {
-		_course.setSmallImageId(smallImageId);
+		model.setSmallImageId(smallImageId);
 	}
 
 	/**
-	* Sets the status of this course.
-	*
-	* @param status the status of this course
-	*/
+	 * Sets the status of this course.
+	 *
+	 * @param status the status of this course
+	 */
 	@Override
 	public void setStatus(int status) {
-		_course.setStatus(status);
+		model.setStatus(status);
 	}
 
 	/**
-	* Sets the status by user ID of this course.
-	*
-	* @param statusByUserId the status by user ID of this course
-	*/
+	 * Sets the status by user ID of this course.
+	 *
+	 * @param statusByUserId the status by user ID of this course
+	 */
 	@Override
 	public void setStatusByUserId(long statusByUserId) {
-		_course.setStatusByUserId(statusByUserId);
+		model.setStatusByUserId(statusByUserId);
 	}
 
 	/**
-	* Sets the status by user name of this course.
-	*
-	* @param statusByUserName the status by user name of this course
-	*/
+	 * Sets the status by user name of this course.
+	 *
+	 * @param statusByUserName the status by user name of this course
+	 */
 	@Override
 	public void setStatusByUserName(String statusByUserName) {
-		_course.setStatusByUserName(statusByUserName);
+		model.setStatusByUserName(statusByUserName);
 	}
 
 	/**
-	* Sets the status by user uuid of this course.
-	*
-	* @param statusByUserUuid the status by user uuid of this course
-	*/
+	 * Sets the status by user uuid of this course.
+	 *
+	 * @param statusByUserUuid the status by user uuid of this course
+	 */
 	@Override
 	public void setStatusByUserUuid(String statusByUserUuid) {
-		_course.setStatusByUserUuid(statusByUserUuid);
+		model.setStatusByUserUuid(statusByUserUuid);
 	}
 
 	/**
-	* Sets the status date of this course.
-	*
-	* @param statusDate the status date of this course
-	*/
+	 * Sets the status date of this course.
+	 *
+	 * @param statusDate the status date of this course
+	 */
 	@Override
 	public void setStatusDate(Date statusDate) {
-		_course.setStatusDate(statusDate);
+		model.setStatusDate(statusDate);
 	}
 
 	/**
-	* Sets the title of this course.
-	*
-	* @param title the title of this course
-	*/
+	 * Sets the title of this course.
+	 *
+	 * @param title the title of this course
+	 */
 	@Override
 	public void setTitle(String title) {
-		_course.setTitle(title);
+		model.setTitle(title);
 	}
 
 	/**
-	* Sets the localized title of this course in the language.
-	*
-	* @param title the localized title of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized title of this course in the language.
+	 *
+	 * @param title the localized title of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
 	public void setTitle(String title, java.util.Locale locale) {
-		_course.setTitle(title, locale);
+		model.setTitle(title, locale);
 	}
 
 	/**
-	* Sets the localized title of this course in the language, and sets the default locale.
-	*
-	* @param title the localized title of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized title of this course in the language, and sets the default locale.
+	 *
+	 * @param title the localized title of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setTitle(String title, java.util.Locale locale,
-		java.util.Locale defaultLocale) {
-		_course.setTitle(title, locale, defaultLocale);
+	public void setTitle(
+		String title, java.util.Locale locale, java.util.Locale defaultLocale) {
+
+		model.setTitle(title, locale, defaultLocale);
 	}
 
 	@Override
 	public void setTitleCurrentLanguageId(String languageId) {
-		_course.setTitleCurrentLanguageId(languageId);
+		model.setTitleCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized titles of this course from the map of locales and localized titles.
-	*
-	* @param titleMap the locales and localized titles of this course
-	*/
+	 * Sets the localized titles of this course from the map of locales and localized titles.
+	 *
+	 * @param titleMap the locales and localized titles of this course
+	 */
 	@Override
 	public void setTitleMap(Map<java.util.Locale, String> titleMap) {
-		_course.setTitleMap(titleMap);
+		model.setTitleMap(titleMap);
 	}
 
 	/**
-	* Sets the localized titles of this course from the map of locales and localized titles, and sets the default locale.
-	*
-	* @param titleMap the locales and localized titles of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized titles of this course from the map of locales and localized titles, and sets the default locale.
+	 *
+	 * @param titleMap the locales and localized titles of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setTitleMap(Map<java.util.Locale, String> titleMap,
+	public void setTitleMap(
+		Map<java.util.Locale, String> titleMap,
 		java.util.Locale defaultLocale) {
-		_course.setTitleMap(titleMap, defaultLocale);
+
+		model.setTitleMap(titleMap, defaultLocale);
 	}
 
 	/**
-	* Sets the user ID of this course.
-	*
-	* @param userId the user ID of this course
-	*/
+	 * Sets the user ID of this course.
+	 *
+	 * @param userId the user ID of this course
+	 */
 	@Override
 	public void setUserId(long userId) {
-		_course.setUserId(userId);
+		model.setUserId(userId);
 	}
 
 	/**
-	* Sets the user name of this course.
-	*
-	* @param userName the user name of this course
-	*/
+	 * Sets the user name of this course.
+	 *
+	 * @param userName the user name of this course
+	 */
 	@Override
 	public void setUserName(String userName) {
-		_course.setUserName(userName);
+		model.setUserName(userName);
 	}
 
 	/**
-	* Sets the user uuid of this course.
-	*
-	* @param userUuid the user uuid of this course
-	*/
+	 * Sets the user uuid of this course.
+	 *
+	 * @param userUuid the user uuid of this course
+	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		_course.setUserUuid(userUuid);
+		model.setUserUuid(userUuid);
 	}
 
 	/**
-	* Sets the uuid of this course.
-	*
-	* @param uuid the uuid of this course
-	*/
+	 * Sets the uuid of this course.
+	 *
+	 * @param uuid the uuid of this course
+	 */
 	@Override
 	public void setUuid(String uuid) {
-		_course.setUuid(uuid);
+		model.setUuid(uuid);
 	}
 
 	/**
-	* Sets whether this course is welcome.
-	*
-	* @param welcome the welcome of this course
-	*/
+	 * Sets whether this course is welcome.
+	 *
+	 * @param welcome the welcome of this course
+	 */
 	@Override
 	public void setWelcome(boolean welcome) {
-		_course.setWelcome(welcome);
+		model.setWelcome(welcome);
 	}
 
 	/**
-	* Sets the welcome msg of this course.
-	*
-	* @param welcomeMsg the welcome msg of this course
-	*/
+	 * Sets the welcome msg of this course.
+	 *
+	 * @param welcomeMsg the welcome msg of this course
+	 */
 	@Override
 	public void setWelcomeMsg(String welcomeMsg) {
-		_course.setWelcomeMsg(welcomeMsg);
+		model.setWelcomeMsg(welcomeMsg);
 	}
 
 	/**
-	* Sets the localized welcome msg of this course in the language.
-	*
-	* @param welcomeMsg the localized welcome msg of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized welcome msg of this course in the language.
+	 *
+	 * @param welcomeMsg the localized welcome msg of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
 	public void setWelcomeMsg(String welcomeMsg, java.util.Locale locale) {
-		_course.setWelcomeMsg(welcomeMsg, locale);
+		model.setWelcomeMsg(welcomeMsg, locale);
 	}
 
 	/**
-	* Sets the localized welcome msg of this course in the language, and sets the default locale.
-	*
-	* @param welcomeMsg the localized welcome msg of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized welcome msg of this course in the language, and sets the default locale.
+	 *
+	 * @param welcomeMsg the localized welcome msg of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setWelcomeMsg(String welcomeMsg, java.util.Locale locale,
+	public void setWelcomeMsg(
+		String welcomeMsg, java.util.Locale locale,
 		java.util.Locale defaultLocale) {
-		_course.setWelcomeMsg(welcomeMsg, locale, defaultLocale);
+
+		model.setWelcomeMsg(welcomeMsg, locale, defaultLocale);
 	}
 
 	@Override
 	public void setWelcomeMsgCurrentLanguageId(String languageId) {
-		_course.setWelcomeMsgCurrentLanguageId(languageId);
+		model.setWelcomeMsgCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs.
-	*
-	* @param welcomeMsgMap the locales and localized welcome msgs of this course
-	*/
+	 * Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs.
+	 *
+	 * @param welcomeMsgMap the locales and localized welcome msgs of this course
+	 */
 	@Override
 	public void setWelcomeMsgMap(Map<java.util.Locale, String> welcomeMsgMap) {
-		_course.setWelcomeMsgMap(welcomeMsgMap);
+		model.setWelcomeMsgMap(welcomeMsgMap);
 	}
 
 	/**
-	* Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs, and sets the default locale.
-	*
-	* @param welcomeMsgMap the locales and localized welcome msgs of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized welcome msgs of this course from the map of locales and localized welcome msgs, and sets the default locale.
+	 *
+	 * @param welcomeMsgMap the locales and localized welcome msgs of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setWelcomeMsgMap(Map<java.util.Locale, String> welcomeMsgMap,
+	public void setWelcomeMsgMap(
+		Map<java.util.Locale, String> welcomeMsgMap,
 		java.util.Locale defaultLocale) {
-		_course.setWelcomeMsgMap(welcomeMsgMap, defaultLocale);
+
+		model.setWelcomeMsgMap(welcomeMsgMap, defaultLocale);
 	}
 
 	/**
-	* Sets the welcome subject of this course.
-	*
-	* @param welcomeSubject the welcome subject of this course
-	*/
+	 * Sets the welcome subject of this course.
+	 *
+	 * @param welcomeSubject the welcome subject of this course
+	 */
 	@Override
 	public void setWelcomeSubject(String welcomeSubject) {
-		_course.setWelcomeSubject(welcomeSubject);
+		model.setWelcomeSubject(welcomeSubject);
 	}
 
 	/**
-	* Sets the localized welcome subject of this course in the language.
-	*
-	* @param welcomeSubject the localized welcome subject of this course
-	* @param locale the locale of the language
-	*/
+	 * Sets the localized welcome subject of this course in the language.
+	 *
+	 * @param welcomeSubject the localized welcome subject of this course
+	 * @param locale the locale of the language
+	 */
 	@Override
-	public void setWelcomeSubject(String welcomeSubject, java.util.Locale locale) {
-		_course.setWelcomeSubject(welcomeSubject, locale);
+	public void setWelcomeSubject(
+		String welcomeSubject, java.util.Locale locale) {
+
+		model.setWelcomeSubject(welcomeSubject, locale);
 	}
 
 	/**
-	* Sets the localized welcome subject of this course in the language, and sets the default locale.
-	*
-	* @param welcomeSubject the localized welcome subject of this course
-	* @param locale the locale of the language
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized welcome subject of this course in the language, and sets the default locale.
+	 *
+	 * @param welcomeSubject the localized welcome subject of this course
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
 	@Override
-	public void setWelcomeSubject(String welcomeSubject,
-		java.util.Locale locale, java.util.Locale defaultLocale) {
-		_course.setWelcomeSubject(welcomeSubject, locale, defaultLocale);
+	public void setWelcomeSubject(
+		String welcomeSubject, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+
+		model.setWelcomeSubject(welcomeSubject, locale, defaultLocale);
 	}
 
 	@Override
 	public void setWelcomeSubjectCurrentLanguageId(String languageId) {
-		_course.setWelcomeSubjectCurrentLanguageId(languageId);
+		model.setWelcomeSubjectCurrentLanguageId(languageId);
 	}
 
 	/**
-	* Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects.
-	*
-	* @param welcomeSubjectMap the locales and localized welcome subjects of this course
-	*/
+	 * Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects.
+	 *
+	 * @param welcomeSubjectMap the locales and localized welcome subjects of this course
+	 */
 	@Override
 	public void setWelcomeSubjectMap(
 		Map<java.util.Locale, String> welcomeSubjectMap) {
-		_course.setWelcomeSubjectMap(welcomeSubjectMap);
+
+		model.setWelcomeSubjectMap(welcomeSubjectMap);
 	}
 
 	/**
-	* Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects, and sets the default locale.
-	*
-	* @param welcomeSubjectMap the locales and localized welcome subjects of this course
-	* @param defaultLocale the default locale
-	*/
+	 * Sets the localized welcome subjects of this course from the map of locales and localized welcome subjects, and sets the default locale.
+	 *
+	 * @param welcomeSubjectMap the locales and localized welcome subjects of this course
+	 * @param defaultLocale the default locale
+	 */
 	@Override
 	public void setWelcomeSubjectMap(
 		Map<java.util.Locale, String> welcomeSubjectMap,
 		java.util.Locale defaultLocale) {
-		_course.setWelcomeSubjectMap(welcomeSubjectMap, defaultLocale);
-	}
 
-	@Override
-	public com.liferay.portal.kernel.model.CacheModel<Course> toCacheModel() {
-		return _course.toCacheModel();
-	}
-
-	@Override
-	public Course toEscapedModel() {
-		return new CourseWrapper(_course.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _course.toString();
-	}
-
-	@Override
-	public Course toUnescapedModel() {
-		return new CourseWrapper(_course.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _course.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof CourseWrapper)) {
-			return false;
-		}
-
-		CourseWrapper courseWrapper = (CourseWrapper)obj;
-
-		if (Objects.equals(_course, courseWrapper._course)) {
-			return true;
-		}
-
-		return false;
+		model.setWelcomeSubjectMap(welcomeSubjectMap, defaultLocale);
 	}
 
 	@Override
 	public StagedModelType getStagedModelType() {
-		return _course.getStagedModelType();
+		return model.getStagedModelType();
 	}
 
 	@Override
-	public Course getWrappedModel() {
-		return _course;
+	protected CourseWrapper wrap(Course course) {
+		return new CourseWrapper(course);
 	}
 
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _course.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _course.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_course.resetOriginalValues();
-	}
-
-	private final Course _course;
 }

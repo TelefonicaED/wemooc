@@ -1,34 +1,72 @@
 package com.ted.lms.web.internal.portlet.action;
 
+import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import com.liferay.portal.kernel.struts.BaseStrutsAction;
+import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
 import com.liferay.portal.kernel.struts.StrutsAction;
-import com.liferay.portal.struts.FindActionHelper;
+import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.struts.FindStrutsAction;
+import com.ted.lms.model.Module;
+import com.ted.lms.service.ModuleLocalService;
 
 @Component(
 	immediate = true, property = "path=/modules/find_module",
 	service = StrutsAction.class
 )
-public class FindModuleAction extends BaseStrutsAction {
+public class FindModuleAction extends FindStrutsAction {
 	
 	@Override
-	public String execute(HttpServletRequest request, HttpServletResponse response)throws Exception {
-		findActionHelper.execute(request, response);
-		return null;
-	}
+	public long getGroupId(long primaryKey) throws Exception {
+		Module activity = moduleLocalService.getModule(primaryKey);
 
-	@Reference(
-		target = "(model.class.name=com.ted.lms.model.Module)",
-		unbind = "-"
-	)
-	protected void setFindActionHelper(FindActionHelper findActionHelper) {
-		this.findActionHelper = findActionHelper;
+		return activity.getGroupId();
 	}
+	
+	@Override
+	public String getPrimaryKeyParameterName() {
+		return "moduleId";
+	}
+	
+	@Override
+	protected PortletLayoutFinder getPortletLayoutFinder() {
+		return portletLayoutFinder;
+	}
+	
+	@Reference
+	private ModuleLocalService moduleLocalService;
+	
+	@Reference(target = "(model.class.name=com.ted.lms.model.Module)")
+	private PortletLayoutFinder portletLayoutFinder;
 
-	private FindActionHelper findActionHelper;
+	
+	@Override
+	protected void addRequiredParameters(HttpServletRequest request, String portletId, PortletURL portletURL) {
+
+		String mvcRenderCommandName = null;
+		
+		String action = ParamUtil.getString(request, Constants.CMD); 
+		
+		//Aquí deberíamos saber si venimos para editor o para ver
+
+		if (action.equals(Constants.EDIT)) {
+			mvcRenderCommandName = "/modules/edit_module";
+		} else if (action.equals(Constants.VIEW)) {
+			mvcRenderCommandName = "/modules/view_module";
+		}
+
+		portletURL.setParameter("mvcRenderCommandName", mvcRenderCommandName);
+	}
+	
+	@Override
+	public void setPrimaryKeyParameter(PortletURL portletURL, long primaryKey)
+		throws Exception {
+		portletURL.setParameter(
+				"moduleId", String.valueOf(primaryKey));
+		
+	}
 }

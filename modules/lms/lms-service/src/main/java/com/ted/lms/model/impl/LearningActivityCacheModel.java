@@ -14,11 +14,9 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.model.LearningActivity;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing LearningActivity in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see LearningActivity
  * @generated
  */
 @ProviderType
-public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
-	Externalizable {
+public class LearningActivityCacheModel
+	implements CacheModel<LearningActivity>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -49,7 +49,8 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 			return false;
 		}
 
-		LearningActivityCacheModel learningActivityCacheModel = (LearningActivityCacheModel)obj;
+		LearningActivityCacheModel learningActivityCacheModel =
+			(LearningActivityCacheModel)obj;
 
 		if (actId == learningActivityCacheModel.actId) {
 			return true;
@@ -296,8 +297,7 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -416,4 +416,5 @@ public class LearningActivityCacheModel implements CacheModel<LearningActivity>,
 	public long statusByUserId;
 	public String statusByUserName;
 	public long statusDate;
+
 }

@@ -6,13 +6,20 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.spring.extender.service.ServiceReference;
+import com.ted.lms.service.persistence.LearningActivityResultFinder;
 import com.ted.lms.service.persistence.ModuleResultFinder;
 
  
 import java.util.Iterator;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component(service = ModuleResultFinder.class)
 public class ModuleResultFinderImpl extends ModuleResultFinderBaseImpl implements ModuleResultFinder{
+	
+	@Reference
+	private CustomSQL customSQL;
 	
 	public static final String COUNT_MODULES_USER_PASSED = ModuleResultFinder.class.getName() + ".countModulesUserPassed";
 	
@@ -54,7 +61,4 @@ public class ModuleResultFinderImpl extends ModuleResultFinderBaseImpl implement
 			closeSession(session);
 		}
 	}
-	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
 }

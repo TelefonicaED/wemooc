@@ -6,4 +6,5 @@ Export-Package:\
 	com.ted.audit.db.model,\
 	com.ted.audit.db.service,\
 	com.ted.audit.db.service.persistence
+-check: EXPORTS
 -includeresource: META-INF/service.xml=../audit-db-service/service.xml

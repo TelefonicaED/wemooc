@@ -1,14 +1,14 @@
 package com.ted.lms.model;
 
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadRequest;
 
 import java.util.Locale;
 
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
-import aQute.bnd.annotation.ProviderType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para la factoría de los métodos de evaluación de los módulos, tiene los métodos que son genéricos y no dependen del método de evaluación 
@@ -19,7 +19,7 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface ModuleEvalFactory {
 
-	public ModuleEval getModuleEval(Module module, ServiceContext serviceContext) throws PortalException;
+	public ModuleEval getModuleEval(Module module) throws PortalException;
 
 	public String getClassName();
 

@@ -14,72 +14,77 @@
 
 package com.ted.lms.learning.activity.survey.service.persistence.impl;
 
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.configuration.Configuration;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 
 import com.ted.lms.learning.activity.survey.model.SurveyResult;
 import com.ted.lms.learning.activity.survey.service.persistence.SurveyResultPersistence;
-
-import java.lang.reflect.Field;
+import com.ted.lms.learning.activity.survey.service.persistence.impl.constants.SurveyPersistenceConstants;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
-public class SurveyResultFinderBaseImpl extends BasePersistenceImpl<SurveyResult> {
+public abstract class SurveyResultFinderBaseImpl
+	extends BasePersistenceImpl<SurveyResult> {
+
 	public SurveyResultFinderBaseImpl() {
 		setModelClass(SurveyResult.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			field.setAccessible(true);
+		dbColumnNames.put("uuid", "uuid_");
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	@Override
 	public Set<String> getBadColumnNames() {
-		return getSurveyResultPersistence().getBadColumnNames();
+		return surveyResultPersistence.getBadColumnNames();
 	}
 
-	/**
-	 * Returns the survey result persistence.
-	 *
-	 * @return the survey result persistence
-	 */
-	public SurveyResultPersistence getSurveyResultPersistence() {
-		return surveyResultPersistence;
+	@Override
+	@Reference(
+		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
 	}
 
-	/**
-	 * Sets the survey result persistence.
-	 *
-	 * @param surveyResultPersistence the survey result persistence
-	 */
-	public void setSurveyResultPersistence(
-		SurveyResultPersistence surveyResultPersistence) {
-		this.surveyResultPersistence = surveyResultPersistence;
+	@Override
+	@Reference(
+		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
 	}
 
-	@BeanReference(type = SurveyResultPersistence.class)
+	@Override
+	@Reference(
+		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
 	protected SurveyResultPersistence surveyResultPersistence;
-	private static final Log _log = LogFactoryUtil.getLog(SurveyResultFinderBaseImpl.class);
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		SurveyResultFinderBaseImpl.class);
+
 }

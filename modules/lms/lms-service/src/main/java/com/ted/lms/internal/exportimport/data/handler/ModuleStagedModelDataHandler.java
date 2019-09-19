@@ -34,7 +34,6 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portlet.documentlibrary.lar.FileEntryUtil;
 import com.ted.lms.internal.exportimport.creation.strategy.ModuleCreationStrategy;
-import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
 import com.ted.lms.model.impl.ModuleImpl;
 import com.ted.lms.service.ModuleLocalService;
@@ -325,13 +324,13 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		            importedModule = moduleLocalService.addModule(             
 		            		userId, groupId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), 
 		            		module.getAllowedTime(), null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
-		            importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
+		            importedModule = moduleLocalService.updateOrder(userId, importedModule, module.getPriority());
 		        } else {
 		        	log.debug("el módulo ya existe: " + module.getModuleId());
 		            importedModule = moduleLocalService.updateModule(userId, module.getModuleId(), module.getTitleMap(),module.getDescriptionMap(), 
 		            		module.getStartDate(), module.getEndDate(), module.getAllowedTime(), null, module.getModuleEvalId(),  module.getModuleExtraData(),
 		            		serviceContext);
-		            importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
+		            importedModule = moduleLocalService.updateOrder(userId, importedModule, module.getPriority());
 		        }
 		        
 			    // Small image
@@ -361,7 +360,7 @@ public class ModuleStagedModelDataHandler extends BaseStagedModelDataHandler<Mod
 		        importedModule = moduleLocalService.addModule(             
 	            		userId, groupId, module.getTitleMap(),module.getDescriptionMap(), module.getStartDate(), module.getEndDate(), module.getAllowedTime(), 
 	            		null, module.getModuleEvalId(), module.getModuleExtraData(), serviceContext);
-		        importedModule = moduleLocalService.updateOrder(importedModule, module.getOrder());
+		        importedModule = moduleLocalService.updateOrder(userId, importedModule, module.getPriority());
 		    }
 		    
 		    portletDataContext.importClassedModel(module, importedModule);

@@ -10,18 +10,22 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.impl.CourseResultImpl;
 import com.ted.lms.service.persistence.CourseResultFinder;
-
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.List;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
-public class CourseResultFinderImpl extends CourseResultFinderBaseImpl implements CourseResultFinder{
+@Component(service = CourseResultFinder.class)
+public class CourseResultFinderImpl extends CourseResultFinderBaseImpl implements CourseResultFinder {
 	
+	@Reference
+	private CustomSQL customSQL;
+
 	public static final String HAS_USER_TRIES =
 			 CourseResultFinder.class.getName() +
 				".hasUserTries";
@@ -264,7 +268,5 @@ public class CourseResultFinderImpl extends CourseResultFinderBaseImpl implement
 	
 		return courseResults;
 	}
-	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
+
 }

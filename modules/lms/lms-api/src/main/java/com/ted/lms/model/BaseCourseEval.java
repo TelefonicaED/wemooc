@@ -43,7 +43,7 @@ public abstract class BaseCourseEval implements CourseEval {
 	
 	private CourseEvalFactory courseEvalFactory;
 	
-	public boolean updateCourse() throws SystemException {
+	public boolean updateCourse() throws SystemException, PortalException  {
 		List<CourseResult> courseResults = CourseResultLocalServiceUtil.getCourseResults(course.getCourseId());
 		for(CourseResult courseResult: courseResults) {
 			updateCourseResult(courseResult);
@@ -52,7 +52,7 @@ public abstract class BaseCourseEval implements CourseEval {
 		return true;
 	}
 	
-	public boolean recalculateCourse() throws SystemException {
+	public boolean recalculateCourse() throws SystemException, PortalException  {
 		List<CourseResult> courseResults = CourseResultLocalServiceUtil.getCourseResults(course.getCourseId());
 		for(CourseResult courseResult: courseResults) {
 			recalculateCourseResult(courseResult);

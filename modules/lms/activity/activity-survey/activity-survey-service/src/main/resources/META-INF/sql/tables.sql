@@ -6,5 +6,5 @@ create table Survey_SurveyResult (
 	questionId LONG,
 	answerId LONG,
 	userId LONG,
-	freeAnswer TEXT null
+	freeAnswer VARCHAR(75) null
 );

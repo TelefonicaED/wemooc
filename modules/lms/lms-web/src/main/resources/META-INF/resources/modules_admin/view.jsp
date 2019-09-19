@@ -34,6 +34,7 @@ PortletURL addActivityPortletURL = null;
 								</c:when>
 								<c:otherwise>
 									<%=module.getTitle(themeDisplay.getLocale()) %>
+									<span class="glyphicon glyphicon-lock"></span>
 								</c:otherwise>
 							</c:choose>
 						</span>

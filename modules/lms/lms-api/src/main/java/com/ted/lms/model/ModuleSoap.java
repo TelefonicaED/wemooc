@@ -14,23 +14,23 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * This class is used by SOAP remote services, specifically {@link com.ted.lms.service.http.ModuleServiceSoap}.
  *
  * @author Brian Wing Shun Chan
- * @see com.ted.lms.service.http.ModuleServiceSoap
  * @generated
  */
 @ProviderType
 public class ModuleSoap implements Serializable {
+
 	public static ModuleSoap toSoapModel(Module model) {
 		ModuleSoap soapModel = new ModuleSoap();
 
@@ -46,7 +46,7 @@ public class ModuleSoap implements Serializable {
 		soapModel.setTitle(model.getTitle());
 		soapModel.setDescription(model.getDescription());
 		soapModel.setSmallImageId(model.getSmallImageId());
-		soapModel.setOrder(model.getOrder());
+		soapModel.setPriority(model.getPriority());
 		soapModel.setStartDate(model.getStartDate());
 		soapModel.setEndDate(model.getEndDate());
 		soapModel.setAllowedTime(model.getAllowedTime());
@@ -204,12 +204,12 @@ public class ModuleSoap implements Serializable {
 		_smallImageId = smallImageId;
 	}
 
-	public long getOrder() {
-		return _order;
+	public long getPriority() {
+		return _priority;
 	}
 
-	public void setOrder(long order) {
-		_order = order;
+	public void setPriority(long priority) {
+		_priority = priority;
 	}
 
 	public Date getStartDate() {
@@ -296,7 +296,7 @@ public class ModuleSoap implements Serializable {
 	private String _title;
 	private String _description;
 	private long _smallImageId;
-	private long _order;
+	private long _priority;
 	private Date _startDate;
 	private Date _endDate;
 	private long _allowedTime;
@@ -306,4 +306,5 @@ public class ModuleSoap implements Serializable {
 	private long _statusByUserId;
 	private String _statusByUserName;
 	private Date _statusDate;
+
 }

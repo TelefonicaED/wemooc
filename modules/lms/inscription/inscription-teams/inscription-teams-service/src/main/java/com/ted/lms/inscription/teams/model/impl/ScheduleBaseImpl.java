@@ -14,10 +14,10 @@
 
 package com.ted.lms.inscription.teams.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.inscription.teams.model.Schedule;
 import com.ted.lms.inscription.teams.service.ScheduleLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the Schedule service. Represents a row in the &quot;iteam_Schedule&quot; database table, with each column mapped to a property of this class.
@@ -32,12 +32,13 @@ import com.ted.lms.inscription.teams.service.ScheduleLocalServiceUtil;
  * @generated
  */
 @ProviderType
-public abstract class ScheduleBaseImpl extends ScheduleModelImpl
-	implements Schedule {
+public abstract class ScheduleBaseImpl
+	extends ScheduleModelImpl implements Schedule {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a schedule model instance should use the {@link Schedule} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a schedule model instance should use the <code>Schedule</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -48,4 +49,5 @@ public abstract class ScheduleBaseImpl extends ScheduleModelImpl
 			ScheduleLocalServiceUtil.updateSchedule(this);
 		}
 	}
+
 }

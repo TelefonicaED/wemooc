@@ -14,7 +14,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Virginia Martín Agudo
  *
  */
-@Component(immediate = true)
+@Component(immediate = true, service = {})
 public class ModulePermission {
 	public static boolean contains(
             PermissionChecker permissionChecker, Module module,

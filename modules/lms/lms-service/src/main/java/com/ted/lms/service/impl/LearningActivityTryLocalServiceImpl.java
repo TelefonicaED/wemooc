@@ -14,6 +14,9 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+import com.ted.lms.service.LearningActivityResultLocalService;
+import com.ted.lms.service.base.LearningActivityTryLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -29,16 +32,18 @@ import com.ted.lms.model.LearningActivityTry;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
-import com.ted.lms.service.base.LearningActivityTryLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The implementation of the learning activity try local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.LearningActivityTryLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.LearningActivityTryLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -46,14 +51,18 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see LearningActivityTryLocalServiceBaseImpl
- * @see com.ted.lms.service.LearningActivityTryLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.LearningActivityTry",
+	service = AopService.class
+)
 public class LearningActivityTryLocalServiceImpl
 	extends LearningActivityTryLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.LearningActivityTryLocalServiceUtil} to access the learning activity try local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.LearningActivityTryLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.LearningActivityTryLocalServiceUtil</code>.
 	 */
 	
 	public int getLearningActivityTriesCount(long actId, long userId) {
@@ -189,7 +198,7 @@ public class LearningActivityTryLocalServiceImpl
 		
 		learningActivityTry.setResult(result);
 		learningActivityTry.setEndDate(endDate);
-		//No se actualiza la fecha de finalización del usuario si ya tiene
+		//No se actualiza la fecha de finalizaciÃ³n del usuario si ya tiene
 		if(learningActivityTry.getEndUserDate() == null)
 			learningActivityTry.setEndUserDate(endDate);
 		
@@ -211,4 +220,7 @@ public class LearningActivityTryLocalServiceImpl
 		
 		return learningActivityTry;
 	}
+	
+	@Reference
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
 }

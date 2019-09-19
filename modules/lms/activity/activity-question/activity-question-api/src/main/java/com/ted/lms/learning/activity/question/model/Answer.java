@@ -14,30 +14,33 @@
 
 package com.ted.lms.learning.activity.question.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
- * The extended model interface for the Answer service. Represents a row in the &quot;qu_Answer&quot; database table, with each column mapped to a property of this class.
+ * The extended model interface for the Answer service. Represents a row in the &quot;QU_Answer&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see AnswerModel
- * @see com.ted.lms.learning.activity.question.model.impl.AnswerImpl
- * @see com.ted.lms.learning.activity.question.model.impl.AnswerModelImpl
  * @generated
  */
-@ImplementationClassName("com.ted.lms.learning.activity.question.model.impl.AnswerImpl")
+@ImplementationClassName(
+	"com.ted.lms.learning.activity.question.model.impl.AnswerImpl"
+)
 @ProviderType
 public interface Answer extends AnswerModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.learning.activity.question.model.impl.AnswerImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.learning.activity.question.model.impl.AnswerImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<Answer, Long> ANSWER_ID_ACCESSOR = new Accessor<Answer, Long>() {
+	public static final Accessor<Answer, Long> ANSWER_ID_ACCESSOR =
+		new Accessor<Answer, Long>() {
+
 			@Override
 			public Long get(Answer answer) {
 				return answer.getAnswerId();
@@ -52,5 +55,7 @@ public interface Answer extends AnswerModel, PersistedModel {
 			public Class<Answer> getTypeClass() {
 				return Answer.class;
 			}
+
 		};
+
 }

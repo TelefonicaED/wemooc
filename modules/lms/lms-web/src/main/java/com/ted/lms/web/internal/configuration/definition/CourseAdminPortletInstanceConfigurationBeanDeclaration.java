@@ -5,8 +5,10 @@ import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfigur
 
 import org.osgi.service.component.annotations.Component;
 
-@Component
-public class CourseAdminPortletInstanceConfigurationBeanDeclaration implements ConfigurationBeanDeclaration {
+@Component(service=ConfigurationBeanDeclaration.class)
+public class CourseAdminPortletInstanceConfigurationBeanDeclaration 
+	implements ConfigurationBeanDeclaration {
+	
 	@Override
 	public Class<?> getConfigurationBeanClass() {
 		return CourseAdminPortletInstanceConfiguration.class;

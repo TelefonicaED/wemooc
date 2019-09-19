@@ -74,17 +74,19 @@ public class ViewMembersMVCRenderCommand implements MVCRenderCommand {
 			
 			String[] roleCourses = configuration.roleCourses();
 			
-			Role studentRole = RoleLocalServiceUtil.getRole(themeDisplay.getCompanyId(), LMSRoleConstants.STUDENT);
-			Role teacherRole = RoleLocalServiceUtil.getRole(themeDisplay.getCompanyId(), LMSRoleConstants.TEACHER_ROLE);
+			Role studentRole = RoleLocalServiceUtil.fetchRole(themeDisplay.getCompanyId(), LMSRoleConstants.STUDENT);
+			Role teacherRole = RoleLocalServiceUtil.fetchRole(themeDisplay.getCompanyId(), LMSRoleConstants.TEACHER_ROLE);
 			
 			List<NavigationItem> navigationItem =  new NavigationItemList() {
 				{
-					add(
-						navigationItem -> {
-							navigationItem.setActive(Objects.equals(tabs, "students"));
-							navigationItem.setHref(courseMembersDisplayContext.getPortletURL(), "tabs", "students", "roleId", studentRole.getRoleId());
-							navigationItem.setLabel(studentRole.getTitle(themeDisplay.getLocale()));
-						});
+					if(studentRole != null) {
+						add(
+							navigationItem -> {
+								navigationItem.setActive(Objects.equals(tabs, "students"));
+								navigationItem.setHref(courseMembersDisplayContext.getPortletURL(), "tabs", "students", "roleId", studentRole.getRoleId());
+								navigationItem.setLabel(studentRole.getTitle(themeDisplay.getLocale()));
+							});
+					}
 					if(teacherRole != null) {
 						add(
 							navigationItem -> {
@@ -93,15 +95,17 @@ public class ViewMembersMVCRenderCommand implements MVCRenderCommand {
 								navigationItem.setLabel(teacherRole.getTitle(themeDisplay.getLocale()));
 							});
 					}
-					for(String roleCourse: roleCourses) {
-						Role role = RoleLocalServiceUtil.fetchRole(themeDisplay.getCompanyId(), roleCourse);
-						if(role != null) {
-							add(
-								navigationItem -> {
-									navigationItem.setActive(Objects.equals(tabs, role.getName()));
-									navigationItem.setHref(courseMembersDisplayContext.getPortletURL(), "tabs", role.getName(), "roleId", role.getRoleId());
-									navigationItem.setLabel(role.getTitle(themeDisplay.getLocale()));
-								});
+					if(roleCourses != null) {
+						for(String roleCourse: roleCourses) {
+							Role role = RoleLocalServiceUtil.fetchRole(themeDisplay.getCompanyId(), roleCourse);
+							if(role != null) {
+								add(
+									navigationItem -> {
+										navigationItem.setActive(Objects.equals(tabs, role.getName()));
+										navigationItem.setHref(courseMembersDisplayContext.getPortletURL(), "tabs", role.getName(), "roleId", role.getRoleId());
+										navigationItem.setLabel(role.getTitle(themeDisplay.getLocale()));
+									});
+							}
 						}
 					}
 				}

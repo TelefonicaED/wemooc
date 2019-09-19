@@ -3,10 +3,8 @@ package com.ted.lms.web.internal.display.context;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.SafeConsumer;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.ViewTypeItemList;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
@@ -21,11 +19,7 @@ import com.liferay.trash.TrashHelper;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
-import com.ted.lms.security.permission.resource.CoursePermission;
 import com.ted.lms.security.permission.resource.LMSPermission;
-import com.ted.lms.security.permission.resource.ModulePermission;
-import com.ted.lms.service.CourseLocalService;
-import com.ted.lms.service.CourseLocalServiceUtil;
 import com.ted.lms.service.CourseTypeLocalServiceUtil;
 
 import java.util.List;
@@ -57,23 +51,22 @@ public class CoursesManagementToolbarDisplayContext {
 				{
 					ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
 					add(
-						SafeConsumer.ignore(
-							dropdownItem -> {
-								dropdownItem.putData("action", "deleteCourses");
+						dropdownItem -> {
+							dropdownItem.putData("action", "deleteCourses");
 
-								boolean trashEnabled = trashHelper.isTrashEnabled(themeDisplay.getScopeGroupId());
+							boolean trashEnabled = trashHelper.isTrashEnabled(themeDisplay.getScopeGroupId());
 
-								dropdownItem.setIcon(trashEnabled ? "trash" : "times");
+							dropdownItem.setIcon(trashEnabled ? "trash" : "times");
 
-								String label = "delete";
+							String label = "delete";
 
-								if (trashEnabled) {
-									label = "move-to-recycle-bin";
-								}
+							if (trashEnabled) {
+								label = "move-to-recycle-bin";
+							}
 
-								dropdownItem.setLabel(LanguageUtil.get(request, label));
-								dropdownItem.setQuickAction(true);
-							}));
+							dropdownItem.setLabel(LanguageUtil.get(request, label));
+							dropdownItem.setQuickAction(true);
+						});
 				}
 			};
 		}

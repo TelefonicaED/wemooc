@@ -20,6 +20,7 @@ import java.util.List;
 import javax.portlet.ActionRequest;
 import javax.portlet.PortletRequest;
 
+
 public abstract class BaseQuestionType implements QuestionType{
 	
 	private static final Log log = LogFactoryUtil.getLog(BaseQuestionType.class);

@@ -14,10 +14,10 @@
 
 package com.ted.lms.learning.activity.p2p.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the P2PActivityCorrections service. Represents a row in the &quot;PTP_P2PActivityCorrections&quot; database table, with each column mapped to a property of this class.
@@ -34,18 +34,22 @@ import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServ
 @ProviderType
 public abstract class P2PActivityCorrectionsBaseImpl
 	extends P2PActivityCorrectionsModelImpl implements P2PActivityCorrections {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a p2p activity corrections model instance should use the {@link P2PActivityCorrections} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a p2p activity corrections model instance should use the <code>P2PActivityCorrections</code> interface instead.
 	 */
 	@Override
 	public void persist() {
 		if (this.isNew()) {
-			P2PActivityCorrectionsLocalServiceUtil.addP2PActivityCorrections(this);
+			P2PActivityCorrectionsLocalServiceUtil.addP2PActivityCorrections(
+				this);
 		}
 		else {
-			P2PActivityCorrectionsLocalServiceUtil.updateP2PActivityCorrections(this);
+			P2PActivityCorrectionsLocalServiceUtil.updateP2PActivityCorrections(
+				this);
 		}
 	}
+
 }

@@ -14,73 +14,79 @@
 
 package com.ted.lms.learning.activity.p2p.service.persistence.impl;
 
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.configuration.Configuration;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsPersistence;
-
-import java.lang.reflect.Field;
+import com.ted.lms.learning.activity.p2p.service.persistence.impl.constants.PTPPersistenceConstants;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
-public class P2PActivityCorrectionsFinderBaseImpl extends BasePersistenceImpl<P2PActivityCorrections> {
+public abstract class P2PActivityCorrectionsFinderBaseImpl
+	extends BasePersistenceImpl<P2PActivityCorrections> {
+
 	public P2PActivityCorrectionsFinderBaseImpl() {
 		setModelClass(P2PActivityCorrections.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			field.setAccessible(true);
+		dbColumnNames.put("uuid", "uuid_");
+		dbColumnNames.put("date", "date_");
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-			dbColumnNames.put("date", "date_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	@Override
 	public Set<String> getBadColumnNames() {
-		return getP2PActivityCorrectionsPersistence().getBadColumnNames();
+		return p2pActivityCorrectionsPersistence.getBadColumnNames();
 	}
 
-	/**
-	 * Returns the p2p activity corrections persistence.
-	 *
-	 * @return the p2p activity corrections persistence
-	 */
-	public P2PActivityCorrectionsPersistence getP2PActivityCorrectionsPersistence() {
-		return p2pActivityCorrectionsPersistence;
+	@Override
+	@Reference(
+		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
 	}
 
-	/**
-	 * Sets the p2p activity corrections persistence.
-	 *
-	 * @param p2pActivityCorrectionsPersistence the p2p activity corrections persistence
-	 */
-	public void setP2PActivityCorrectionsPersistence(
-		P2PActivityCorrectionsPersistence p2pActivityCorrectionsPersistence) {
-		this.p2pActivityCorrectionsPersistence = p2pActivityCorrectionsPersistence;
+	@Override
+	@Reference(
+		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
 	}
 
-	@BeanReference(type = P2PActivityCorrectionsPersistence.class)
-	protected P2PActivityCorrectionsPersistence p2pActivityCorrectionsPersistence;
-	private static final Log _log = LogFactoryUtil.getLog(P2PActivityCorrectionsFinderBaseImpl.class);
+	@Override
+	@Reference(
+		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
+	protected P2PActivityCorrectionsPersistence
+		p2pActivityCorrectionsPersistence;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		P2PActivityCorrectionsFinderBaseImpl.class);
+
 }

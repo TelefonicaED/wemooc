@@ -14,6 +14,12 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.LearningActivityTryLocalService;
+import com.ted.lms.service.ModuleResultLocalService;
+import com.ted.lms.service.base.LearningActivityResultLocalServiceBaseImpl;
+
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -31,11 +37,14 @@ import com.ted.lms.service.base.LearningActivityResultLocalServiceBaseImpl;
 import java.util.Date;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the learning activity result local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.LearningActivityResultLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.LearningActivityResultLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -43,14 +52,18 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see LearningActivityResultLocalServiceBaseImpl
- * @see com.ted.lms.service.LearningActivityResultLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.LearningActivityResult",
+	service = AopService.class
+)
 public class LearningActivityResultLocalServiceImpl
 	extends LearningActivityResultLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.LearningActivityResultLocalServiceUtil} to access the learning activity result local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.LearningActivityResultLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.LearningActivityResultLocalServiceUtil</code>.
 	 */
 	
 	@Override
@@ -116,7 +129,7 @@ public class LearningActivityResultLocalServiceImpl
 		
 		if(learningActivityTry.getEndDate()!=null){
 			
-			long numTries = learningActivityTryLocalService.getLearningActivityTriesCount(learningActivityTry.getActId(), learningActivityTry.getUserId());
+			long numTries = learningActivityTryPersistence.countByActIdUserId(learningActivityTry.getActId(), learningActivityTry.getUserId());
 			
 			log.debug("****Cuantos try llevo "+numTries);
 			
@@ -154,7 +167,7 @@ public class LearningActivityResultLocalServiceImpl
 			
 			learningActivityResultPersistence.update(learningActivityResult);
 			
-			moduleResultLocalService.updateModuleResult(learningActivityResult, serviceContext);
+			moduleResultLocalService.updateModuleResult(learningActivityResult);
 			
 			//auditing
 			AuditFactory.audit(serviceContext.getCompanyId(), serviceContext.getScopeGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_RESULT_UPDATE, 
@@ -171,4 +184,10 @@ public class LearningActivityResultLocalServiceImpl
 	}
 	
 	private static Log log = LogFactoryUtil.getLog(LearningActivityResultLocalServiceImpl.class);
+	
+	@Reference
+	protected ModuleResultLocalService moduleResultLocalService;
+	
+	@Reference
+	protected LearningActivityLocalService learningActivityLocalService;
 }

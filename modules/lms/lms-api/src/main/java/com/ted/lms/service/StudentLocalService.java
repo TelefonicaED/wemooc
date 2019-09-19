@@ -14,8 +14,6 @@
 
 package com.ted.lms.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.User;
@@ -35,6 +33,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * Provides the local service interface for Student. Methods of this
  * service will not have security checks based on the propagated JAAS
@@ -43,82 +43,91 @@ import java.util.Locale;
  *
  * @author Brian Wing Shun Chan
  * @see StudentLocalServiceUtil
- * @see com.ted.lms.service.base.StudentLocalServiceBaseImpl
- * @see com.ted.lms.service.impl.StudentLocalServiceImpl
  * @generated
  */
 @ProviderType
-@Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
-	PortalException.class, SystemException.class})
+@Transactional(
+	isolation = Isolation.PORTAL,
+	rollbackFor = {PortalException.class, SystemException.class}
+)
 public interface StudentLocalService extends BaseLocalService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link StudentLocalServiceUtil} to access the student local service. Add custom service methods to {@link com.ted.lms.service.impl.StudentLocalServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify or reference this interface directly. Always use {@link StudentLocalServiceUtil} to access the student local service. Add custom service methods to <code>com.ted.lms.service.impl.StudentLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public boolean canEnroll(Course course, long userId, Locale locale,
-		PermissionChecker permissionChecker)
-		throws PortalException, InscriptionException;
+	public boolean canEnroll(
+			Course course, long userId, Locale locale,
+			PermissionChecker permissionChecker)
+		throws InscriptionException, PortalException;
 
-	public boolean canUnsubscribe(Course course, long userId,
-		PermissionChecker permissionChecker) throws PortalException;
+	public boolean canUnsubscribe(
+			Course course, long userId, PermissionChecker permissionChecker)
+		throws PortalException;
 
-	public int countStudentsFinished(long courseId, long companyId,
-		String keywords, int status, LinkedHashMap<String, Object> params,
-		int start, int end);
+	public int countStudentsFinished(
+		long courseId, long companyId, String keywords, int status,
+		LinkedHashMap<String, Object> params, int start, int end);
 
 	public int countStudentsFromCourse(long courseId, long companyId);
 
-	public int countStudentsFromCourse(long courseId, long companyId,
-		String keywords, int status, LinkedHashMap<String, Object> params);
+	public int countStudentsFromCourse(
+		long courseId, long companyId, String keywords, int status,
+		LinkedHashMap<String, Object> params);
 
 	/**
-	* Usar este método para contar los estudiantes de un curso
-	*
-	* @param courseId id del curso
-	* @param companyId id de company
-	* @param screenName nombre de usuario
-	* @param firstName nombre
-	* @param lastName apellido
-	* @param emailAddress direccion de correo
-	* @param status estado del usuario (WorkflowConstants)
-	* @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
-	* @return
-	*/
-	public int countStudentsFromCourse(long courseId, long companyId,
-		String screenName, String firstName, String lastName,
-		String emailAddress, int status, LinkedHashMap<String, Object> params,
-		boolean andOperator);
+	 * Usar este método para contar los estudiantes de un curso
+	 *
+	 * @param courseId id del curso
+	 * @param companyId id de company
+	 * @param screenName nombre de usuario
+	 * @param firstName nombre
+	 * @param lastName apellido
+	 * @param emailAddress direccion de correo
+	 * @param status estado del usuario (WorkflowConstants)
+	 * @param andOperator true si queremos que coincidan screenname, firstname, lastname y emailaddress, false en caso contrario
+	 * @return
+	 */
+	public int countStudentsFromCourse(
+		long courseId, long companyId, String screenName, String firstName,
+		String lastName, String emailAddress, int status,
+		LinkedHashMap<String, Object> params, boolean andOperator);
 
 	/**
-	* Este método realiza las comprobaciones necesarias en base al método de inscripción seleccionado en el curso e inscribe al usuario,
-	* se debe llamar cuando es el mismo estudiante el que se está inscribiendo en el curso
-	*/
-	public CourseResult enrollStudent(Course course, long studentId,
-		ServiceContext serviceContext, PermissionChecker permissionChecker)
-		throws PortalException, InscriptionException;
+	 * Este método realiza las comprobaciones necesarias en base al método de inscripción seleccionado en el curso e inscribe al usuario,
+	 * se debe llamar cuando es el mismo estudiante el que se está inscribiendo en el curso
+	 */
+	public CourseResult enrollStudent(
+			Course course, long studentId, ServiceContext serviceContext,
+			PermissionChecker permissionChecker)
+		throws InscriptionException, PortalException;
 
 	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
+	 * Returns the OSGi service identifier.
+	 *
+	 * @return the OSGi service identifier
+	 */
 	public String getOSGiServiceIdentifier();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<User> getStudentsFromCourse(long courseId, long companyId,
-		String keywords, int status, LinkedHashMap<String, Object> params,
-		int start, int end, OrderByComparator obc);
+	public List<User> getStudentsFromCourse(
+		long courseId, long companyId, String keywords, int status,
+		LinkedHashMap<String, Object> params, int start, int end,
+		OrderByComparator obc);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public List<User> getStudentsFromCourse(long courseId, long companyId,
-		String screenName, String firstName, String lastName,
-		String emailAddress, int status, LinkedHashMap<String, Object> params,
-		boolean andOperator, int start, int end, OrderByComparator obc);
+	public List<User> getStudentsFromCourse(
+		long courseId, long companyId, String screenName, String firstName,
+		String lastName, String emailAddress, int status,
+		LinkedHashMap<String, Object> params, boolean andOperator, int start,
+		int end, OrderByComparator obc);
 
 	/**
-	* Este método se usa para desinscribir a un usuario de un curso teniendo en cuenta el método de inscripción
-	*/
-	public boolean unsubscribeStudent(Course course, long userId,
-		PermissionChecker permissionChecker) throws PortalException;
+	 * Este método se usa para desinscribir a un usuario de un curso teniendo en cuenta el método de inscripción
+	 */
+	public boolean unsubscribeStudent(
+			Course course, long userId, PermissionChecker permissionChecker)
+		throws PortalException;
+
 }

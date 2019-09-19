@@ -1,9 +1,9 @@
-create index IX_E95CE3AB on qu_Answer (groupId);
-create index IX_5BBED734 on qu_Answer (questionId);
-create index IX_47D96413 on qu_Answer (uuid_[$COLUMN_LENGTH:75$], companyId);
-create unique index IX_1A81D355 on qu_Answer (uuid_[$COLUMN_LENGTH:75$], groupId);
+create index IX_3FD5DFAB on QU_Answer (groupId);
+create index IX_44D45B34 on QU_Answer (questionId);
+create index IX_3BBE813 on QU_Answer (uuid_[$COLUMN_LENGTH:75$], companyId);
+create unique index IX_B5355755 on QU_Answer (uuid_[$COLUMN_LENGTH:75$], groupId);
 
-create index IX_F76FAB96 on qu_Question (actId);
-create index IX_AD4DB143 on qu_Question (groupId);
-create index IX_CD1A617B on qu_Question (uuid_[$COLUMN_LENGTH:75$], companyId);
-create unique index IX_7330ABD on qu_Question (uuid_[$COLUMN_LENGTH:75$], groupId);
+create index IX_4DE8A796 on QU_Question (actId);
+create index IX_4977AD43 on QU_Question (groupId);
+create index IX_1A6BE57B on QU_Question (uuid_[$COLUMN_LENGTH:75$], companyId);
+create unique index IX_C3158EBD on QU_Question (uuid_[$COLUMN_LENGTH:75$], groupId);

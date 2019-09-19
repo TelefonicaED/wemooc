@@ -40,7 +40,7 @@ public class PonderatedCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException, PortalException  {
 
 		if(courseResult.getStartDate() == null){
 			courseResult.setStartDate(new Date());
@@ -70,7 +70,7 @@ public class PonderatedCourseEval extends BaseCourseEval{
 	}
 
 	@Override
-	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException {
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException, PortalException {
 		// Se obtiene el courseresult del usuario en dicho course.
 
 		List<LearningActivityResult> lresult = learningActivityResultLocalService.getRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
@@ -81,96 +81,89 @@ public class PonderatedCourseEval extends BaseCourseEval{
 		}
 		return courseResult;	
 	}
-	
-	public CourseResult updateCourseResult(CourseResult courseResult, long userId, List<LearningActivityResult> lresult) {
-		
-		try {
-			java.util.Map<Long,Long> weights=getActivitiesWeight();
-			double score = getPassPuntuation();
 
-			boolean passed=true;
-			double result=0;
-			long weight=0;
-			List<LearningActivity> learningActivities=learningActivityLocalService.getRequiredLearningActivitiesOfGroup(course.getGroupCreatedId());
-			
-			//Guardo los resultados de las actividades del usuario en el curso en un hashmap para no tener que acceder a bbdd por cada uno de ellos
-			HashMap<Long, LearningActivityResult> results = new HashMap<Long, LearningActivityResult>();
-			for(LearningActivityResult ar:lresult){
-				results.put(ar.getActId(), ar);
+	public CourseResult updateCourseResult(CourseResult courseResult, long userId, List<LearningActivityResult> lresult) throws PortalException{
+		
+		java.util.Map<Long,Long> weights=getActivitiesWeight();
+		double score = getPassPuntuation();
+
+		boolean passed=true;
+		double result=0;
+		long weight=0;
+		List<LearningActivity> learningActivities=learningActivityLocalService.getRequiredLearningActivitiesOfGroup(course.getGroupCreatedId());
+		
+		//Guardo los resultados de las actividades del usuario en el curso en un hashmap para no tener que acceder a bbdd por cada uno de ellos
+		HashMap<Long, LearningActivityResult> results = new HashMap<Long, LearningActivityResult>();
+		for(LearningActivityResult ar:lresult){
+			results.put(ar.getActId(), ar);
+		}
+		
+		boolean isFailed=false;
+		LearningActivityResult learningActivityResult = null;
+		boolean hasTries = false;
+		for(LearningActivity act:learningActivities){
+
+			if(!weights.containsKey(act.getActId())){//Solo se tienen en cuenta las actividades obligatorias que tienen peso definido
+				continue;
 			}
 			
-			boolean isFailed=false;
-			LearningActivityResult learningActivityResult = null;
-			boolean hasTries = false;
-			for(LearningActivity act:learningActivities){
-
-				if(!weights.containsKey(act.getActId())){//Solo se tienen en cuenta las actividades obligatorias que tienen peso definido
-					continue;
-				}
-				
-				if(results.containsKey(act.getActId())){
-					learningActivityResult = results.get(act.getActId());
-				}else{
-					learningActivityResult = null;
-				}
-				
-				if(learningActivityResult != null){					
-					if(learningActivityResult.getEndDate()!=null){						
-						if(!learningActivityResult.isPassed()){
-							passed=false;
-							if(act.getTries() > 0){
-								long  userTries = learningActivityTryLocalService.getLearningActivityTriesCount(act.getActId(), userId);
-								if(userTries >= act.getTries()){
-									isFailed=true;
-								}else{
-									hasTries = true;
-								}
+			if(results.containsKey(act.getActId())){
+				learningActivityResult = results.get(act.getActId());
+			}else{
+				learningActivityResult = null;
+			}
+			
+			if(learningActivityResult != null){					
+				if(learningActivityResult.getEndDate()!=null){						
+					if(!learningActivityResult.isPassed()){
+						passed=false;
+						if(act.getTries() > 0){
+							long  userTries = learningActivityTryLocalService.getLearningActivityTriesCount(act.getActId(), userId);
+							if(userTries >= act.getTries()){
+								isFailed=true;
 							}else{
 								hasTries = true;
 							}
+						}else{
+							hasTries = true;
 						}
-						result=result+(learningActivityResult.getResult()*weights.get(act.getActId()));
-
-					}else{
-						passed=false;
-						hasTries = true;
 					}
+					result=result+(learningActivityResult.getResult()*weights.get(act.getActId()));
+
 				}else{
 					passed=false;
 					hasTries = true;
 				}
-				weight+=weights.get(act.getActId());
-			}
-
-			
-			
-			if(result>0&&weight>0){
-				result=result/weight;
-			}
-
-			if(result<score){
+			}else{
 				passed=false;
+				hasTries = true;
 			}
-						
-
-			if(!hasTries && !passed){
-				isFailed = true;
-			}
-			
-			// Si el usuario se ha marcado como isFailed es porque lo tiene suspenso. Se le asigna un passed a false y se marca la fecha de finalización del curso (passedDate).
-            courseResult.setPassed(passed && !isFailed);
-            // Se almacena el result del resultado del usuario en el curso.
-            courseResult.setResult(result);
-            if((passed || isFailed) && courseResult.getPassedDate() == null) {
-                   courseResult.setPassedDate(new Date());
-            }
-            return courseResultLocalService.updateCourseResult(courseResult);	
-			
-		} catch (PortalException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+			weight+=weights.get(act.getActId());
 		}
+
+		
+		
+		if(result>0&&weight>0){
+			result=result/weight;
+		}
+
+		if(result<score){
+			passed=false;
+		}
+					
+
+		if(!hasTries && !passed){
+			isFailed = true;
+		}
+		
+		// Si el usuario se ha marcado como isFailed es porque lo tiene suspenso. Se le asigna un passed a false y se marca la fecha de finalización del curso (passedDate).
+        courseResult.setPassed(passed && !isFailed);
+        // Se almacena el result del resultado del usuario en el curso.
+        courseResult.setResult(result);
+        if((passed || isFailed) && courseResult.getPassedDate() == null) {
+               courseResult.setPassedDate(new Date());
+        }
+        return courseResult;	
 	}
 	
 	@Override

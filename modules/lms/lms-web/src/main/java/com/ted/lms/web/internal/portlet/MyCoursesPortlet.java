@@ -56,7 +56,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class MyCoursesPortlet extends MVCPortlet {
 	
-private static final Log log = LogFactoryUtil.getLog(InscriptionPortlet.class);
+	private static final Log log = LogFactoryUtil.getLog(InscriptionPortlet.class);
 	
 	@Override
 	public void doView(RenderRequest renderRequest, RenderResponse renderResponse) throws IOException, PortletException {
@@ -179,6 +179,7 @@ private static final Log log = LogFactoryUtil.getLog(InscriptionPortlet.class);
 				null);
 		
 		System.out.println("total: " + total);
+		System.out.println("results: " + results);
 
 		searchContainer.setResults(results);
 		searchContainer.setTotal(total);

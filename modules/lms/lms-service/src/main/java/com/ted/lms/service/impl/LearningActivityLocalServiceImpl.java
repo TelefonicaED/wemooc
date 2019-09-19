@@ -14,21 +14,30 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
+import com.ted.lms.service.base.LearningActivityLocalServiceBaseImpl;
+
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
-import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.ResourceConstants;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -36,14 +45,16 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.trash.exception.TrashEntryException;
 import com.liferay.trash.service.TrashEntryLocalService;
+import com.ted.audit.api.AuditFactory;
+import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
-import com.ted.lms.constants.CourseParams;
 import com.ted.lms.constants.LMSActivityKeys;
+import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.constants.LMSConstants;
+import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
 import com.ted.lms.copy.permission.ResourceCopy;
@@ -56,7 +67,6 @@ import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
-import com.ted.lms.service.base.LearningActivityLocalServiceBaseImpl;
 import com.ted.lms.util.LMSPrefsPropsValues;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
@@ -69,11 +79,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the learning activity local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.LearningActivityLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.LearningActivityLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -81,10 +94,19 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see LearningActivityLocalServiceBaseImpl
- * @see com.ted.lms.service.LearningActivityLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.LearningActivity",
+	service = AopService.class
+)
 public class LearningActivityLocalServiceImpl
 	extends LearningActivityLocalServiceBaseImpl {
+
+	/*
+	 * NOTE FOR DEVELOPERS:
+	 *
+	 * Never reference this class directly. Use <code>com.ted.lms.service.LearningActivityLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.LearningActivityLocalServiceUtil</code>.
+	 */
 	
 	private static final Log log = LogFactoryUtil.getLog(LearningActivityLocalServiceImpl.class);
 	/*
@@ -211,10 +233,19 @@ public class LearningActivityLocalServiceImpl
 		resourceLocalService.addResources(activity.getCompanyId(), groupId, userId,  LearningActivity.class.getName(), 
 				activity.getActId(), false, true, false);
 		
+		Role studentRole = roleLocalService.fetchRole(user.getCompanyId(), LMSRoleConstants.STUDENT);
+		
+		String[] actIds = {ActionKeys.VIEW};
+		resourcePermissionLocalService.setResourcePermissions(studentRole.getCompanyId(), LearningActivity.class.getName(), 
+				ResourceConstants.SCOPE_INDIVIDUAL,	Long.toString(actId),studentRole.getRoleId(), actIds);
+		
 		updateAsset(userId, activity, serviceContext.getAssetCategoryIds(), serviceContext.getAssetTagNames(), 
 				serviceContext.getAssetLinkEntryIds(), serviceContext.getAssetPriority());
 		
 		addLearningActivityAttachments(userId, activity, selectedFileNames);
+		
+		AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_ADD, LearningActivity.class.getName(), activity.getActId(), 
+				userId, user.getFullName(), null);
 		
 		return activity;
 		
@@ -306,6 +337,9 @@ public class LearningActivityLocalServiceImpl
 
 		removeLearningActivityAttachments(removeFileEntryIds);
 		
+		AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE, LearningActivity.class.getName(), activity.getActId(), 
+				userId, user.getFullName(), null);
+		
 		return activity;
 		
 	}
@@ -317,6 +351,9 @@ public class LearningActivityLocalServiceImpl
 		
 		activity.setUserId(userId);
 		activity.setUserName(user.getFullName());
+		
+		AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE, LearningActivity.class.getName(), activity.getActId(), 
+				userId, user.getFullName(), null);
 		
 		return learningActivityPersistence.update(activity);
 	}
@@ -370,6 +407,11 @@ public class LearningActivityLocalServiceImpl
 			
 			learningActivityPersistence.update(activity);			
 			learningActivityPersistence.update(nextActivity);
+			
+			AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE, LearningActivity.class.getName(), activity.getActId(), 
+					userId, user.getFullName(), null);
+			AuditFactory.audit(nextActivity.getCompanyId(), nextActivity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE, LearningActivity.class.getName(), nextActivity.getActId(), 
+					userId, user.getFullName(), null);
 		}
 		
 		return activity;
@@ -397,14 +439,40 @@ public class LearningActivityLocalServiceImpl
 			
 			learningActivityPersistence.update(activity);			
 			learningActivityPersistence.update(previousActivity);
+			
+			AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE, LearningActivity.class.getName(), activity.getActId(), 
+					userId, user.getFullName(), null);
+			AuditFactory.audit(previousActivity.getCompanyId(), previousActivity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE, LearningActivity.class.getName(), previousActivity.getActId(), 
+					userId, user.getFullName(), null);
 		}
 		
 		return activity;
 	}
 	
+	
 	@Override
-	public LearningActivity getNextLearningActivity(LearningActivity activity) throws PortalException {
-		List<LearningActivity> listNextLearningActivities = learningActivityPersistence.findByModuleIdNextLearningActivities(activity.getModuleId(), 
+	public void changeVisibility(long userId, long actId) throws PortalException{
+		
+		User user = userLocalService.getUser(userId);
+		
+		Role studentRole = roleLocalService.fetchRole(user.getCompanyId(), LMSRoleConstants.STUDENT);
+		
+		boolean visible = resourcePermissionLocalService.hasResourcePermission(studentRole.getCompanyId(), LearningActivity.class.getName(), 
+				ResourceConstants.SCOPE_INDIVIDUAL,	Long.toString(actId),studentRole.getRoleId(), ActionKeys.VIEW);
+		
+		if(visible) {
+			resourcePermissionLocalService.removeResourcePermission(studentRole.getCompanyId(), LearningActivity.class.getName(), 
+					ResourceConstants.SCOPE_INDIVIDUAL,	Long.toString(actId),studentRole.getRoleId(), ActionKeys.VIEW);	
+		}else {
+			String[] actIds = {ActionKeys.VIEW};
+			resourcePermissionLocalService.setResourcePermissions(studentRole.getCompanyId(), LearningActivity.class.getName(), 
+					ResourceConstants.SCOPE_INDIVIDUAL,	Long.toString(actId),studentRole.getRoleId(), actIds);
+		}
+		
+	}
+
+	private LearningActivity getNextLearningActivity(LearningActivity activity) throws PortalException {
+		List<LearningActivity> listNextLearningActivities = learningActivityPersistence.findByModuleIdNextLearningActivities(activity.getGroupId(), activity.getModuleId(), 
 				activity.getPriority());
 		LearningActivity nextLearningActivity = null;
 		if(listNextLearningActivities != null && listNextLearningActivities.size() > 0) {
@@ -415,9 +483,9 @@ public class LearningActivityLocalServiceImpl
 		return nextLearningActivity;
 	}
 	
-	@Override
-	public LearningActivity getPreviousLearningActivity(LearningActivity activity) throws PortalException {
-		List<LearningActivity> listPreviousLearningActivities = learningActivityPersistence.findByModuleIdPreviousLearningActivities(activity.getModuleId(), 
+
+	private LearningActivity getPreviousLearningActivity(LearningActivity activity) throws PortalException {
+		List<LearningActivity> listPreviousLearningActivities = learningActivityPersistence.findByModuleIdPreviousLearningActivities(activity.getGroupId(), activity.getModuleId(), 
 				activity.getPriority());
 		LearningActivity previousLearningActivity = null;
 		if(listPreviousLearningActivities != null && listPreviousLearningActivities.size() > 0) {
@@ -467,6 +535,11 @@ public class LearningActivityLocalServiceImpl
 		if (oldStatus == WorkflowConstants.STATUS_PENDING) {
 			workflowInstanceLinkLocalService.deleteWorkflowInstanceLink(activity.getCompanyId(), activity.getGroupId(), Module.class.getName(), activity.getModuleId());
 		}
+		
+		User user = userLocalService.getUser(userId);
+		
+		AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_TO_TRASH, LearningActivity.class.getName(), activity.getActId(), 
+				userId, user.getFullName(), null);
 
 		return activity;
 	}
@@ -541,6 +614,9 @@ public class LearningActivityLocalServiceImpl
 				trashEntryLocalService.deleteEntry(LearningActivity.class.getName(), actId);
 			}
 		}
+		
+		AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_UPDATE_STATUS, LearningActivity.class.getName(), activity.getActId(), 
+				userId, user.getFullName(), null);
 
 		return activity;
 	}
@@ -579,7 +655,7 @@ public class LearningActivityLocalServiceImpl
 		ExpandoBridgeUtil.copyExpandoBridgeAttributes(oldActivity.getExpandoBridge(), newActivity.getExpandoBridge());
 		
 		//Duplicamos los prerequisitos
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities(newActivity.getCompanyId());
+		String[] classNamePrerequisites = getPrerequisiteActivities(newActivity.getCompanyId());
 		PrerequisiteFactory prerequisiteFactory = null;
 		
 		long activityClassNameId = PortalUtil.getClassNameId(LearningActivity.class);
@@ -593,6 +669,17 @@ public class LearningActivityLocalServiceImpl
 		
 		return newActivity;
 		
+	}
+	
+	public String[] getPrerequisiteActivities(long companyId) {
+		String[] prerequisiteActivities = null;
+		try {
+			CourseServiceConfiguration courseServiceConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(CourseServiceConfiguration.class, companyId);
+			prerequisiteActivities = courseServiceConfiguration.prerequisitesActivity();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		return prerequisiteActivities;
 	}
 	
 	protected void copyActivityImages(LearningActivity oldActivity, LearningActivity newActivity) throws Exception {
@@ -682,6 +769,12 @@ public class LearningActivityLocalServiceImpl
 			LearningActivityTypeFactory activityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
 			LearningActivityType activityType = activityTypeFactory.getLearningActivityType(activity);
 			
+			long userId = PrincipalThreadLocal.getUserId();
+			User user = userLocalService.getUser(userId);
+			
+			AuditFactory.audit(activity.getCompanyId(), activity.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_REMOVE, LearningActivity.class.getName(), activity.getActId(), 
+					userId, user.getFullName(), null);
+			
 			activityType.onDelete();
 		}catch (PortalException e) {
 			e.printStackTrace();
@@ -692,19 +785,18 @@ public class LearningActivityLocalServiceImpl
 	}
 	
 	
-	@ServiceReference(type = CommentManager.class)
+	@Reference
 	protected CommentManager commentManager;
 	
-	@ServiceReference(type = TrashEntryLocalService.class)
+	@Reference
 	protected TrashEntryLocalService trashEntryLocalService;
 	
-	@BeanReference(type = PortletFileRepository.class)
+	@Reference
 	protected PortletFileRepository portletFileRepository;
 
-	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	@Reference
 	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
 	
-	@ServiceReference(type = ResourceCopy.class)
+	@Reference
 	protected ResourceCopy resourceCopy;
-	
 }

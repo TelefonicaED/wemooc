@@ -19,6 +19,7 @@ import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Criterion;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -38,7 +39,6 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.liferay.upload.AttachmentContentUpdater;
 import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
 import com.ted.lms.learning.activity.question.model.Answer;
@@ -46,17 +46,22 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
+import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.base.QuestionLocalServiceBaseImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.portlet.ActionRequest;
+
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The implementation of the question local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.question.service.QuestionLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.question.service.QuestionLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -64,15 +69,18 @@ import javax.portlet.ActionRequest;
  *
  * @author Brian Wing Shun Chan
  * @see QuestionLocalServiceBaseImpl
- * @see com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.learning.activity.question.model.Question",
+	service = AopService.class
+)
 public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil} to access the question local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.learning.activity.question.service.QuestionLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.learning.activity.question.service.QuestionLocalServiceUtil</code>.
 	 */
-	
 	private static final Log log = LogFactoryUtil.getLog(QuestionLocalServiceImpl.class);
 	
 	public List<Question> getQuestions(long actId){
@@ -303,12 +311,12 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 		return question;
 	}
 	
-	@ServiceReference(type = AttachmentContentUpdater.class)
+	@Reference
 	private AttachmentContentUpdater attachmentContentUpdater;
 	
-	@ServiceReference(type = DLReferencesCopyContentProcessor.class)
+	@Reference
 	protected DLReferencesCopyContentProcessor dlReferencesCopyContentProcessor;
 	
-	
-	
+	@Reference
+	private AnswerLocalService answerLocalService;
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.1.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_1_0.dtd">
+<!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.2.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_2_0.dtd">
 
-<service-builder package-path="com.ted.lms">
+<service-builder dependency-injector="ds" package-path="com.ted.lms">
 	<namespace>LMS</namespace>
 	<entity local-service="true" name="Course" remote-service="true" uuid="true" trash-enabled="true">
 
@@ -99,7 +99,6 @@
 		<reference entity="SocialActivity" package-path="com.liferay.portlet.social" />
 		<reference entity="Role" package-path="com.liferay.portal" />
 	</entity>
-	
 	<entity name="CourseType"  local-service="true" remote-service="true" >
 		<!-- PK fields -->
 		<column name="courseTypeId" type="long" primary="true"/>
@@ -242,7 +241,7 @@
 		<column name="title" type="String" localized="true"/>
 		<column name="description" type="String" localized="true" />
 		<column name="smallImageId" type="long" />
-		<column name="order" type="long" />
+		<column name="priority" type="long" />
 		<column name="startDate" type="Date" convert-null="true" />
 		<column name="endDate" type="Date" convert-null="true" />
 		<column name="allowedTime" type="long" />
@@ -256,7 +255,7 @@
 		<!-- Order -->
 
 		<order by="asc">
-			<order-column name="order" />
+			<order-column name="priority" />
 		</order>
 
 		<!-- Finder methods -->
@@ -273,11 +272,11 @@
 		</finder>
 		<finder name="GroupIdNextModules" return-type="Collection">
 			<finder-column name="groupId" />
-			<finder-column name="order" comparator="&gt;"/>
+			<finder-column name="priority" comparator="&gt;"/>
 		</finder>
 		<finder name="GroupIdPreviousModules" return-type="Collection">
 			<finder-column name="groupId" />
-			<finder-column name="order" comparator="&lt;"/>
+			<finder-column name="priority" comparator="&lt;"/>
 		</finder>
 
 		<!-- References -->
@@ -415,10 +414,12 @@
 			<finder-column name="typeId" />
 		</finder>
 		<finder name="ModuleIdNextLearningActivities" return-type="Collection">
+			<finder-column name="groupId" />
 			<finder-column name="moduleId" />
 			<finder-column name="priority" comparator="&gt;"/>
 		</finder>
 		<finder name="ModuleIdPreviousLearningActivities" return-type="Collection">
+			<finder-column name="groupId" />
 			<finder-column name="moduleId" />
 			<finder-column name="priority" comparator="&lt;"/>
 		</finder>
@@ -446,6 +447,8 @@
 		<reference entity="WorkflowInstanceLink" package-path="com.liferay.portal" />
 		<reference entity="ExpandoValue" package-path="com.liferay.portlet.expando" />
 		<reference entity="Resource" package-path="com.liferay.portal" />
+		<reference entity="Role" package-path="com.liferay.portal" />
+		<reference entity="ResourcePermission" package-path="com.liferay.portal" />
 	</entity>
 	<entity local-service="true" name="LearningActivityResult" remote-service="false" uuid="true">
 

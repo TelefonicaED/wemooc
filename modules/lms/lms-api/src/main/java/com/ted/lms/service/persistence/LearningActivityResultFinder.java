@@ -14,7 +14,7 @@
 
 package com.ted.lms.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Brian Wing Shun Chan
@@ -22,12 +22,14 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface LearningActivityResultFinder {
-	public java.util.List<com.ted.lms.model.LearningActivityResult> findRequiredLearningActivityResults(
-		long groupId, long userId);
 
-	public int countRequiredLearningActivityResultsByModule(long moduleId,
-		long userId);
+	public java.util.List<com.ted.lms.model.LearningActivityResult>
+		findRequiredLearningActivityResults(long groupId, long userId);
 
-	public long countStudentsFinished(long actId, long courseGroupCreatedId,
-		long companyId);
+	public int countRequiredLearningActivityResultsByModule(
+		long moduleId, long userId);
+
+	public long countStudentsFinished(
+		long actId, long courseGroupCreatedId, long companyId);
+
 }

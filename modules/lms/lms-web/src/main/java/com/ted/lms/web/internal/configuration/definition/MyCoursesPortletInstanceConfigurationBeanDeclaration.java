@@ -19,9 +19,6 @@ import com.ted.lms.web.internal.configuration.MyCoursesPortletInstanceConfigurat
 
 import org.osgi.service.component.annotations.Component;
 
-/**
- * @author Sergio González
- */
 @Component(service = ConfigurationBeanDeclaration.class)
 public class MyCoursesPortletInstanceConfigurationBeanDeclaration
 	implements ConfigurationBeanDeclaration {

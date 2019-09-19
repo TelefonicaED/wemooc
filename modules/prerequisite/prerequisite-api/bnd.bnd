@@ -7,4 +7,5 @@ Export-Package: \
 	com.ted.prerequisite.service,\
 	com.ted.prerequisite.service.persistence,\
 	com.ted.prerequisite.registry
+-check: EXPORTS
 -includeresource: META-INF/service.xml=../prerequisite-service/service.xml

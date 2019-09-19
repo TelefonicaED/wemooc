@@ -6,14 +6,21 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 import com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsImpl;
 import com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityCorrectionsFinder;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
+@Component(service = P2PActivityCorrectionsFinder.class)
 public class P2PActivityCorrectionsFinderImpl extends P2PActivityCorrectionsFinderBaseImpl implements P2PActivityCorrectionsFinder{
+	
+	@Reference
+	private CustomSQL customSQL;
 	
 	public static final String FIND_CORRECTIONS_FINISHED =
 			P2PActivityCorrectionsFinder.class.getName() +
@@ -95,8 +102,4 @@ public class P2PActivityCorrectionsFinderImpl extends P2PActivityCorrectionsFind
 	
 		return p2pActivities;
 	}
-
-	
-	@ServiceReference(type=CustomSQL.class)
-	private CustomSQL customSQL;
 }

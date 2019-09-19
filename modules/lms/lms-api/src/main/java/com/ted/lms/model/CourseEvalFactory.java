@@ -6,7 +6,8 @@ import com.liferay.portal.kernel.upload.UploadRequest;
 import java.util.Locale;
 
 import javax.portlet.PortletResponse;
-import aQute.bnd.annotation.ProviderType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para la factoría de los métodos de evaluación de los cursos, tiene los métodos que son genéricos y no dependen del método de evaluación de un curso en concreto,

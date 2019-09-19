@@ -31,13 +31,6 @@ public class ActivityPrerequisite extends BasePrerequisite{
 		this.learningActivityLocalService = learningActivityLocalService;
 	}
 	
-/*	public ActivityPrerequisite(long classNameId, long classPK, LearningActivityResultLocalService learningActivityResultLocalService, 
-				PrerequisiteRelationLocalService prerequisiteRelationLocalService, LearningActivityLocalService learningActivityLocalService) {
-		super(classNameId, classPK, prerequisiteRelationLocalService);
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-		this.learningActivityLocalService = learningActivityLocalService;
-	}*/
-	
 	@Override
 	public String getTitle(Locale locale) {
 		JSONObject extraData = prerequisiteRelation.getExtraDataJSON();
@@ -82,7 +75,7 @@ public class ActivityPrerequisite extends BasePrerequisite{
 			JSONObject extraData = prerequisiteRelation.getExtraDataJSON();
 			extraData.put(ActivityPrerequisiteConstants.JSON_ACT_ID, actId);
 			prerequisiteRelation.setExtraData(extraData.toString());
-			prerequisiteRelationLocalService.updatePrerequisiteRelation(prerequisiteRelation);
+			prerequisiteRelation = prerequisiteRelationLocalService.updatePrerequisiteRelation(prerequisiteRelation);
 		}else if(actId == 0 && prerequisiteRelation != null){
 			prerequisiteRelationLocalService.deletePrerequisiteRelation(prerequisiteRelation);
 			prerequisiteRelation = null;

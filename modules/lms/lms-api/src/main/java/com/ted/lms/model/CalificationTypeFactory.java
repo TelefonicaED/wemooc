@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import javax.portlet.PortletResponse;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para la factoría de los métodos de calificación, tiene los métodos que son genéricos y no dependen del método de calificación de un curso en concreto,

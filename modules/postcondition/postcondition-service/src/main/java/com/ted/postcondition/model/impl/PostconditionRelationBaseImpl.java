@@ -14,10 +14,10 @@
 
 package com.ted.postcondition.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.postcondition.model.PostconditionRelation;
 import com.ted.postcondition.service.PostconditionRelationLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the PostconditionRelation service. Represents a row in the &quot;post_PostconditionRelation&quot; database table, with each column mapped to a property of this class.
@@ -34,18 +34,22 @@ import com.ted.postcondition.service.PostconditionRelationLocalServiceUtil;
 @ProviderType
 public abstract class PostconditionRelationBaseImpl
 	extends PostconditionRelationModelImpl implements PostconditionRelation {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a postcondition relation model instance should use the {@link PostconditionRelation} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a postcondition relation model instance should use the <code>PostconditionRelation</code> interface instead.
 	 */
 	@Override
 	public void persist() {
 		if (this.isNew()) {
-			PostconditionRelationLocalServiceUtil.addPostconditionRelation(this);
+			PostconditionRelationLocalServiceUtil.addPostconditionRelation(
+				this);
 		}
 		else {
-			PostconditionRelationLocalServiceUtil.updatePostconditionRelation(this);
+			PostconditionRelationLocalServiceUtil.updatePostconditionRelation(
+				this);
 		}
 	}
+
 }

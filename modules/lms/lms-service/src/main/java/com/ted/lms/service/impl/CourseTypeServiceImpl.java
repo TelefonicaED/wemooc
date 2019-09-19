@@ -14,13 +14,17 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
 import com.ted.lms.service.base.CourseTypeServiceBaseImpl;
+
+import org.osgi.service.component.annotations.Component;
 
 /**
  * The implementation of the course type remote service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.CourseTypeService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.CourseTypeService</code> interface.
  *
  * <p>
  * This is a remote service. Methods of this service are expected to have security checks based on the propagated JAAS credentials because this service can be accessed remotely.
@@ -28,12 +32,19 @@ import com.ted.lms.service.base.CourseTypeServiceBaseImpl;
  *
  * @author Brian Wing Shun Chan
  * @see CourseTypeServiceBaseImpl
- * @see com.ted.lms.service.CourseTypeServiceUtil
  */
+@Component(
+	property = {
+		"json.web.service.context.name=lms",
+		"json.web.service.context.path=CourseType"
+	},
+	service = AopService.class
+)
 public class CourseTypeServiceImpl extends CourseTypeServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.CourseTypeServiceUtil} to access the course type remote service.
+	 * Never reference this class directly. Always use <code>com.ted.lms.service.CourseTypeServiceUtil</code> to access the course type remote service.
 	 */
 }

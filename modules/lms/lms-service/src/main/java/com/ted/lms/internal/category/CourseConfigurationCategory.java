@@ -4,11 +4,7 @@ import com.liferay.configuration.admin.category.ConfigurationCategory;
 
 import org.osgi.service.component.annotations.Component;
 
-@Component(
-	immediate = true,
-	property = "model.class.name=com.ted.lms.internal.category.CourseConfigurationCategory",
-	service = ConfigurationCategory.class
-)
+@Component(service = ConfigurationCategory.class)
 public class CourseConfigurationCategory implements ConfigurationCategory {
 
 	@Override
@@ -20,8 +16,18 @@ public class CourseConfigurationCategory implements ConfigurationCategory {
 	public String getCategorySection() {
 		return CATEGORY_SECTION;
 	}
+	
+	/**
+	 * choose one of
+	 * @see https://clayui.com/docs/components/icons.html 
+	 */
+	@Override
+	public String getCategoryIcon() {
 
-	private static final String CATEGORY_KEY = "courses";
+		return "pencil";
+	}
 
-	private static final String CATEGORY_SECTION = "content";
+	private static final String CATEGORY_KEY = "lms";
+
+	private static final String CATEGORY_SECTION = "content-and-data";
 }

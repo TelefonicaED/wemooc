@@ -14,11 +14,9 @@
 
 package com.ted.lms.learning.activity.survey.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.learning.activity.survey.model.SurveyResult;
 
@@ -27,16 +25,18 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing SurveyResult in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see SurveyResult
  * @generated
  */
 @ProviderType
-public class SurveyResultCacheModel implements CacheModel<SurveyResult>,
-	Externalizable {
+public class SurveyResultCacheModel
+	implements CacheModel<SurveyResult>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -47,7 +47,8 @@ public class SurveyResultCacheModel implements CacheModel<SurveyResult>,
 			return false;
 		}
 
-		SurveyResultCacheModel surveyResultCacheModel = (SurveyResultCacheModel)obj;
+		SurveyResultCacheModel surveyResultCacheModel =
+			(SurveyResultCacheModel)obj;
 
 		if (surveyResultId == surveyResultCacheModel.surveyResultId) {
 			return true;
@@ -135,8 +136,7 @@ public class SurveyResultCacheModel implements CacheModel<SurveyResult>,
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -172,4 +172,5 @@ public class SurveyResultCacheModel implements CacheModel<SurveyResult>,
 	public long answerId;
 	public long userId;
 	public String freeAnswer;
+
 }

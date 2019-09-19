@@ -5,6 +5,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -17,6 +18,7 @@ import com.liferay.portal.kernel.xml.DocumentException;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.constants.LMSActionKeys;
+import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.test.web.activity.TestActivityType;
@@ -510,4 +512,10 @@ public class TestActivityViewMVCRenderCommand implements MVCRenderCommand {
 	private LearningActivityLocalService learningActivityLocalService;
 	@Reference
 	private QuestionLocalService questionLocalService;
+	
+	@Reference(
+		target = "(model.class.name=" + LMSConstants.LEARNING_ACTIVITY_MODEL_CLASS_NAME + ")"
+	)
+	private ModelResourcePermission<LearningActivity>
+		learningActivityModelResourcePermission;
 }

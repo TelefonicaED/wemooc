@@ -14,8 +14,8 @@
 
 package com.ted.prerequisite.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,36 +23,42 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.prerequisite.exception.NoSuchPrerequisiteRelationException;
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.model.impl.PrerequisiteRelationImpl;
 import com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl;
 import com.ted.prerequisite.service.persistence.PrerequisiteRelationPersistence;
+import com.ted.prerequisite.service.persistence.impl.constants.prePersistenceConstants;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the prerequisite relation service.
@@ -62,54 +68,34 @@ import java.util.Set;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see PrerequisiteRelationPersistence
- * @see com.ted.prerequisite.service.persistence.PrerequisiteRelationUtil
  * @generated
  */
+@Component(service = PrerequisiteRelationPersistence.class)
 @ProviderType
-public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<PrerequisiteRelation>
+public class PrerequisiteRelationPersistenceImpl
+	extends BasePersistenceImpl<PrerequisiteRelation>
 	implements PrerequisiteRelationPersistence {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link PrerequisiteRelationUtil} to access the prerequisite relation persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify or reference this class directly. Always use <code>PrerequisiteRelationUtil</code> to access the prerequisite relation persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static final String FINDER_CLASS_NAME_ENTITY = PrerequisiteRelationImpl.class.getName();
-	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List1";
-	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] { String.class.getName() },
-			PrerequisiteRelationModelImpl.UUID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] { String.class.getName() });
+	public static final String FINDER_CLASS_NAME_ENTITY =
+		PrerequisiteRelationImpl.class.getName();
+
+	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List1";
+
+	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List2";
+
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByUuid;
+	private FinderPath _finderPathWithoutPaginationFindByUuid;
+	private FinderPath _finderPathCountByUuid;
 
 	/**
 	 * Returns all the prerequisite relations where uuid = &#63;.
@@ -126,7 +112,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns a range of all the prerequisite relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -135,7 +121,9 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the range of matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByUuid(String uuid, int start, int end) {
+	public List<PrerequisiteRelation> findByUuid(
+		String uuid, int start, int end) {
+
 		return findByUuid(uuid, start, end, null);
 	}
 
@@ -143,7 +131,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns an ordered range of all the prerequisite relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -153,8 +141,10 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByUuid(String uuid, int start,
-		int end, OrderByComparator<PrerequisiteRelation> orderByComparator) {
+	public List<PrerequisiteRelation> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
 		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
@@ -162,7 +152,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns an ordered range of all the prerequisite relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -173,9 +163,11 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByUuid(String uuid, int start,
-		int end, OrderByComparator<PrerequisiteRelation> orderByComparator,
+	public List<PrerequisiteRelation> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<PrerequisiteRelation> orderByComparator,
 		boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -183,21 +175,22 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid };
+			finderPath = _finderPathWithoutPaginationFindByUuid;
+			finderArgs = new Object[] {uuid};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByUuid;
+			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<PrerequisiteRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PrerequisiteRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PrerequisiteRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PrerequisiteRelation prerequisiteRelation : list) {
@@ -214,8 +207,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -235,11 +228,10 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 			}
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(PrerequisiteRelationModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -259,16 +251,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 				}
 
 				if (!pagination) {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -297,11 +289,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation findByUuid_First(String uuid,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+	public PrerequisiteRelation findByUuid_First(
+			String uuid,
+			OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByUuid_First(uuid,
-				orderByComparator);
+
+		PrerequisiteRelation prerequisiteRelation = fetchByUuid_First(
+			uuid, orderByComparator);
 
 		if (prerequisiteRelation != null) {
 			return prerequisiteRelation;
@@ -327,10 +321,12 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the first matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation fetchByUuid_First(String uuid,
+	public PrerequisiteRelation fetchByUuid_First(
+		String uuid,
 		OrderByComparator<PrerequisiteRelation> orderByComparator) {
-		List<PrerequisiteRelation> list = findByUuid(uuid, 0, 1,
-				orderByComparator);
+
+		List<PrerequisiteRelation> list = findByUuid(
+			uuid, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -348,11 +344,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation findByUuid_Last(String uuid,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+	public PrerequisiteRelation findByUuid_Last(
+			String uuid,
+			OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByUuid_Last(uuid,
-				orderByComparator);
+
+		PrerequisiteRelation prerequisiteRelation = fetchByUuid_Last(
+			uuid, orderByComparator);
 
 		if (prerequisiteRelation != null) {
 			return prerequisiteRelation;
@@ -378,16 +376,18 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the last matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation fetchByUuid_Last(String uuid,
+	public PrerequisiteRelation fetchByUuid_Last(
+		String uuid,
 		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
 		int count = countByUuid(uuid);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<PrerequisiteRelation> list = findByUuid(uuid, count - 1, count,
-				orderByComparator);
+		List<PrerequisiteRelation> list = findByUuid(
+			uuid, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -407,12 +407,14 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public PrerequisiteRelation[] findByUuid_PrevAndNext(
-		long prerequisiteRelationId, String uuid,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+			long prerequisiteRelationId, String uuid,
+			OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
+
 		uuid = Objects.toString(uuid, "");
 
-		PrerequisiteRelation prerequisiteRelation = findByPrimaryKey(prerequisiteRelationId);
+		PrerequisiteRelation prerequisiteRelation = findByPrimaryKey(
+			prerequisiteRelationId);
 
 		Session session = null;
 
@@ -421,13 +423,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 			PrerequisiteRelation[] array = new PrerequisiteRelationImpl[3];
 
-			array[0] = getByUuid_PrevAndNext(session, prerequisiteRelation,
-					uuid, orderByComparator, true);
+			array[0] = getByUuid_PrevAndNext(
+				session, prerequisiteRelation, uuid, orderByComparator, true);
 
 			array[1] = prerequisiteRelation;
 
-			array[2] = getByUuid_PrevAndNext(session, prerequisiteRelation,
-					uuid, orderByComparator, false);
+			array[2] = getByUuid_PrevAndNext(
+				session, prerequisiteRelation, uuid, orderByComparator, false);
 
 			return array;
 		}
@@ -439,15 +441,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		}
 	}
 
-	protected PrerequisiteRelation getByUuid_PrevAndNext(Session session,
-		PrerequisiteRelation prerequisiteRelation, String uuid,
+	protected PrerequisiteRelation getByUuid_PrevAndNext(
+		Session session, PrerequisiteRelation prerequisiteRelation, String uuid,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -468,7 +471,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		}
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -540,10 +544,11 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		}
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(prerequisiteRelation);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						prerequisiteRelation)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -564,8 +569,9 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (PrerequisiteRelation prerequisiteRelation : findByUuid(uuid,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (PrerequisiteRelation prerequisiteRelation :
+				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(prerequisiteRelation);
 		}
 	}
@@ -580,9 +586,9 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	public int countByUuid(String uuid) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
+		FinderPath finderPath = _finderPathCountByUuid;
 
-		Object[] finderArgs = new Object[] { uuid };
+		Object[] finderArgs = new Object[] {uuid};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -634,34 +640,15 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_1 = "prerequisiteRelation.uuid IS NULL";
-	private static final String _FINDER_COLUMN_UUID_UUID_2 = "prerequisiteRelation.uuid = ?";
-	private static final String _FINDER_COLUMN_UUID_UUID_3 = "(prerequisiteRelation.uuid IS NULL OR prerequisiteRelation.uuid = '')";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK =
-		new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK =
-		new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByClassNameIdClassPK",
-			new String[] { Long.class.getName(), Long.class.getName() },
-			PrerequisiteRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
-			PrerequisiteRelationModelImpl.CLASSPK_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK = new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByClassNameIdClassPK",
-			new String[] { Long.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_UUID_2 =
+		"prerequisiteRelation.uuid = ?";
+
+	private static final String _FINDER_COLUMN_UUID_UUID_3 =
+		"(prerequisiteRelation.uuid IS NULL OR prerequisiteRelation.uuid = '')";
+
+	private FinderPath _finderPathWithPaginationFindByClassNameIdClassPK;
+	private FinderPath _finderPathWithoutPaginationFindByClassNameIdClassPK;
+	private FinderPath _finderPathCountByClassNameIdClassPK;
 
 	/**
 	 * Returns all the prerequisite relations where classNameId = &#63; and classPK = &#63;.
@@ -673,15 +660,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public List<PrerequisiteRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK) {
-		return findByClassNameIdClassPK(classNameId, classPK,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		return findByClassNameIdClassPK(
+			classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the prerequisite relations where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -693,6 +681,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public List<PrerequisiteRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end) {
+
 		return findByClassNameIdClassPK(classNameId, classPK, start, end, null);
 	}
 
@@ -700,7 +689,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns an ordered range of all the prerequisite relations where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -714,15 +703,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	public List<PrerequisiteRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator) {
-		return findByClassNameIdClassPK(classNameId, classPK, start, end,
-			orderByComparator, true);
+
+		return findByClassNameIdClassPK(
+			classNameId, classPK, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the prerequisite relations where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -738,35 +728,37 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		long classNameId, long classPK, int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK;
-			finderArgs = new Object[] { classNameId, classPK };
+			finderPath = _finderPathWithoutPaginationFindByClassNameIdClassPK;
+			finderArgs = new Object[] {classNameId, classPK};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK;
+			finderPath = _finderPathWithPaginationFindByClassNameIdClassPK;
 			finderArgs = new Object[] {
-					classNameId, classPK,
-					
-					start, end, orderByComparator
-				};
+				classNameId, classPK, start, end, orderByComparator
+			};
 		}
 
 		List<PrerequisiteRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PrerequisiteRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PrerequisiteRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PrerequisiteRelation prerequisiteRelation : list) {
-					if ((classNameId != prerequisiteRelation.getClassNameId()) ||
-							(classPK != prerequisiteRelation.getClassPK())) {
+					if ((classNameId !=
+							prerequisiteRelation.getClassNameId()) ||
+						(classPK != prerequisiteRelation.getClassPK())) {
+
 						list = null;
 
 						break;
@@ -779,8 +771,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -793,11 +785,10 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 			query.append(_FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(PrerequisiteRelationModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -817,16 +808,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 				qPos.add(classPK);
 
 				if (!pagination) {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -857,11 +848,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public PrerequisiteRelation findByClassNameIdClassPK_First(
-		long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+			long classNameId, long classPK,
+			OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByClassNameIdClassPK_First(classNameId,
-				classPK, orderByComparator);
+
+		PrerequisiteRelation prerequisiteRelation =
+			fetchByClassNameIdClassPK_First(
+				classNameId, classPK, orderByComparator);
 
 		if (prerequisiteRelation != null) {
 			return prerequisiteRelation;
@@ -894,8 +887,9 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	public PrerequisiteRelation fetchByClassNameIdClassPK_First(
 		long classNameId, long classPK,
 		OrderByComparator<PrerequisiteRelation> orderByComparator) {
-		List<PrerequisiteRelation> list = findByClassNameIdClassPK(classNameId,
-				classPK, 0, 1, orderByComparator);
+
+		List<PrerequisiteRelation> list = findByClassNameIdClassPK(
+			classNameId, classPK, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -915,11 +909,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public PrerequisiteRelation findByClassNameIdClassPK_Last(
-		long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+			long classNameId, long classPK,
+			OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByClassNameIdClassPK_Last(classNameId,
-				classPK, orderByComparator);
+
+		PrerequisiteRelation prerequisiteRelation =
+			fetchByClassNameIdClassPK_Last(
+				classNameId, classPK, orderByComparator);
 
 		if (prerequisiteRelation != null) {
 			return prerequisiteRelation;
@@ -952,14 +948,15 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	public PrerequisiteRelation fetchByClassNameIdClassPK_Last(
 		long classNameId, long classPK,
 		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
 		int count = countByClassNameIdClassPK(classNameId, classPK);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<PrerequisiteRelation> list = findByClassNameIdClassPK(classNameId,
-				classPK, count - 1, count, orderByComparator);
+		List<PrerequisiteRelation> list = findByClassNameIdClassPK(
+			classNameId, classPK, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -980,10 +977,12 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public PrerequisiteRelation[] findByClassNameIdClassPK_PrevAndNext(
-		long prerequisiteRelationId, long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+			long prerequisiteRelationId, long classNameId, long classPK,
+			OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = findByPrimaryKey(prerequisiteRelationId);
+
+		PrerequisiteRelation prerequisiteRelation = findByPrimaryKey(
+			prerequisiteRelationId);
 
 		Session session = null;
 
@@ -992,15 +991,15 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 			PrerequisiteRelation[] array = new PrerequisiteRelationImpl[3];
 
-			array[0] = getByClassNameIdClassPK_PrevAndNext(session,
-					prerequisiteRelation, classNameId, classPK,
-					orderByComparator, true);
+			array[0] = getByClassNameIdClassPK_PrevAndNext(
+				session, prerequisiteRelation, classNameId, classPK,
+				orderByComparator, true);
 
 			array[1] = prerequisiteRelation;
 
-			array[2] = getByClassNameIdClassPK_PrevAndNext(session,
-					prerequisiteRelation, classNameId, classPK,
-					orderByComparator, false);
+			array[2] = getByClassNameIdClassPK_PrevAndNext(
+				session, prerequisiteRelation, classNameId, classPK,
+				orderByComparator, false);
 
 			return array;
 		}
@@ -1017,11 +1016,12 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		long classNameId, long classPK,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1035,7 +1035,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		query.append(_FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1107,10 +1108,11 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		qPos.add(classPK);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(prerequisiteRelation);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						prerequisiteRelation)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1132,8 +1134,11 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public void removeByClassNameIdClassPK(long classNameId, long classPK) {
-		for (PrerequisiteRelation prerequisiteRelation : findByClassNameIdClassPK(
-				classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (PrerequisiteRelation prerequisiteRelation :
+				findByClassNameIdClassPK(
+					classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(prerequisiteRelation);
 		}
 	}
@@ -1147,9 +1152,9 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public int countByClassNameIdClassPK(long classNameId, long classPK) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK;
+		FinderPath finderPath = _finderPathCountByClassNameIdClassPK;
 
-		Object[] finderArgs = new Object[] { classNameId, classPK };
+		Object[] finderArgs = new Object[] {classNameId, classPK};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1194,40 +1199,19 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSNAMEID_2 = "prerequisiteRelation.classNameId = ? AND ";
-	private static final String _FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2 = "prerequisiteRelation.classPK = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK =
-		new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByClassNamePrerequisiteIdClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK =
-		new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByClassNamePrerequisiteIdClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			PrerequisiteRelationModelImpl.CLASSNAMEPREREQUISITEID_COLUMN_BITMASK |
-			PrerequisiteRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
-			PrerequisiteRelationModelImpl.CLASSPK_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK =
-		new FinderPath(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByClassNamePrerequisiteIdClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSNAMEID_2 =
+			"prerequisiteRelation.classNameId = ? AND ";
+
+	private static final String _FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2 =
+		"prerequisiteRelation.classPK = ?";
+
+	private FinderPath
+		_finderPathWithPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
+	private FinderPath
+		_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
+	private FinderPath
+		_finderPathCountByClassNamePrerequisiteIdClassNameIdClassPK;
 
 	/**
 	 * Returns all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -1238,17 +1222,20 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK) {
-		return findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-			classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<PrerequisiteRelation>
+		findByClassNamePrerequisiteIdClassNameIdClassPK(
+			long classNamePrerequisiteId, long classNameId, long classPK) {
+
+		return findByClassNamePrerequisiteIdClassNameIdClassPK(
+			classNamePrerequisiteId, classNameId, classPK, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNamePrerequisiteId the class name prerequisite ID
@@ -1259,18 +1246,20 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the range of matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		int start, int end) {
-		return findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-			classNameId, classPK, start, end, null);
+	public List<PrerequisiteRelation>
+		findByClassNamePrerequisiteIdClassNameIdClassPK(
+			long classNamePrerequisiteId, long classNameId, long classPK,
+			int start, int end) {
+
+		return findByClassNamePrerequisiteIdClassNameIdClassPK(
+			classNamePrerequisiteId, classNameId, classPK, start, end, null);
 	}
 
 	/**
 	 * Returns an ordered range of all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNamePrerequisiteId the class name prerequisite ID
@@ -1282,19 +1271,22 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		int start, int end,
-		OrderByComparator<PrerequisiteRelation> orderByComparator) {
-		return findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-			classNameId, classPK, start, end, orderByComparator, true);
+	public List<PrerequisiteRelation>
+		findByClassNamePrerequisiteIdClassNameIdClassPK(
+			long classNamePrerequisiteId, long classNameId, long classPK,
+			int start, int end,
+			OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
+		return findByClassNamePrerequisiteIdClassNameIdClassPK(
+			classNamePrerequisiteId, classNameId, classPK, start, end,
+			orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the prerequisite relations where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNamePrerequisiteId the class name prerequisite ID
@@ -1307,43 +1299,51 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findByClassNamePrerequisiteIdClassNameIdClassPK(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		int start, int end,
-		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+	public List<PrerequisiteRelation>
+		findByClassNamePrerequisiteIdClassNameIdClassPK(
+			long classNamePrerequisiteId, long classNameId, long classPK,
+			int start, int end,
+			OrderByComparator<PrerequisiteRelation> orderByComparator,
+			boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK;
+			finderPath =
+				_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
 			finderArgs = new Object[] {
-					classNamePrerequisiteId, classNameId, classPK
-				};
+				classNamePrerequisiteId, classNameId, classPK
+			};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK;
+			finderPath =
+				_finderPathWithPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
 			finderArgs = new Object[] {
-					classNamePrerequisiteId, classNameId, classPK,
-					
-					start, end, orderByComparator
-				};
+				classNamePrerequisiteId, classNameId, classPK, start, end,
+				orderByComparator
+			};
 		}
 
 		List<PrerequisiteRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PrerequisiteRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PrerequisiteRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PrerequisiteRelation prerequisiteRelation : list) {
-					if ((classNamePrerequisiteId != prerequisiteRelation.getClassNamePrerequisiteId()) ||
-							(classNameId != prerequisiteRelation.getClassNameId()) ||
-							(classPK != prerequisiteRelation.getClassPK())) {
+					if ((classNamePrerequisiteId !=
+							prerequisiteRelation.
+								getClassNamePrerequisiteId()) ||
+						(classNameId !=
+							prerequisiteRelation.getClassNameId()) ||
+						(classPK != prerequisiteRelation.getClassPK())) {
+
 						list = null;
 
 						break;
@@ -1356,8 +1356,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(5 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					5 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(5);
@@ -1365,18 +1365,20 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 			query.append(_SQL_SELECT_PREREQUISITERELATION_WHERE);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(PrerequisiteRelationModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1398,16 +1400,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 				qPos.add(classPK);
 
 				if (!pagination) {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -1438,12 +1440,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation findByClassNamePrerequisiteIdClassNameIdClassPK_First(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+	public PrerequisiteRelation
+			findByClassNamePrerequisiteIdClassNameIdClassPK_First(
+				long classNamePrerequisiteId, long classNameId, long classPK,
+				OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByClassNamePrerequisiteIdClassNameIdClassPK_First(classNamePrerequisiteId,
-				classNameId, classPK, orderByComparator);
+
+		PrerequisiteRelation prerequisiteRelation =
+			fetchByClassNamePrerequisiteIdClassNameIdClassPK_First(
+				classNamePrerequisiteId, classNameId, classPK,
+				orderByComparator);
 
 		if (prerequisiteRelation != null) {
 			return prerequisiteRelation;
@@ -1477,11 +1483,15 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the first matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation fetchByClassNamePrerequisiteIdClassNameIdClassPK_First(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator) {
-		List<PrerequisiteRelation> list = findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-				classNameId, classPK, 0, 1, orderByComparator);
+	public PrerequisiteRelation
+		fetchByClassNamePrerequisiteIdClassNameIdClassPK_First(
+			long classNamePrerequisiteId, long classNameId, long classPK,
+			OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
+		List<PrerequisiteRelation> list =
+			findByClassNamePrerequisiteIdClassNameIdClassPK(
+				classNamePrerequisiteId, classNameId, classPK, 0, 1,
+				orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1501,12 +1511,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @throws NoSuchPrerequisiteRelationException if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation findByClassNamePrerequisiteIdClassNameIdClassPK_Last(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+	public PrerequisiteRelation
+			findByClassNamePrerequisiteIdClassNameIdClassPK_Last(
+				long classNamePrerequisiteId, long classNameId, long classPK,
+				OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByClassNamePrerequisiteIdClassNameIdClassPK_Last(classNamePrerequisiteId,
-				classNameId, classPK, orderByComparator);
+
+		PrerequisiteRelation prerequisiteRelation =
+			fetchByClassNamePrerequisiteIdClassNameIdClassPK_Last(
+				classNamePrerequisiteId, classNameId, classPK,
+				orderByComparator);
 
 		if (prerequisiteRelation != null) {
 			return prerequisiteRelation;
@@ -1540,18 +1554,22 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the last matching prerequisite relation, or <code>null</code> if a matching prerequisite relation could not be found
 	 */
 	@Override
-	public PrerequisiteRelation fetchByClassNamePrerequisiteIdClassNameIdClassPK_Last(
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator) {
-		int count = countByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-				classNameId, classPK);
+	public PrerequisiteRelation
+		fetchByClassNamePrerequisiteIdClassNameIdClassPK_Last(
+			long classNamePrerequisiteId, long classNameId, long classPK,
+			OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
+		int count = countByClassNamePrerequisiteIdClassNameIdClassPK(
+			classNamePrerequisiteId, classNameId, classPK);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<PrerequisiteRelation> list = findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId,
-				classNameId, classPK, count - 1, count, orderByComparator);
+		List<PrerequisiteRelation> list =
+			findByClassNamePrerequisiteIdClassNameIdClassPK(
+				classNamePrerequisiteId, classNameId, classPK, count - 1, count,
+				orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1572,12 +1590,15 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @throws NoSuchPrerequisiteRelationException if a prerequisite relation with the primary key could not be found
 	 */
 	@Override
-	public PrerequisiteRelation[] findByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
-		long prerequisiteRelationId, long classNamePrerequisiteId,
-		long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator)
+	public PrerequisiteRelation[]
+			findByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
+				long prerequisiteRelationId, long classNamePrerequisiteId,
+				long classNameId, long classPK,
+				OrderByComparator<PrerequisiteRelation> orderByComparator)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = findByPrimaryKey(prerequisiteRelationId);
+
+		PrerequisiteRelation prerequisiteRelation = findByPrimaryKey(
+			prerequisiteRelationId);
 
 		Session session = null;
 
@@ -1586,15 +1607,17 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 			PrerequisiteRelation[] array = new PrerequisiteRelationImpl[3];
 
-			array[0] = getByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(session,
-					prerequisiteRelation, classNamePrerequisiteId, classNameId,
-					classPK, orderByComparator, true);
+			array[0] =
+				getByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
+					session, prerequisiteRelation, classNamePrerequisiteId,
+					classNameId, classPK, orderByComparator, true);
 
 			array[1] = prerequisiteRelation;
 
-			array[2] = getByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(session,
-					prerequisiteRelation, classNamePrerequisiteId, classNameId,
-					classPK, orderByComparator, false);
+			array[2] =
+				getByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
+					session, prerequisiteRelation, classNamePrerequisiteId,
+					classNameId, classPK, orderByComparator, false);
 
 			return array;
 		}
@@ -1606,16 +1629,18 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		}
 	}
 
-	protected PrerequisiteRelation getByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
-		Session session, PrerequisiteRelation prerequisiteRelation,
-		long classNamePrerequisiteId, long classNameId, long classPK,
-		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean previous) {
+	protected PrerequisiteRelation
+		getByClassNamePrerequisiteIdClassNameIdClassPK_PrevAndNext(
+			Session session, PrerequisiteRelation prerequisiteRelation,
+			long classNamePrerequisiteId, long classNameId, long classPK,
+			OrderByComparator<PrerequisiteRelation> orderByComparator,
+			boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1624,14 +1649,18 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 		query.append(_SQL_SELECT_PREREQUISITERELATION_WHERE);
 
-		query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2);
+		query.append(
+			_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2);
 
-		query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
+		query.append(
+			_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
 
-		query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2);
+		query.append(
+			_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1705,10 +1734,11 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		qPos.add(classPK);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(prerequisiteRelation);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						prerequisiteRelation)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1732,9 +1762,12 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public void removeByClassNamePrerequisiteIdClassNameIdClassPK(
 		long classNamePrerequisiteId, long classNameId, long classPK) {
-		for (PrerequisiteRelation prerequisiteRelation : findByClassNamePrerequisiteIdClassNameIdClassPK(
-				classNamePrerequisiteId, classNameId, classPK,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+		for (PrerequisiteRelation prerequisiteRelation :
+				findByClassNamePrerequisiteIdClassNameIdClassPK(
+					classNamePrerequisiteId, classNameId, classPK,
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(prerequisiteRelation);
 		}
 	}
@@ -1750,11 +1783,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public int countByClassNamePrerequisiteIdClassNameIdClassPK(
 		long classNamePrerequisiteId, long classNameId, long classPK) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK;
+
+		FinderPath finderPath =
+			_finderPathCountByClassNamePrerequisiteIdClassNameIdClassPK;
 
 		Object[] finderArgs = new Object[] {
-				classNamePrerequisiteId, classNameId, classPK
-			};
+			classNamePrerequisiteId, classNameId, classPK
+		};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1763,11 +1798,14 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 			query.append(_SQL_COUNT_PREREQUISITERELATION_WHERE);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2);
 
 			String sql = query.toString();
 
@@ -1803,33 +1841,29 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2 =
-		"prerequisiteRelation.classNamePrerequisiteId = ? AND ";
-	private static final String _FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2 =
-		"prerequisiteRelation.classNameId = ? AND ";
-	private static final String _FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2 =
-		"prerequisiteRelation.classPK = ?";
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEPREREQUISITEID_2 =
+			"prerequisiteRelation.classNamePrerequisiteId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2 =
+			"prerequisiteRelation.classNameId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK_CLASSPK_2 =
+			"prerequisiteRelation.classPK = ?";
 
 	public PrerequisiteRelationPersistenceImpl() {
 		setModelClass(PrerequisiteRelation.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		setModelImplClass(PrerequisiteRelationImpl.class);
+		setModelPKClass(long.class);
 
-			field.setAccessible(true);
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
+		dbColumnNames.put("uuid", "uuid_");
 
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	/**
@@ -1839,8 +1873,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public void cacheResult(PrerequisiteRelation prerequisiteRelation) {
-		entityCache.putResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
+		entityCache.putResult(
+			entityCacheEnabled, PrerequisiteRelationImpl.class,
 			prerequisiteRelation.getPrimaryKey(), prerequisiteRelation);
 
 		prerequisiteRelation.resetOriginalValues();
@@ -1853,11 +1887,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public void cacheResult(List<PrerequisiteRelation> prerequisiteRelations) {
-		for (PrerequisiteRelation prerequisiteRelation : prerequisiteRelations) {
+		for (PrerequisiteRelation prerequisiteRelation :
+				prerequisiteRelations) {
+
 			if (entityCache.getResult(
-						PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-						PrerequisiteRelationImpl.class,
-						prerequisiteRelation.getPrimaryKey()) == null) {
+					entityCacheEnabled, PrerequisiteRelationImpl.class,
+					prerequisiteRelation.getPrimaryKey()) == null) {
+
 				cacheResult(prerequisiteRelation);
 			}
 			else {
@@ -1870,7 +1906,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Clears the cache for all prerequisite relations.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
@@ -1886,13 +1922,14 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Clears the cache for the prerequisite relation.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
 	public void clearCache(PrerequisiteRelation prerequisiteRelation) {
-		entityCache.removeResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class, prerequisiteRelation.getPrimaryKey());
+		entityCache.removeResult(
+			entityCacheEnabled, PrerequisiteRelationImpl.class,
+			prerequisiteRelation.getPrimaryKey());
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
@@ -1903,9 +1940,11 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		for (PrerequisiteRelation prerequisiteRelation : prerequisiteRelations) {
-			entityCache.removeResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-				PrerequisiteRelationImpl.class,
+		for (PrerequisiteRelation prerequisiteRelation :
+				prerequisiteRelations) {
+
+			entityCache.removeResult(
+				entityCacheEnabled, PrerequisiteRelationImpl.class,
 				prerequisiteRelation.getPrimaryKey());
 		}
 	}
@@ -1918,7 +1957,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public PrerequisiteRelation create(long prerequisiteRelationId) {
-		PrerequisiteRelation prerequisiteRelation = new PrerequisiteRelationImpl();
+		PrerequisiteRelation prerequisiteRelation =
+			new PrerequisiteRelationImpl();
 
 		prerequisiteRelation.setNew(true);
 		prerequisiteRelation.setPrimaryKey(prerequisiteRelationId);
@@ -1940,6 +1980,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public PrerequisiteRelation remove(long prerequisiteRelationId)
 		throws NoSuchPrerequisiteRelationException {
+
 		return remove((Serializable)prerequisiteRelationId);
 	}
 
@@ -1953,21 +1994,23 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public PrerequisiteRelation remove(Serializable primaryKey)
 		throws NoSuchPrerequisiteRelationException {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			PrerequisiteRelation prerequisiteRelation = (PrerequisiteRelation)session.get(PrerequisiteRelationImpl.class,
-					primaryKey);
+			PrerequisiteRelation prerequisiteRelation =
+				(PrerequisiteRelation)session.get(
+					PrerequisiteRelationImpl.class, primaryKey);
 
 			if (prerequisiteRelation == null) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
-				throw new NoSuchPrerequisiteRelationException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+				throw new NoSuchPrerequisiteRelationException(
+					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			return remove(prerequisiteRelation);
@@ -1986,14 +2029,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	protected PrerequisiteRelation removeImpl(
 		PrerequisiteRelation prerequisiteRelation) {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			if (!session.contains(prerequisiteRelation)) {
-				prerequisiteRelation = (PrerequisiteRelation)session.get(PrerequisiteRelationImpl.class,
-						prerequisiteRelation.getPrimaryKeyObj());
+				prerequisiteRelation = (PrerequisiteRelation)session.get(
+					PrerequisiteRelationImpl.class,
+					prerequisiteRelation.getPrimaryKeyObj());
 			}
 
 			if (prerequisiteRelation != null) {
@@ -2017,25 +2062,28 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public PrerequisiteRelation updateImpl(
 		PrerequisiteRelation prerequisiteRelation) {
+
 		boolean isNew = prerequisiteRelation.isNew();
 
 		if (!(prerequisiteRelation instanceof PrerequisiteRelationModelImpl)) {
 			InvocationHandler invocationHandler = null;
 
 			if (ProxyUtil.isProxyClass(prerequisiteRelation.getClass())) {
-				invocationHandler = ProxyUtil.getInvocationHandler(prerequisiteRelation);
+				invocationHandler = ProxyUtil.getInvocationHandler(
+					prerequisiteRelation);
 
 				throw new IllegalArgumentException(
 					"Implement ModelWrapper in prerequisiteRelation proxy " +
-					invocationHandler.getClass());
+						invocationHandler.getClass());
 			}
 
 			throw new IllegalArgumentException(
 				"Implement ModelWrapper in custom PrerequisiteRelation implementation " +
-				prerequisiteRelation.getClass());
+					prerequisiteRelation.getClass());
 		}
 
-		PrerequisiteRelationModelImpl prerequisiteRelationModelImpl = (PrerequisiteRelationModelImpl)prerequisiteRelation;
+		PrerequisiteRelationModelImpl prerequisiteRelationModelImpl =
+			(PrerequisiteRelationModelImpl)prerequisiteRelation;
 
 		if (Validator.isNull(prerequisiteRelation.getUuid())) {
 			String uuid = PortalUUIDUtil.generate();
@@ -2054,7 +2102,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 				prerequisiteRelation.setNew(false);
 			}
 			else {
-				prerequisiteRelation = (PrerequisiteRelation)session.merge(prerequisiteRelation);
+				prerequisiteRelation = (PrerequisiteRelation)session.merge(
+					prerequisiteRelation);
 			}
 		}
 		catch (Exception e) {
@@ -2066,112 +2115,125 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!PrerequisiteRelationModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!_columnBitmaskEnabled) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
-		else
-		 if (isNew) {
-			Object[] args = new Object[] { prerequisiteRelationModelImpl.getUuid() };
+		else if (isNew) {
+			Object[] args = new Object[] {
+				prerequisiteRelationModelImpl.getUuid()
+			};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
+			finderCache.removeResult(_finderPathCountByUuid, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid, args);
 
 			args = new Object[] {
+				prerequisiteRelationModelImpl.getClassNameId(),
+				prerequisiteRelationModelImpl.getClassPK()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByClassNameIdClassPK, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByClassNameIdClassPK, args);
+
+			args = new Object[] {
+				prerequisiteRelationModelImpl.getClassNamePrerequisiteId(),
+				prerequisiteRelationModelImpl.getClassNameId(),
+				prerequisiteRelationModelImpl.getClassPK()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByClassNamePrerequisiteIdClassNameIdClassPK,
+				args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK,
+				args);
+
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
+		}
+		else {
+			if ((prerequisiteRelationModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUuid.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					prerequisiteRelationModelImpl.getOriginalUuid()
+				};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+
+				args = new Object[] {prerequisiteRelationModelImpl.getUuid()};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+			}
+
+			if ((prerequisiteRelationModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByClassNameIdClassPK.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					prerequisiteRelationModelImpl.getOriginalClassNameId(),
+					prerequisiteRelationModelImpl.getOriginalClassPK()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByClassNameIdClassPK, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNameIdClassPK, args);
+
+				args = new Object[] {
 					prerequisiteRelationModelImpl.getClassNameId(),
 					prerequisiteRelationModelImpl.getClassPK()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK,
-				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK,
-				args);
+				finderCache.removeResult(
+					_finderPathCountByClassNameIdClassPK, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNameIdClassPK, args);
+			}
 
-			args = new Object[] {
+			if ((prerequisiteRelationModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK.
+					 getColumnBitmask()) != 0) {
+
+				Object[] args = new Object[] {
+					prerequisiteRelationModelImpl.
+						getOriginalClassNamePrerequisiteId(),
+					prerequisiteRelationModelImpl.getOriginalClassNameId(),
+					prerequisiteRelationModelImpl.getOriginalClassPK()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByClassNamePrerequisiteIdClassNameIdClassPK,
+					args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK,
+					args);
+
+				args = new Object[] {
 					prerequisiteRelationModelImpl.getClassNamePrerequisiteId(),
 					prerequisiteRelationModelImpl.getClassNameId(),
 					prerequisiteRelationModelImpl.getClassPK()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK,
-				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
-		}
-
-		else {
-			if ((prerequisiteRelationModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						prerequisiteRelationModelImpl.getOriginalUuid()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
+				finderCache.removeResult(
+					_finderPathCountByClassNamePrerequisiteIdClassNameIdClassPK,
 					args);
-
-				args = new Object[] { prerequisiteRelationModelImpl.getUuid() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
-			}
-
-			if ((prerequisiteRelationModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						prerequisiteRelationModelImpl.getOriginalClassNameId(),
-						prerequisiteRelationModelImpl.getOriginalClassPK()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK,
-					args);
-
-				args = new Object[] {
-						prerequisiteRelationModelImpl.getClassNameId(),
-						prerequisiteRelationModelImpl.getClassPK()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK,
-					args);
-			}
-
-			if ((prerequisiteRelationModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						prerequisiteRelationModelImpl.getOriginalClassNamePrerequisiteId(),
-						prerequisiteRelationModelImpl.getOriginalClassNameId(),
-						prerequisiteRelationModelImpl.getOriginalClassPK()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK,
-					args);
-
-				args = new Object[] {
-						prerequisiteRelationModelImpl.getClassNamePrerequisiteId(),
-						prerequisiteRelationModelImpl.getClassNameId(),
-						prerequisiteRelationModelImpl.getClassPK()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPREREQUISITEIDCLASSNAMEIDCLASSPK,
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK,
 					args);
 			}
 		}
 
-		entityCache.putResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PrerequisiteRelationImpl.class,
+		entityCache.putResult(
+			entityCacheEnabled, PrerequisiteRelationImpl.class,
 			prerequisiteRelation.getPrimaryKey(), prerequisiteRelation, false);
 
 		prerequisiteRelation.resetOriginalValues();
@@ -2180,7 +2242,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	}
 
 	/**
-	 * Returns the prerequisite relation with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
+	 * Returns the prerequisite relation with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the prerequisite relation
 	 * @return the prerequisite relation
@@ -2189,22 +2251,24 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public PrerequisiteRelation findByPrimaryKey(Serializable primaryKey)
 		throws NoSuchPrerequisiteRelationException {
-		PrerequisiteRelation prerequisiteRelation = fetchByPrimaryKey(primaryKey);
+
+		PrerequisiteRelation prerequisiteRelation = fetchByPrimaryKey(
+			primaryKey);
 
 		if (prerequisiteRelation == null) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
-			throw new NoSuchPrerequisiteRelationException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-				primaryKey);
+			throw new NoSuchPrerequisiteRelationException(
+				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 		}
 
 		return prerequisiteRelation;
 	}
 
 	/**
-	 * Returns the prerequisite relation with the primary key or throws a {@link NoSuchPrerequisiteRelationException} if it could not be found.
+	 * Returns the prerequisite relation with the primary key or throws a <code>NoSuchPrerequisiteRelationException</code> if it could not be found.
 	 *
 	 * @param prerequisiteRelationId the primary key of the prerequisite relation
 	 * @return the prerequisite relation
@@ -2213,55 +2277,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public PrerequisiteRelation findByPrimaryKey(long prerequisiteRelationId)
 		throws NoSuchPrerequisiteRelationException {
+
 		return findByPrimaryKey((Serializable)prerequisiteRelationId);
-	}
-
-	/**
-	 * Returns the prerequisite relation with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the prerequisite relation
-	 * @return the prerequisite relation, or <code>null</code> if a prerequisite relation with the primary key could not be found
-	 */
-	@Override
-	public PrerequisiteRelation fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-				PrerequisiteRelationImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		PrerequisiteRelation prerequisiteRelation = (PrerequisiteRelation)serializable;
-
-		if (prerequisiteRelation == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				prerequisiteRelation = (PrerequisiteRelation)session.get(PrerequisiteRelationImpl.class,
-						primaryKey);
-
-				if (prerequisiteRelation != null) {
-					cacheResult(prerequisiteRelation);
-				}
-				else {
-					entityCache.putResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-						PrerequisiteRelationImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-					PrerequisiteRelationImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return prerequisiteRelation;
 	}
 
 	/**
@@ -2273,101 +2290,6 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	@Override
 	public PrerequisiteRelation fetchByPrimaryKey(long prerequisiteRelationId) {
 		return fetchByPrimaryKey((Serializable)prerequisiteRelationId);
-	}
-
-	@Override
-	public Map<Serializable, PrerequisiteRelation> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, PrerequisiteRelation> map = new HashMap<Serializable, PrerequisiteRelation>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			PrerequisiteRelation prerequisiteRelation = fetchByPrimaryKey(primaryKey);
-
-			if (prerequisiteRelation != null) {
-				map.put(primaryKey, prerequisiteRelation);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-					PrerequisiteRelationImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (PrerequisiteRelation)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler((uncachedPrimaryKeys.size() * 2) +
-				1);
-
-		query.append(_SQL_SELECT_PREREQUISITERELATION_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (PrerequisiteRelation prerequisiteRelation : (List<PrerequisiteRelation>)q.list()) {
-				map.put(prerequisiteRelation.getPrimaryKeyObj(),
-					prerequisiteRelation);
-
-				cacheResult(prerequisiteRelation);
-
-				uncachedPrimaryKeys.remove(prerequisiteRelation.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(PrerequisiteRelationModelImpl.ENTITY_CACHE_ENABLED,
-					PrerequisiteRelationImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -2384,7 +2306,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns a range of all the prerequisite relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of prerequisite relations
@@ -2400,7 +2322,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns an ordered range of all the prerequisite relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of prerequisite relations
@@ -2409,8 +2331,10 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the ordered range of prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findAll(int start, int end,
+	public List<PrerequisiteRelation> findAll(
+		int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator) {
+
 		return findAll(start, end, orderByComparator, true);
 	}
 
@@ -2418,7 +2342,7 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * Returns an ordered range of all the prerequisite relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of prerequisite relations
@@ -2428,29 +2352,32 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 * @return the ordered range of prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> findAll(int start, int end,
+	public List<PrerequisiteRelation> findAll(
+		int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithoutPaginationFindAll;
 			finderArgs = FINDER_ARGS_EMPTY;
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
-			finderArgs = new Object[] { start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindAll;
+			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<PrerequisiteRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PrerequisiteRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PrerequisiteRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -2458,13 +2385,13 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					2 + (orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_PREREQUISITERELATION);
 
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
 				sql = query.toString();
 			}
@@ -2472,7 +2399,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 				sql = _SQL_SELECT_PREREQUISITERELATION;
 
 				if (pagination) {
-					sql = sql.concat(PrerequisiteRelationModelImpl.ORDER_BY_JPQL);
+					sql = sql.concat(
+						PrerequisiteRelationModelImpl.ORDER_BY_JPQL);
 				}
 			}
 
@@ -2484,16 +2412,16 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 				Query q = session.createQuery(sql);
 
 				if (!pagination) {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PrerequisiteRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PrerequisiteRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -2531,8 +2459,8 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
-				FINDER_ARGS_EMPTY, this);
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -2544,12 +2472,12 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
-					count);
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -2567,6 +2495,21 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "prerequisiteRelationId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_PREREQUISITERELATION;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return PrerequisiteRelationModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -2574,30 +2517,184 @@ public class PrerequisiteRelationPersistenceImpl extends BasePersistenceImpl<Pre
 	/**
 	 * Initializes the prerequisite relation persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		PrerequisiteRelationModelImpl.setEntityCacheEnabled(entityCacheEnabled);
+		PrerequisiteRelationModelImpl.setFinderCacheEnabled(finderCacheEnabled);
+
+		_finderPathWithPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PrerequisiteRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PrerequisiteRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+			new String[0]);
+
+		_finderPathCountAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+			new String[0]);
+
+		_finderPathWithPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PrerequisiteRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+			new String[] {
+				String.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PrerequisiteRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+			new String[] {String.class.getName()},
+			PrerequisiteRelationModelImpl.UUID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+			new String[] {String.class.getName()});
+
+		_finderPathWithPaginationFindByClassNameIdClassPK = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PrerequisiteRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByClassNameIdClassPK",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByClassNameIdClassPK = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PrerequisiteRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByClassNameIdClassPK",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			PrerequisiteRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
+			PrerequisiteRelationModelImpl.CLASSPK_COLUMN_BITMASK);
+
+		_finderPathCountByClassNameIdClassPK = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByClassNameIdClassPK",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK =
+			new FinderPath(
+				entityCacheEnabled, finderCacheEnabled,
+				PrerequisiteRelationImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				"findByClassNamePrerequisiteIdClassNameIdClassPK",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK =
+			new FinderPath(
+				entityCacheEnabled, finderCacheEnabled,
+				PrerequisiteRelationImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByClassNamePrerequisiteIdClassNameIdClassPK",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				PrerequisiteRelationModelImpl.
+					CLASSNAMEPREREQUISITEID_COLUMN_BITMASK |
+				PrerequisiteRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
+				PrerequisiteRelationModelImpl.CLASSPK_COLUMN_BITMASK);
+
+		_finderPathCountByClassNamePrerequisiteIdClassNameIdClassPK =
+			new FinderPath(
+				entityCacheEnabled, finderCacheEnabled, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"countByClassNamePrerequisiteIdClassNameIdClassPK",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				});
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
 		entityCache.removeCache(PrerequisiteRelationImpl.class.getName());
 		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = EntityCache.class)
+	@Override
+	@Reference(
+		target = prePersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
+
+		_columnBitmaskEnabled = GetterUtil.getBoolean(
+			configuration.get(
+				"value.object.column.bitmask.enabled.com.ted.prerequisite.model.PrerequisiteRelation"),
+			true);
+	}
+
+	@Override
+	@Reference(
+		target = prePersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = prePersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	private boolean _columnBitmaskEnabled;
+
+	@Reference
 	protected EntityCache entityCache;
-	@ServiceReference(type = FinderCache.class)
+
+	@Reference
 	protected FinderCache finderCache;
-	private static final String _SQL_SELECT_PREREQUISITERELATION = "SELECT prerequisiteRelation FROM PrerequisiteRelation prerequisiteRelation";
-	private static final String _SQL_SELECT_PREREQUISITERELATION_WHERE_PKS_IN = "SELECT prerequisiteRelation FROM PrerequisiteRelation prerequisiteRelation WHERE prerequisiteRelationId IN (";
-	private static final String _SQL_SELECT_PREREQUISITERELATION_WHERE = "SELECT prerequisiteRelation FROM PrerequisiteRelation prerequisiteRelation WHERE ";
-	private static final String _SQL_COUNT_PREREQUISITERELATION = "SELECT COUNT(prerequisiteRelation) FROM PrerequisiteRelation prerequisiteRelation";
-	private static final String _SQL_COUNT_PREREQUISITERELATION_WHERE = "SELECT COUNT(prerequisiteRelation) FROM PrerequisiteRelation prerequisiteRelation WHERE ";
-	private static final String _ORDER_BY_ENTITY_ALIAS = "prerequisiteRelation.";
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No PrerequisiteRelation exists with the primary key ";
-	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No PrerequisiteRelation exists with the key {";
-	private static final Log _log = LogFactoryUtil.getLog(PrerequisiteRelationPersistenceImpl.class);
-	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid"
-			});
+
+	private static final String _SQL_SELECT_PREREQUISITERELATION =
+		"SELECT prerequisiteRelation FROM PrerequisiteRelation prerequisiteRelation";
+
+	private static final String _SQL_SELECT_PREREQUISITERELATION_WHERE =
+		"SELECT prerequisiteRelation FROM PrerequisiteRelation prerequisiteRelation WHERE ";
+
+	private static final String _SQL_COUNT_PREREQUISITERELATION =
+		"SELECT COUNT(prerequisiteRelation) FROM PrerequisiteRelation prerequisiteRelation";
+
+	private static final String _SQL_COUNT_PREREQUISITERELATION_WHERE =
+		"SELECT COUNT(prerequisiteRelation) FROM PrerequisiteRelation prerequisiteRelation WHERE ";
+
+	private static final String _ORDER_BY_ENTITY_ALIAS =
+		"prerequisiteRelation.";
+
+	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
+		"No PrerequisiteRelation exists with the primary key ";
+
+	private static final String _NO_SUCH_ENTITY_WITH_KEY =
+		"No PrerequisiteRelation exists with the key {";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		PrerequisiteRelationPersistenceImpl.class);
+
+	private static final Set<String> _badColumnNames = SetUtil.fromArray(
+		new String[] {"uuid"});
+
 }

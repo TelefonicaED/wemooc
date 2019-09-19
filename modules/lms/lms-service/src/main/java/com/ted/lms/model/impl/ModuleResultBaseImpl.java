@@ -14,10 +14,10 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.ModuleResultLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the ModuleResult service. Represents a row in the &quot;LMS_ModuleResult&quot; database table, with each column mapped to a property of this class.
@@ -32,12 +32,13 @@ import com.ted.lms.service.ModuleResultLocalServiceUtil;
  * @generated
  */
 @ProviderType
-public abstract class ModuleResultBaseImpl extends ModuleResultModelImpl
-	implements ModuleResult {
+public abstract class ModuleResultBaseImpl
+	extends ModuleResultModelImpl implements ModuleResult {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a module result model instance should use the {@link ModuleResult} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a module result model instance should use the <code>ModuleResult</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -48,4 +49,5 @@ public abstract class ModuleResultBaseImpl extends ModuleResultModelImpl
 			ModuleResultLocalServiceUtil.updateModuleResult(this);
 		}
 	}
+
 }

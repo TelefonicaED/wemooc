@@ -367,25 +367,20 @@ public class EditModuleMVCActionCommand extends BaseMVCActionCommand {
 		
 		//Guardamos los campos personalizados del método de evaluación
 		ModuleEvalFactory moduleEvalFactory = ModuleEvalFactoryRegistryUtil.getModuleEvalFactoryByType(moduleEvalId);
-		ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module, serviceContext);
+		ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module);
 		moduleEval.setExtraContent(actionRequest);
 		
 		moduleService.updateModule(module);
 		
 		//Guardamos los prerequisitos
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteModules(themeDisplay.getCompanyId());
+		String[] classNamePrerequisites = moduleLocalService.getPrerequisiteModules(themeDisplay.getCompanyId());
 		PrerequisiteFactory prerequisiteFactory = null;
-		Prerequisite prerequisite = null;
 		long moduleClassNameId = PortalUtil.getClassNameId(Module.class);
-		List<PrerequisiteRelation> prerequisiteRelations = null;
 		
 		for(String classNamePrerequisite: classNamePrerequisites){
+			log.debug("classNamePrerequisite: " + classNamePrerequisite);
 			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
-			prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(prerequisiteFactory.getClassNameId(), moduleClassNameId, module.getModuleId());
-			if(prerequisiteRelations != null && prerequisiteRelations.size() > 0) {
-				prerequisite = prerequisiteFactory.getPrerequisite(prerequisiteRelations.get(0));
-				prerequisite.setExtraContent(actionRequest);
-			}
+			prerequisiteFactory.savePrerequisites(moduleClassNameId, module.getModuleId(), actionRequest);
 		}
 		
 		if (moduleSmallImageSelectorHelper.isFileEntryTempFile()) {

@@ -14,7 +14,7 @@
 
 package com.ted.lms.learning.activity.survey.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * @author Brian Wing Shun Chan
@@ -22,12 +22,15 @@ import aQute.bnd.annotation.ProviderType;
  */
 @ProviderType
 public interface SurveyResultFinder {
-	public long countStartedOnlyStudents(long actId, long companyId,
+
+	public long countStartedOnlyStudents(
+		long actId, long companyId, long courseGroupCreatedId);
+
+	public long countStudentsByQuestionIdAndAnswerId(
+		long questionId, long answerId, long companyId,
 		long courseGroupCreatedId);
 
-	public long countStudentsByQuestionIdAndAnswerId(long questionId,
-		long answerId, long companyId, long courseGroupCreatedId);
+	public long countStudentsByQuestionId(
+		long questionId, long companyId, long courseGroupCreatedId);
 
-	public long countStudentsByQuestionId(long questionId, long companyId,
-		long courseGroupCreatedId);
 }

@@ -2,9 +2,8 @@ package com.ted.prerequisite.activity;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.ted.lms.model.LearningActivity;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.prerequisite.activity.internal.constants.ActivityPrerequisitePortletKeys;
@@ -13,10 +12,11 @@ import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
+import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
+import javax.portlet.PortletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -36,6 +36,24 @@ public class ActivityPrerequisiteFactory extends BasePrerequisiteFactory {
 	@Override
 	public ActivityPrerequisite getPrerequisite(PrerequisiteRelation prerequisiteRelation) throws PortalException {	
 		return new ActivityPrerequisite(prerequisiteRelation, learningActivityResultLocalService, prerequisiteRelationLocalService, learningActivityLocalService);
+	}
+	
+	@Override
+	public void savePrerequisites(long classNameId, long classPK, PortletRequest request) throws PortalException{
+		
+		long actId = ParamUtil.getLong(request, "prerequisiteActId", 0);
+		
+		List<PrerequisiteRelation> prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(getClassNameId(), classNameId, classPK);
+		
+		Prerequisite prerequisite = null;
+		if(actId > 0 && (prerequisiteRelations == null || prerequisiteRelations.size() == 0)) {
+			PrerequisiteRelation prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), classNameId, classPK, "");
+			prerequisite = getPrerequisite(prerequisiteRelation);
+		}else {
+			prerequisite = getPrerequisite(prerequisiteRelations.get(0));
+		}
+
+		prerequisite.setExtraContent(request);
 	}
 
 /*	@Override

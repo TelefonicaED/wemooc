@@ -22,19 +22,20 @@ import com.ted.postcondition.model.Postcondition;
 import com.ted.postcondition.model.PostconditionFactory;
 import com.ted.postcondition.registry.PostconditionFactoryRegistryUtil;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model implementation for the PostconditionRelation service. Represents a row in the &quot;post_PostconditionRelation&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.postcondition.model.PostconditionRelation} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.postcondition.model.PostconditionRelation<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class PostconditionRelationImpl extends PostconditionRelationBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -91,4 +92,5 @@ public class PostconditionRelationImpl extends PostconditionRelationBaseImpl {
 		
 		super.setExtraData(prerequisiteExtraData);
 	}
+
 }

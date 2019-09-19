@@ -7,7 +7,8 @@ import com.ted.lms.exception.InscriptionException;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
-import aQute.bnd.annotation.ProviderType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para los tipos de inscripción de los cursos

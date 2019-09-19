@@ -14,8 +14,8 @@
 
 package com.ted.lms.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,41 +23,46 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.exception.NoSuchLearningActivityResultException;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.impl.LearningActivityResultImpl;
 import com.ted.lms.model.impl.LearningActivityResultModelImpl;
 import com.ted.lms.service.persistence.LearningActivityResultPersistence;
+import com.ted.lms.service.persistence.impl.constants.LMSPersistenceConstants;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the learning activity result service.
@@ -67,54 +72,34 @@ import java.util.Set;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see LearningActivityResultPersistence
- * @see com.ted.lms.service.persistence.LearningActivityResultUtil
  * @generated
  */
+@Component(service = LearningActivityResultPersistence.class)
 @ProviderType
-public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<LearningActivityResult>
+public class LearningActivityResultPersistenceImpl
+	extends BasePersistenceImpl<LearningActivityResult>
 	implements LearningActivityResultPersistence {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link LearningActivityResultUtil} to access the learning activity result persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify or reference this class directly. Always use <code>LearningActivityResultUtil</code> to access the learning activity result persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static final String FINDER_CLASS_NAME_ENTITY = LearningActivityResultImpl.class.getName();
-	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List1";
-	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] { String.class.getName() },
-			LearningActivityResultModelImpl.UUID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] { String.class.getName() });
+	public static final String FINDER_CLASS_NAME_ENTITY =
+		LearningActivityResultImpl.class.getName();
+
+	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List1";
+
+	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List2";
+
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByUuid;
+	private FinderPath _finderPathWithoutPaginationFindByUuid;
+	private FinderPath _finderPathCountByUuid;
 
 	/**
 	 * Returns all the learning activity results where uuid = &#63;.
@@ -131,7 +116,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns a range of all the learning activity results where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -140,8 +125,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid(String uuid, int start,
-		int end) {
+	public List<LearningActivityResult> findByUuid(
+		String uuid, int start, int end) {
+
 		return findByUuid(uuid, start, end, null);
 	}
 
@@ -149,7 +135,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -159,8 +145,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the ordered range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid(String uuid, int start,
-		int end, OrderByComparator<LearningActivityResult> orderByComparator) {
+	public List<LearningActivityResult> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<LearningActivityResult> orderByComparator) {
+
 		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
@@ -168,20 +156,22 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
 	 * @param start the lower bound of the range of learning activity results
 	 * @param end the upper bound of the range of learning activity results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid(String uuid, int start,
-		int end, OrderByComparator<LearningActivityResult> orderByComparator,
-		boolean retrieveFromCache) {
+	public List<LearningActivityResult> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<LearningActivityResult> orderByComparator,
+		boolean useFinderCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -189,21 +179,25 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid };
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid;
+				finderArgs = new Object[] {uuid};
+			}
 		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid, start, end, orderByComparator };
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByUuid;
+			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<LearningActivityResult> list = null;
 
-		if (retrieveFromCache) {
-			list = (List<LearningActivityResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+		if (useFinderCache) {
+			list = (List<LearningActivityResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LearningActivityResult learningActivityResult : list) {
@@ -220,8 +214,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -241,11 +235,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			}
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(LearningActivityResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -265,24 +258,28 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				}
 
 				if (!pagination) {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -303,11 +300,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult findByUuid_First(String uuid,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult findByUuid_First(
+			String uuid,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByUuid_First(uuid,
-				orderByComparator);
+
+		LearningActivityResult learningActivityResult = fetchByUuid_First(
+			uuid, orderByComparator);
 
 		if (learningActivityResult != null) {
 			return learningActivityResult;
@@ -333,10 +332,12 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the first matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByUuid_First(String uuid,
+	public LearningActivityResult fetchByUuid_First(
+		String uuid,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
-		List<LearningActivityResult> list = findByUuid(uuid, 0, 1,
-				orderByComparator);
+
+		List<LearningActivityResult> list = findByUuid(
+			uuid, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -354,11 +355,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult findByUuid_Last(String uuid,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult findByUuid_Last(
+			String uuid,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByUuid_Last(uuid,
-				orderByComparator);
+
+		LearningActivityResult learningActivityResult = fetchByUuid_Last(
+			uuid, orderByComparator);
 
 		if (learningActivityResult != null) {
 			return learningActivityResult;
@@ -384,16 +387,18 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the last matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByUuid_Last(String uuid,
+	public LearningActivityResult fetchByUuid_Last(
+		String uuid,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
+
 		int count = countByUuid(uuid);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<LearningActivityResult> list = findByUuid(uuid, count - 1, count,
-				orderByComparator);
+		List<LearningActivityResult> list = findByUuid(
+			uuid, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -412,9 +417,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a learning activity result with the primary key could not be found
 	 */
 	@Override
-	public LearningActivityResult[] findByUuid_PrevAndNext(long larId,
-		String uuid, OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult[] findByUuid_PrevAndNext(
+			long larId, String uuid,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
+
 		uuid = Objects.toString(uuid, "");
 
 		LearningActivityResult learningActivityResult = findByPrimaryKey(larId);
@@ -426,13 +433,14 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 
 			LearningActivityResult[] array = new LearningActivityResultImpl[3];
 
-			array[0] = getByUuid_PrevAndNext(session, learningActivityResult,
-					uuid, orderByComparator, true);
+			array[0] = getByUuid_PrevAndNext(
+				session, learningActivityResult, uuid, orderByComparator, true);
 
 			array[1] = learningActivityResult;
 
-			array[2] = getByUuid_PrevAndNext(session, learningActivityResult,
-					uuid, orderByComparator, false);
+			array[2] = getByUuid_PrevAndNext(
+				session, learningActivityResult, uuid, orderByComparator,
+				false);
 
 			return array;
 		}
@@ -444,15 +452,17 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		}
 	}
 
-	protected LearningActivityResult getByUuid_PrevAndNext(Session session,
-		LearningActivityResult learningActivityResult, String uuid,
+	protected LearningActivityResult getByUuid_PrevAndNext(
+		Session session, LearningActivityResult learningActivityResult,
+		String uuid,
 		OrderByComparator<LearningActivityResult> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -473,7 +483,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		}
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -545,10 +556,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		}
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(learningActivityResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						learningActivityResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -569,8 +581,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (LearningActivityResult learningActivityResult : findByUuid(uuid,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (LearningActivityResult learningActivityResult :
+				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(learningActivityResult);
 		}
 	}
@@ -585,9 +598,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	public int countByUuid(String uuid) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
+		FinderPath finderPath = _finderPathCountByUuid;
 
-		Object[] finderArgs = new Object[] { uuid };
+		Object[] finderArgs = new Object[] {uuid};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -639,23 +652,17 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_1 = "learningActivityResult.uuid IS NULL";
-	private static final String _FINDER_COLUMN_UUID_UUID_2 = "learningActivityResult.uuid = ?";
-	private static final String _FINDER_COLUMN_UUID_UUID_3 = "(learningActivityResult.uuid IS NULL OR learningActivityResult.uuid = '')";
-	public static final FinderPath FINDER_PATH_FETCH_BY_UUID_G = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class, FINDER_CLASS_NAME_ENTITY,
-			"fetchByUUID_G",
-			new String[] { String.class.getName(), Long.class.getName() },
-			LearningActivityResultModelImpl.UUID_COLUMN_BITMASK |
-			LearningActivityResultModelImpl.GROUPID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID_G = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
-			new String[] { String.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_UUID_2 =
+		"learningActivityResult.uuid = ?";
+
+	private static final String _FINDER_COLUMN_UUID_UUID_3 =
+		"(learningActivityResult.uuid IS NULL OR learningActivityResult.uuid = '')";
+
+	private FinderPath _finderPathFetchByUUID_G;
+	private FinderPath _finderPathCountByUUID_G;
 
 	/**
-	 * Returns the learning activity result where uuid = &#63; and groupId = &#63; or throws a {@link NoSuchLearningActivityResultException} if it could not be found.
+	 * Returns the learning activity result where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchLearningActivityResultException</code> if it could not be found.
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
@@ -665,8 +672,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult findByUUID_G(String uuid, long groupId)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByUUID_G(uuid,
-				groupId);
+
+		LearningActivityResult learningActivityResult = fetchByUUID_G(
+			uuid, groupId);
 
 		if (learningActivityResult == null) {
 			StringBundler msg = new StringBundler(6);
@@ -708,28 +716,35 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByUUID_G(String uuid, long groupId,
-		boolean retrieveFromCache) {
+	public LearningActivityResult fetchByUUID_G(
+		String uuid, long groupId, boolean useFinderCache) {
+
 		uuid = Objects.toString(uuid, "");
 
-		Object[] finderArgs = new Object[] { uuid, groupId };
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {uuid, groupId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_UUID_G,
-					finderArgs, this);
+		if (useFinderCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByUUID_G, finderArgs, this);
 		}
 
 		if (result instanceof LearningActivityResult) {
-			LearningActivityResult learningActivityResult = (LearningActivityResult)result;
+			LearningActivityResult learningActivityResult =
+				(LearningActivityResult)result;
 
 			if (!Objects.equals(uuid, learningActivityResult.getUuid()) ||
-					(groupId != learningActivityResult.getGroupId())) {
+				(groupId != learningActivityResult.getGroupId())) {
+
 				result = null;
 			}
 		}
@@ -772,8 +787,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				List<LearningActivityResult> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
-						finderArgs, list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByUUID_G, finderArgs, list);
+					}
 				}
 				else {
 					LearningActivityResult learningActivityResult = list.get(0);
@@ -784,7 +801,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByUUID_G, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -811,8 +831,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult removeByUUID_G(String uuid, long groupId)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = findByUUID_G(uuid,
-				groupId);
+
+		LearningActivityResult learningActivityResult = findByUUID_G(
+			uuid, groupId);
 
 		return remove(learningActivityResult);
 	}
@@ -828,9 +849,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	public int countByUUID_G(String uuid, long groupId) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_G;
+		FinderPath finderPath = _finderPathCountByUUID_G;
 
-		Object[] finderArgs = new Object[] { uuid, groupId };
+		Object[] finderArgs = new Object[] {uuid, groupId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -886,32 +907,18 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_G_UUID_1 = "learningActivityResult.uuid IS NULL AND ";
-	private static final String _FINDER_COLUMN_UUID_G_UUID_2 = "learningActivityResult.uuid = ? AND ";
-	private static final String _FINDER_COLUMN_UUID_G_UUID_3 = "(learningActivityResult.uuid IS NULL OR learningActivityResult.uuid = '') AND ";
-	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 = "learningActivityResult.groupId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID_C = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
-			new String[] {
-				String.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C =
-		new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
-			new String[] { String.class.getName(), Long.class.getName() },
-			LearningActivityResultModelImpl.UUID_COLUMN_BITMASK |
-			LearningActivityResultModelImpl.COMPANYID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID_C = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
-			new String[] { String.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_G_UUID_2 =
+		"learningActivityResult.uuid = ? AND ";
+
+	private static final String _FINDER_COLUMN_UUID_G_UUID_3 =
+		"(learningActivityResult.uuid IS NULL OR learningActivityResult.uuid = '') AND ";
+
+	private static final String _FINDER_COLUMN_UUID_G_GROUPID_2 =
+		"learningActivityResult.groupId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByUuid_C;
+	private FinderPath _finderPathWithoutPaginationFindByUuid_C;
+	private FinderPath _finderPathCountByUuid_C;
 
 	/**
 	 * Returns all the learning activity results where uuid = &#63; and companyId = &#63;.
@@ -921,16 +928,18 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid_C(String uuid, long companyId) {
-		return findByUuid_C(uuid, companyId, QueryUtil.ALL_POS,
-			QueryUtil.ALL_POS, null);
+	public List<LearningActivityResult> findByUuid_C(
+		String uuid, long companyId) {
+
+		return findByUuid_C(
+			uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the learning activity results where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -940,8 +949,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid_C(String uuid,
-		long companyId, int start, int end) {
+	public List<LearningActivityResult> findByUuid_C(
+		String uuid, long companyId, int start, int end) {
+
 		return findByUuid_C(uuid, companyId, start, end, null);
 	}
 
@@ -949,7 +959,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -960,17 +970,19 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the ordered range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid_C(String uuid,
-		long companyId, int start, int end,
+	public List<LearningActivityResult> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
-		return findByUuid_C(uuid, companyId, start, end, orderByComparator, true);
+
+		return findByUuid_C(
+			uuid, companyId, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the learning activity results where uuid = &#63; and companyId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -978,14 +990,15 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @param start the lower bound of the range of learning activity results
 	 * @param end the upper bound of the range of learning activity results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByUuid_C(String uuid,
-		long companyId, int start, int end,
+	public List<LearningActivityResult> findByUuid_C(
+		String uuid, long companyId, int start, int end,
 		OrderByComparator<LearningActivityResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -993,30 +1006,33 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C;
-			finderArgs = new Object[] { uuid, companyId };
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid_C;
+				finderArgs = new Object[] {uuid, companyId};
+			}
 		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID_C;
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByUuid_C;
 			finderArgs = new Object[] {
-					uuid, companyId,
-					
-					start, end, orderByComparator
-				};
+				uuid, companyId, start, end, orderByComparator
+			};
 		}
 
 		List<LearningActivityResult> list = null;
 
-		if (retrieveFromCache) {
-			list = (List<LearningActivityResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+		if (useFinderCache) {
+			list = (List<LearningActivityResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LearningActivityResult learningActivityResult : list) {
 					if (!uuid.equals(learningActivityResult.getUuid()) ||
-							(companyId != learningActivityResult.getCompanyId())) {
+						(companyId != learningActivityResult.getCompanyId())) {
+
 						list = null;
 
 						break;
@@ -1029,8 +1045,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -1052,11 +1068,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			query.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(LearningActivityResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1078,24 +1093,28 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				qPos.add(companyId);
 
 				if (!pagination) {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1117,12 +1136,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult findByUuid_C_First(String uuid,
-		long companyId,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult findByUuid_C_First(
+			String uuid, long companyId,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByUuid_C_First(uuid,
-				companyId, orderByComparator);
+
+		LearningActivityResult learningActivityResult = fetchByUuid_C_First(
+			uuid, companyId, orderByComparator);
 
 		if (learningActivityResult != null) {
 			return learningActivityResult;
@@ -1152,11 +1172,12 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the first matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByUuid_C_First(String uuid,
-		long companyId,
+	public LearningActivityResult fetchByUuid_C_First(
+		String uuid, long companyId,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
-		List<LearningActivityResult> list = findByUuid_C(uuid, companyId, 0, 1,
-				orderByComparator);
+
+		List<LearningActivityResult> list = findByUuid_C(
+			uuid, companyId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1175,12 +1196,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult findByUuid_C_Last(String uuid,
-		long companyId,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult findByUuid_C_Last(
+			String uuid, long companyId,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByUuid_C_Last(uuid,
-				companyId, orderByComparator);
+
+		LearningActivityResult learningActivityResult = fetchByUuid_C_Last(
+			uuid, companyId, orderByComparator);
 
 		if (learningActivityResult != null) {
 			return learningActivityResult;
@@ -1210,17 +1232,18 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the last matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByUuid_C_Last(String uuid,
-		long companyId,
+	public LearningActivityResult fetchByUuid_C_Last(
+		String uuid, long companyId,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
+
 		int count = countByUuid_C(uuid, companyId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<LearningActivityResult> list = findByUuid_C(uuid, companyId,
-				count - 1, count, orderByComparator);
+		List<LearningActivityResult> list = findByUuid_C(
+			uuid, companyId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1240,10 +1263,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a learning activity result with the primary key could not be found
 	 */
 	@Override
-	public LearningActivityResult[] findByUuid_C_PrevAndNext(long larId,
-		String uuid, long companyId,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult[] findByUuid_C_PrevAndNext(
+			long larId, String uuid, long companyId,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
+
 		uuid = Objects.toString(uuid, "");
 
 		LearningActivityResult learningActivityResult = findByPrimaryKey(larId);
@@ -1255,13 +1279,15 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 
 			LearningActivityResult[] array = new LearningActivityResultImpl[3];
 
-			array[0] = getByUuid_C_PrevAndNext(session, learningActivityResult,
-					uuid, companyId, orderByComparator, true);
+			array[0] = getByUuid_C_PrevAndNext(
+				session, learningActivityResult, uuid, companyId,
+				orderByComparator, true);
 
 			array[1] = learningActivityResult;
 
-			array[2] = getByUuid_C_PrevAndNext(session, learningActivityResult,
-					uuid, companyId, orderByComparator, false);
+			array[2] = getByUuid_C_PrevAndNext(
+				session, learningActivityResult, uuid, companyId,
+				orderByComparator, false);
 
 			return array;
 		}
@@ -1273,16 +1299,17 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		}
 	}
 
-	protected LearningActivityResult getByUuid_C_PrevAndNext(Session session,
-		LearningActivityResult learningActivityResult, String uuid,
-		long companyId,
+	protected LearningActivityResult getByUuid_C_PrevAndNext(
+		Session session, LearningActivityResult learningActivityResult,
+		String uuid, long companyId,
 		OrderByComparator<LearningActivityResult> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1305,7 +1332,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		query.append(_FINDER_COLUMN_UUID_C_COMPANYID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1379,10 +1407,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		qPos.add(companyId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(learningActivityResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						learningActivityResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1404,8 +1433,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public void removeByUuid_C(String uuid, long companyId) {
-		for (LearningActivityResult learningActivityResult : findByUuid_C(
-				uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (LearningActivityResult learningActivityResult :
+				findByUuid_C(
+					uuid, companyId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(learningActivityResult);
 		}
 	}
@@ -1421,9 +1453,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	public int countByUuid_C(String uuid, long companyId) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID_C;
+		FinderPath finderPath = _finderPathCountByUuid_C;
 
-		Object[] finderArgs = new Object[] { uuid, companyId };
+		Object[] finderArgs = new Object[] {uuid, companyId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1479,30 +1511,18 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_C_UUID_1 = "learningActivityResult.uuid IS NULL AND ";
-	private static final String _FINDER_COLUMN_UUID_C_UUID_2 = "learningActivityResult.uuid = ? AND ";
-	private static final String _FINDER_COLUMN_UUID_C_UUID_3 = "(learningActivityResult.uuid IS NULL OR learningActivityResult.uuid = '') AND ";
-	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 = "learningActivityResult.companyId = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActId",
-			new String[] {
-				Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByActId",
-			new String[] { Long.class.getName() },
-			LearningActivityResultModelImpl.ACTID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ACTID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActId",
-			new String[] { Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_C_UUID_2 =
+		"learningActivityResult.uuid = ? AND ";
+
+	private static final String _FINDER_COLUMN_UUID_C_UUID_3 =
+		"(learningActivityResult.uuid IS NULL OR learningActivityResult.uuid = '') AND ";
+
+	private static final String _FINDER_COLUMN_UUID_C_COMPANYID_2 =
+		"learningActivityResult.companyId = ?";
+
+	private FinderPath _finderPathWithPaginationFindByActId;
+	private FinderPath _finderPathWithoutPaginationFindByActId;
+	private FinderPath _finderPathCountByActId;
 
 	/**
 	 * Returns all the learning activity results where actId = &#63;.
@@ -1519,7 +1539,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns a range of all the learning activity results where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1528,8 +1548,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByActId(long actId, int start,
-		int end) {
+	public List<LearningActivityResult> findByActId(
+		long actId, int start, int end) {
+
 		return findByActId(actId, start, end, null);
 	}
 
@@ -1537,7 +1558,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
@@ -1547,8 +1568,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the ordered range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByActId(long actId, int start,
-		int end, OrderByComparator<LearningActivityResult> orderByComparator) {
+	public List<LearningActivityResult> findByActId(
+		long actId, int start, int end,
+		OrderByComparator<LearningActivityResult> orderByComparator) {
+
 		return findByActId(actId, start, end, orderByComparator, true);
 	}
 
@@ -1556,40 +1579,46 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results where actId = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param actId the act ID
 	 * @param start the lower bound of the range of learning activity results
 	 * @param end the upper bound of the range of learning activity results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findByActId(long actId, int start,
-		int end, OrderByComparator<LearningActivityResult> orderByComparator,
-		boolean retrieveFromCache) {
+	public List<LearningActivityResult> findByActId(
+		long actId, int start, int end,
+		OrderByComparator<LearningActivityResult> orderByComparator,
+		boolean useFinderCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID;
-			finderArgs = new Object[] { actId };
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByActId;
+				finderArgs = new Object[] {actId};
+			}
 		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_ACTID;
-			finderArgs = new Object[] { actId, start, end, orderByComparator };
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindByActId;
+			finderArgs = new Object[] {actId, start, end, orderByComparator};
 		}
 
 		List<LearningActivityResult> list = null;
 
-		if (retrieveFromCache) {
-			list = (List<LearningActivityResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+		if (useFinderCache) {
+			list = (List<LearningActivityResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (LearningActivityResult learningActivityResult : list) {
@@ -1606,8 +1635,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -1618,11 +1647,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			query.append(_FINDER_COLUMN_ACTID_ACTID_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(LearningActivityResultModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1640,24 +1668,28 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				qPos.add(actId);
 
 				if (!pagination) {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1678,11 +1710,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult findByActId_First(long actId,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult findByActId_First(
+			long actId,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByActId_First(actId,
-				orderByComparator);
+
+		LearningActivityResult learningActivityResult = fetchByActId_First(
+			actId, orderByComparator);
 
 		if (learningActivityResult != null) {
 			return learningActivityResult;
@@ -1708,10 +1742,12 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the first matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByActId_First(long actId,
+	public LearningActivityResult fetchByActId_First(
+		long actId,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
-		List<LearningActivityResult> list = findByActId(actId, 0, 1,
-				orderByComparator);
+
+		List<LearningActivityResult> list = findByActId(
+			actId, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1729,11 +1765,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult findByActId_Last(long actId,
-		OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult findByActId_Last(
+			long actId,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByActId_Last(actId,
-				orderByComparator);
+
+		LearningActivityResult learningActivityResult = fetchByActId_Last(
+			actId, orderByComparator);
 
 		if (learningActivityResult != null) {
 			return learningActivityResult;
@@ -1759,16 +1797,18 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the last matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByActId_Last(long actId,
+	public LearningActivityResult fetchByActId_Last(
+		long actId,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
+
 		int count = countByActId(actId);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<LearningActivityResult> list = findByActId(actId, count - 1,
-				count, orderByComparator);
+		List<LearningActivityResult> list = findByActId(
+			actId, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1787,9 +1827,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @throws NoSuchLearningActivityResultException if a learning activity result with the primary key could not be found
 	 */
 	@Override
-	public LearningActivityResult[] findByActId_PrevAndNext(long larId,
-		long actId, OrderByComparator<LearningActivityResult> orderByComparator)
+	public LearningActivityResult[] findByActId_PrevAndNext(
+			long larId, long actId,
+			OrderByComparator<LearningActivityResult> orderByComparator)
 		throws NoSuchLearningActivityResultException {
+
 		LearningActivityResult learningActivityResult = findByPrimaryKey(larId);
 
 		Session session = null;
@@ -1799,13 +1841,15 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 
 			LearningActivityResult[] array = new LearningActivityResultImpl[3];
 
-			array[0] = getByActId_PrevAndNext(session, learningActivityResult,
-					actId, orderByComparator, true);
+			array[0] = getByActId_PrevAndNext(
+				session, learningActivityResult, actId, orderByComparator,
+				true);
 
 			array[1] = learningActivityResult;
 
-			array[2] = getByActId_PrevAndNext(session, learningActivityResult,
-					actId, orderByComparator, false);
+			array[2] = getByActId_PrevAndNext(
+				session, learningActivityResult, actId, orderByComparator,
+				false);
 
 			return array;
 		}
@@ -1817,15 +1861,16 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		}
 	}
 
-	protected LearningActivityResult getByActId_PrevAndNext(Session session,
-		LearningActivityResult learningActivityResult, long actId,
-		OrderByComparator<LearningActivityResult> orderByComparator,
+	protected LearningActivityResult getByActId_PrevAndNext(
+		Session session, LearningActivityResult learningActivityResult,
+		long actId, OrderByComparator<LearningActivityResult> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1837,7 +1882,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		query.append(_FINDER_COLUMN_ACTID_ACTID_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1907,10 +1953,11 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		qPos.add(actId);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(learningActivityResult);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						learningActivityResult)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1931,8 +1978,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public void removeByActId(long actId) {
-		for (LearningActivityResult learningActivityResult : findByActId(
-				actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (LearningActivityResult learningActivityResult :
+				findByActId(
+					actId, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(learningActivityResult);
 		}
 	}
@@ -1945,9 +1994,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public int countByActId(long actId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTID;
+		FinderPath finderPath = _finderPathCountByActId;
 
-		Object[] finderArgs = new Object[] { actId };
+		Object[] finderArgs = new Object[] {actId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1988,21 +2037,14 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ACTID_ACTID_2 = "learningActivityResult.actId = ?";
-	public static final FinderPath FINDER_PATH_FETCH_BY_ACTIDUSERID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED,
-			LearningActivityResultImpl.class, FINDER_CLASS_NAME_ENTITY,
-			"fetchByActIdUserId",
-			new String[] { Long.class.getName(), Long.class.getName() },
-			LearningActivityResultModelImpl.ACTID_COLUMN_BITMASK |
-			LearningActivityResultModelImpl.USERID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_ACTIDUSERID = new FinderPath(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActIdUserId",
-			new String[] { Long.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_ACTID_ACTID_2 =
+		"learningActivityResult.actId = ?";
+
+	private FinderPath _finderPathFetchByActIdUserId;
+	private FinderPath _finderPathCountByActIdUserId;
 
 	/**
-	 * Returns the learning activity result where actId = &#63; and userId = &#63; or throws a {@link NoSuchLearningActivityResultException} if it could not be found.
+	 * Returns the learning activity result where actId = &#63; and userId = &#63; or throws a <code>NoSuchLearningActivityResultException</code> if it could not be found.
 	 *
 	 * @param actId the act ID
 	 * @param userId the user ID
@@ -2012,8 +2054,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult findByActIdUserId(long actId, long userId)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByActIdUserId(actId,
-				userId);
+
+		LearningActivityResult learningActivityResult = fetchByActIdUserId(
+			actId, userId);
 
 		if (learningActivityResult == null) {
 			StringBundler msg = new StringBundler(6);
@@ -2055,26 +2098,33 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 *
 	 * @param actId the act ID
 	 * @param userId the user ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
 	 */
 	@Override
-	public LearningActivityResult fetchByActIdUserId(long actId, long userId,
-		boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] { actId, userId };
+	public LearningActivityResult fetchByActIdUserId(
+		long actId, long userId, boolean useFinderCache) {
+
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {actId, userId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
-			result = finderCache.getResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-					finderArgs, this);
+		if (useFinderCache) {
+			result = finderCache.getResult(
+				_finderPathFetchByActIdUserId, finderArgs, this);
 		}
 
 		if (result instanceof LearningActivityResult) {
-			LearningActivityResult learningActivityResult = (LearningActivityResult)result;
+			LearningActivityResult learningActivityResult =
+				(LearningActivityResult)result;
 
 			if ((actId != learningActivityResult.getActId()) ||
-					(userId != learningActivityResult.getUserId())) {
+				(userId != learningActivityResult.getUserId())) {
+
 				result = null;
 			}
 		}
@@ -2106,8 +2156,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				List<LearningActivityResult> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-						finderArgs, list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByActIdUserId, finderArgs, list);
+					}
 				}
 				else {
 					LearningActivityResult learningActivityResult = list.get(0);
@@ -2118,8 +2170,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
-					finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByActIdUserId, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2146,8 +2200,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult removeByActIdUserId(long actId, long userId)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = findByActIdUserId(actId,
-				userId);
+
+		LearningActivityResult learningActivityResult = findByActIdUserId(
+			actId, userId);
 
 		return remove(learningActivityResult);
 	}
@@ -2161,9 +2216,9 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public int countByActIdUserId(long actId, long userId) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_ACTIDUSERID;
+		FinderPath finderPath = _finderPathCountByActIdUserId;
 
-		Object[] finderArgs = new Object[] { actId, userId };
+		Object[] finderArgs = new Object[] {actId, userId};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -2208,29 +2263,23 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_ACTIDUSERID_ACTID_2 = "learningActivityResult.actId = ? AND ";
-	private static final String _FINDER_COLUMN_ACTIDUSERID_USERID_2 = "learningActivityResult.userId = ?";
+	private static final String _FINDER_COLUMN_ACTIDUSERID_ACTID_2 =
+		"learningActivityResult.actId = ? AND ";
+
+	private static final String _FINDER_COLUMN_ACTIDUSERID_USERID_2 =
+		"learningActivityResult.userId = ?";
 
 	public LearningActivityResultPersistenceImpl() {
 		setModelClass(LearningActivityResult.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		setModelImplClass(LearningActivityResultImpl.class);
+		setModelPKClass(long.class);
 
-			field.setAccessible(true);
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
+		dbColumnNames.put("uuid", "uuid_");
 
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	/**
@@ -2240,21 +2289,25 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public void cacheResult(LearningActivityResult learningActivityResult) {
-		entityCache.putResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
+		entityCache.putResult(
+			entityCacheEnabled, LearningActivityResultImpl.class,
 			learningActivityResult.getPrimaryKey(), learningActivityResult);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G,
+		finderCache.putResult(
+			_finderPathFetchByUUID_G,
 			new Object[] {
 				learningActivityResult.getUuid(),
 				learningActivityResult.getGroupId()
-			}, learningActivityResult);
+			},
+			learningActivityResult);
 
-		finderCache.putResult(FINDER_PATH_FETCH_BY_ACTIDUSERID,
+		finderCache.putResult(
+			_finderPathFetchByActIdUserId,
 			new Object[] {
 				learningActivityResult.getActId(),
 				learningActivityResult.getUserId()
-			}, learningActivityResult);
+			},
+			learningActivityResult);
 
 		learningActivityResult.resetOriginalValues();
 	}
@@ -2267,11 +2320,14 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public void cacheResult(
 		List<LearningActivityResult> learningActivityResults) {
-		for (LearningActivityResult learningActivityResult : learningActivityResults) {
+
+		for (LearningActivityResult learningActivityResult :
+				learningActivityResults) {
+
 			if (entityCache.getResult(
-						LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-						LearningActivityResultImpl.class,
-						learningActivityResult.getPrimaryKey()) == null) {
+					entityCacheEnabled, LearningActivityResultImpl.class,
+					learningActivityResult.getPrimaryKey()) == null) {
+
 				cacheResult(learningActivityResult);
 			}
 			else {
@@ -2284,7 +2340,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Clears the cache for all learning activity results.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
@@ -2300,103 +2356,113 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Clears the cache for the learning activity result.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
 	public void clearCache(LearningActivityResult learningActivityResult) {
-		entityCache.removeResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
+		entityCache.removeResult(
+			entityCacheEnabled, LearningActivityResultImpl.class,
 			learningActivityResult.getPrimaryKey());
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		clearUniqueFindersCache((LearningActivityResultModelImpl)learningActivityResult,
-			true);
+		clearUniqueFindersCache(
+			(LearningActivityResultModelImpl)learningActivityResult, true);
 	}
 
 	@Override
-	public void clearCache(List<LearningActivityResult> learningActivityResults) {
+	public void clearCache(
+		List<LearningActivityResult> learningActivityResults) {
+
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		for (LearningActivityResult learningActivityResult : learningActivityResults) {
-			entityCache.removeResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-				LearningActivityResultImpl.class,
+		for (LearningActivityResult learningActivityResult :
+				learningActivityResults) {
+
+			entityCache.removeResult(
+				entityCacheEnabled, LearningActivityResultImpl.class,
 				learningActivityResult.getPrimaryKey());
 
-			clearUniqueFindersCache((LearningActivityResultModelImpl)learningActivityResult,
-				true);
+			clearUniqueFindersCache(
+				(LearningActivityResultModelImpl)learningActivityResult, true);
 		}
 	}
 
 	protected void cacheUniqueFindersCache(
 		LearningActivityResultModelImpl learningActivityResultModelImpl) {
-		Object[] args = new Object[] {
-				learningActivityResultModelImpl.getUuid(),
-				learningActivityResultModelImpl.getGroupId()
-			};
 
-		finderCache.putResult(FINDER_PATH_COUNT_BY_UUID_G, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_UUID_G, args,
-			learningActivityResultModelImpl, false);
+		Object[] args = new Object[] {
+			learningActivityResultModelImpl.getUuid(),
+			learningActivityResultModelImpl.getGroupId()
+		};
+
+		finderCache.putResult(
+			_finderPathCountByUUID_G, args, Long.valueOf(1), false);
+		finderCache.putResult(
+			_finderPathFetchByUUID_G, args, learningActivityResultModelImpl,
+			false);
 
 		args = new Object[] {
-				learningActivityResultModelImpl.getActId(),
-				learningActivityResultModelImpl.getUserId()
-			};
+			learningActivityResultModelImpl.getActId(),
+			learningActivityResultModelImpl.getUserId()
+		};
 
-		finderCache.putResult(FINDER_PATH_COUNT_BY_ACTIDUSERID, args,
-			Long.valueOf(1), false);
-		finderCache.putResult(FINDER_PATH_FETCH_BY_ACTIDUSERID, args,
+		finderCache.putResult(
+			_finderPathCountByActIdUserId, args, Long.valueOf(1), false);
+		finderCache.putResult(
+			_finderPathFetchByActIdUserId, args,
 			learningActivityResultModelImpl, false);
 	}
 
 	protected void clearUniqueFindersCache(
 		LearningActivityResultModelImpl learningActivityResultModelImpl,
 		boolean clearCurrent) {
-		if (clearCurrent) {
-			Object[] args = new Object[] {
-					learningActivityResultModelImpl.getUuid(),
-					learningActivityResultModelImpl.getGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
-
-		if ((learningActivityResultModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_UUID_G.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
-					learningActivityResultModelImpl.getOriginalUuid(),
-					learningActivityResultModelImpl.getOriginalGroupId()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_G, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_UUID_G, args);
-		}
 
 		if (clearCurrent) {
 			Object[] args = new Object[] {
-					learningActivityResultModelImpl.getActId(),
-					learningActivityResultModelImpl.getUserId()
-				};
+				learningActivityResultModelImpl.getUuid(),
+				learningActivityResultModelImpl.getGroupId()
+			};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIDUSERID, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_ACTIDUSERID, args);
+			finderCache.removeResult(_finderPathCountByUUID_G, args);
+			finderCache.removeResult(_finderPathFetchByUUID_G, args);
 		}
 
 		if ((learningActivityResultModelImpl.getColumnBitmask() &
-				FINDER_PATH_FETCH_BY_ACTIDUSERID.getColumnBitmask()) != 0) {
-			Object[] args = new Object[] {
-					learningActivityResultModelImpl.getOriginalActId(),
-					learningActivityResultModelImpl.getOriginalUserId()
-				};
+			 _finderPathFetchByUUID_G.getColumnBitmask()) != 0) {
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTIDUSERID, args);
-			finderCache.removeResult(FINDER_PATH_FETCH_BY_ACTIDUSERID, args);
+			Object[] args = new Object[] {
+				learningActivityResultModelImpl.getOriginalUuid(),
+				learningActivityResultModelImpl.getOriginalGroupId()
+			};
+
+			finderCache.removeResult(_finderPathCountByUUID_G, args);
+			finderCache.removeResult(_finderPathFetchByUUID_G, args);
+		}
+
+		if (clearCurrent) {
+			Object[] args = new Object[] {
+				learningActivityResultModelImpl.getActId(),
+				learningActivityResultModelImpl.getUserId()
+			};
+
+			finderCache.removeResult(_finderPathCountByActIdUserId, args);
+			finderCache.removeResult(_finderPathFetchByActIdUserId, args);
+		}
+
+		if ((learningActivityResultModelImpl.getColumnBitmask() &
+			 _finderPathFetchByActIdUserId.getColumnBitmask()) != 0) {
+
+			Object[] args = new Object[] {
+				learningActivityResultModelImpl.getOriginalActId(),
+				learningActivityResultModelImpl.getOriginalUserId()
+			};
+
+			finderCache.removeResult(_finderPathCountByActIdUserId, args);
+			finderCache.removeResult(_finderPathFetchByActIdUserId, args);
 		}
 	}
 
@@ -2408,7 +2474,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public LearningActivityResult create(long larId) {
-		LearningActivityResult learningActivityResult = new LearningActivityResultImpl();
+		LearningActivityResult learningActivityResult =
+			new LearningActivityResultImpl();
 
 		learningActivityResult.setNew(true);
 		learningActivityResult.setPrimaryKey(larId);
@@ -2417,7 +2484,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 
 		learningActivityResult.setUuid(uuid);
 
-		learningActivityResult.setCompanyId(companyProvider.getCompanyId());
+		learningActivityResult.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return learningActivityResult;
 	}
@@ -2432,6 +2499,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult remove(long larId)
 		throws NoSuchLearningActivityResultException {
+
 		return remove((Serializable)larId);
 	}
 
@@ -2445,21 +2513,23 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult remove(Serializable primaryKey)
 		throws NoSuchLearningActivityResultException {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			LearningActivityResult learningActivityResult = (LearningActivityResult)session.get(LearningActivityResultImpl.class,
-					primaryKey);
+			LearningActivityResult learningActivityResult =
+				(LearningActivityResult)session.get(
+					LearningActivityResultImpl.class, primaryKey);
 
 			if (learningActivityResult == null) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
-				throw new NoSuchLearningActivityResultException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+				throw new NoSuchLearningActivityResultException(
+					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			return remove(learningActivityResult);
@@ -2478,14 +2548,16 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	protected LearningActivityResult removeImpl(
 		LearningActivityResult learningActivityResult) {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			if (!session.contains(learningActivityResult)) {
-				learningActivityResult = (LearningActivityResult)session.get(LearningActivityResultImpl.class,
-						learningActivityResult.getPrimaryKeyObj());
+				learningActivityResult = (LearningActivityResult)session.get(
+					LearningActivityResultImpl.class,
+					learningActivityResult.getPrimaryKeyObj());
 			}
 
 			if (learningActivityResult != null) {
@@ -2509,25 +2581,30 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult updateImpl(
 		LearningActivityResult learningActivityResult) {
+
 		boolean isNew = learningActivityResult.isNew();
 
-		if (!(learningActivityResult instanceof LearningActivityResultModelImpl)) {
+		if (!(learningActivityResult instanceof
+				LearningActivityResultModelImpl)) {
+
 			InvocationHandler invocationHandler = null;
 
 			if (ProxyUtil.isProxyClass(learningActivityResult.getClass())) {
-				invocationHandler = ProxyUtil.getInvocationHandler(learningActivityResult);
+				invocationHandler = ProxyUtil.getInvocationHandler(
+					learningActivityResult);
 
 				throw new IllegalArgumentException(
 					"Implement ModelWrapper in learningActivityResult proxy " +
-					invocationHandler.getClass());
+						invocationHandler.getClass());
 			}
 
 			throw new IllegalArgumentException(
 				"Implement ModelWrapper in custom LearningActivityResult implementation " +
-				learningActivityResult.getClass());
+					learningActivityResult.getClass());
 		}
 
-		LearningActivityResultModelImpl learningActivityResultModelImpl = (LearningActivityResultModelImpl)learningActivityResult;
+		LearningActivityResultModelImpl learningActivityResultModelImpl =
+			(LearningActivityResultModelImpl)learningActivityResult;
 
 		if (Validator.isNull(learningActivityResult.getUuid())) {
 			String uuid = PortalUUIDUtil.generate();
@@ -2535,7 +2612,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			learningActivityResult.setUuid(uuid);
 		}
 
-		ServiceContext serviceContext = ServiceContextThreadLocal.getServiceContext();
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
 
 		Date now = new Date();
 
@@ -2544,8 +2622,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				learningActivityResult.setCreateDate(now);
 			}
 			else {
-				learningActivityResult.setCreateDate(serviceContext.getCreateDate(
-						now));
+				learningActivityResult.setCreateDate(
+					serviceContext.getCreateDate(now));
 			}
 		}
 
@@ -2554,8 +2632,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				learningActivityResult.setModifiedDate(now);
 			}
 			else {
-				learningActivityResult.setModifiedDate(serviceContext.getModifiedDate(
-						now));
+				learningActivityResult.setModifiedDate(
+					serviceContext.getModifiedDate(now));
 			}
 		}
 
@@ -2570,7 +2648,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				learningActivityResult.setNew(false);
 			}
 			else {
-				learningActivityResult = (LearningActivityResult)session.merge(learningActivityResult);
+				learningActivityResult = (LearningActivityResult)session.merge(
+					learningActivityResult);
 			}
 		}
 		catch (Exception e) {
@@ -2582,98 +2661,104 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!LearningActivityResultModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!_columnBitmaskEnabled) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
-		else
-		 if (isNew) {
+		else if (isNew) {
 			Object[] args = new Object[] {
-					learningActivityResultModelImpl.getUuid()
-				};
+				learningActivityResultModelImpl.getUuid()
+			};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
+			finderCache.removeResult(_finderPathCountByUuid, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid, args);
 
 			args = new Object[] {
+				learningActivityResultModelImpl.getUuid(),
+				learningActivityResultModelImpl.getCompanyId()
+			};
+
+			finderCache.removeResult(_finderPathCountByUuid_C, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid_C, args);
+
+			args = new Object[] {learningActivityResultModelImpl.getActId()};
+
+			finderCache.removeResult(_finderPathCountByActId, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByActId, args);
+
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
+		}
+		else {
+			if ((learningActivityResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUuid.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					learningActivityResultModelImpl.getOriginalUuid()
+				};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+
+				args = new Object[] {learningActivityResultModelImpl.getUuid()};
+
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
+			}
+
+			if ((learningActivityResultModelImpl.getColumnBitmask() &
+				 _finderPathWithoutPaginationFindByUuid_C.getColumnBitmask()) !=
+					 0) {
+
+				Object[] args = new Object[] {
+					learningActivityResultModelImpl.getOriginalUuid(),
+					learningActivityResultModelImpl.getOriginalCompanyId()
+				};
+
+				finderCache.removeResult(_finderPathCountByUuid_C, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid_C, args);
+
+				args = new Object[] {
 					learningActivityResultModelImpl.getUuid(),
 					learningActivityResultModelImpl.getCompanyId()
 				};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-				args);
-
-			args = new Object[] { learningActivityResultModelImpl.getActId() };
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-				args);
-
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
-		}
-
-		else {
-			if ((learningActivityResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						learningActivityResultModelImpl.getOriginalUuid()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
-
-				args = new Object[] { learningActivityResultModelImpl.getUuid() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
+				finderCache.removeResult(_finderPathCountByUuid_C, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid_C, args);
 			}
 
 			if ((learningActivityResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						learningActivityResultModelImpl.getOriginalUuid(),
-						learningActivityResultModelImpl.getOriginalCompanyId()
-					};
+				 _finderPathWithoutPaginationFindByActId.getColumnBitmask()) !=
+					 0) {
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-					args);
+				Object[] args = new Object[] {
+					learningActivityResultModelImpl.getOriginalActId()
+				};
+
+				finderCache.removeResult(_finderPathCountByActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByActId, args);
 
 				args = new Object[] {
-						learningActivityResultModelImpl.getUuid(),
-						learningActivityResultModelImpl.getCompanyId()
-					};
+					learningActivityResultModelImpl.getActId()
+				};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID_C, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID_C,
-					args);
-			}
-
-			if ((learningActivityResultModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						learningActivityResultModelImpl.getOriginalActId()
-					};
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-					args);
-
-				args = new Object[] { learningActivityResultModelImpl.getActId() };
-
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_ACTID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_ACTID,
-					args);
+				finderCache.removeResult(_finderPathCountByActId, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByActId, args);
 			}
 		}
 
-		entityCache.putResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-			LearningActivityResultImpl.class,
+		entityCache.putResult(
+			entityCacheEnabled, LearningActivityResultImpl.class,
 			learningActivityResult.getPrimaryKey(), learningActivityResult,
 			false);
 
@@ -2686,7 +2771,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	}
 
 	/**
-	 * Returns the learning activity result with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
+	 * Returns the learning activity result with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the learning activity result
 	 * @return the learning activity result
@@ -2695,22 +2780,24 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult findByPrimaryKey(Serializable primaryKey)
 		throws NoSuchLearningActivityResultException {
-		LearningActivityResult learningActivityResult = fetchByPrimaryKey(primaryKey);
+
+		LearningActivityResult learningActivityResult = fetchByPrimaryKey(
+			primaryKey);
 
 		if (learningActivityResult == null) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
-			throw new NoSuchLearningActivityResultException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-				primaryKey);
+			throw new NoSuchLearningActivityResultException(
+				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 		}
 
 		return learningActivityResult;
 	}
 
 	/**
-	 * Returns the learning activity result with the primary key or throws a {@link NoSuchLearningActivityResultException} if it could not be found.
+	 * Returns the learning activity result with the primary key or throws a <code>NoSuchLearningActivityResultException</code> if it could not be found.
 	 *
 	 * @param larId the primary key of the learning activity result
 	 * @return the learning activity result
@@ -2719,55 +2806,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult findByPrimaryKey(long larId)
 		throws NoSuchLearningActivityResultException {
+
 		return findByPrimaryKey((Serializable)larId);
-	}
-
-	/**
-	 * Returns the learning activity result with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the learning activity result
-	 * @return the learning activity result, or <code>null</code> if a learning activity result with the primary key could not be found
-	 */
-	@Override
-	public LearningActivityResult fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-				LearningActivityResultImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		LearningActivityResult learningActivityResult = (LearningActivityResult)serializable;
-
-		if (learningActivityResult == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				learningActivityResult = (LearningActivityResult)session.get(LearningActivityResultImpl.class,
-						primaryKey);
-
-				if (learningActivityResult != null) {
-					cacheResult(learningActivityResult);
-				}
-				else {
-					entityCache.putResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-						LearningActivityResultImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-					LearningActivityResultImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return learningActivityResult;
 	}
 
 	/**
@@ -2779,101 +2819,6 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	@Override
 	public LearningActivityResult fetchByPrimaryKey(long larId) {
 		return fetchByPrimaryKey((Serializable)larId);
-	}
-
-	@Override
-	public Map<Serializable, LearningActivityResult> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, LearningActivityResult> map = new HashMap<Serializable, LearningActivityResult>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			LearningActivityResult learningActivityResult = fetchByPrimaryKey(primaryKey);
-
-			if (learningActivityResult != null) {
-				map.put(primaryKey, learningActivityResult);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-					LearningActivityResultImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (LearningActivityResult)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler((uncachedPrimaryKeys.size() * 2) +
-				1);
-
-		query.append(_SQL_SELECT_LEARNINGACTIVITYRESULT_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (LearningActivityResult learningActivityResult : (List<LearningActivityResult>)q.list()) {
-				map.put(learningActivityResult.getPrimaryKeyObj(),
-					learningActivityResult);
-
-				cacheResult(learningActivityResult);
-
-				uncachedPrimaryKeys.remove(learningActivityResult.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(LearningActivityResultModelImpl.ENTITY_CACHE_ENABLED,
-					LearningActivityResultImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -2890,7 +2835,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns a range of all the learning activity results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of learning activity results
@@ -2906,7 +2851,7 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of learning activity results
@@ -2915,8 +2860,10 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * @return the ordered range of learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findAll(int start, int end,
+	public List<LearningActivityResult> findAll(
+		int start, int end,
 		OrderByComparator<LearningActivityResult> orderByComparator) {
+
 		return findAll(start, end, orderByComparator, true);
 	}
 
@@ -2924,39 +2871,45 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 * Returns an ordered range of all the learning activity results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link LearningActivityResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of learning activity results
 	 * @param end the upper bound of the range of learning activity results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of learning activity results
 	 */
 	@Override
-	public List<LearningActivityResult> findAll(int start, int end,
+	public List<LearningActivityResult> findAll(
+		int start, int end,
 		OrderByComparator<LearningActivityResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
-			finderArgs = FINDER_ARGS_EMPTY;
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
-			finderArgs = new Object[] { start, end, orderByComparator };
+		else if (useFinderCache) {
+			finderPath = _finderPathWithPaginationFindAll;
+			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<LearningActivityResult> list = null;
 
-		if (retrieveFromCache) {
-			list = (List<LearningActivityResult>)finderCache.getResult(finderPath,
-					finderArgs, this);
+		if (useFinderCache) {
+			list = (List<LearningActivityResult>)finderCache.getResult(
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -2964,13 +2917,13 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					2 + (orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_LEARNINGACTIVITYRESULT);
 
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
 				sql = query.toString();
 			}
@@ -2978,7 +2931,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				sql = _SQL_SELECT_LEARNINGACTIVITYRESULT;
 
 				if (pagination) {
-					sql = sql.concat(LearningActivityResultModelImpl.ORDER_BY_JPQL);
+					sql = sql.concat(
+						LearningActivityResultModelImpl.ORDER_BY_JPQL);
 				}
 			}
 
@@ -2990,24 +2944,28 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 				Query q = session.createQuery(sql);
 
 				if (!pagination) {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<LearningActivityResult>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<LearningActivityResult>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -3037,8 +2995,8 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
-				FINDER_ARGS_EMPTY, this);
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -3046,16 +3004,17 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 			try {
 				session = openSession();
 
-				Query q = session.createQuery(_SQL_COUNT_LEARNINGACTIVITYRESULT);
+				Query q = session.createQuery(
+					_SQL_COUNT_LEARNINGACTIVITYRESULT);
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
-					count);
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -3073,6 +3032,21 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "larId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_LEARNINGACTIVITYRESULT;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return LearningActivityResultModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -3080,32 +3054,203 @@ public class LearningActivityResultPersistenceImpl extends BasePersistenceImpl<L
 	/**
 	 * Initializes the learning activity result persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		LearningActivityResultModelImpl.setEntityCacheEnabled(
+			entityCacheEnabled);
+		LearningActivityResultModelImpl.setFinderCacheEnabled(
+			finderCacheEnabled);
+
+		_finderPathWithPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+			new String[0]);
+
+		_finderPathCountAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+			new String[0]);
+
+		_finderPathWithPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+			new String[] {
+				String.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+			new String[] {String.class.getName()},
+			LearningActivityResultModelImpl.UUID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+			new String[] {String.class.getName()});
+
+		_finderPathFetchByUUID_G = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByUUID_G",
+			new String[] {String.class.getName(), Long.class.getName()},
+			LearningActivityResultModelImpl.UUID_COLUMN_BITMASK |
+			LearningActivityResultModelImpl.GROUPID_COLUMN_BITMASK);
+
+		_finderPathCountByUUID_G = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUUID_G",
+			new String[] {String.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByUuid_C = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid_C",
+			new String[] {
+				String.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid_C = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid_C",
+			new String[] {String.class.getName(), Long.class.getName()},
+			LearningActivityResultModelImpl.UUID_COLUMN_BITMASK |
+			LearningActivityResultModelImpl.COMPANYID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid_C = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid_C",
+			new String[] {String.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByActId",
+			new String[] {
+				Long.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByActId",
+			new String[] {Long.class.getName()},
+			LearningActivityResultModelImpl.ACTID_COLUMN_BITMASK);
+
+		_finderPathCountByActId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActId",
+			new String[] {Long.class.getName()});
+
+		_finderPathFetchByActIdUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			LearningActivityResultImpl.class, FINDER_CLASS_NAME_ENTITY,
+			"fetchByActIdUserId",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			LearningActivityResultModelImpl.ACTID_COLUMN_BITMASK |
+			LearningActivityResultModelImpl.USERID_COLUMN_BITMASK);
+
+		_finderPathCountByActIdUserId = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByActIdUserId",
+			new String[] {Long.class.getName(), Long.class.getName()});
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
 		entityCache.removeCache(LearningActivityResultImpl.class.getName());
 		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
-	@ServiceReference(type = EntityCache.class)
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
+
+		_columnBitmaskEnabled = GetterUtil.getBoolean(
+			configuration.get(
+				"value.object.column.bitmask.enabled.com.ted.lms.model.LearningActivityResult"),
+			true);
+	}
+
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	private boolean _columnBitmaskEnabled;
+
+	@Reference
 	protected EntityCache entityCache;
-	@ServiceReference(type = FinderCache.class)
+
+	@Reference
 	protected FinderCache finderCache;
-	private static final String _SQL_SELECT_LEARNINGACTIVITYRESULT = "SELECT learningActivityResult FROM LearningActivityResult learningActivityResult";
-	private static final String _SQL_SELECT_LEARNINGACTIVITYRESULT_WHERE_PKS_IN = "SELECT learningActivityResult FROM LearningActivityResult learningActivityResult WHERE larId IN (";
-	private static final String _SQL_SELECT_LEARNINGACTIVITYRESULT_WHERE = "SELECT learningActivityResult FROM LearningActivityResult learningActivityResult WHERE ";
-	private static final String _SQL_COUNT_LEARNINGACTIVITYRESULT = "SELECT COUNT(learningActivityResult) FROM LearningActivityResult learningActivityResult";
-	private static final String _SQL_COUNT_LEARNINGACTIVITYRESULT_WHERE = "SELECT COUNT(learningActivityResult) FROM LearningActivityResult learningActivityResult WHERE ";
-	private static final String _ORDER_BY_ENTITY_ALIAS = "learningActivityResult.";
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No LearningActivityResult exists with the primary key ";
-	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No LearningActivityResult exists with the key {";
-	private static final Log _log = LogFactoryUtil.getLog(LearningActivityResultPersistenceImpl.class);
-	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid"
-			});
+
+	private static final String _SQL_SELECT_LEARNINGACTIVITYRESULT =
+		"SELECT learningActivityResult FROM LearningActivityResult learningActivityResult";
+
+	private static final String _SQL_SELECT_LEARNINGACTIVITYRESULT_WHERE =
+		"SELECT learningActivityResult FROM LearningActivityResult learningActivityResult WHERE ";
+
+	private static final String _SQL_COUNT_LEARNINGACTIVITYRESULT =
+		"SELECT COUNT(learningActivityResult) FROM LearningActivityResult learningActivityResult";
+
+	private static final String _SQL_COUNT_LEARNINGACTIVITYRESULT_WHERE =
+		"SELECT COUNT(learningActivityResult) FROM LearningActivityResult learningActivityResult WHERE ";
+
+	private static final String _ORDER_BY_ENTITY_ALIAS =
+		"learningActivityResult.";
+
+	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
+		"No LearningActivityResult exists with the primary key ";
+
+	private static final String _NO_SUCH_ENTITY_WITH_KEY =
+		"No LearningActivityResult exists with the key {";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LearningActivityResultPersistenceImpl.class);
+
+	private static final Set<String> _badColumnNames = SetUtil.fromArray(
+		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(LMSPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
+
 }

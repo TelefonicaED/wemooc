@@ -14,31 +14,32 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the LearningActivityTry service. Represents a row in the &quot;LMS_LearningActivityTry&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see LearningActivityTryModel
- * @see com.ted.lms.model.impl.LearningActivityTryImpl
- * @see com.ted.lms.model.impl.LearningActivityTryModelImpl
  * @generated
  */
 @ImplementationClassName("com.ted.lms.model.impl.LearningActivityTryImpl")
 @ProviderType
-public interface LearningActivityTry extends LearningActivityTryModel,
-	PersistedModel {
+public interface LearningActivityTry
+	extends LearningActivityTryModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.model.impl.LearningActivityTryImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.model.impl.LearningActivityTryImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<LearningActivityTry, Long> LAT_ID_ACCESSOR = new Accessor<LearningActivityTry, Long>() {
+	public static final Accessor<LearningActivityTry, Long> LAT_ID_ACCESSOR =
+		new Accessor<LearningActivityTry, Long>() {
+
 			@Override
 			public Long get(LearningActivityTry learningActivityTry) {
 				return learningActivityTry.getLatId();
@@ -53,5 +54,7 @@ public interface LearningActivityTry extends LearningActivityTryModel,
 			public Class<LearningActivityTry> getTypeClass() {
 				return LearningActivityTry.class;
 			}
+
 		};
+
 }

@@ -14,6 +14,9 @@
 
 package com.ted.lms.service.impl;
 
+import com.liferay.portal.aop.AopService;
+
+import com.ted.lms.service.base.StudentLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -42,6 +45,8 @@ import com.ted.lms.exception.InscriptionException;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.security.permission.resource.CoursePermission;
+import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.CourseResultLocalService;
 import com.ted.lms.service.CourseResultLocalServiceUtil;
 import com.ted.lms.service.base.StudentLocalServiceBaseImpl;
 import com.ted.prerequisite.model.Prerequisite;
@@ -52,11 +57,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * The implementation of the student local service.
  *
  * <p>
- * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.service.StudentLocalService} interface.
+ * All custom service methods should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.service.StudentLocalService</code> interface.
  *
  * <p>
  * This is a local service. Methods of this service will not have security checks based on the propagated JAAS credentials because this service can only be accessed from within the same VM.
@@ -64,16 +72,19 @@ import java.util.Locale;
  *
  * @author Brian Wing Shun Chan
  * @see StudentLocalServiceBaseImpl
- * @see com.ted.lms.service.StudentLocalServiceUtil
  */
+@Component(
+	property = "model.class.name=com.ted.lms.model.Student",
+	service = AopService.class
+)
 public class StudentLocalServiceImpl extends StudentLocalServiceBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never reference this class directly. Always use {@link com.ted.lms.service.StudentLocalServiceUtil} to access the student local service.
+	 * Never reference this class directly. Use <code>com.ted.lms.service.StudentLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.StudentLocalServiceUtil</code>.
 	 */
-	
-	private static final Log log = LogFactoryUtil.getLog(StudentLocalServiceImpl.class);
+private static final Log log = LogFactoryUtil.getLog(StudentLocalServiceImpl.class);
 	
 	/**
 	 * Este método realiza las comprobaciones necesarias en base al método de inscripción seleccionado en el curso e inscribe al usuario,
@@ -248,4 +259,10 @@ public class StudentLocalServiceImpl extends StudentLocalServiceBaseImpl {
 		
 		return courseFinder.countStudents(courseId, companyId, keywords, keywords, keywords, keywords, status, null, params, false);
 	}
+	
+	@Reference
+	protected CourseLocalService courseLocalService;
+	
+	@Reference
+	protected CourseResultLocalService courseResultLocalService;
 }

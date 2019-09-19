@@ -88,7 +88,7 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory = RequestBackedPortletURLFactoryUtil.create(renderRequest);
 		String itemSelectorURL = modulesItemSelectorHelper.getItemSelectorURL(requestBackedPortletURLFactory, themeDisplay, smallImageSelectedItemEventName);
 		
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteModules(themeDisplay.getCompanyId());
+		String[] classNamePrerequisites = moduleLocalService.getPrerequisiteModules(themeDisplay.getCompanyId());
 		
 		PrerequisiteFactory prerequisiteFactory = null;
 		

@@ -14,8 +14,8 @@
 
 package com.ted.postcondition.service.persistence.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -23,36 +23,42 @@ import com.liferay.portal.kernel.dao.orm.Query;
 import com.liferay.portal.kernel.dao.orm.QueryPos;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.postcondition.exception.NoSuchPostconditionRelationException;
 import com.ted.postcondition.model.PostconditionRelation;
 import com.ted.postcondition.model.impl.PostconditionRelationImpl;
 import com.ted.postcondition.model.impl.PostconditionRelationModelImpl;
 import com.ted.postcondition.service.persistence.PostconditionRelationPersistence;
+import com.ted.postcondition.service.persistence.impl.constants.postPersistenceConstants;
 
 import java.io.Serializable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
+import javax.sql.DataSource;
+
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The persistence implementation for the postcondition relation service.
@@ -62,54 +68,34 @@ import java.util.Set;
  * </p>
  *
  * @author Brian Wing Shun Chan
- * @see PostconditionRelationPersistence
- * @see com.ted.postcondition.service.persistence.PostconditionRelationUtil
  * @generated
  */
+@Component(service = PostconditionRelationPersistence.class)
 @ProviderType
-public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<PostconditionRelation>
+public class PostconditionRelationPersistenceImpl
+	extends BasePersistenceImpl<PostconditionRelation>
 	implements PostconditionRelationPersistence {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link PostconditionRelationUtil} to access the postcondition relation persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
+	 * Never modify or reference this class directly. Always use <code>PostconditionRelationUtil</code> to access the postcondition relation persistence. Modify <code>service.xml</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static final String FINDER_CLASS_NAME_ENTITY = PostconditionRelationImpl.class.getName();
-	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List1";
-	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION = FINDER_CLASS_NAME_ENTITY +
-		".List2";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_ALL = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll", new String[0]);
-	public static final FinderPath FINDER_PATH_COUNT_ALL = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll", new String[0]);
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
-			new String[] {
-				String.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
-			new String[] { String.class.getName() },
-			PostconditionRelationModelImpl.UUID_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_UUID = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
-			new String[] { String.class.getName() });
+	public static final String FINDER_CLASS_NAME_ENTITY =
+		PostconditionRelationImpl.class.getName();
+
+	public static final String FINDER_CLASS_NAME_LIST_WITH_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List1";
+
+	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
+		FINDER_CLASS_NAME_ENTITY + ".List2";
+
+	private FinderPath _finderPathWithPaginationFindAll;
+	private FinderPath _finderPathWithoutPaginationFindAll;
+	private FinderPath _finderPathCountAll;
+	private FinderPath _finderPathWithPaginationFindByUuid;
+	private FinderPath _finderPathWithoutPaginationFindByUuid;
+	private FinderPath _finderPathCountByUuid;
 
 	/**
 	 * Returns all the postcondition relations where uuid = &#63;.
@@ -126,7 +112,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns a range of all the postcondition relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -135,8 +121,9 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the range of matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByUuid(String uuid, int start,
-		int end) {
+	public List<PostconditionRelation> findByUuid(
+		String uuid, int start, int end) {
+
 		return findByUuid(uuid, start, end, null);
 	}
 
@@ -144,7 +131,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns an ordered range of all the postcondition relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -154,8 +141,10 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the ordered range of matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByUuid(String uuid, int start,
-		int end, OrderByComparator<PostconditionRelation> orderByComparator) {
+	public List<PostconditionRelation> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<PostconditionRelation> orderByComparator) {
+
 		return findByUuid(uuid, start, end, orderByComparator, true);
 	}
 
@@ -163,7 +152,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns an ordered range of all the postcondition relations where uuid = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param uuid the uuid
@@ -174,9 +163,11 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the ordered range of matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByUuid(String uuid, int start,
-		int end, OrderByComparator<PostconditionRelation> orderByComparator,
+	public List<PostconditionRelation> findByUuid(
+		String uuid, int start, int end,
+		OrderByComparator<PostconditionRelation> orderByComparator,
 		boolean retrieveFromCache) {
+
 		uuid = Objects.toString(uuid, "");
 
 		boolean pagination = true;
@@ -184,21 +175,22 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid };
+			finderPath = _finderPathWithoutPaginationFindByUuid;
+			finderArgs = new Object[] {uuid};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_UUID;
-			finderArgs = new Object[] { uuid, start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindByUuid;
+			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<PostconditionRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PostconditionRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PostconditionRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PostconditionRelation postconditionRelation : list) {
@@ -215,8 +207,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(3 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					3 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(3);
@@ -236,11 +228,10 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 			}
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(PostconditionRelationModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -260,16 +251,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 				}
 
 				if (!pagination) {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -298,11 +289,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @throws NoSuchPostconditionRelationException if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation findByUuid_First(String uuid,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+	public PostconditionRelation findByUuid_First(
+			String uuid,
+			OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByUuid_First(uuid,
-				orderByComparator);
+
+		PostconditionRelation postconditionRelation = fetchByUuid_First(
+			uuid, orderByComparator);
 
 		if (postconditionRelation != null) {
 			return postconditionRelation;
@@ -328,10 +321,12 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the first matching postcondition relation, or <code>null</code> if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation fetchByUuid_First(String uuid,
+	public PostconditionRelation fetchByUuid_First(
+		String uuid,
 		OrderByComparator<PostconditionRelation> orderByComparator) {
-		List<PostconditionRelation> list = findByUuid(uuid, 0, 1,
-				orderByComparator);
+
+		List<PostconditionRelation> list = findByUuid(
+			uuid, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -349,11 +344,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @throws NoSuchPostconditionRelationException if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation findByUuid_Last(String uuid,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+	public PostconditionRelation findByUuid_Last(
+			String uuid,
+			OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByUuid_Last(uuid,
-				orderByComparator);
+
+		PostconditionRelation postconditionRelation = fetchByUuid_Last(
+			uuid, orderByComparator);
 
 		if (postconditionRelation != null) {
 			return postconditionRelation;
@@ -379,16 +376,18 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the last matching postcondition relation, or <code>null</code> if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation fetchByUuid_Last(String uuid,
+	public PostconditionRelation fetchByUuid_Last(
+		String uuid,
 		OrderByComparator<PostconditionRelation> orderByComparator) {
+
 		int count = countByUuid(uuid);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<PostconditionRelation> list = findByUuid(uuid, count - 1, count,
-				orderByComparator);
+		List<PostconditionRelation> list = findByUuid(
+			uuid, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -408,12 +407,14 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public PostconditionRelation[] findByUuid_PrevAndNext(
-		long postconditionRelationId, String uuid,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+			long postconditionRelationId, String uuid,
+			OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
+
 		uuid = Objects.toString(uuid, "");
 
-		PostconditionRelation postconditionRelation = findByPrimaryKey(postconditionRelationId);
+		PostconditionRelation postconditionRelation = findByPrimaryKey(
+			postconditionRelationId);
 
 		Session session = null;
 
@@ -422,13 +423,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 			PostconditionRelation[] array = new PostconditionRelationImpl[3];
 
-			array[0] = getByUuid_PrevAndNext(session, postconditionRelation,
-					uuid, orderByComparator, true);
+			array[0] = getByUuid_PrevAndNext(
+				session, postconditionRelation, uuid, orderByComparator, true);
 
 			array[1] = postconditionRelation;
 
-			array[2] = getByUuid_PrevAndNext(session, postconditionRelation,
-					uuid, orderByComparator, false);
+			array[2] = getByUuid_PrevAndNext(
+				session, postconditionRelation, uuid, orderByComparator, false);
 
 			return array;
 		}
@@ -440,15 +441,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		}
 	}
 
-	protected PostconditionRelation getByUuid_PrevAndNext(Session session,
-		PostconditionRelation postconditionRelation, String uuid,
-		OrderByComparator<PostconditionRelation> orderByComparator,
+	protected PostconditionRelation getByUuid_PrevAndNext(
+		Session session, PostconditionRelation postconditionRelation,
+		String uuid, OrderByComparator<PostconditionRelation> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(4 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				4 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -469,7 +471,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		}
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -541,10 +544,11 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		}
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(postconditionRelation);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						postconditionRelation)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -565,8 +569,9 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public void removeByUuid(String uuid) {
-		for (PostconditionRelation postconditionRelation : findByUuid(uuid,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (PostconditionRelation postconditionRelation :
+				findByUuid(uuid, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(postconditionRelation);
 		}
 	}
@@ -581,9 +586,9 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	public int countByUuid(String uuid) {
 		uuid = Objects.toString(uuid, "");
 
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_UUID;
+		FinderPath finderPath = _finderPathCountByUuid;
 
-		Object[] finderArgs = new Object[] { uuid };
+		Object[] finderArgs = new Object[] {uuid};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -635,34 +640,15 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_UUID_UUID_1 = "postconditionRelation.uuid IS NULL";
-	private static final String _FINDER_COLUMN_UUID_UUID_2 = "postconditionRelation.uuid = ?";
-	private static final String _FINDER_COLUMN_UUID_UUID_3 = "(postconditionRelation.uuid IS NULL OR postconditionRelation.uuid = '')";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK =
-		new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK =
-		new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByClassNameIdClassPK",
-			new String[] { Long.class.getName(), Long.class.getName() },
-			PostconditionRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
-			PostconditionRelationModelImpl.CLASSPK_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK = new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByClassNameIdClassPK",
-			new String[] { Long.class.getName(), Long.class.getName() });
+	private static final String _FINDER_COLUMN_UUID_UUID_2 =
+		"postconditionRelation.uuid = ?";
+
+	private static final String _FINDER_COLUMN_UUID_UUID_3 =
+		"(postconditionRelation.uuid IS NULL OR postconditionRelation.uuid = '')";
+
+	private FinderPath _finderPathWithPaginationFindByClassNameIdClassPK;
+	private FinderPath _finderPathWithoutPaginationFindByClassNameIdClassPK;
+	private FinderPath _finderPathCountByClassNameIdClassPK;
 
 	/**
 	 * Returns all the postcondition relations where classNameId = &#63; and classPK = &#63;.
@@ -674,15 +660,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public List<PostconditionRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK) {
-		return findByClassNameIdClassPK(classNameId, classPK,
-			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		return findByClassNameIdClassPK(
+			classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the postcondition relations where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -694,6 +681,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public List<PostconditionRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end) {
+
 		return findByClassNameIdClassPK(classNameId, classPK, start, end, null);
 	}
 
@@ -701,7 +689,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns an ordered range of all the postcondition relations where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -715,15 +703,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	public List<PostconditionRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end,
 		OrderByComparator<PostconditionRelation> orderByComparator) {
-		return findByClassNameIdClassPK(classNameId, classPK, start, end,
-			orderByComparator, true);
+
+		return findByClassNameIdClassPK(
+			classNameId, classPK, start, end, orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the postcondition relations where classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNameId the class name ID
@@ -739,35 +728,37 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		long classNameId, long classPK, int start, int end,
 		OrderByComparator<PostconditionRelation> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK;
-			finderArgs = new Object[] { classNameId, classPK };
+			finderPath = _finderPathWithoutPaginationFindByClassNameIdClassPK;
+			finderArgs = new Object[] {classNameId, classPK};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK;
+			finderPath = _finderPathWithPaginationFindByClassNameIdClassPK;
 			finderArgs = new Object[] {
-					classNameId, classPK,
-					
-					start, end, orderByComparator
-				};
+				classNameId, classPK, start, end, orderByComparator
+			};
 		}
 
 		List<PostconditionRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PostconditionRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PostconditionRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PostconditionRelation postconditionRelation : list) {
-					if ((classNameId != postconditionRelation.getClassNameId()) ||
-							(classPK != postconditionRelation.getClassPK())) {
+					if ((classNameId !=
+							postconditionRelation.getClassNameId()) ||
+						(classPK != postconditionRelation.getClassPK())) {
+
 						list = null;
 
 						break;
@@ -780,8 +771,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(4 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					4 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(4);
@@ -794,11 +785,10 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 			query.append(_FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(PostconditionRelationModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -818,16 +808,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 				qPos.add(classPK);
 
 				if (!pagination) {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -858,11 +848,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public PostconditionRelation findByClassNameIdClassPK_First(
-		long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+			long classNameId, long classPK,
+			OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByClassNameIdClassPK_First(classNameId,
-				classPK, orderByComparator);
+
+		PostconditionRelation postconditionRelation =
+			fetchByClassNameIdClassPK_First(
+				classNameId, classPK, orderByComparator);
 
 		if (postconditionRelation != null) {
 			return postconditionRelation;
@@ -895,8 +887,9 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	public PostconditionRelation fetchByClassNameIdClassPK_First(
 		long classNameId, long classPK,
 		OrderByComparator<PostconditionRelation> orderByComparator) {
-		List<PostconditionRelation> list = findByClassNameIdClassPK(classNameId,
-				classPK, 0, 1, orderByComparator);
+
+		List<PostconditionRelation> list = findByClassNameIdClassPK(
+			classNameId, classPK, 0, 1, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -916,11 +909,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public PostconditionRelation findByClassNameIdClassPK_Last(
-		long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+			long classNameId, long classPK,
+			OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByClassNameIdClassPK_Last(classNameId,
-				classPK, orderByComparator);
+
+		PostconditionRelation postconditionRelation =
+			fetchByClassNameIdClassPK_Last(
+				classNameId, classPK, orderByComparator);
 
 		if (postconditionRelation != null) {
 			return postconditionRelation;
@@ -953,14 +948,15 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	public PostconditionRelation fetchByClassNameIdClassPK_Last(
 		long classNameId, long classPK,
 		OrderByComparator<PostconditionRelation> orderByComparator) {
+
 		int count = countByClassNameIdClassPK(classNameId, classPK);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<PostconditionRelation> list = findByClassNameIdClassPK(classNameId,
-				classPK, count - 1, count, orderByComparator);
+		List<PostconditionRelation> list = findByClassNameIdClassPK(
+			classNameId, classPK, count - 1, count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -981,10 +977,12 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public PostconditionRelation[] findByClassNameIdClassPK_PrevAndNext(
-		long postconditionRelationId, long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+			long postconditionRelationId, long classNameId, long classPK,
+			OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = findByPrimaryKey(postconditionRelationId);
+
+		PostconditionRelation postconditionRelation = findByPrimaryKey(
+			postconditionRelationId);
 
 		Session session = null;
 
@@ -993,15 +991,15 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 			PostconditionRelation[] array = new PostconditionRelationImpl[3];
 
-			array[0] = getByClassNameIdClassPK_PrevAndNext(session,
-					postconditionRelation, classNameId, classPK,
-					orderByComparator, true);
+			array[0] = getByClassNameIdClassPK_PrevAndNext(
+				session, postconditionRelation, classNameId, classPK,
+				orderByComparator, true);
 
 			array[1] = postconditionRelation;
 
-			array[2] = getByClassNameIdClassPK_PrevAndNext(session,
-					postconditionRelation, classNameId, classPK,
-					orderByComparator, false);
+			array[2] = getByClassNameIdClassPK_PrevAndNext(
+				session, postconditionRelation, classNameId, classPK,
+				orderByComparator, false);
 
 			return array;
 		}
@@ -1018,11 +1016,12 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		long classNameId, long classPK,
 		OrderByComparator<PostconditionRelation> orderByComparator,
 		boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(5 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				5 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1036,7 +1035,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		query.append(_FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1108,10 +1108,11 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		qPos.add(classPK);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(postconditionRelation);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						postconditionRelation)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1133,8 +1134,11 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public void removeByClassNameIdClassPK(long classNameId, long classPK) {
-		for (PostconditionRelation postconditionRelation : findByClassNameIdClassPK(
-				classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+		for (PostconditionRelation postconditionRelation :
+				findByClassNameIdClassPK(
+					classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					null)) {
+
 			remove(postconditionRelation);
 		}
 	}
@@ -1148,9 +1152,9 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public int countByClassNameIdClassPK(long classNameId, long classPK) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK;
+		FinderPath finderPath = _finderPathCountByClassNameIdClassPK;
 
-		Object[] finderArgs = new Object[] { classNameId, classPK };
+		Object[] finderArgs = new Object[] {classNameId, classPK};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1195,40 +1199,19 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSNAMEID_2 = "postconditionRelation.classNameId = ? AND ";
-	private static final String _FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2 = "postconditionRelation.classPK = ?";
-	public static final FinderPath FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK =
-		new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
-			"findByClassNamePostconditionIdClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName(),
-				
-			Integer.class.getName(), Integer.class.getName(),
-				OrderByComparator.class.getName()
-			});
-	public static final FinderPath FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK =
-		new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"findByClassNamePostconditionIdClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			},
-			PostconditionRelationModelImpl.CLASSNAMEPOSTCONDITIONID_COLUMN_BITMASK |
-			PostconditionRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
-			PostconditionRelationModelImpl.CLASSPK_COLUMN_BITMASK);
-	public static final FinderPath FINDER_PATH_COUNT_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK =
-		new FinderPath(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationModelImpl.FINDER_CACHE_ENABLED, Long.class,
-			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
-			"countByClassNamePostconditionIdClassNameIdClassPK",
-			new String[] {
-				Long.class.getName(), Long.class.getName(), Long.class.getName()
-			});
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSNAMEID_2 =
+			"postconditionRelation.classNameId = ? AND ";
+
+	private static final String _FINDER_COLUMN_CLASSNAMEIDCLASSPK_CLASSPK_2 =
+		"postconditionRelation.classPK = ?";
+
+	private FinderPath
+		_finderPathWithPaginationFindByClassNamePostconditionIdClassNameIdClassPK;
+	private FinderPath
+		_finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK;
+	private FinderPath
+		_finderPathCountByClassNamePostconditionIdClassNameIdClassPK;
 
 	/**
 	 * Returns all the postcondition relations where classNamePostconditionId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -1239,17 +1222,20 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByClassNamePostconditionIdClassNameIdClassPK(
-		long classNamePostconditionId, long classNameId, long classPK) {
-		return findByClassNamePostconditionIdClassNameIdClassPK(classNamePostconditionId,
-			classNameId, classPK, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+	public List<PostconditionRelation>
+		findByClassNamePostconditionIdClassNameIdClassPK(
+			long classNamePostconditionId, long classNameId, long classPK) {
+
+		return findByClassNamePostconditionIdClassNameIdClassPK(
+			classNamePostconditionId, classNameId, classPK, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
 	}
 
 	/**
 	 * Returns a range of all the postcondition relations where classNamePostconditionId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNamePostconditionId the class name postcondition ID
@@ -1260,18 +1246,20 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the range of matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByClassNamePostconditionIdClassNameIdClassPK(
-		long classNamePostconditionId, long classNameId, long classPK,
-		int start, int end) {
-		return findByClassNamePostconditionIdClassNameIdClassPK(classNamePostconditionId,
-			classNameId, classPK, start, end, null);
+	public List<PostconditionRelation>
+		findByClassNamePostconditionIdClassNameIdClassPK(
+			long classNamePostconditionId, long classNameId, long classPK,
+			int start, int end) {
+
+		return findByClassNamePostconditionIdClassNameIdClassPK(
+			classNamePostconditionId, classNameId, classPK, start, end, null);
 	}
 
 	/**
 	 * Returns an ordered range of all the postcondition relations where classNamePostconditionId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNamePostconditionId the class name postcondition ID
@@ -1283,19 +1271,22 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the ordered range of matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByClassNamePostconditionIdClassNameIdClassPK(
-		long classNamePostconditionId, long classNameId, long classPK,
-		int start, int end,
-		OrderByComparator<PostconditionRelation> orderByComparator) {
-		return findByClassNamePostconditionIdClassNameIdClassPK(classNamePostconditionId,
-			classNameId, classPK, start, end, orderByComparator, true);
+	public List<PostconditionRelation>
+		findByClassNamePostconditionIdClassNameIdClassPK(
+			long classNamePostconditionId, long classNameId, long classPK,
+			int start, int end,
+			OrderByComparator<PostconditionRelation> orderByComparator) {
+
+		return findByClassNamePostconditionIdClassNameIdClassPK(
+			classNamePostconditionId, classNameId, classPK, start, end,
+			orderByComparator, true);
 	}
 
 	/**
 	 * Returns an ordered range of all the postcondition relations where classNamePostconditionId = &#63; and classNameId = &#63; and classPK = &#63;.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param classNamePostconditionId the class name postcondition ID
@@ -1308,43 +1299,51 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the ordered range of matching postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findByClassNamePostconditionIdClassNameIdClassPK(
-		long classNamePostconditionId, long classNameId, long classPK,
-		int start, int end,
-		OrderByComparator<PostconditionRelation> orderByComparator,
-		boolean retrieveFromCache) {
+	public List<PostconditionRelation>
+		findByClassNamePostconditionIdClassNameIdClassPK(
+			long classNamePostconditionId, long classNameId, long classPK,
+			int start, int end,
+			OrderByComparator<PostconditionRelation> orderByComparator,
+			boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK;
+			finderPath =
+				_finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK;
 			finderArgs = new Object[] {
-					classNamePostconditionId, classNameId, classPK
-				};
+				classNamePostconditionId, classNameId, classPK
+			};
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK;
+			finderPath =
+				_finderPathWithPaginationFindByClassNamePostconditionIdClassNameIdClassPK;
 			finderArgs = new Object[] {
-					classNamePostconditionId, classNameId, classPK,
-					
-					start, end, orderByComparator
-				};
+				classNamePostconditionId, classNameId, classPK, start, end,
+				orderByComparator
+			};
 		}
 
 		List<PostconditionRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PostconditionRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PostconditionRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 
 			if ((list != null) && !list.isEmpty()) {
 				for (PostconditionRelation postconditionRelation : list) {
-					if ((classNamePostconditionId != postconditionRelation.getClassNamePostconditionId()) ||
-							(classNameId != postconditionRelation.getClassNameId()) ||
-							(classPK != postconditionRelation.getClassPK())) {
+					if ((classNamePostconditionId !=
+							postconditionRelation.
+								getClassNamePostconditionId()) ||
+						(classNameId !=
+							postconditionRelation.getClassNameId()) ||
+						(classPK != postconditionRelation.getClassPK())) {
+
 						list = null;
 
 						break;
@@ -1357,8 +1356,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 			StringBundler query = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(5 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					5 + (orderByComparator.getOrderByFields().length * 2));
 			}
 			else {
 				query = new StringBundler(5);
@@ -1366,18 +1365,20 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 			query.append(_SQL_SELECT_POSTCONDITIONRELATION_WHERE);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2);
 
 			if (orderByComparator != null) {
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 			}
-			else
-			 if (pagination) {
+			else if (pagination) {
 				query.append(PostconditionRelationModelImpl.ORDER_BY_JPQL);
 			}
 
@@ -1399,16 +1400,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 				qPos.add(classPK);
 
 				if (!pagination) {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -1439,12 +1440,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @throws NoSuchPostconditionRelationException if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation findByClassNamePostconditionIdClassNameIdClassPK_First(
-		long classNamePostconditionId, long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+	public PostconditionRelation
+			findByClassNamePostconditionIdClassNameIdClassPK_First(
+				long classNamePostconditionId, long classNameId, long classPK,
+				OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByClassNamePostconditionIdClassNameIdClassPK_First(classNamePostconditionId,
-				classNameId, classPK, orderByComparator);
+
+		PostconditionRelation postconditionRelation =
+			fetchByClassNamePostconditionIdClassNameIdClassPK_First(
+				classNamePostconditionId, classNameId, classPK,
+				orderByComparator);
 
 		if (postconditionRelation != null) {
 			return postconditionRelation;
@@ -1478,11 +1483,15 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the first matching postcondition relation, or <code>null</code> if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation fetchByClassNamePostconditionIdClassNameIdClassPK_First(
-		long classNamePostconditionId, long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator) {
-		List<PostconditionRelation> list = findByClassNamePostconditionIdClassNameIdClassPK(classNamePostconditionId,
-				classNameId, classPK, 0, 1, orderByComparator);
+	public PostconditionRelation
+		fetchByClassNamePostconditionIdClassNameIdClassPK_First(
+			long classNamePostconditionId, long classNameId, long classPK,
+			OrderByComparator<PostconditionRelation> orderByComparator) {
+
+		List<PostconditionRelation> list =
+			findByClassNamePostconditionIdClassNameIdClassPK(
+				classNamePostconditionId, classNameId, classPK, 0, 1,
+				orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1502,12 +1511,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @throws NoSuchPostconditionRelationException if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation findByClassNamePostconditionIdClassNameIdClassPK_Last(
-		long classNamePostconditionId, long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+	public PostconditionRelation
+			findByClassNamePostconditionIdClassNameIdClassPK_Last(
+				long classNamePostconditionId, long classNameId, long classPK,
+				OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByClassNamePostconditionIdClassNameIdClassPK_Last(classNamePostconditionId,
-				classNameId, classPK, orderByComparator);
+
+		PostconditionRelation postconditionRelation =
+			fetchByClassNamePostconditionIdClassNameIdClassPK_Last(
+				classNamePostconditionId, classNameId, classPK,
+				orderByComparator);
 
 		if (postconditionRelation != null) {
 			return postconditionRelation;
@@ -1541,18 +1554,22 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the last matching postcondition relation, or <code>null</code> if a matching postcondition relation could not be found
 	 */
 	@Override
-	public PostconditionRelation fetchByClassNamePostconditionIdClassNameIdClassPK_Last(
-		long classNamePostconditionId, long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator) {
-		int count = countByClassNamePostconditionIdClassNameIdClassPK(classNamePostconditionId,
-				classNameId, classPK);
+	public PostconditionRelation
+		fetchByClassNamePostconditionIdClassNameIdClassPK_Last(
+			long classNamePostconditionId, long classNameId, long classPK,
+			OrderByComparator<PostconditionRelation> orderByComparator) {
+
+		int count = countByClassNamePostconditionIdClassNameIdClassPK(
+			classNamePostconditionId, classNameId, classPK);
 
 		if (count == 0) {
 			return null;
 		}
 
-		List<PostconditionRelation> list = findByClassNamePostconditionIdClassNameIdClassPK(classNamePostconditionId,
-				classNameId, classPK, count - 1, count, orderByComparator);
+		List<PostconditionRelation> list =
+			findByClassNamePostconditionIdClassNameIdClassPK(
+				classNamePostconditionId, classNameId, classPK, count - 1,
+				count, orderByComparator);
 
 		if (!list.isEmpty()) {
 			return list.get(0);
@@ -1573,12 +1590,15 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @throws NoSuchPostconditionRelationException if a postcondition relation with the primary key could not be found
 	 */
 	@Override
-	public PostconditionRelation[] findByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(
-		long postconditionRelationId, long classNamePostconditionId,
-		long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator)
+	public PostconditionRelation[]
+			findByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(
+				long postconditionRelationId, long classNamePostconditionId,
+				long classNameId, long classPK,
+				OrderByComparator<PostconditionRelation> orderByComparator)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = findByPrimaryKey(postconditionRelationId);
+
+		PostconditionRelation postconditionRelation = findByPrimaryKey(
+			postconditionRelationId);
 
 		Session session = null;
 
@@ -1587,14 +1607,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 			PostconditionRelation[] array = new PostconditionRelationImpl[3];
 
-			array[0] = getByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(session,
-					postconditionRelation, classNamePostconditionId,
+			array[0] =
+				getByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(
+					session, postconditionRelation, classNamePostconditionId,
 					classNameId, classPK, orderByComparator, true);
 
 			array[1] = postconditionRelation;
 
-			array[2] = getByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(session,
-					postconditionRelation, classNamePostconditionId,
+			array[2] =
+				getByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(
+					session, postconditionRelation, classNamePostconditionId,
 					classNameId, classPK, orderByComparator, false);
 
 			return array;
@@ -1607,16 +1629,18 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		}
 	}
 
-	protected PostconditionRelation getByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(
-		Session session, PostconditionRelation postconditionRelation,
-		long classNamePostconditionId, long classNameId, long classPK,
-		OrderByComparator<PostconditionRelation> orderByComparator,
-		boolean previous) {
+	protected PostconditionRelation
+		getByClassNamePostconditionIdClassNameIdClassPK_PrevAndNext(
+			Session session, PostconditionRelation postconditionRelation,
+			long classNamePostconditionId, long classNameId, long classPK,
+			OrderByComparator<PostconditionRelation> orderByComparator,
+			boolean previous) {
+
 		StringBundler query = null;
 
 		if (orderByComparator != null) {
-			query = new StringBundler(6 +
-					(orderByComparator.getOrderByConditionFields().length * 3) +
+			query = new StringBundler(
+				6 + (orderByComparator.getOrderByConditionFields().length * 3) +
 					(orderByComparator.getOrderByFields().length * 3));
 		}
 		else {
@@ -1625,14 +1649,18 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 		query.append(_SQL_SELECT_POSTCONDITIONRELATION_WHERE);
 
-		query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2);
+		query.append(
+			_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2);
 
-		query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
+		query.append(
+			_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
 
-		query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2);
+		query.append(
+			_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2);
 
 		if (orderByComparator != null) {
-			String[] orderByConditionFields = orderByComparator.getOrderByConditionFields();
+			String[] orderByConditionFields =
+				orderByComparator.getOrderByConditionFields();
 
 			if (orderByConditionFields.length > 0) {
 				query.append(WHERE_AND);
@@ -1706,10 +1734,11 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		qPos.add(classPK);
 
 		if (orderByComparator != null) {
-			Object[] values = orderByComparator.getOrderByConditionValues(postconditionRelation);
+			for (Object orderByConditionValue :
+					orderByComparator.getOrderByConditionValues(
+						postconditionRelation)) {
 
-			for (Object value : values) {
-				qPos.add(value);
+				qPos.add(orderByConditionValue);
 			}
 		}
 
@@ -1733,9 +1762,12 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public void removeByClassNamePostconditionIdClassNameIdClassPK(
 		long classNamePostconditionId, long classNameId, long classPK) {
-		for (PostconditionRelation postconditionRelation : findByClassNamePostconditionIdClassNameIdClassPK(
-				classNamePostconditionId, classNameId, classPK,
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
+		for (PostconditionRelation postconditionRelation :
+				findByClassNamePostconditionIdClassNameIdClassPK(
+					classNamePostconditionId, classNameId, classPK,
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS, null)) {
+
 			remove(postconditionRelation);
 		}
 	}
@@ -1751,11 +1783,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public int countByClassNamePostconditionIdClassNameIdClassPK(
 		long classNamePostconditionId, long classNameId, long classPK) {
-		FinderPath finderPath = FINDER_PATH_COUNT_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK;
+
+		FinderPath finderPath =
+			_finderPathCountByClassNamePostconditionIdClassNameIdClassPK;
 
 		Object[] finderArgs = new Object[] {
-				classNamePostconditionId, classNameId, classPK
-			};
+			classNamePostconditionId, classNameId, classPK
+		};
 
 		Long count = (Long)finderCache.getResult(finderPath, finderArgs, this);
 
@@ -1764,11 +1798,14 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 			query.append(_SQL_COUNT_POSTCONDITIONRELATION_WHERE);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2);
 
-			query.append(_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2);
+			query.append(
+				_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2);
 
 			String sql = query.toString();
 
@@ -1804,33 +1841,29 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		return count.intValue();
 	}
 
-	private static final String _FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2 =
-		"postconditionRelation.classNamePostconditionId = ? AND ";
-	private static final String _FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2 =
-		"postconditionRelation.classNameId = ? AND ";
-	private static final String _FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2 =
-		"postconditionRelation.classPK = ?";
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEPOSTCONDITIONID_2 =
+			"postconditionRelation.classNamePostconditionId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSNAMEID_2 =
+			"postconditionRelation.classNameId = ? AND ";
+
+	private static final String
+		_FINDER_COLUMN_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK_CLASSPK_2 =
+			"postconditionRelation.classPK = ?";
 
 	public PostconditionRelationPersistenceImpl() {
 		setModelClass(PostconditionRelation.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		setModelImplClass(PostconditionRelationImpl.class);
+		setModelPKClass(long.class);
 
-			field.setAccessible(true);
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
+		dbColumnNames.put("uuid", "uuid_");
 
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	/**
@@ -1840,8 +1873,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public void cacheResult(PostconditionRelation postconditionRelation) {
-		entityCache.putResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
+		entityCache.putResult(
+			entityCacheEnabled, PostconditionRelationImpl.class,
 			postconditionRelation.getPrimaryKey(), postconditionRelation);
 
 		postconditionRelation.resetOriginalValues();
@@ -1853,12 +1886,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @param postconditionRelations the postcondition relations
 	 */
 	@Override
-	public void cacheResult(List<PostconditionRelation> postconditionRelations) {
-		for (PostconditionRelation postconditionRelation : postconditionRelations) {
+	public void cacheResult(
+		List<PostconditionRelation> postconditionRelations) {
+
+		for (PostconditionRelation postconditionRelation :
+				postconditionRelations) {
+
 			if (entityCache.getResult(
-						PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-						PostconditionRelationImpl.class,
-						postconditionRelation.getPrimaryKey()) == null) {
+					entityCacheEnabled, PostconditionRelationImpl.class,
+					postconditionRelation.getPrimaryKey()) == null) {
+
 				cacheResult(postconditionRelation);
 			}
 			else {
@@ -1871,7 +1908,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Clears the cache for all postcondition relations.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
@@ -1887,13 +1924,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Clears the cache for the postcondition relation.
 	 *
 	 * <p>
-	 * The {@link EntityCache} and {@link FinderCache} are both cleared by this method.
+	 * The <code>EntityCache</code> and <code>FinderCache</code> are both cleared by this method.
 	 * </p>
 	 */
 	@Override
 	public void clearCache(PostconditionRelation postconditionRelation) {
-		entityCache.removeResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
+		entityCache.removeResult(
+			entityCacheEnabled, PostconditionRelationImpl.class,
 			postconditionRelation.getPrimaryKey());
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
@@ -1905,9 +1942,11 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 
-		for (PostconditionRelation postconditionRelation : postconditionRelations) {
-			entityCache.removeResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-				PostconditionRelationImpl.class,
+		for (PostconditionRelation postconditionRelation :
+				postconditionRelations) {
+
+			entityCache.removeResult(
+				entityCacheEnabled, PostconditionRelationImpl.class,
 				postconditionRelation.getPrimaryKey());
 		}
 	}
@@ -1920,7 +1959,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public PostconditionRelation create(long postconditionRelationId) {
-		PostconditionRelation postconditionRelation = new PostconditionRelationImpl();
+		PostconditionRelation postconditionRelation =
+			new PostconditionRelationImpl();
 
 		postconditionRelation.setNew(true);
 		postconditionRelation.setPrimaryKey(postconditionRelationId);
@@ -1942,6 +1982,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public PostconditionRelation remove(long postconditionRelationId)
 		throws NoSuchPostconditionRelationException {
+
 		return remove((Serializable)postconditionRelationId);
 	}
 
@@ -1955,21 +1996,23 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public PostconditionRelation remove(Serializable primaryKey)
 		throws NoSuchPostconditionRelationException {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
-			PostconditionRelation postconditionRelation = (PostconditionRelation)session.get(PostconditionRelationImpl.class,
-					primaryKey);
+			PostconditionRelation postconditionRelation =
+				(PostconditionRelation)session.get(
+					PostconditionRelationImpl.class, primaryKey);
 
 			if (postconditionRelation == null) {
 				if (_log.isDebugEnabled()) {
 					_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 				}
 
-				throw new NoSuchPostconditionRelationException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-					primaryKey);
+				throw new NoSuchPostconditionRelationException(
+					_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
 			return remove(postconditionRelation);
@@ -1988,14 +2031,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	protected PostconditionRelation removeImpl(
 		PostconditionRelation postconditionRelation) {
+
 		Session session = null;
 
 		try {
 			session = openSession();
 
 			if (!session.contains(postconditionRelation)) {
-				postconditionRelation = (PostconditionRelation)session.get(PostconditionRelationImpl.class,
-						postconditionRelation.getPrimaryKeyObj());
+				postconditionRelation = (PostconditionRelation)session.get(
+					PostconditionRelationImpl.class,
+					postconditionRelation.getPrimaryKeyObj());
 			}
 
 			if (postconditionRelation != null) {
@@ -2019,25 +2064,30 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public PostconditionRelation updateImpl(
 		PostconditionRelation postconditionRelation) {
+
 		boolean isNew = postconditionRelation.isNew();
 
-		if (!(postconditionRelation instanceof PostconditionRelationModelImpl)) {
+		if (!(postconditionRelation instanceof
+				PostconditionRelationModelImpl)) {
+
 			InvocationHandler invocationHandler = null;
 
 			if (ProxyUtil.isProxyClass(postconditionRelation.getClass())) {
-				invocationHandler = ProxyUtil.getInvocationHandler(postconditionRelation);
+				invocationHandler = ProxyUtil.getInvocationHandler(
+					postconditionRelation);
 
 				throw new IllegalArgumentException(
 					"Implement ModelWrapper in postconditionRelation proxy " +
-					invocationHandler.getClass());
+						invocationHandler.getClass());
 			}
 
 			throw new IllegalArgumentException(
 				"Implement ModelWrapper in custom PostconditionRelation implementation " +
-				postconditionRelation.getClass());
+					postconditionRelation.getClass());
 		}
 
-		PostconditionRelationModelImpl postconditionRelationModelImpl = (PostconditionRelationModelImpl)postconditionRelation;
+		PostconditionRelationModelImpl postconditionRelationModelImpl =
+			(PostconditionRelationModelImpl)postconditionRelation;
 
 		if (Validator.isNull(postconditionRelation.getUuid())) {
 			String uuid = PortalUUIDUtil.generate();
@@ -2056,7 +2106,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 				postconditionRelation.setNew(false);
 			}
 			else {
-				postconditionRelation = (PostconditionRelation)session.merge(postconditionRelation);
+				postconditionRelation = (PostconditionRelation)session.merge(
+					postconditionRelation);
 			}
 		}
 		catch (Exception e) {
@@ -2068,115 +2119,128 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 		finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 
-		if (!PostconditionRelationModelImpl.COLUMN_BITMASK_ENABLED) {
+		if (!_columnBitmaskEnabled) {
 			finderCache.clearCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 		}
-		else
-		 if (isNew) {
+		else if (isNew) {
 			Object[] args = new Object[] {
-					postconditionRelationModelImpl.getUuid()
-				};
+				postconditionRelationModelImpl.getUuid()
+			};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-				args);
-
-			args = new Object[] {
-					postconditionRelationModelImpl.getClassNameId(),
-					postconditionRelationModelImpl.getClassPK()
-				};
-
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK,
-				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK,
-				args);
+			finderCache.removeResult(_finderPathCountByUuid, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByUuid, args);
 
 			args = new Object[] {
-					postconditionRelationModelImpl.getClassNamePostconditionId(),
-					postconditionRelationModelImpl.getClassNameId(),
-					postconditionRelationModelImpl.getClassPK()
-				};
+				postconditionRelationModelImpl.getClassNameId(),
+				postconditionRelationModelImpl.getClassPK()
+			};
 
-			finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK,
+			finderCache.removeResult(
+				_finderPathCountByClassNameIdClassPK, args);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByClassNameIdClassPK, args);
+
+			args = new Object[] {
+				postconditionRelationModelImpl.getClassNamePostconditionId(),
+				postconditionRelationModelImpl.getClassNameId(),
+				postconditionRelationModelImpl.getClassPK()
+			};
+
+			finderCache.removeResult(
+				_finderPathCountByClassNamePostconditionIdClassNameIdClassPK,
 				args);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK,
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK,
 				args);
 
-			finderCache.removeResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY);
-			finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL,
-				FINDER_ARGS_EMPTY);
+			finderCache.removeResult(_finderPathCountAll, FINDER_ARGS_EMPTY);
+			finderCache.removeResult(
+				_finderPathWithoutPaginationFindAll, FINDER_ARGS_EMPTY);
 		}
-
 		else {
 			if ((postconditionRelationModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID.getColumnBitmask()) != 0) {
+				 _finderPathWithoutPaginationFindByUuid.getColumnBitmask()) !=
+					 0) {
+
 				Object[] args = new Object[] {
-						postconditionRelationModelImpl.getOriginalUuid()
-					};
+					postconditionRelationModelImpl.getOriginalUuid()
+				};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
 
-				args = new Object[] { postconditionRelationModelImpl.getUuid() };
+				args = new Object[] {postconditionRelationModelImpl.getUuid()};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_UUID, args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_UUID,
-					args);
+				finderCache.removeResult(_finderPathCountByUuid, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByUuid, args);
 			}
 
 			if ((postconditionRelationModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						postconditionRelationModelImpl.getOriginalClassNameId(),
-						postconditionRelationModelImpl.getOriginalClassPK()
-					};
+				 _finderPathWithoutPaginationFindByClassNameIdClassPK.
+					 getColumnBitmask()) != 0) {
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK,
-					args);
+				Object[] args = new Object[] {
+					postconditionRelationModelImpl.getOriginalClassNameId(),
+					postconditionRelationModelImpl.getOriginalClassPK()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByClassNameIdClassPK, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNameIdClassPK, args);
 
 				args = new Object[] {
-						postconditionRelationModelImpl.getClassNameId(),
-						postconditionRelationModelImpl.getClassPK()
-					};
+					postconditionRelationModelImpl.getClassNameId(),
+					postconditionRelationModelImpl.getClassPK()
+				};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEIDCLASSPK,
-					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEIDCLASSPK,
-					args);
+				finderCache.removeResult(
+					_finderPathCountByClassNameIdClassPK, args);
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNameIdClassPK, args);
 			}
 
 			if ((postconditionRelationModelImpl.getColumnBitmask() &
-					FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK.getColumnBitmask()) != 0) {
-				Object[] args = new Object[] {
-						postconditionRelationModelImpl.getOriginalClassNamePostconditionId(),
-						postconditionRelationModelImpl.getOriginalClassNameId(),
-						postconditionRelationModelImpl.getOriginalClassPK()
-					};
+				 _finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK.
+					 getColumnBitmask()) != 0) {
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK,
+				Object[] args = new Object[] {
+					postconditionRelationModelImpl.
+						getOriginalClassNamePostconditionId(),
+					postconditionRelationModelImpl.getOriginalClassNameId(),
+					postconditionRelationModelImpl.getOriginalClassPK()
+				};
+
+				finderCache.removeResult(
+					_finderPathCountByClassNamePostconditionIdClassNameIdClassPK,
 					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK,
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK,
 					args);
 
 				args = new Object[] {
-						postconditionRelationModelImpl.getClassNamePostconditionId(),
-						postconditionRelationModelImpl.getClassNameId(),
-						postconditionRelationModelImpl.getClassPK()
-					};
+					postconditionRelationModelImpl.
+						getClassNamePostconditionId(),
+					postconditionRelationModelImpl.getClassNameId(),
+					postconditionRelationModelImpl.getClassPK()
+				};
 
-				finderCache.removeResult(FINDER_PATH_COUNT_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK,
+				finderCache.removeResult(
+					_finderPathCountByClassNamePostconditionIdClassNameIdClassPK,
 					args);
-				finderCache.removeResult(FINDER_PATH_WITHOUT_PAGINATION_FIND_BY_CLASSNAMEPOSTCONDITIONIDCLASSNAMEIDCLASSPK,
+				finderCache.removeResult(
+					_finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK,
 					args);
 			}
 		}
 
-		entityCache.putResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-			PostconditionRelationImpl.class,
-			postconditionRelation.getPrimaryKey(), postconditionRelation, false);
+		entityCache.putResult(
+			entityCacheEnabled, PostconditionRelationImpl.class,
+			postconditionRelation.getPrimaryKey(), postconditionRelation,
+			false);
 
 		postconditionRelation.resetOriginalValues();
 
@@ -2184,7 +2248,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	}
 
 	/**
-	 * Returns the postcondition relation with the primary key or throws a {@link com.liferay.portal.kernel.exception.NoSuchModelException} if it could not be found.
+	 * Returns the postcondition relation with the primary key or throws a <code>com.liferay.portal.kernel.exception.NoSuchModelException</code> if it could not be found.
 	 *
 	 * @param primaryKey the primary key of the postcondition relation
 	 * @return the postcondition relation
@@ -2193,22 +2257,24 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public PostconditionRelation findByPrimaryKey(Serializable primaryKey)
 		throws NoSuchPostconditionRelationException {
-		PostconditionRelation postconditionRelation = fetchByPrimaryKey(primaryKey);
+
+		PostconditionRelation postconditionRelation = fetchByPrimaryKey(
+			primaryKey);
 
 		if (postconditionRelation == null) {
 			if (_log.isDebugEnabled()) {
 				_log.debug(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 			}
 
-			throw new NoSuchPostconditionRelationException(_NO_SUCH_ENTITY_WITH_PRIMARY_KEY +
-				primaryKey);
+			throw new NoSuchPostconditionRelationException(
+				_NO_SUCH_ENTITY_WITH_PRIMARY_KEY + primaryKey);
 		}
 
 		return postconditionRelation;
 	}
 
 	/**
-	 * Returns the postcondition relation with the primary key or throws a {@link NoSuchPostconditionRelationException} if it could not be found.
+	 * Returns the postcondition relation with the primary key or throws a <code>NoSuchPostconditionRelationException</code> if it could not be found.
 	 *
 	 * @param postconditionRelationId the primary key of the postcondition relation
 	 * @return the postcondition relation
@@ -2217,55 +2283,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	@Override
 	public PostconditionRelation findByPrimaryKey(long postconditionRelationId)
 		throws NoSuchPostconditionRelationException {
+
 		return findByPrimaryKey((Serializable)postconditionRelationId);
-	}
-
-	/**
-	 * Returns the postcondition relation with the primary key or returns <code>null</code> if it could not be found.
-	 *
-	 * @param primaryKey the primary key of the postcondition relation
-	 * @return the postcondition relation, or <code>null</code> if a postcondition relation with the primary key could not be found
-	 */
-	@Override
-	public PostconditionRelation fetchByPrimaryKey(Serializable primaryKey) {
-		Serializable serializable = entityCache.getResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-				PostconditionRelationImpl.class, primaryKey);
-
-		if (serializable == nullModel) {
-			return null;
-		}
-
-		PostconditionRelation postconditionRelation = (PostconditionRelation)serializable;
-
-		if (postconditionRelation == null) {
-			Session session = null;
-
-			try {
-				session = openSession();
-
-				postconditionRelation = (PostconditionRelation)session.get(PostconditionRelationImpl.class,
-						primaryKey);
-
-				if (postconditionRelation != null) {
-					cacheResult(postconditionRelation);
-				}
-				else {
-					entityCache.putResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-						PostconditionRelationImpl.class, primaryKey, nullModel);
-				}
-			}
-			catch (Exception e) {
-				entityCache.removeResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-					PostconditionRelationImpl.class, primaryKey);
-
-				throw processException(e);
-			}
-			finally {
-				closeSession(session);
-			}
-		}
-
-		return postconditionRelation;
 	}
 
 	/**
@@ -2275,103 +2294,10 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the postcondition relation, or <code>null</code> if a postcondition relation with the primary key could not be found
 	 */
 	@Override
-	public PostconditionRelation fetchByPrimaryKey(long postconditionRelationId) {
+	public PostconditionRelation fetchByPrimaryKey(
+		long postconditionRelationId) {
+
 		return fetchByPrimaryKey((Serializable)postconditionRelationId);
-	}
-
-	@Override
-	public Map<Serializable, PostconditionRelation> fetchByPrimaryKeys(
-		Set<Serializable> primaryKeys) {
-		if (primaryKeys.isEmpty()) {
-			return Collections.emptyMap();
-		}
-
-		Map<Serializable, PostconditionRelation> map = new HashMap<Serializable, PostconditionRelation>();
-
-		if (primaryKeys.size() == 1) {
-			Iterator<Serializable> iterator = primaryKeys.iterator();
-
-			Serializable primaryKey = iterator.next();
-
-			PostconditionRelation postconditionRelation = fetchByPrimaryKey(primaryKey);
-
-			if (postconditionRelation != null) {
-				map.put(primaryKey, postconditionRelation);
-			}
-
-			return map;
-		}
-
-		Set<Serializable> uncachedPrimaryKeys = null;
-
-		for (Serializable primaryKey : primaryKeys) {
-			Serializable serializable = entityCache.getResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-					PostconditionRelationImpl.class, primaryKey);
-
-			if (serializable != nullModel) {
-				if (serializable == null) {
-					if (uncachedPrimaryKeys == null) {
-						uncachedPrimaryKeys = new HashSet<Serializable>();
-					}
-
-					uncachedPrimaryKeys.add(primaryKey);
-				}
-				else {
-					map.put(primaryKey, (PostconditionRelation)serializable);
-				}
-			}
-		}
-
-		if (uncachedPrimaryKeys == null) {
-			return map;
-		}
-
-		StringBundler query = new StringBundler((uncachedPrimaryKeys.size() * 2) +
-				1);
-
-		query.append(_SQL_SELECT_POSTCONDITIONRELATION_WHERE_PKS_IN);
-
-		for (Serializable primaryKey : uncachedPrimaryKeys) {
-			query.append((long)primaryKey);
-
-			query.append(",");
-		}
-
-		query.setIndex(query.index() - 1);
-
-		query.append(")");
-
-		String sql = query.toString();
-
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			Query q = session.createQuery(sql);
-
-			for (PostconditionRelation postconditionRelation : (List<PostconditionRelation>)q.list()) {
-				map.put(postconditionRelation.getPrimaryKeyObj(),
-					postconditionRelation);
-
-				cacheResult(postconditionRelation);
-
-				uncachedPrimaryKeys.remove(postconditionRelation.getPrimaryKeyObj());
-			}
-
-			for (Serializable primaryKey : uncachedPrimaryKeys) {
-				entityCache.putResult(PostconditionRelationModelImpl.ENTITY_CACHE_ENABLED,
-					PostconditionRelationImpl.class, primaryKey, nullModel);
-			}
-		}
-		catch (Exception e) {
-			throw processException(e);
-		}
-		finally {
-			closeSession(session);
-		}
-
-		return map;
 	}
 
 	/**
@@ -2388,7 +2314,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns a range of all the postcondition relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of postcondition relations
@@ -2404,7 +2330,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns an ordered range of all the postcondition relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of postcondition relations
@@ -2413,8 +2339,10 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the ordered range of postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findAll(int start, int end,
+	public List<PostconditionRelation> findAll(
+		int start, int end,
 		OrderByComparator<PostconditionRelation> orderByComparator) {
+
 		return findAll(start, end, orderByComparator, true);
 	}
 
@@ -2422,7 +2350,7 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * Returns an ordered range of all the postcondition relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link PostconditionRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>PostconditionRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of postcondition relations
@@ -2432,29 +2360,32 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 * @return the ordered range of postcondition relations
 	 */
 	@Override
-	public List<PostconditionRelation> findAll(int start, int end,
+	public List<PostconditionRelation> findAll(
+		int start, int end,
 		OrderByComparator<PostconditionRelation> orderByComparator,
 		boolean retrieveFromCache) {
+
 		boolean pagination = true;
 		FinderPath finderPath = null;
 		Object[] finderArgs = null;
 
 		if ((start == QueryUtil.ALL_POS) && (end == QueryUtil.ALL_POS) &&
-				(orderByComparator == null)) {
+			(orderByComparator == null)) {
+
 			pagination = false;
-			finderPath = FINDER_PATH_WITHOUT_PAGINATION_FIND_ALL;
+			finderPath = _finderPathWithoutPaginationFindAll;
 			finderArgs = FINDER_ARGS_EMPTY;
 		}
 		else {
-			finderPath = FINDER_PATH_WITH_PAGINATION_FIND_ALL;
-			finderArgs = new Object[] { start, end, orderByComparator };
+			finderPath = _finderPathWithPaginationFindAll;
+			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<PostconditionRelation> list = null;
 
 		if (retrieveFromCache) {
-			list = (List<PostconditionRelation>)finderCache.getResult(finderPath,
-					finderArgs, this);
+			list = (List<PostconditionRelation>)finderCache.getResult(
+				finderPath, finderArgs, this);
 		}
 
 		if (list == null) {
@@ -2462,13 +2393,13 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 			String sql = null;
 
 			if (orderByComparator != null) {
-				query = new StringBundler(2 +
-						(orderByComparator.getOrderByFields().length * 2));
+				query = new StringBundler(
+					2 + (orderByComparator.getOrderByFields().length * 2));
 
 				query.append(_SQL_SELECT_POSTCONDITIONRELATION);
 
-				appendOrderByComparator(query, _ORDER_BY_ENTITY_ALIAS,
-					orderByComparator);
+				appendOrderByComparator(
+					query, _ORDER_BY_ENTITY_ALIAS, orderByComparator);
 
 				sql = query.toString();
 			}
@@ -2476,7 +2407,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 				sql = _SQL_SELECT_POSTCONDITIONRELATION;
 
 				if (pagination) {
-					sql = sql.concat(PostconditionRelationModelImpl.ORDER_BY_JPQL);
+					sql = sql.concat(
+						PostconditionRelationModelImpl.ORDER_BY_JPQL);
 				}
 			}
 
@@ -2488,16 +2420,16 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 				Query q = session.createQuery(sql);
 
 				if (!pagination) {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end, false);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end, false);
 
 					Collections.sort(list);
 
 					list = Collections.unmodifiableList(list);
 				}
 				else {
-					list = (List<PostconditionRelation>)QueryUtil.list(q,
-							getDialect(), start, end);
+					list = (List<PostconditionRelation>)QueryUtil.list(
+						q, getDialect(), start, end);
 				}
 
 				cacheResult(list);
@@ -2535,8 +2467,8 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	 */
 	@Override
 	public int countAll() {
-		Long count = (Long)finderCache.getResult(FINDER_PATH_COUNT_ALL,
-				FINDER_ARGS_EMPTY, this);
+		Long count = (Long)finderCache.getResult(
+			_finderPathCountAll, FINDER_ARGS_EMPTY, this);
 
 		if (count == null) {
 			Session session = null;
@@ -2548,12 +2480,12 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 
 				count = (Long)q.uniqueResult();
 
-				finderCache.putResult(FINDER_PATH_COUNT_ALL, FINDER_ARGS_EMPTY,
-					count);
+				finderCache.putResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY, count);
 			}
 			catch (Exception e) {
-				finderCache.removeResult(FINDER_PATH_COUNT_ALL,
-					FINDER_ARGS_EMPTY);
+				finderCache.removeResult(
+					_finderPathCountAll, FINDER_ARGS_EMPTY);
 
 				throw processException(e);
 			}
@@ -2571,6 +2503,21 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	}
 
 	@Override
+	protected EntityCache getEntityCache() {
+		return entityCache;
+	}
+
+	@Override
+	protected String getPKDBName() {
+		return "postconditionRelationId";
+	}
+
+	@Override
+	protected String getSelectSQL() {
+		return _SQL_SELECT_POSTCONDITIONRELATION;
+	}
+
+	@Override
 	protected Map<String, Integer> getTableColumnsMap() {
 		return PostconditionRelationModelImpl.TABLE_COLUMNS_MAP;
 	}
@@ -2578,30 +2525,186 @@ public class PostconditionRelationPersistenceImpl extends BasePersistenceImpl<Po
 	/**
 	 * Initializes the postcondition relation persistence.
 	 */
-	public void afterPropertiesSet() {
+	@Activate
+	public void activate() {
+		PostconditionRelationModelImpl.setEntityCacheEnabled(
+			entityCacheEnabled);
+		PostconditionRelationModelImpl.setFinderCacheEnabled(
+			finderCacheEnabled);
+
+		_finderPathWithPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PostconditionRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findAll", new String[0]);
+
+		_finderPathWithoutPaginationFindAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PostconditionRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findAll",
+			new String[0]);
+
+		_finderPathCountAll = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countAll",
+			new String[0]);
+
+		_finderPathWithPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PostconditionRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByUuid",
+			new String[] {
+				String.class.getName(), Integer.class.getName(),
+				Integer.class.getName(), OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PostconditionRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "findByUuid",
+			new String[] {String.class.getName()},
+			PostconditionRelationModelImpl.UUID_COLUMN_BITMASK);
+
+		_finderPathCountByUuid = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION, "countByUuid",
+			new String[] {String.class.getName()});
+
+		_finderPathWithPaginationFindByClassNameIdClassPK = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PostconditionRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITH_PAGINATION, "findByClassNameIdClassPK",
+			new String[] {
+				Long.class.getName(), Long.class.getName(),
+				Integer.class.getName(), Integer.class.getName(),
+				OrderByComparator.class.getName()
+			});
+
+		_finderPathWithoutPaginationFindByClassNameIdClassPK = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled,
+			PostconditionRelationImpl.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"findByClassNameIdClassPK",
+			new String[] {Long.class.getName(), Long.class.getName()},
+			PostconditionRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
+			PostconditionRelationModelImpl.CLASSPK_COLUMN_BITMASK);
+
+		_finderPathCountByClassNameIdClassPK = new FinderPath(
+			entityCacheEnabled, finderCacheEnabled, Long.class,
+			FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+			"countByClassNameIdClassPK",
+			new String[] {Long.class.getName(), Long.class.getName()});
+
+		_finderPathWithPaginationFindByClassNamePostconditionIdClassNameIdClassPK =
+			new FinderPath(
+				entityCacheEnabled, finderCacheEnabled,
+				PostconditionRelationImpl.class,
+				FINDER_CLASS_NAME_LIST_WITH_PAGINATION,
+				"findByClassNamePostconditionIdClassNameIdClassPK",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Integer.class.getName(),
+					Integer.class.getName(), OrderByComparator.class.getName()
+				});
+
+		_finderPathWithoutPaginationFindByClassNamePostconditionIdClassNameIdClassPK =
+			new FinderPath(
+				entityCacheEnabled, finderCacheEnabled,
+				PostconditionRelationImpl.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"findByClassNamePostconditionIdClassNameIdClassPK",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				PostconditionRelationModelImpl.
+					CLASSNAMEPOSTCONDITIONID_COLUMN_BITMASK |
+				PostconditionRelationModelImpl.CLASSNAMEID_COLUMN_BITMASK |
+				PostconditionRelationModelImpl.CLASSPK_COLUMN_BITMASK);
+
+		_finderPathCountByClassNamePostconditionIdClassNameIdClassPK =
+			new FinderPath(
+				entityCacheEnabled, finderCacheEnabled, Long.class,
+				FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION,
+				"countByClassNamePostconditionIdClassNameIdClassPK",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				});
 	}
 
-	public void destroy() {
+	@Deactivate
+	public void deactivate() {
 		entityCache.removeCache(PostconditionRelationImpl.class.getName());
 		finderCache.removeCache(FINDER_CLASS_NAME_ENTITY);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITH_PAGINATION);
 		finderCache.removeCache(FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION);
 	}
 
-	@ServiceReference(type = EntityCache.class)
+	@Override
+	@Reference(
+		target = postPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
+
+		_columnBitmaskEnabled = GetterUtil.getBoolean(
+			configuration.get(
+				"value.object.column.bitmask.enabled.com.ted.postcondition.model.PostconditionRelation"),
+			true);
+	}
+
+	@Override
+	@Reference(
+		target = postPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
+	}
+
+	@Override
+	@Reference(
+		target = postPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	private boolean _columnBitmaskEnabled;
+
+	@Reference
 	protected EntityCache entityCache;
-	@ServiceReference(type = FinderCache.class)
+
+	@Reference
 	protected FinderCache finderCache;
-	private static final String _SQL_SELECT_POSTCONDITIONRELATION = "SELECT postconditionRelation FROM PostconditionRelation postconditionRelation";
-	private static final String _SQL_SELECT_POSTCONDITIONRELATION_WHERE_PKS_IN = "SELECT postconditionRelation FROM PostconditionRelation postconditionRelation WHERE postconditionRelationId IN (";
-	private static final String _SQL_SELECT_POSTCONDITIONRELATION_WHERE = "SELECT postconditionRelation FROM PostconditionRelation postconditionRelation WHERE ";
-	private static final String _SQL_COUNT_POSTCONDITIONRELATION = "SELECT COUNT(postconditionRelation) FROM PostconditionRelation postconditionRelation";
-	private static final String _SQL_COUNT_POSTCONDITIONRELATION_WHERE = "SELECT COUNT(postconditionRelation) FROM PostconditionRelation postconditionRelation WHERE ";
-	private static final String _ORDER_BY_ENTITY_ALIAS = "postconditionRelation.";
-	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY = "No PostconditionRelation exists with the primary key ";
-	private static final String _NO_SUCH_ENTITY_WITH_KEY = "No PostconditionRelation exists with the key {";
-	private static final Log _log = LogFactoryUtil.getLog(PostconditionRelationPersistenceImpl.class);
-	private static final Set<String> _badColumnNames = SetUtil.fromArray(new String[] {
-				"uuid"
-			});
+
+	private static final String _SQL_SELECT_POSTCONDITIONRELATION =
+		"SELECT postconditionRelation FROM PostconditionRelation postconditionRelation";
+
+	private static final String _SQL_SELECT_POSTCONDITIONRELATION_WHERE =
+		"SELECT postconditionRelation FROM PostconditionRelation postconditionRelation WHERE ";
+
+	private static final String _SQL_COUNT_POSTCONDITIONRELATION =
+		"SELECT COUNT(postconditionRelation) FROM PostconditionRelation postconditionRelation";
+
+	private static final String _SQL_COUNT_POSTCONDITIONRELATION_WHERE =
+		"SELECT COUNT(postconditionRelation) FROM PostconditionRelation postconditionRelation WHERE ";
+
+	private static final String _ORDER_BY_ENTITY_ALIAS =
+		"postconditionRelation.";
+
+	private static final String _NO_SUCH_ENTITY_WITH_PRIMARY_KEY =
+		"No PostconditionRelation exists with the primary key ";
+
+	private static final String _NO_SUCH_ENTITY_WITH_KEY =
+		"No PostconditionRelation exists with the key {";
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		PostconditionRelationPersistenceImpl.class);
+
+	private static final Set<String> _badColumnNames = SetUtil.fromArray(
+		new String[] {"uuid"});
+
 }

@@ -1,4 +1,4 @@
-create table qu_Answer (
+create table QU_Answer (
 	uuid_ VARCHAR(75) null,
 	answerId LONG not null primary key,
 	groupId LONG,
@@ -10,13 +10,13 @@ create table qu_Answer (
 	lastPublishDate DATE null,
 	questionId LONG,
 	actId LONG,
-	answer TEXT null,
+	answer VARCHAR(75) null,
 	correct BOOLEAN,
 	feedbackCorrect VARCHAR(75) null,
 	feedbackIncorrect VARCHAR(75) null
 );
 
-create table qu_Question (
+create table QU_Question (
 	uuid_ VARCHAR(75) null,
 	questionId LONG not null primary key,
 	groupId LONG,
@@ -27,10 +27,10 @@ create table qu_Question (
 	modifiedDate DATE null,
 	lastPublishDate DATE null,
 	actId LONG,
-	text_ TEXT null,
+	text_ VARCHAR(75) null,
 	questionTypeId LONG,
 	active_ BOOLEAN,
 	weight LONG,
 	penalize BOOLEAN,
-	extraContent STRING null
+	extraContent VARCHAR(75) null
 );

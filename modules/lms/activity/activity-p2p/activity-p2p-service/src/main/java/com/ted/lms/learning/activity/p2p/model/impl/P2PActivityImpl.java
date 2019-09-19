@@ -14,19 +14,20 @@
 
 package com.ted.lms.learning.activity.p2p.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model implementation for the P2PActivity service. Represents a row in the &quot;PTP_P2PActivity&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.learning.activity.p2p.model.P2PActivity} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.learning.activity.p2p.model.P2PActivity<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class P2PActivityImpl extends P2PActivityBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -34,4 +35,5 @@ public class P2PActivityImpl extends P2PActivityBaseImpl {
 	 */
 	public P2PActivityImpl() {
 	}
+
 }

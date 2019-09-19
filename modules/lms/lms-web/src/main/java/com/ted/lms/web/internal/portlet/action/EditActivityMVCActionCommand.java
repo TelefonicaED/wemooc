@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.trash.service.TrashEntryService;
+import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.exception.LearningActivityEndDateException;
 import com.ted.lms.exception.LearningActivityStartDateException;
@@ -44,6 +45,7 @@ import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.LearningActivityService;
 import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.util.LMSPrefsPropsValues;
@@ -74,6 +76,7 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LMSPortletKeys.COURSE_CONTENT_VIEWER,
+		"javax.portlet.name=" + LMSPortletKeys.MODULES_ACTIVITIES,
 		"mvc.command.name=/activities/edit_activity"
 	},
 	service = MVCActionCommand.class
@@ -98,6 +101,8 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 				activity = TransactionInvokerUtil.invoke(_transactionConfig, updateLearningActivityCallable);
 			} else if(cmd.equals(Constants.MOVE)) {
 				moveLearningActivity(actionRequest);
+			} else if(cmd.contentEquals(LMSConstants.CHANGE_VISIBILITY)) {
+				changeVisibility(actionRequest);
 			} else if (cmd.equals(Constants.DELETE)) {
 				deleteLearningActivities(actionRequest, false);
 			} else if (cmd.equals(Constants.MOVE_TO_TRASH)) {
@@ -106,7 +111,9 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 				restoreTrashLearningActivities(actionRequest);
 			}
 
-			String redirect = ParamUtil.getString(actionRequest, "redirect");
+			String redirect = ParamUtil.getString(actionRequest, "redirect", null);
+			
+			System.out.println("redirect: " + redirect);
 			
 			String portletId = _http.getParameter(redirect, "p_p_id", false);
 
@@ -237,6 +244,13 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		}else if(moved == 1) {
 			learningActivityService.moveDownLearningActivity(actId);
 		}
+	}
+	
+	protected void changeVisibility(ActionRequest actionRequest) throws Exception {
+		
+		long actId = ParamUtil.getLong(actionRequest, "actId");
+
+		learningActivityService.changeVisibility(actId);
 	}
 	
 	protected void deleteLearningActivities(ActionRequest actionRequest, boolean moveToTrash) throws Exception {
@@ -387,19 +401,15 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 		learningActivityService.updateLearningActivity(activity);
 		
 		//Guardamos los prerequisitos
-		String[] classNamePrerequisites = courseLocalService.getPrerequisiteActivities(themeDisplay.getCompanyId());
+		String[] classNamePrerequisites = learningActivityLocalService.getPrerequisiteActivities(themeDisplay.getCompanyId());
 		PrerequisiteFactory prerequisiteFactory = null;
-		Prerequisite prerequisite = null;
+		
 		long activityClassNameId = PortalUtil.getClassNameId(LearningActivity.class);
-		List<PrerequisiteRelation> prerequisiteRelations = null;
 		
 		for(String classNamePrerequisite: classNamePrerequisites){
+			log.debug("classNamePrerequisite: " + classNamePrerequisite);
 			prerequisiteFactory = PrerequisiteFactoryRegistryUtil.getPrerequisiteFactoryByClassName(classNamePrerequisite);
-			prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(prerequisiteFactory.getClassNameId(), activityClassNameId, activity.getActId());
-			if(prerequisiteRelations != null && prerequisiteRelations.size() > 0) {
-				prerequisite = prerequisiteFactory.getPrerequisite(prerequisiteRelations.get(0));
-				prerequisite.setExtraContent(actionRequest);
-			}
+			prerequisiteFactory.savePrerequisites(activityClassNameId, activity.getActId(), actionRequest);
 		}
 
 		return activity;
@@ -416,6 +426,11 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 	@Reference(unbind = "-")
 	protected void setLearningActivityService(LearningActivityService learningActivityService) {
 		this.learningActivityService = learningActivityService;
+	}
+	
+	@Reference(unbind = "-")
+	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
+		this.learningActivityLocalService = learningActivityLocalService;
 	}
 	
 	@Reference(unbind = "-")
@@ -437,6 +452,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 	private ModuleLocalService moduleLocalService;
 	private TrashEntryService trashEntryService;
 	private CourseLocalService courseLocalService;
+	private LearningActivityLocalService learningActivityLocalService;
 
 	
 	private class UpdateLearningActivityCallable implements Callable<LearningActivity> {

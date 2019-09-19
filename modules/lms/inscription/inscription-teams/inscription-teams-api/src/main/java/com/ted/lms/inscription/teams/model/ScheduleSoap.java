@@ -14,13 +14,13 @@
 
 package com.ted.lms.inscription.teams.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -30,6 +30,7 @@ import java.util.List;
  */
 @ProviderType
 public class ScheduleSoap implements Serializable {
+
 	public static ScheduleSoap toSoapModel(Schedule model) {
 		ScheduleSoap soapModel = new ScheduleSoap();
 
@@ -69,7 +70,8 @@ public class ScheduleSoap implements Serializable {
 	}
 
 	public static ScheduleSoap[] toSoapModels(List<Schedule> models) {
-		List<ScheduleSoap> soapModels = new ArrayList<ScheduleSoap>(models.size());
+		List<ScheduleSoap> soapModels = new ArrayList<ScheduleSoap>(
+			models.size());
 
 		for (Schedule model : models) {
 			soapModels.add(toSoapModel(model));
@@ -125,4 +127,5 @@ public class ScheduleSoap implements Serializable {
 	private long _teamId;
 	private Date _startDate;
 	private Date _endDate;
+
 }

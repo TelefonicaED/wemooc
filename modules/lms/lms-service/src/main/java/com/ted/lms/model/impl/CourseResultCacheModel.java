@@ -14,11 +14,9 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.model.CourseResult;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing CourseResult in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see CourseResult
  * @generated
  */
 @ProviderType
-public class CourseResultCacheModel implements CacheModel<CourseResult>,
-	Externalizable {
+public class CourseResultCacheModel
+	implements CacheModel<CourseResult>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -49,7 +49,8 @@ public class CourseResultCacheModel implements CacheModel<CourseResult>,
 			return false;
 		}
 
-		CourseResultCacheModel courseResultCacheModel = (CourseResultCacheModel)obj;
+		CourseResultCacheModel courseResultCacheModel =
+			(CourseResultCacheModel)obj;
 
 		if (crId == courseResultCacheModel.crId) {
 			return true;
@@ -228,8 +229,7 @@ public class CourseResultCacheModel implements CacheModel<CourseResult>,
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(crId);
 
 		objectOutput.writeLong(groupId);
@@ -294,4 +294,5 @@ public class CourseResultCacheModel implements CacheModel<CourseResult>,
 	public long allowStartDate;
 	public long allowEndDate;
 	public String extraData;
+
 }

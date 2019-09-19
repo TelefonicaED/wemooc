@@ -14,71 +14,85 @@
 
 package com.ted.lms.service.persistence.impl;
 
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.configuration.Configuration;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 
 import com.ted.lms.model.Course;
 import com.ted.lms.service.persistence.CoursePersistence;
-
-import java.lang.reflect.Field;
+import com.ted.lms.service.persistence.impl.constants.LMSPersistenceConstants;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
-public class CourseFinderBaseImpl extends BasePersistenceImpl<Course> {
+public abstract class CourseFinderBaseImpl extends BasePersistenceImpl<Course> {
+
 	public CourseFinderBaseImpl() {
 		setModelClass(Course.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			field.setAccessible(true);
+		dbColumnNames.put("uuid", "uuid_");
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	@Override
 	public Set<String> getBadColumnNames() {
-		return getCoursePersistence().getBadColumnNames();
+		return coursePersistence.getBadColumnNames();
 	}
 
-	/**
-	 * Returns the course persistence.
-	 *
-	 * @return the course persistence
-	 */
-	public CoursePersistence getCoursePersistence() {
-		return coursePersistence;
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
 	}
 
-	/**
-	 * Sets the course persistence.
-	 *
-	 * @param coursePersistence the course persistence
-	 */
-	public void setCoursePersistence(CoursePersistence coursePersistence) {
-		this.coursePersistence = coursePersistence;
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
 	}
 
-	@BeanReference(type = CoursePersistence.class)
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
 	protected CoursePersistence coursePersistence;
-	private static final Log _log = LogFactoryUtil.getLog(CourseFinderBaseImpl.class);
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		CourseFinderBaseImpl.class);
+
+	static {
+		try {
+			Class.forName(LMSPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
+
 }

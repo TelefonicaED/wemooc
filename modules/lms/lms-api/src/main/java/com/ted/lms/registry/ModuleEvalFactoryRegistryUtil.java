@@ -1,6 +1,5 @@
 package com.ted.lms.registry;
 
-import aQute.bnd.annotation.ProviderType;
 
 import com.ted.lms.model.ModuleEvalFactory;
 import com.liferay.portal.kernel.log.Log;
@@ -20,6 +19,8 @@ import com.liferay.registry.collections.ServiceRegistrationMapImpl;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Registry para los métodos de evaluación de los módulos

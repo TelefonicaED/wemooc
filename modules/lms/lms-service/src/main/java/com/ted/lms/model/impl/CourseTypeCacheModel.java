@@ -14,11 +14,9 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.model.CourseType;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing CourseType in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see CourseType
  * @generated
  */
 @ProviderType
-public class CourseTypeCacheModel implements CacheModel<CourseType>,
-	Externalizable {
+public class CourseTypeCacheModel
+	implements CacheModel<CourseType>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -172,8 +172,7 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(courseTypeId);
 
 		objectOutput.writeLong(groupId);
@@ -221,4 +220,5 @@ public class CourseTypeCacheModel implements CacheModel<CourseType>,
 	public String description;
 	public long iconId;
 	public long lastPublishDate;
+
 }

@@ -5,18 +5,10 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.ted.lms.constants.LMSPortletKeys;
-import com.ted.lms.service.CourseResultLocalService;
-import com.ted.lms.service.LearningActivityLocalService;
-import com.ted.lms.service.LearningActivityResultLocalService;
-import com.ted.lms.service.LearningActivityTryLocalService;
-import com.ted.lms.service.ModuleLocalService;
-import com.ted.lms.service.ModuleResultLocalService;
-
 import java.util.Locale;
 
 import javax.portlet.PortletResponse;
 import javax.portlet.PortletURL;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * Base para la factoría de los métodos de evaluación de un módulo

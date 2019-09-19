@@ -14,19 +14,14 @@
 
 package com.ted.lms.inscription.teams.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
-
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <p>
@@ -38,19 +33,12 @@ import java.util.Objects;
  * @generated
  */
 @ProviderType
-public class ScheduleWrapper implements Schedule, ModelWrapper<Schedule> {
+public class ScheduleWrapper
+	extends BaseModelWrapper<Schedule>
+	implements Schedule, ModelWrapper<Schedule> {
+
 	public ScheduleWrapper(Schedule schedule) {
-		_schedule = schedule;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return Schedule.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return Schedule.class.getName();
+		super(schedule);
 	}
 
 	@Override
@@ -92,245 +80,114 @@ public class ScheduleWrapper implements Schedule, ModelWrapper<Schedule> {
 		}
 	}
 
-	@Override
-	public Object clone() {
-		return new ScheduleWrapper((Schedule)_schedule.clone());
-	}
-
-	@Override
-	public int compareTo(Schedule schedule) {
-		return _schedule.compareTo(schedule);
-	}
-
 	/**
-	* Returns the end date of this schedule.
-	*
-	* @return the end date of this schedule
-	*/
+	 * Returns the end date of this schedule.
+	 *
+	 * @return the end date of this schedule
+	 */
 	@Override
 	public Date getEndDate() {
-		return _schedule.getEndDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _schedule.getExpandoBridge();
+		return model.getEndDate();
 	}
 
 	/**
-	* Returns the primary key of this schedule.
-	*
-	* @return the primary key of this schedule
-	*/
+	 * Returns the primary key of this schedule.
+	 *
+	 * @return the primary key of this schedule
+	 */
 	@Override
 	public long getPrimaryKey() {
-		return _schedule.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _schedule.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
-	* Returns the schedule ID of this schedule.
-	*
-	* @return the schedule ID of this schedule
-	*/
+	 * Returns the schedule ID of this schedule.
+	 *
+	 * @return the schedule ID of this schedule
+	 */
 	@Override
 	public long getScheduleId() {
-		return _schedule.getScheduleId();
+		return model.getScheduleId();
 	}
 
 	/**
-	* Returns the start date of this schedule.
-	*
-	* @return the start date of this schedule
-	*/
+	 * Returns the start date of this schedule.
+	 *
+	 * @return the start date of this schedule
+	 */
 	@Override
 	public Date getStartDate() {
-		return _schedule.getStartDate();
+		return model.getStartDate();
 	}
 
 	/**
-	* Returns the team ID of this schedule.
-	*
-	* @return the team ID of this schedule
-	*/
+	 * Returns the team ID of this schedule.
+	 *
+	 * @return the team ID of this schedule
+	 */
 	@Override
 	public long getTeamId() {
-		return _schedule.getTeamId();
-	}
-
-	@Override
-	public int hashCode() {
-		return _schedule.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _schedule.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _schedule.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _schedule.isNew();
+		return model.getTeamId();
 	}
 
 	@Override
 	public void persist() {
-		_schedule.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_schedule.setCachedModel(cachedModel);
+		model.persist();
 	}
 
 	/**
-	* Sets the end date of this schedule.
-	*
-	* @param endDate the end date of this schedule
-	*/
+	 * Sets the end date of this schedule.
+	 *
+	 * @param endDate the end date of this schedule
+	 */
 	@Override
 	public void setEndDate(Date endDate) {
-		_schedule.setEndDate(endDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_schedule.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_schedule.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_schedule.setExpandoBridgeAttributes(serviceContext);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_schedule.setNew(n);
+		model.setEndDate(endDate);
 	}
 
 	/**
-	* Sets the primary key of this schedule.
-	*
-	* @param primaryKey the primary key of this schedule
-	*/
+	 * Sets the primary key of this schedule.
+	 *
+	 * @param primaryKey the primary key of this schedule
+	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_schedule.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_schedule.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Sets the schedule ID of this schedule.
-	*
-	* @param scheduleId the schedule ID of this schedule
-	*/
+	 * Sets the schedule ID of this schedule.
+	 *
+	 * @param scheduleId the schedule ID of this schedule
+	 */
 	@Override
 	public void setScheduleId(long scheduleId) {
-		_schedule.setScheduleId(scheduleId);
+		model.setScheduleId(scheduleId);
 	}
 
 	/**
-	* Sets the start date of this schedule.
-	*
-	* @param startDate the start date of this schedule
-	*/
+	 * Sets the start date of this schedule.
+	 *
+	 * @param startDate the start date of this schedule
+	 */
 	@Override
 	public void setStartDate(Date startDate) {
-		_schedule.setStartDate(startDate);
+		model.setStartDate(startDate);
 	}
 
 	/**
-	* Sets the team ID of this schedule.
-	*
-	* @param teamId the team ID of this schedule
-	*/
+	 * Sets the team ID of this schedule.
+	 *
+	 * @param teamId the team ID of this schedule
+	 */
 	@Override
 	public void setTeamId(long teamId) {
-		_schedule.setTeamId(teamId);
+		model.setTeamId(teamId);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<Schedule> toCacheModel() {
-		return _schedule.toCacheModel();
+	protected ScheduleWrapper wrap(Schedule schedule) {
+		return new ScheduleWrapper(schedule);
 	}
 
-	@Override
-	public Schedule toEscapedModel() {
-		return new ScheduleWrapper(_schedule.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _schedule.toString();
-	}
-
-	@Override
-	public Schedule toUnescapedModel() {
-		return new ScheduleWrapper(_schedule.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _schedule.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof ScheduleWrapper)) {
-			return false;
-		}
-
-		ScheduleWrapper scheduleWrapper = (ScheduleWrapper)obj;
-
-		if (Objects.equals(_schedule, scheduleWrapper._schedule)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public Schedule getWrappedModel() {
-		return _schedule;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _schedule.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _schedule.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_schedule.resetOriginalValues();
-	}
-
-	private final Schedule _schedule;
 }

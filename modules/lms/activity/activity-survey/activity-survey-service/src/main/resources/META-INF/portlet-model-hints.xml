@@ -9,8 +9,6 @@
 		<field name="questionId" type="long" />
 		<field name="answerId" type="long" />
 		<field name="userId" type="long" />
-		<field name="freeAnswer" type="String">
-			<hint name="max-length">50000</hint>
-		</field>
+		<field name="freeAnswer" type="String" />
 	</model>
 </model-hints>

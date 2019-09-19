@@ -14,30 +14,31 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.annotation.ImplementationClassName;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.util.Accessor;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model interface for the CourseType service. Represents a row in the &quot;LMS_CourseType&quot; database table, with each column mapped to a property of this class.
  *
  * @author Brian Wing Shun Chan
  * @see CourseTypeModel
- * @see com.ted.lms.model.impl.CourseTypeImpl
- * @see com.ted.lms.model.impl.CourseTypeModelImpl
  * @generated
  */
 @ImplementationClassName("com.ted.lms.model.impl.CourseTypeImpl")
 @ProviderType
 public interface CourseType extends CourseTypeModel, PersistedModel {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify this interface directly. Add methods to {@link com.ted.lms.model.impl.CourseTypeImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify this interface directly. Add methods to <code>com.ted.lms.model.impl.CourseTypeImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public static final Accessor<CourseType, Long> COURSE_TYPE_ID_ACCESSOR = new Accessor<CourseType, Long>() {
+	public static final Accessor<CourseType, Long> COURSE_TYPE_ID_ACCESSOR =
+		new Accessor<CourseType, Long>() {
+
 			@Override
 			public Long get(CourseType courseType) {
 				return courseType.getCourseTypeId();
@@ -52,9 +53,11 @@ public interface CourseType extends CourseTypeModel, PersistedModel {
 			public Class<CourseType> getTypeClass() {
 				return CourseType.class;
 			}
+
 		};
 
 	public String getIconURL(
-		com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
+			com.liferay.portal.kernel.theme.ThemeDisplay themeDisplay)
 		throws com.liferay.portal.kernel.exception.PortalException;
+
 }

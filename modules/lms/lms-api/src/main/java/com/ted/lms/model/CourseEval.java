@@ -6,7 +6,8 @@ import com.liferay.portal.kernel.exception.SystemException;
 import java.util.Map;
 
 import javax.portlet.ActionRequest;
-import aQute.bnd.annotation.ProviderType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para los métodos de evaluación de los cursos
@@ -22,14 +23,15 @@ public interface CourseEval {
 	 * @param userId
 	 * @return
 	 * @throws SystemException
+	 * @throws PortalException 
 	 */
-	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException;
+	public CourseResult updateCourseResult(CourseResult courseResult) throws SystemException, PortalException;
 	
-	public boolean updateCourse() throws SystemException;
+	public boolean updateCourse() throws SystemException, PortalException ;
 	
-	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException;
+	public CourseResult recalculateCourseResult(CourseResult courseResult) throws SystemException, PortalException;
 	
-	public boolean recalculateCourse() throws SystemException;
+	public boolean recalculateCourse() throws SystemException, PortalException ;
 
 	public double getPassPuntuation();
 

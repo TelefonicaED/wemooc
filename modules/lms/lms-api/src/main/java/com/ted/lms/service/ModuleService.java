@@ -14,8 +14,6 @@
 
 package com.ted.lms.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.jsonwebservice.JSONWebService;
@@ -23,7 +21,6 @@ import com.liferay.portal.kernel.security.access.control.AccessControlled;
 import com.liferay.portal.kernel.service.BaseService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector;
-import com.liferay.portal.kernel.spring.osgi.OSGiBeanProperties;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -34,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * Provides the remote service interface for Module. Methods of this
  * service are expected to have security checks based on the propagated JAAS
@@ -41,31 +40,32 @@ import java.util.Map;
  *
  * @author Brian Wing Shun Chan
  * @see ModuleServiceUtil
- * @see com.ted.lms.service.base.ModuleServiceBaseImpl
- * @see com.ted.lms.service.impl.ModuleServiceImpl
  * @generated
  */
 @AccessControlled
 @JSONWebService
-@OSGiBeanProperties(property =  {
-	"json.web.service.context.name=lms", "json.web.service.context.path=Module"}, service = ModuleService.class)
 @ProviderType
-@Transactional(isolation = Isolation.PORTAL, rollbackFor =  {
-	PortalException.class, SystemException.class})
+@Transactional(
+	isolation = Isolation.PORTAL,
+	rollbackFor = {PortalException.class, SystemException.class}
+)
 public interface ModuleService extends BaseService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this interface directly. Always use {@link ModuleServiceUtil} to access the module remote service. Add custom service methods to {@link com.ted.lms.service.impl.ModuleServiceImpl} and rerun ServiceBuilder to automatically copy the method declarations to this interface.
+	 * Never modify or reference this interface directly. Always use {@link ModuleServiceUtil} to access the module remote service. Add custom service methods to <code>com.ted.lms.service.impl.ModuleServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface.
 	 */
-	public Module addModule(long groupId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, boolean startDate,
-		int startDateMonth, int startDateDay, int startDateYear,
-		int startDateHour, int startDateMinute, boolean endDate,
-		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-		int endDateMinute, int allowedHours, int allowedMinutes,
-		ImageSelector smallImageImageSelector, long moduleEvalId,
-		ServiceContext serviceContext) throws PortalException;
+	public Module addModule(
+			long groupId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, boolean startDate,
+			int startDateMonth, int startDateDay, int startDateYear,
+			int startDateHour, int startDateMinute, boolean endDate,
+			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+			int endDateMinute, int allowedHours, int allowedMinutes,
+			ImageSelector smallImageImageSelector, long moduleEvalId,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 	public void deleteModule(long moduleId) throws PortalException;
 
@@ -73,10 +73,10 @@ public interface ModuleService extends BaseService {
 	public List<Module> getGroupModules(long groupId);
 
 	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
+	 * Returns the OSGi service identifier.
+	 *
+	 * @return the OSGi service identifier
+	 */
 	public String getOSGiServiceIdentifier();
 
 	public Module moveDownModule(long moduleId) throws PortalException;
@@ -85,14 +85,17 @@ public interface ModuleService extends BaseService {
 
 	public Module moveUpModule(long moduleId) throws PortalException;
 
-	public Module updateModule(long moduleId, Map<Locale, String> titleMap,
-		Map<Locale, String> descriptionMap, boolean startDate,
-		int startDateMonth, int startDateDay, int startDateYear,
-		int startDateHour, int startDateMinute, boolean endDate,
-		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-		int endDateMinute, int allowedHours, int allowedMinutes,
-		ImageSelector smallImageImageSelector, long moduleEvalId,
-		ServiceContext serviceContext) throws PortalException;
+	public Module updateModule(
+			long moduleId, Map<Locale, String> titleMap,
+			Map<Locale, String> descriptionMap, boolean startDate,
+			int startDateMonth, int startDateDay, int startDateYear,
+			int startDateHour, int startDateMinute, boolean endDate,
+			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+			int endDateMinute, int allowedHours, int allowedMinutes,
+			ImageSelector smallImageImageSelector, long moduleEvalId,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 	public Module updateModule(Module module) throws PortalException;
+
 }

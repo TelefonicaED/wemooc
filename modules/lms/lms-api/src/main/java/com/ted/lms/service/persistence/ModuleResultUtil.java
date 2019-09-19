@@ -14,23 +14,25 @@
 
 package com.ted.lms.service.persistence;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.model.ModuleResult;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
-
-import org.osgi.util.tracker.ServiceTracker;
+import java.io.Serializable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * The persistence utility for the module result service. This utility wraps {@link com.ted.lms.service.persistence.impl.ModuleResultPersistenceImpl} and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
+ * The persistence utility for the module result service. This utility wraps <code>com.ted.lms.service.persistence.impl.ModuleResultPersistenceImpl</code> and provides direct access to the database for CRUD operations. This utility should only be used by the service layer, as it must operate within a transaction. Never access this utility in a JSP, controller, model, or other front-end class.
  *
  * <p>
  * Caching information and settings can be found in <code>portal.properties</code>
@@ -38,11 +40,11 @@ import java.util.List;
  *
  * @author Brian Wing Shun Chan
  * @see ModuleResultPersistence
- * @see com.ted.lms.service.persistence.impl.ModuleResultPersistenceImpl
  * @generated
  */
 @ProviderType
 public class ModuleResultUtil {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -71,10 +73,20 @@ public class ModuleResultUtil {
 	}
 
 	/**
+	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#fetchByPrimaryKeys(Set)
+	 */
+	public static Map<Serializable, ModuleResult> fetchByPrimaryKeys(
+		Set<Serializable> primaryKeys) {
+
+		return getPersistence().fetchByPrimaryKeys(primaryKeys);
+	}
+
+	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#findWithDynamicQuery(DynamicQuery)
 	 */
 	public static List<ModuleResult> findWithDynamicQuery(
 		DynamicQuery dynamicQuery) {
+
 		return getPersistence().findWithDynamicQuery(dynamicQuery);
 	}
 
@@ -83,6 +95,7 @@ public class ModuleResultUtil {
 	 */
 	public static List<ModuleResult> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end) {
+
 		return getPersistence().findWithDynamicQuery(dynamicQuery, start, end);
 	}
 
@@ -92,9 +105,9 @@ public class ModuleResultUtil {
 	public static List<ModuleResult> findWithDynamicQuery(
 		DynamicQuery dynamicQuery, int start, int end,
 		OrderByComparator<ModuleResult> orderByComparator) {
-		return getPersistence()
-				   .findWithDynamicQuery(dynamicQuery, start, end,
-			orderByComparator);
+
+		return getPersistence().findWithDynamicQuery(
+			dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
@@ -107,265 +120,286 @@ public class ModuleResultUtil {
 	/**
 	 * @see com.liferay.portal.kernel.service.persistence.BasePersistence#update(com.liferay.portal.kernel.model.BaseModel, ServiceContext)
 	 */
-	public static ModuleResult update(ModuleResult moduleResult,
-		ServiceContext serviceContext) {
+	public static ModuleResult update(
+		ModuleResult moduleResult, ServiceContext serviceContext) {
+
 		return getPersistence().update(moduleResult, serviceContext);
 	}
 
 	/**
-	* Returns all the module results where moduleId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @return the matching module results
-	*/
+	 * Returns all the module results where moduleId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @return the matching module results
+	 */
 	public static List<ModuleResult> findByModuleId(long moduleId) {
 		return getPersistence().findByModuleId(moduleId);
 	}
 
 	/**
-	* Returns a range of all the module results where moduleId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param moduleId the module ID
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @return the range of matching module results
-	*/
-	public static List<ModuleResult> findByModuleId(long moduleId, int start,
-		int end) {
+	 * Returns a range of all the module results where moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @return the range of matching module results
+	 */
+	public static List<ModuleResult> findByModuleId(
+		long moduleId, int start, int end) {
+
 		return getPersistence().findByModuleId(moduleId, start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the module results where moduleId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param moduleId the module ID
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of matching module results
-	*/
-	public static List<ModuleResult> findByModuleId(long moduleId, int start,
-		int end, OrderByComparator<ModuleResult> orderByComparator) {
-		return getPersistence()
-				   .findByModuleId(moduleId, start, end, orderByComparator);
-	}
-
-	/**
-	* Returns an ordered range of all the module results where moduleId = &#63;.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param moduleId the module ID
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the ordered range of matching module results
-	*/
-	public static List<ModuleResult> findByModuleId(long moduleId, int start,
-		int end, OrderByComparator<ModuleResult> orderByComparator,
-		boolean retrieveFromCache) {
-		return getPersistence()
-				   .findByModuleId(moduleId, start, end, orderByComparator,
-			retrieveFromCache);
-	}
-
-	/**
-	* Returns the first module result in the ordered set where moduleId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching module result
-	* @throws NoSuchModuleResultException if a matching module result could not be found
-	*/
-	public static ModuleResult findByModuleId_First(long moduleId,
-		OrderByComparator<ModuleResult> orderByComparator)
-		throws com.ted.lms.exception.NoSuchModuleResultException {
-		return getPersistence().findByModuleId_First(moduleId, orderByComparator);
-	}
-
-	/**
-	* Returns the first module result in the ordered set where moduleId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the first matching module result, or <code>null</code> if a matching module result could not be found
-	*/
-	public static ModuleResult fetchByModuleId_First(long moduleId,
+	 * Returns an ordered range of all the module results where moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching module results
+	 */
+	public static List<ModuleResult> findByModuleId(
+		long moduleId, int start, int end,
 		OrderByComparator<ModuleResult> orderByComparator) {
-		return getPersistence()
-				   .fetchByModuleId_First(moduleId, orderByComparator);
+
+		return getPersistence().findByModuleId(
+			moduleId, start, end, orderByComparator);
 	}
 
 	/**
-	* Returns the last module result in the ordered set where moduleId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching module result
-	* @throws NoSuchModuleResultException if a matching module result could not be found
-	*/
-	public static ModuleResult findByModuleId_Last(long moduleId,
-		OrderByComparator<ModuleResult> orderByComparator)
+	 * Returns an ordered range of all the module results where moduleId = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param moduleId the module ID
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching module results
+	 */
+	public static List<ModuleResult> findByModuleId(
+		long moduleId, int start, int end,
+		OrderByComparator<ModuleResult> orderByComparator,
+		boolean useFinderCache) {
+
+		return getPersistence().findByModuleId(
+			moduleId, start, end, orderByComparator, useFinderCache);
+	}
+
+	/**
+	 * Returns the first module result in the ordered set where moduleId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module result
+	 * @throws NoSuchModuleResultException if a matching module result could not be found
+	 */
+	public static ModuleResult findByModuleId_First(
+			long moduleId, OrderByComparator<ModuleResult> orderByComparator)
 		throws com.ted.lms.exception.NoSuchModuleResultException {
-		return getPersistence().findByModuleId_Last(moduleId, orderByComparator);
+
+		return getPersistence().findByModuleId_First(
+			moduleId, orderByComparator);
 	}
 
 	/**
-	* Returns the last module result in the ordered set where moduleId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the last matching module result, or <code>null</code> if a matching module result could not be found
-	*/
-	public static ModuleResult fetchByModuleId_Last(long moduleId,
-		OrderByComparator<ModuleResult> orderByComparator) {
-		return getPersistence().fetchByModuleId_Last(moduleId, orderByComparator);
+	 * Returns the first module result in the ordered set where moduleId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching module result, or <code>null</code> if a matching module result could not be found
+	 */
+	public static ModuleResult fetchByModuleId_First(
+		long moduleId, OrderByComparator<ModuleResult> orderByComparator) {
+
+		return getPersistence().fetchByModuleId_First(
+			moduleId, orderByComparator);
 	}
 
 	/**
-	* Returns the module results before and after the current module result in the ordered set where moduleId = &#63;.
-	*
-	* @param mrId the primary key of the current module result
-	* @param moduleId the module ID
-	* @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
-	* @return the previous, current, and next module result
-	* @throws NoSuchModuleResultException if a module result with the primary key could not be found
-	*/
-	public static ModuleResult[] findByModuleId_PrevAndNext(long mrId,
-		long moduleId, OrderByComparator<ModuleResult> orderByComparator)
+	 * Returns the last module result in the ordered set where moduleId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module result
+	 * @throws NoSuchModuleResultException if a matching module result could not be found
+	 */
+	public static ModuleResult findByModuleId_Last(
+			long moduleId, OrderByComparator<ModuleResult> orderByComparator)
 		throws com.ted.lms.exception.NoSuchModuleResultException {
-		return getPersistence()
-				   .findByModuleId_PrevAndNext(mrId, moduleId, orderByComparator);
+
+		return getPersistence().findByModuleId_Last(
+			moduleId, orderByComparator);
 	}
 
 	/**
-	* Removes all the module results where moduleId = &#63; from the database.
-	*
-	* @param moduleId the module ID
-	*/
+	 * Returns the last module result in the ordered set where moduleId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching module result, or <code>null</code> if a matching module result could not be found
+	 */
+	public static ModuleResult fetchByModuleId_Last(
+		long moduleId, OrderByComparator<ModuleResult> orderByComparator) {
+
+		return getPersistence().fetchByModuleId_Last(
+			moduleId, orderByComparator);
+	}
+
+	/**
+	 * Returns the module results before and after the current module result in the ordered set where moduleId = &#63;.
+	 *
+	 * @param mrId the primary key of the current module result
+	 * @param moduleId the module ID
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next module result
+	 * @throws NoSuchModuleResultException if a module result with the primary key could not be found
+	 */
+	public static ModuleResult[] findByModuleId_PrevAndNext(
+			long mrId, long moduleId,
+			OrderByComparator<ModuleResult> orderByComparator)
+		throws com.ted.lms.exception.NoSuchModuleResultException {
+
+		return getPersistence().findByModuleId_PrevAndNext(
+			mrId, moduleId, orderByComparator);
+	}
+
+	/**
+	 * Removes all the module results where moduleId = &#63; from the database.
+	 *
+	 * @param moduleId the module ID
+	 */
 	public static void removeByModuleId(long moduleId) {
 		getPersistence().removeByModuleId(moduleId);
 	}
 
 	/**
-	* Returns the number of module results where moduleId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @return the number of matching module results
-	*/
+	 * Returns the number of module results where moduleId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @return the number of matching module results
+	 */
 	public static int countByModuleId(long moduleId) {
 		return getPersistence().countByModuleId(moduleId);
 	}
 
 	/**
-	* Returns the module result where moduleId = &#63; and userId = &#63; or throws a {@link NoSuchModuleResultException} if it could not be found.
-	*
-	* @param moduleId the module ID
-	* @param userId the user ID
-	* @return the matching module result
-	* @throws NoSuchModuleResultException if a matching module result could not be found
-	*/
+	 * Returns the module result where moduleId = &#63; and userId = &#63; or throws a <code>NoSuchModuleResultException</code> if it could not be found.
+	 *
+	 * @param moduleId the module ID
+	 * @param userId the user ID
+	 * @return the matching module result
+	 * @throws NoSuchModuleResultException if a matching module result could not be found
+	 */
 	public static ModuleResult findByModuleIdUserId(long moduleId, long userId)
 		throws com.ted.lms.exception.NoSuchModuleResultException {
+
 		return getPersistence().findByModuleIdUserId(moduleId, userId);
 	}
 
 	/**
-	* Returns the module result where moduleId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
-	*
-	* @param moduleId the module ID
-	* @param userId the user ID
-	* @return the matching module result, or <code>null</code> if a matching module result could not be found
-	*/
-	public static ModuleResult fetchByModuleIdUserId(long moduleId, long userId) {
+	 * Returns the module result where moduleId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found. Uses the finder cache.
+	 *
+	 * @param moduleId the module ID
+	 * @param userId the user ID
+	 * @return the matching module result, or <code>null</code> if a matching module result could not be found
+	 */
+	public static ModuleResult fetchByModuleIdUserId(
+		long moduleId, long userId) {
+
 		return getPersistence().fetchByModuleIdUserId(moduleId, userId);
 	}
 
 	/**
-	* Returns the module result where moduleId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
-	*
-	* @param moduleId the module ID
-	* @param userId the user ID
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the matching module result, or <code>null</code> if a matching module result could not be found
-	*/
-	public static ModuleResult fetchByModuleIdUserId(long moduleId,
-		long userId, boolean retrieveFromCache) {
-		return getPersistence()
-				   .fetchByModuleIdUserId(moduleId, userId, retrieveFromCache);
+	 * Returns the module result where moduleId = &#63; and userId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
+	 *
+	 * @param moduleId the module ID
+	 * @param userId the user ID
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the matching module result, or <code>null</code> if a matching module result could not be found
+	 */
+	public static ModuleResult fetchByModuleIdUserId(
+		long moduleId, long userId, boolean useFinderCache) {
+
+		return getPersistence().fetchByModuleIdUserId(
+			moduleId, userId, useFinderCache);
 	}
 
 	/**
-	* Removes the module result where moduleId = &#63; and userId = &#63; from the database.
-	*
-	* @param moduleId the module ID
-	* @param userId the user ID
-	* @return the module result that was removed
-	*/
-	public static ModuleResult removeByModuleIdUserId(long moduleId, long userId)
+	 * Removes the module result where moduleId = &#63; and userId = &#63; from the database.
+	 *
+	 * @param moduleId the module ID
+	 * @param userId the user ID
+	 * @return the module result that was removed
+	 */
+	public static ModuleResult removeByModuleIdUserId(
+			long moduleId, long userId)
 		throws com.ted.lms.exception.NoSuchModuleResultException {
+
 		return getPersistence().removeByModuleIdUserId(moduleId, userId);
 	}
 
 	/**
-	* Returns the number of module results where moduleId = &#63; and userId = &#63;.
-	*
-	* @param moduleId the module ID
-	* @param userId the user ID
-	* @return the number of matching module results
-	*/
+	 * Returns the number of module results where moduleId = &#63; and userId = &#63;.
+	 *
+	 * @param moduleId the module ID
+	 * @param userId the user ID
+	 * @return the number of matching module results
+	 */
 	public static int countByModuleIdUserId(long moduleId, long userId) {
 		return getPersistence().countByModuleIdUserId(moduleId, userId);
 	}
 
 	/**
-	* Caches the module result in the entity cache if it is enabled.
-	*
-	* @param moduleResult the module result
-	*/
+	 * Caches the module result in the entity cache if it is enabled.
+	 *
+	 * @param moduleResult the module result
+	 */
 	public static void cacheResult(ModuleResult moduleResult) {
 		getPersistence().cacheResult(moduleResult);
 	}
 
 	/**
-	* Caches the module results in the entity cache if it is enabled.
-	*
-	* @param moduleResults the module results
-	*/
+	 * Caches the module results in the entity cache if it is enabled.
+	 *
+	 * @param moduleResults the module results
+	 */
 	public static void cacheResult(List<ModuleResult> moduleResults) {
 		getPersistence().cacheResult(moduleResults);
 	}
 
 	/**
-	* Creates a new module result with the primary key. Does not add the module result to the database.
-	*
-	* @param mrId the primary key for the new module result
-	* @return the new module result
-	*/
+	 * Creates a new module result with the primary key. Does not add the module result to the database.
+	 *
+	 * @param mrId the primary key for the new module result
+	 * @return the new module result
+	 */
 	public static ModuleResult create(long mrId) {
 		return getPersistence().create(mrId);
 	}
 
 	/**
-	* Removes the module result with the primary key from the database. Also notifies the appropriate model listeners.
-	*
-	* @param mrId the primary key of the module result
-	* @return the module result that was removed
-	* @throws NoSuchModuleResultException if a module result with the primary key could not be found
-	*/
+	 * Removes the module result with the primary key from the database. Also notifies the appropriate model listeners.
+	 *
+	 * @param mrId the primary key of the module result
+	 * @return the module result that was removed
+	 * @throws NoSuchModuleResultException if a module result with the primary key could not be found
+	 */
 	public static ModuleResult remove(long mrId)
 		throws com.ted.lms.exception.NoSuchModuleResultException {
+
 		return getPersistence().remove(mrId);
 	}
 
@@ -374,105 +408,103 @@ public class ModuleResultUtil {
 	}
 
 	/**
-	* Returns the module result with the primary key or throws a {@link NoSuchModuleResultException} if it could not be found.
-	*
-	* @param mrId the primary key of the module result
-	* @return the module result
-	* @throws NoSuchModuleResultException if a module result with the primary key could not be found
-	*/
+	 * Returns the module result with the primary key or throws a <code>NoSuchModuleResultException</code> if it could not be found.
+	 *
+	 * @param mrId the primary key of the module result
+	 * @return the module result
+	 * @throws NoSuchModuleResultException if a module result with the primary key could not be found
+	 */
 	public static ModuleResult findByPrimaryKey(long mrId)
 		throws com.ted.lms.exception.NoSuchModuleResultException {
+
 		return getPersistence().findByPrimaryKey(mrId);
 	}
 
 	/**
-	* Returns the module result with the primary key or returns <code>null</code> if it could not be found.
-	*
-	* @param mrId the primary key of the module result
-	* @return the module result, or <code>null</code> if a module result with the primary key could not be found
-	*/
+	 * Returns the module result with the primary key or returns <code>null</code> if it could not be found.
+	 *
+	 * @param mrId the primary key of the module result
+	 * @return the module result, or <code>null</code> if a module result with the primary key could not be found
+	 */
 	public static ModuleResult fetchByPrimaryKey(long mrId) {
 		return getPersistence().fetchByPrimaryKey(mrId);
 	}
 
-	public static java.util.Map<java.io.Serializable, ModuleResult> fetchByPrimaryKeys(
-		java.util.Set<java.io.Serializable> primaryKeys) {
-		return getPersistence().fetchByPrimaryKeys(primaryKeys);
-	}
-
 	/**
-	* Returns all the module results.
-	*
-	* @return the module results
-	*/
+	 * Returns all the module results.
+	 *
+	 * @return the module results
+	 */
 	public static List<ModuleResult> findAll() {
 		return getPersistence().findAll();
 	}
 
 	/**
-	* Returns a range of all the module results.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @return the range of module results
-	*/
+	 * Returns a range of all the module results.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @return the range of module results
+	 */
 	public static List<ModuleResult> findAll(int start, int end) {
 		return getPersistence().findAll(start, end);
 	}
 
 	/**
-	* Returns an ordered range of all the module results.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @return the ordered range of module results
-	*/
-	public static List<ModuleResult> findAll(int start, int end,
-		OrderByComparator<ModuleResult> orderByComparator) {
+	 * Returns an ordered range of all the module results.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of module results
+	 */
+	public static List<ModuleResult> findAll(
+		int start, int end, OrderByComparator<ModuleResult> orderByComparator) {
+
 		return getPersistence().findAll(start, end, orderByComparator);
 	}
 
 	/**
-	* Returns an ordered range of all the module results.
-	*
-	* <p>
-	* Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link ModuleResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
-	* </p>
-	*
-	* @param start the lower bound of the range of module results
-	* @param end the upper bound of the range of module results (not inclusive)
-	* @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	* @param retrieveFromCache whether to retrieve from the finder cache
-	* @return the ordered range of module results
-	*/
-	public static List<ModuleResult> findAll(int start, int end,
-		OrderByComparator<ModuleResult> orderByComparator,
-		boolean retrieveFromCache) {
-		return getPersistence()
-				   .findAll(start, end, orderByComparator, retrieveFromCache);
+	 * Returns an ordered range of all the module results.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>ModuleResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param start the lower bound of the range of module results
+	 * @param end the upper bound of the range of module results (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of module results
+	 */
+	public static List<ModuleResult> findAll(
+		int start, int end, OrderByComparator<ModuleResult> orderByComparator,
+		boolean useFinderCache) {
+
+		return getPersistence().findAll(
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
-	* Removes all the module results from the database.
-	*/
+	 * Removes all the module results from the database.
+	 */
 	public static void removeAll() {
 		getPersistence().removeAll();
 	}
 
 	/**
-	* Returns the number of module results.
-	*
-	* @return the number of module results
-	*/
+	 * Returns the number of module results.
+	 *
+	 * @return the number of module results
+	 */
 	public static int countAll() {
 		return getPersistence().countAll();
 	}
@@ -481,17 +513,22 @@ public class ModuleResultUtil {
 		return _serviceTracker.getService();
 	}
 
-	private static ServiceTracker<ModuleResultPersistence, ModuleResultPersistence> _serviceTracker;
+	private static ServiceTracker
+		<ModuleResultPersistence, ModuleResultPersistence> _serviceTracker;
 
 	static {
 		Bundle bundle = FrameworkUtil.getBundle(ModuleResultPersistence.class);
 
-		ServiceTracker<ModuleResultPersistence, ModuleResultPersistence> serviceTracker =
-			new ServiceTracker<ModuleResultPersistence, ModuleResultPersistence>(bundle.getBundleContext(),
-				ModuleResultPersistence.class, null);
+		ServiceTracker<ModuleResultPersistence, ModuleResultPersistence>
+			serviceTracker =
+				new ServiceTracker
+					<ModuleResultPersistence, ModuleResultPersistence>(
+						bundle.getBundleContext(),
+						ModuleResultPersistence.class, null);
 
 		serviceTracker.open();
 
 		_serviceTracker = serviceTracker;
 	}
+
 }

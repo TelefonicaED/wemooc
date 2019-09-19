@@ -14,11 +14,9 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.model.LearningActivityResult;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing LearningActivityResult in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see LearningActivityResult
  * @generated
  */
 @ProviderType
-public class LearningActivityResultCacheModel implements CacheModel<LearningActivityResult>,
-	Externalizable {
+public class LearningActivityResultCacheModel
+	implements CacheModel<LearningActivityResult>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -49,7 +49,8 @@ public class LearningActivityResultCacheModel implements CacheModel<LearningActi
 			return false;
 		}
 
-		LearningActivityResultCacheModel learningActivityResultCacheModel = (LearningActivityResultCacheModel)obj;
+		LearningActivityResultCacheModel learningActivityResultCacheModel =
+			(LearningActivityResultCacheModel)obj;
 
 		if (larId == learningActivityResultCacheModel.larId) {
 			return true;
@@ -106,7 +107,8 @@ public class LearningActivityResultCacheModel implements CacheModel<LearningActi
 
 	@Override
 	public LearningActivityResult toEntityModel() {
-		LearningActivityResultImpl learningActivityResultImpl = new LearningActivityResultImpl();
+		LearningActivityResultImpl learningActivityResultImpl =
+			new LearningActivityResultImpl();
 
 		if (uuid == null) {
 			learningActivityResultImpl.setUuid("");
@@ -209,8 +211,7 @@ public class LearningActivityResultCacheModel implements CacheModel<LearningActi
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -277,4 +278,5 @@ public class LearningActivityResultCacheModel implements CacheModel<LearningActi
 	public long startDate;
 	public long endDate;
 	public String extraData;
+
 }

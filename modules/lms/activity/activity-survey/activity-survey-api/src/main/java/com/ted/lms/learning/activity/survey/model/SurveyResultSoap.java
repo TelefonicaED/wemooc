@@ -14,12 +14,12 @@
 
 package com.ted.lms.learning.activity.survey.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -29,6 +29,7 @@ import java.util.List;
  */
 @ProviderType
 public class SurveyResultSoap implements Serializable {
+
 	public static SurveyResultSoap toSoapModel(SurveyResult model) {
 		SurveyResultSoap soapModel = new SurveyResultSoap();
 
@@ -72,7 +73,8 @@ public class SurveyResultSoap implements Serializable {
 	}
 
 	public static SurveyResultSoap[] toSoapModels(List<SurveyResult> models) {
-		List<SurveyResultSoap> soapModels = new ArrayList<SurveyResultSoap>(models.size());
+		List<SurveyResultSoap> soapModels = new ArrayList<SurveyResultSoap>(
+			models.size());
 
 		for (SurveyResult model : models) {
 			soapModels.add(toSoapModel(model));
@@ -164,4 +166,5 @@ public class SurveyResultSoap implements Serializable {
 	private long _answerId;
 	private long _userId;
 	private String _freeAnswer;
+
 }

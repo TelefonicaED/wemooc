@@ -14,9 +14,7 @@
 
 package com.ted.prerequisite.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
@@ -34,13 +32,10 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
-import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
-import com.liferay.portal.kernel.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalService;
@@ -52,6 +47,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * Provides the base implementation for the prerequisite relation local service.
  *
@@ -61,17 +59,18 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.ted.prerequisite.service.impl.PrerequisiteRelationLocalServiceImpl
- * @see com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil
  * @generated
  */
 @ProviderType
 public abstract class PrerequisiteRelationLocalServiceBaseImpl
-	extends BaseLocalServiceImpl implements PrerequisiteRelationLocalService,
-		IdentifiableOSGiService {
+	extends BaseLocalServiceImpl
+	implements PrerequisiteRelationLocalService, AopService,
+			   IdentifiableOSGiService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil} to access the prerequisite relation local service.
+	 * Never modify or reference this class directly. Use <code>PrerequisiteRelationLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -84,6 +83,7 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	@Override
 	public PrerequisiteRelation addPrerequisiteRelation(
 		PrerequisiteRelation prerequisiteRelation) {
+
 		prerequisiteRelation.setNew(true);
 
 		return prerequisiteRelationPersistence.update(prerequisiteRelation);
@@ -99,6 +99,7 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	@Transactional(enabled = false)
 	public PrerequisiteRelation createPrerequisiteRelation(
 		long prerequisiteRelationId) {
+
 		return prerequisiteRelationPersistence.create(prerequisiteRelationId);
 	}
 
@@ -112,7 +113,9 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public PrerequisiteRelation deletePrerequisiteRelation(
-		long prerequisiteRelationId) throws PortalException {
+			long prerequisiteRelationId)
+		throws PortalException {
+
 		return prerequisiteRelationPersistence.remove(prerequisiteRelationId);
 	}
 
@@ -126,6 +129,7 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	@Override
 	public PrerequisiteRelation deletePrerequisiteRelation(
 		PrerequisiteRelation prerequisiteRelation) {
+
 		return prerequisiteRelationPersistence.remove(prerequisiteRelation);
 	}
 
@@ -133,8 +137,8 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	public DynamicQuery dynamicQuery() {
 		Class<?> clazz = getClass();
 
-		return DynamicQueryFactoryUtil.forClass(PrerequisiteRelation.class,
-			clazz.getClassLoader());
+		return DynamicQueryFactoryUtil.forClass(
+			PrerequisiteRelation.class, clazz.getClassLoader());
 	}
 
 	/**
@@ -145,14 +149,15 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 */
 	@Override
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
-		return prerequisiteRelationPersistence.findWithDynamicQuery(dynamicQuery);
+		return prerequisiteRelationPersistence.findWithDynamicQuery(
+			dynamicQuery);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -161,17 +166,18 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 * @return the range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
-		return prerequisiteRelationPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
+
+		return prerequisiteRelationPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -181,10 +187,12 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 * @return the ordered range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
-		return prerequisiteRelationPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end, orderByComparator);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
+
+		return prerequisiteRelationPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
@@ -195,7 +203,8 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
-		return prerequisiteRelationPersistence.countWithDynamicQuery(dynamicQuery);
+		return prerequisiteRelationPersistence.countWithDynamicQuery(
+			dynamicQuery);
 	}
 
 	/**
@@ -206,16 +215,19 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
-		return prerequisiteRelationPersistence.countWithDynamicQuery(dynamicQuery,
-			projection);
+	public long dynamicQueryCount(
+		DynamicQuery dynamicQuery, Projection projection) {
+
+		return prerequisiteRelationPersistence.countWithDynamicQuery(
+			dynamicQuery, projection);
 	}
 
 	@Override
 	public PrerequisiteRelation fetchPrerequisiteRelation(
 		long prerequisiteRelationId) {
-		return prerequisiteRelationPersistence.fetchByPrimaryKey(prerequisiteRelationId);
+
+		return prerequisiteRelationPersistence.fetchByPrimaryKey(
+			prerequisiteRelationId);
 	}
 
 	/**
@@ -227,15 +239,20 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 */
 	@Override
 	public PrerequisiteRelation getPrerequisiteRelation(
-		long prerequisiteRelationId) throws PortalException {
-		return prerequisiteRelationPersistence.findByPrimaryKey(prerequisiteRelationId);
+			long prerequisiteRelationId)
+		throws PortalException {
+
+		return prerequisiteRelationPersistence.findByPrimaryKey(
+			prerequisiteRelationId);
 	}
 
 	@Override
 	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+		ActionableDynamicQuery actionableDynamicQuery =
+			new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(prerequisiteRelationLocalService);
+		actionableDynamicQuery.setBaseLocalService(
+			prerequisiteRelationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PrerequisiteRelation.class);
 
@@ -246,12 +263,17 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	}
 
 	@Override
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+	public IndexableActionableDynamicQuery
+		getIndexableActionableDynamicQuery() {
 
-		indexableActionableDynamicQuery.setBaseLocalService(prerequisiteRelationLocalService);
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery =
+			new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(
+			prerequisiteRelationLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
-		indexableActionableDynamicQuery.setModelClass(PrerequisiteRelation.class);
+		indexableActionableDynamicQuery.setModelClass(
+			PrerequisiteRelation.class);
 
 		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
 			"prerequisiteRelationId");
@@ -261,7 +283,9 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(prerequisiteRelationLocalService);
+
+		actionableDynamicQuery.setBaseLocalService(
+			prerequisiteRelationLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(PrerequisiteRelation.class);
 
@@ -275,12 +299,15 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException {
-		return prerequisiteRelationLocalService.deletePrerequisiteRelation((PrerequisiteRelation)persistedModel);
+
+		return prerequisiteRelationLocalService.deletePrerequisiteRelation(
+			(PrerequisiteRelation)persistedModel);
 	}
 
 	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException {
+
 		return prerequisiteRelationPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -288,7 +315,7 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 * Returns a range of all the prerequisite relations.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.prerequisite.model.impl.PrerequisiteRelationModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of prerequisite relations
@@ -296,8 +323,9 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 * @return the range of prerequisite relations
 	 */
 	@Override
-	public List<PrerequisiteRelation> getPrerequisiteRelations(int start,
-		int end) {
+	public List<PrerequisiteRelation> getPrerequisiteRelations(
+		int start, int end) {
+
 		return prerequisiteRelationPersistence.findAll(start, end);
 	}
 
@@ -321,168 +349,22 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	@Override
 	public PrerequisiteRelation updatePrerequisiteRelation(
 		PrerequisiteRelation prerequisiteRelation) {
+
 		return prerequisiteRelationPersistence.update(prerequisiteRelation);
 	}
 
-	/**
-	 * Returns the prerequisite relation local service.
-	 *
-	 * @return the prerequisite relation local service
-	 */
-	public PrerequisiteRelationLocalService getPrerequisiteRelationLocalService() {
-		return prerequisiteRelationLocalService;
+	@Override
+	public Class<?>[] getAopInterfaces() {
+		return new Class<?>[] {
+			PrerequisiteRelationLocalService.class,
+			IdentifiableOSGiService.class, PersistedModelLocalService.class
+		};
 	}
 
-	/**
-	 * Sets the prerequisite relation local service.
-	 *
-	 * @param prerequisiteRelationLocalService the prerequisite relation local service
-	 */
-	public void setPrerequisiteRelationLocalService(
-		PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
-		this.prerequisiteRelationLocalService = prerequisiteRelationLocalService;
-	}
-
-	/**
-	 * Returns the prerequisite relation persistence.
-	 *
-	 * @return the prerequisite relation persistence
-	 */
-	public PrerequisiteRelationPersistence getPrerequisiteRelationPersistence() {
-		return prerequisiteRelationPersistence;
-	}
-
-	/**
-	 * Sets the prerequisite relation persistence.
-	 *
-	 * @param prerequisiteRelationPersistence the prerequisite relation persistence
-	 */
-	public void setPrerequisiteRelationPersistence(
-		PrerequisiteRelationPersistence prerequisiteRelationPersistence) {
-		this.prerequisiteRelationPersistence = prerequisiteRelationPersistence;
-	}
-
-	/**
-	 * Returns the counter local service.
-	 *
-	 * @return the counter local service
-	 */
-	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
-		return counterLocalService;
-	}
-
-	/**
-	 * Sets the counter local service.
-	 *
-	 * @param counterLocalService the counter local service
-	 */
-	public void setCounterLocalService(
-		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
-		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
-	}
-
-	/**
-	 * Returns the resource local service.
-	 *
-	 * @return the resource local service
-	 */
-	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
-		return resourceLocalService;
-	}
-
-	/**
-	 * Sets the resource local service.
-	 *
-	 * @param resourceLocalService the resource local service
-	 */
-	public void setResourceLocalService(
-		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
-		this.resourceLocalService = resourceLocalService;
-	}
-
-	/**
-	 * Returns the user local service.
-	 *
-	 * @return the user local service
-	 */
-	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
-		return userLocalService;
-	}
-
-	/**
-	 * Sets the user local service.
-	 *
-	 * @param userLocalService the user local service
-	 */
-	public void setUserLocalService(
-		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
-
-	/**
-	 * Returns the user persistence.
-	 *
-	 * @return the user persistence
-	 */
-	public UserPersistence getUserPersistence() {
-		return userPersistence;
-	}
-
-	/**
-	 * Sets the user persistence.
-	 *
-	 * @param userPersistence the user persistence
-	 */
-	public void setUserPersistence(UserPersistence userPersistence) {
-		this.userPersistence = userPersistence;
-	}
-
-	public void afterPropertiesSet() {
-		persistedModelLocalServiceRegistry.register("com.ted.prerequisite.model.PrerequisiteRelation",
-			prerequisiteRelationLocalService);
-	}
-
-	public void destroy() {
-		persistedModelLocalServiceRegistry.unregister(
-			"com.ted.prerequisite.model.PrerequisiteRelation");
+	@Override
+	public void setAopProxy(Object aopProxy) {
+		prerequisiteRelationLocalService =
+			(PrerequisiteRelationLocalService)aopProxy;
 	}
 
 	/**
@@ -510,15 +392,16 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 	 */
 	protected void runSQL(String sql) {
 		try {
-			DataSource dataSource = prerequisiteRelationPersistence.getDataSource();
+			DataSource dataSource =
+				prerequisiteRelationPersistence.getDataSource();
 
 			DB db = DBManagerUtil.getDB();
 
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
 
-			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
-					sql);
+			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(
+				dataSource, sql);
 
 			sqlUpdate.update();
 		}
@@ -527,22 +410,25 @@ public abstract class PrerequisiteRelationLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = PrerequisiteRelationLocalService.class)
 	protected PrerequisiteRelationLocalService prerequisiteRelationLocalService;
-	@BeanReference(type = PrerequisiteRelationPersistence.class)
+
+	@Reference
 	protected PrerequisiteRelationPersistence prerequisiteRelationPersistence;
-	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
-	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
-	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
-	@ServiceReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
-	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
-	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
-	@ServiceReference(type = UserPersistence.class)
-	protected UserPersistence userPersistence;
-	@ServiceReference(type = PersistedModelLocalServiceRegistry.class)
-	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
+
+	@Reference
+	protected com.liferay.counter.kernel.service.CounterLocalService
+		counterLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ClassNameLocalService
+		classNameLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourceLocalService
+		resourceLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.UserLocalService
+		userLocalService;
+
 }

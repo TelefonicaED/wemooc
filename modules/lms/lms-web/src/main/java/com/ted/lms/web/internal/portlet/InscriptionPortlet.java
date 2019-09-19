@@ -270,12 +270,8 @@ public class InscriptionPortlet extends MVCPortlet {
 	}
 	
 	private MembershipRequestLocalService membershipRequestLocalService;
-
-	@Reference(unbind = "-")
-	protected void setPrerequisiteRelationLocalService(PrerequisiteRelationLocalService prerequisiteRelationLocalService) {
-		this.prerequisiteRelationLocalService = prerequisiteRelationLocalService;
-	}
 	
+	@Reference
 	private PrerequisiteRelationLocalService prerequisiteRelationLocalService;
 	
 	@Reference(unbind = "-")

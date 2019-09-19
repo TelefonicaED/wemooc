@@ -14,9 +14,9 @@
 
 package com.ted.lms.service;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.portal.kernel.service.ServiceWrapper;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Provides a wrapper for {@link LearningActivityService}.
@@ -26,125 +26,186 @@ import com.liferay.portal.kernel.service.ServiceWrapper;
  * @generated
  */
 @ProviderType
-public class LearningActivityServiceWrapper implements LearningActivityService,
-	ServiceWrapper<LearningActivityService> {
+public class LearningActivityServiceWrapper
+	implements LearningActivityService,
+			   ServiceWrapper<LearningActivityService> {
+
 	public LearningActivityServiceWrapper(
 		LearningActivityService learningActivityService) {
+
 		_learningActivityService = learningActivityService;
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity addLearningActivity(
-		long groupId, long moduleId, long type,
-		java.util.Map<java.util.Locale, String> titleMap,
-		java.util.Map<java.util.Locale, String> descriptionMap,
-		boolean useStartExecutionDateCourse, int startDateMonth,
-		int startDateDay, int startDateYear, int startDateHour,
-		int startDateMinute, boolean useEndExecutionDateCourse,
-		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-		int endDateMinute, boolean required, int tries, double passPuntuation,
-		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
-		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated, String[] selectedFileNames,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
+			long groupId, long moduleId, long type,
+			java.util.Map<java.util.Locale, String> titleMap,
+			java.util.Map<java.util.Locale, String> descriptionMap,
+			boolean useStartExecutionDateCourse, int startDateMonth,
+			int startDateDay, int startDateYear, int startDateHour,
+			int startDateMinute, boolean useEndExecutionDateCourse,
+			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+			int endDateMinute, boolean required, int tries,
+			double passPuntuation,
+			java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+			java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+			boolean commentsActivated, String[] selectedFileNames,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityService.addLearningActivity(groupId, moduleId,
-			type, titleMap, descriptionMap, useStartExecutionDateCourse,
-			startDateMonth, startDateDay, startDateYear, startDateHour,
-			startDateMinute, useEndExecutionDateCourse, endDateMonth,
-			endDateDay, endDateYear, endDateHour, endDateMinute, required,
-			tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
-			commentsActivated, selectedFileNames, serviceContext);
+
+		return _learningActivityService.addLearningActivity(
+			groupId, moduleId, type, titleMap, descriptionMap,
+			useStartExecutionDateCourse, startDateMonth, startDateDay,
+			startDateYear, startDateHour, startDateMinute,
+			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
+			endDateHour, endDateMinute, required, tries, passPuntuation,
+			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
+			selectedFileNames, serviceContext);
+	}
+
+	@Override
+	public void changeVisibility(long actId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_learningActivityService.changeVisibility(actId);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity deleteLearningActivity(long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _learningActivityService.deleteLearningActivity(actId);
 	}
 
 	@Override
 	public java.util.List<com.ted.lms.model.LearningActivity> getActivities(
 		long moduleId) {
+
 		return _learningActivityService.getActivities(moduleId);
 	}
 
 	@Override
-	public java.util.List<com.ted.lms.model.LearningActivity> getActivitiesExcluded(
-		long moduleId, long actId) {
+	public java.util.List<com.ted.lms.model.LearningActivity>
+		getActivitiesExcluded(long moduleId, long actId) {
+
 		return _learningActivityService.getActivitiesExcluded(moduleId, actId);
 	}
 
 	@Override
-	public java.util.List<com.ted.lms.model.LearningActivity> getActivitiesNotTypeId(
-		long moduleId, long typeId) {
-		return _learningActivityService.getActivitiesNotTypeId(moduleId, typeId);
+	public java.util.List<com.ted.lms.model.LearningActivity>
+		getActivitiesNotTypeId(long moduleId, long typeId) {
+
+		return _learningActivityService.getActivitiesNotTypeId(
+			moduleId, typeId);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity getFirstLearningActivity(
+			long groupId, long moduleId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _learningActivityService.getFirstLearningActivity(
+			groupId, moduleId);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity getLearningActivity(long actId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		return _learningActivityService.getLearningActivity(actId);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivity getNextLearningActivity(
+			com.ted.lms.model.LearningActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _learningActivityService.getNextLearningActivity(activity);
 	}
 
 	/**
-	* Returns the OSGi service identifier.
-	*
-	* @return the OSGi service identifier
-	*/
+	 * Returns the OSGi service identifier.
+	 *
+	 * @return the OSGi service identifier
+	 */
 	@Override
 	public String getOSGiServiceIdentifier() {
 		return _learningActivityService.getOSGiServiceIdentifier();
 	}
 
 	@Override
+	public com.ted.lms.model.LearningActivity getPreviousLearningActivity(
+			com.ted.lms.model.LearningActivity activity)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _learningActivityService.getPreviousLearningActivity(activity);
+	}
+
+	@Override
 	public String[] getTempFileNames(long groupId)
 		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _learningActivityService.getTempFileNames(groupId);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity moveDownLearningActivity(
-		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+			long actId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _learningActivityService.moveDownLearningActivity(actId);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity moveLearningActivityToTrash(
-		long actId) throws com.liferay.portal.kernel.exception.PortalException {
+			long actId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _learningActivityService.moveLearningActivityToTrash(actId);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity moveUpLearningActivity(long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _learningActivityService.moveUpLearningActivity(actId);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
-		com.ted.lms.model.LearningActivity activity)
+			com.ted.lms.model.LearningActivity activity)
 		throws com.liferay.portal.kernel.exception.PortalException {
+
 		return _learningActivityService.updateLearningActivity(activity);
 	}
 
 	@Override
 	public com.ted.lms.model.LearningActivity updateLearningActivity(
-		long actId, java.util.Map<java.util.Locale, String> titleMap,
-		java.util.Map<java.util.Locale, String> descriptionMap,
-		boolean useStartExecutionDateCourse, int startDateMonth,
-		int startDateDay, int startDateYear, int startDateHour,
-		int startDateMinute, boolean useEndExecutionDateCourse,
-		int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-		int endDateMinute, boolean required, int tries, double passPuntuation,
-		java.util.Map<java.util.Locale, String> feedbackCorrectMap,
-		java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
-		boolean commentsActivated, String[] selectedFileNames,
-		long[] removeFileEntryIds,
-		com.liferay.portal.kernel.service.ServiceContext serviceContext)
-		throws com.liferay.portal.kernel.security.auth.PrincipalException,
-			com.liferay.portal.kernel.exception.PortalException {
-		return _learningActivityService.updateLearningActivity(actId, titleMap,
-			descriptionMap, useStartExecutionDateCourse, startDateMonth,
-			startDateDay, startDateYear, startDateHour, startDateMinute,
-			useEndExecutionDateCourse, endDateMonth, endDateDay, endDateYear,
-			endDateHour, endDateMinute, required, tries, passPuntuation,
-			feedbackCorrectMap, feedbackNoCorrectMap, commentsActivated,
-			selectedFileNames, removeFileEntryIds, serviceContext);
+			long actId, java.util.Map<java.util.Locale, String> titleMap,
+			java.util.Map<java.util.Locale, String> descriptionMap,
+			boolean useStartExecutionDateCourse, int startDateMonth,
+			int startDateDay, int startDateYear, int startDateHour,
+			int startDateMinute, boolean useEndExecutionDateCourse,
+			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
+			int endDateMinute, boolean required, int tries,
+			double passPuntuation,
+			java.util.Map<java.util.Locale, String> feedbackCorrectMap,
+			java.util.Map<java.util.Locale, String> feedbackNoCorrectMap,
+			boolean commentsActivated, String[] selectedFileNames,
+			long[] removeFileEntryIds,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		return _learningActivityService.updateLearningActivity(
+			actId, titleMap, descriptionMap, useStartExecutionDateCourse,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute, useEndExecutionDateCourse, endDateMonth,
+			endDateDay, endDateYear, endDateHour, endDateMinute, required,
+			tries, passPuntuation, feedbackCorrectMap, feedbackNoCorrectMap,
+			commentsActivated, selectedFileNames, removeFileEntryIds,
+			serviceContext);
 	}
 
 	@Override
@@ -155,8 +216,10 @@ public class LearningActivityServiceWrapper implements LearningActivityService,
 	@Override
 	public void setWrappedService(
 		LearningActivityService learningActivityService) {
+
 		_learningActivityService = learningActivityService;
 	}
 
 	private LearningActivityService _learningActivityService;
+
 }

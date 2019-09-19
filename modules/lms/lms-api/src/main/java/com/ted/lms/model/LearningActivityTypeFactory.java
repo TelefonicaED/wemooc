@@ -8,7 +8,8 @@ import com.liferay.portal.kernel.xml.Element;
 import java.util.Locale;
 
 import javax.portlet.ActionRequest;
-import aQute.bnd.annotation.ProviderType;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * Interfaz para la factoría de actividades del LMS

@@ -2,11 +2,10 @@ package com.ted.lms.web.internal.configuration;
 
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
-import aQute.bnd.annotation.ProviderType;
 import aQute.bnd.annotation.metatype.Meta;
 
 @ExtendedObjectClassDefinition(
-	category = "course",
+	category = "lms",
 	scope = ExtendedObjectClassDefinition.Scope.PORTLET_INSTANCE
 )
 @Meta.OCD(
@@ -14,7 +13,6 @@ import aQute.bnd.annotation.metatype.Meta;
 	localization = "content/Language",
 	name = "course-admin-instance-configuration-name"
 )
-@ProviderType
 public interface CourseAdminPortletInstanceConfiguration {
 	@Meta.AD(
 		name = "search-tags", required = false

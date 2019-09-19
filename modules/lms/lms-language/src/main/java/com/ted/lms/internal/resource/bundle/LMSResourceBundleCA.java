@@ -1,5 +1,6 @@
 package com.ted.lms.internal.resource.bundle;
 
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.language.UTF8Control;
 
 import java.util.Enumeration;

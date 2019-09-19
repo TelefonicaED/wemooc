@@ -7,16 +7,12 @@ create unique index IX_93C2C164 on LMS_Course (uuid_[$COLUMN_LENGTH:75$], groupI
 
 create index IX_664FE819 on LMS_CourseResult (courseId, passed);
 create unique index IX_DE7486F on LMS_CourseResult (courseId, userId);
-create index IX_A1660519 on LMS_CourseResult (passed, courseId);
 create index IX_52038025 on LMS_CourseResult (userId);
 
 create index IX_F2B28E60 on LMS_CourseType (companyId);
 
-create index IX_98CCA386 on LMS_CourseTypeRelation (courseTypeId, classNameId);
-
 create index IX_FEF374C8 on LMS_LearningActivity (companyId);
-create index IX_E4054AA5 on LMS_LearningActivity (groupId, moduleId);
-create index IX_5238B462 on LMS_LearningActivity (groupId, priority);
+create index IX_121EBBFD on LMS_LearningActivity (groupId, moduleId, priority);
 create index IX_20DCD39D on LMS_LearningActivity (groupId, required);
 create index IX_52D8FB13 on LMS_LearningActivity (moduleId, priority);
 create index IX_217D1A4E on LMS_LearningActivity (moduleId, required);
@@ -34,7 +30,7 @@ create index IX_2445C2FB on LMS_LearningActivityTry (uuid_[$COLUMN_LENGTH:75$], 
 create unique index IX_6CC8CC3D on LMS_LearningActivityTry (uuid_[$COLUMN_LENGTH:75$], groupId);
 
 create index IX_23FFC0C9 on LMS_Module (companyId);
-create index IX_2F8DC090 on LMS_Module (groupId, order_);
+create index IX_907D6F63 on LMS_Module (groupId, priority);
 create index IX_34956971 on LMS_Module (groupId, status);
 create index IX_FBE67E33 on LMS_Module (uuid_[$COLUMN_LENGTH:75$], companyId);
 create unique index IX_4D4EF575 on LMS_Module (uuid_[$COLUMN_LENGTH:75$], groupId);

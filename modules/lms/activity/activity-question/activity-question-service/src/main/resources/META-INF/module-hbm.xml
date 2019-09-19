@@ -4,7 +4,7 @@
 <hibernate-mapping auto-import="false" default-lazy="false">
 	<import class="com.ted.lms.learning.activity.question.model.Answer" />
 	<import class="com.ted.lms.learning.activity.question.model.Question" />
-	<class name="com.ted.lms.learning.activity.question.model.impl.AnswerImpl" table="qu_Answer">
+	<class name="com.ted.lms.learning.activity.question.model.impl.AnswerImpl" table="QU_Answer">
 		<id access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="answerId" type="long">
 			<generator class="assigned" />
 		</id>
@@ -23,7 +23,7 @@
 		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="feedbackCorrect" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 		<property access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="feedbackIncorrect" type="com.liferay.portal.dao.orm.hibernate.StringType" />
 	</class>
-	<class name="com.ted.lms.learning.activity.question.model.impl.QuestionImpl" table="qu_Question">
+	<class name="com.ted.lms.learning.activity.question.model.impl.QuestionImpl" table="QU_Question">
 		<id access="com.liferay.portal.dao.orm.hibernate.LiferayPropertyAccessor" name="questionId" type="long">
 			<generator class="assigned" />
 		</id>

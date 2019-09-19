@@ -26,19 +26,15 @@
 		<field name="calificationType" type="long" />
 		<field name="welcome" type="boolean" />
 		<field localized="true" name="welcomeSubject" type="String" />
-		<field localized="true" name="welcomeMsg" type="String">
-			<hint-collection name="EDITOR" />
-		</field>
+		<field localized="true" name="welcomeMsg" type="String" />
 		<field name="goodbye" type="boolean" />
 		<field localized="true" name="goodbyeSubject" type="String" />
-		<field localized="true" name="goodbyeMsg" type="String">
-			<hint-collection name="EDITOR" />
-		</field>
+		<field localized="true" name="goodbyeMsg" type="String" />
 		<field name="deniedInscription" type="boolean" />
 		<field localized="true" name="deniedInscriptionSubject" type="String" />
 		<field localized="true" name="deniedInscriptionMsg" type="String" />
 		<field name="courseExtraData" type="String">
-			<hint name="max-length">500000</hint>
+			<hint name="max-length">5000</hint>
 		</field>
 		<field name="status" type="int" />
 		<field name="statusByUserId" type="long" />
@@ -66,7 +62,7 @@
 		<field name="allowStartDate" type="Date" />
 		<field name="allowEndDate" type="Date" />
 		<field name="extraData" type="String">
-			<hint name="max-length">500000</hint>
+			<hint name="max-length">5000</hint>
 		</field>
 	</model>
 	<model name="com.ted.lms.model.CourseType">
@@ -107,7 +103,7 @@
 		<field name="passPuntuation" type="double" />
 		<field name="priority" type="long" />
 		<field name="extraContent" type="String">
-			<hint name="max-length">500000</hint>
+			<hint name="max-length">5000</hint>
 		</field>
 		<field localized="true" name="feedbackCorrect" type="String" />
 		<field localized="true" name="feedbackNoCorrect" type="String" />
@@ -137,7 +133,7 @@
 		<field name="startDate" type="Date" />
 		<field name="endDate" type="Date" />
 		<field name="extraData" type="String">
-			<hint name="max-length">500000</hint>
+			<hint name="max-length">5000</hint>
 		</field>
 	</model>
 	<model name="com.ted.lms.model.LearningActivityTry">
@@ -159,7 +155,7 @@
 		<field name="endDate" type="Date" />
 		<field name="endUserDate" type="Date" />
 		<field name="tryResultData" type="String">
-			<hint name="max-length">500000</hint>
+			<hint name="max-length">5000</hint>
 		</field>
 	</model>
 	<model name="com.ted.lms.model.Module">
@@ -175,13 +171,13 @@
 		<field localized="true" name="title" type="String" />
 		<field localized="true" name="description" type="String" />
 		<field name="smallImageId" type="long" />
-		<field name="order" type="long" />
+		<field name="priority" type="long" />
 		<field name="startDate" type="Date" />
 		<field name="endDate" type="Date" />
 		<field name="allowedTime" type="long" />
 		<field name="moduleEvalId" type="long" />
 		<field name="moduleExtraData" type="String">
-			<hint name="max-length">500000</hint>
+			<hint-collection name="EDITOR" />
 		</field>
 		<field name="status" type="int" />
 		<field name="statusByUserId" type="long" />
@@ -200,13 +196,13 @@
 		<field name="userId" type="long" />
 		<field name="result" type="double" />
 		<field name="comments" type="String">
-			<hint-collection name="EDITOR" />
+			<hint name="max-length">5000</hint>
 		</field>
 		<field name="passed" type="boolean" />
 		<field name="startDate" type="Date" />
 		<field name="passedDate" type="Date" />
 		<field name="extraData" type="String">
-			<hint name="max-length">500000</hint>
+			<hint-collection name="EDITOR" />
 		</field>
 	</model>
 </model-hints>

@@ -14,40 +14,66 @@
 
 package com.ted.lms.service.persistence.impl;
 
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.configuration.Configuration;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 
 import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.persistence.ModuleResultPersistence;
+import com.ted.lms.service.persistence.impl.constants.LMSPersistenceConstants;
+
+import javax.sql.DataSource;
+
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
-public class ModuleResultFinderBaseImpl extends BasePersistenceImpl<ModuleResult> {
+public abstract class ModuleResultFinderBaseImpl
+	extends BasePersistenceImpl<ModuleResult> {
+
 	public ModuleResultFinderBaseImpl() {
 		setModelClass(ModuleResult.class);
 	}
 
-	/**
-	 * Returns the module result persistence.
-	 *
-	 * @return the module result persistence
-	 */
-	public ModuleResultPersistence getModuleResultPersistence() {
-		return moduleResultPersistence;
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
 	}
 
-	/**
-	 * Sets the module result persistence.
-	 *
-	 * @param moduleResultPersistence the module result persistence
-	 */
-	public void setModuleResultPersistence(
-		ModuleResultPersistence moduleResultPersistence) {
-		this.moduleResultPersistence = moduleResultPersistence;
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
 	}
 
-	@BeanReference(type = ModuleResultPersistence.class)
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
 	protected ModuleResultPersistence moduleResultPersistence;
+
+	static {
+		try {
+			Class.forName(LMSPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
+
 }

@@ -14,19 +14,14 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.expando.kernel.model.ExpandoBridge;
-
 import com.liferay.portal.kernel.model.ModelWrapper;
-import com.liferay.portal.kernel.service.ServiceContext;
-
-import java.io.Serializable;
+import com.liferay.portal.kernel.model.wrapper.BaseModelWrapper;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * <p>
@@ -38,20 +33,12 @@ import java.util.Objects;
  * @generated
  */
 @ProviderType
-public class ModuleResultWrapper implements ModuleResult,
-	ModelWrapper<ModuleResult> {
+public class ModuleResultWrapper
+	extends BaseModelWrapper<ModuleResult>
+	implements ModuleResult, ModelWrapper<ModuleResult> {
+
 	public ModuleResultWrapper(ModuleResult moduleResult) {
-		_moduleResult = moduleResult;
-	}
-
-	@Override
-	public Class<?> getModelClass() {
-		return ModuleResult.class;
-	}
-
-	@Override
-	public String getModelClassName() {
-		return ModuleResult.class.getName();
+		super(moduleResult);
 	}
 
 	@Override
@@ -170,495 +157,374 @@ public class ModuleResultWrapper implements ModuleResult,
 		}
 	}
 
-	@Override
-	public Object clone() {
-		return new ModuleResultWrapper((ModuleResult)_moduleResult.clone());
-	}
-
-	@Override
-	public int compareTo(ModuleResult moduleResult) {
-		return _moduleResult.compareTo(moduleResult);
-	}
-
 	/**
-	* Returns the comments of this module result.
-	*
-	* @return the comments of this module result
-	*/
+	 * Returns the comments of this module result.
+	 *
+	 * @return the comments of this module result
+	 */
 	@Override
 	public String getComments() {
-		return _moduleResult.getComments();
+		return model.getComments();
 	}
 
 	/**
-	* Returns the company ID of this module result.
-	*
-	* @return the company ID of this module result
-	*/
+	 * Returns the company ID of this module result.
+	 *
+	 * @return the company ID of this module result
+	 */
 	@Override
 	public long getCompanyId() {
-		return _moduleResult.getCompanyId();
+		return model.getCompanyId();
 	}
 
 	/**
-	* Returns the create date of this module result.
-	*
-	* @return the create date of this module result
-	*/
+	 * Returns the create date of this module result.
+	 *
+	 * @return the create date of this module result
+	 */
 	@Override
 	public Date getCreateDate() {
-		return _moduleResult.getCreateDate();
-	}
-
-	@Override
-	public ExpandoBridge getExpandoBridge() {
-		return _moduleResult.getExpandoBridge();
+		return model.getCreateDate();
 	}
 
 	/**
-	* Returns the extra data of this module result.
-	*
-	* @return the extra data of this module result
-	*/
+	 * Returns the extra data of this module result.
+	 *
+	 * @return the extra data of this module result
+	 */
 	@Override
 	public String getExtraData() {
-		return _moduleResult.getExtraData();
+		return model.getExtraData();
 	}
 
 	/**
-	* Returns the group ID of this module result.
-	*
-	* @return the group ID of this module result
-	*/
+	 * Returns the group ID of this module result.
+	 *
+	 * @return the group ID of this module result
+	 */
 	@Override
 	public long getGroupId() {
-		return _moduleResult.getGroupId();
+		return model.getGroupId();
 	}
 
 	/**
-	* Returns the modified date of this module result.
-	*
-	* @return the modified date of this module result
-	*/
+	 * Returns the modified date of this module result.
+	 *
+	 * @return the modified date of this module result
+	 */
 	@Override
 	public Date getModifiedDate() {
-		return _moduleResult.getModifiedDate();
+		return model.getModifiedDate();
 	}
 
 	/**
-	* Returns the module ID of this module result.
-	*
-	* @return the module ID of this module result
-	*/
+	 * Returns the module ID of this module result.
+	 *
+	 * @return the module ID of this module result
+	 */
 	@Override
 	public long getModuleId() {
-		return _moduleResult.getModuleId();
+		return model.getModuleId();
+	}
+
+	@Override
+	public String getModuleStatus(java.util.Locale locale) {
+		return model.getModuleStatus(locale);
 	}
 
 	/**
-	* Returns the mr ID of this module result.
-	*
-	* @return the mr ID of this module result
-	*/
+	 * Returns the mr ID of this module result.
+	 *
+	 * @return the mr ID of this module result
+	 */
 	@Override
 	public long getMrId() {
-		return _moduleResult.getMrId();
+		return model.getMrId();
 	}
 
 	/**
-	* Returns the passed of this module result.
-	*
-	* @return the passed of this module result
-	*/
+	 * Returns the passed of this module result.
+	 *
+	 * @return the passed of this module result
+	 */
 	@Override
 	public boolean getPassed() {
-		return _moduleResult.getPassed();
+		return model.getPassed();
 	}
 
 	/**
-	* Returns the passed date of this module result.
-	*
-	* @return the passed date of this module result
-	*/
+	 * Returns the passed date of this module result.
+	 *
+	 * @return the passed date of this module result
+	 */
 	@Override
 	public Date getPassedDate() {
-		return _moduleResult.getPassedDate();
+		return model.getPassedDate();
 	}
 
 	/**
-	* Returns the primary key of this module result.
-	*
-	* @return the primary key of this module result
-	*/
+	 * Returns the primary key of this module result.
+	 *
+	 * @return the primary key of this module result
+	 */
 	@Override
 	public long getPrimaryKey() {
-		return _moduleResult.getPrimaryKey();
-	}
-
-	@Override
-	public Serializable getPrimaryKeyObj() {
-		return _moduleResult.getPrimaryKeyObj();
+		return model.getPrimaryKey();
 	}
 
 	/**
-	* Returns the result of this module result.
-	*
-	* @return the result of this module result
-	*/
+	 * Returns the result of this module result.
+	 *
+	 * @return the result of this module result
+	 */
 	@Override
 	public double getResult() {
-		return _moduleResult.getResult();
+		return model.getResult();
 	}
 
 	/**
-	* Returns the start date of this module result.
-	*
-	* @return the start date of this module result
-	*/
+	 * Returns the start date of this module result.
+	 *
+	 * @return the start date of this module result
+	 */
 	@Override
 	public Date getStartDate() {
-		return _moduleResult.getStartDate();
+		return model.getStartDate();
 	}
 
 	/**
-	* Returns the user ID of this module result.
-	*
-	* @return the user ID of this module result
-	*/
+	 * Returns the user ID of this module result.
+	 *
+	 * @return the user ID of this module result
+	 */
 	@Override
 	public long getUserId() {
-		return _moduleResult.getUserId();
+		return model.getUserId();
 	}
 
 	/**
-	* Returns the user modified ID of this module result.
-	*
-	* @return the user modified ID of this module result
-	*/
+	 * Returns the user modified ID of this module result.
+	 *
+	 * @return the user modified ID of this module result
+	 */
 	@Override
 	public long getUserModifiedId() {
-		return _moduleResult.getUserModifiedId();
+		return model.getUserModifiedId();
 	}
 
 	/**
-	* Returns the user modified name of this module result.
-	*
-	* @return the user modified name of this module result
-	*/
+	 * Returns the user modified name of this module result.
+	 *
+	 * @return the user modified name of this module result
+	 */
 	@Override
 	public String getUserModifiedName() {
-		return _moduleResult.getUserModifiedName();
+		return model.getUserModifiedName();
 	}
 
 	/**
-	* Returns the user uuid of this module result.
-	*
-	* @return the user uuid of this module result
-	*/
+	 * Returns the user uuid of this module result.
+	 *
+	 * @return the user uuid of this module result
+	 */
 	@Override
 	public String getUserUuid() {
-		return _moduleResult.getUserUuid();
+		return model.getUserUuid();
 	}
 
 	@Override
-	public int hashCode() {
-		return _moduleResult.hashCode();
-	}
-
-	@Override
-	public boolean isCachedModel() {
-		return _moduleResult.isCachedModel();
-	}
-
-	@Override
-	public boolean isEscapedModel() {
-		return _moduleResult.isEscapedModel();
-	}
-
-	@Override
-	public boolean isNew() {
-		return _moduleResult.isNew();
+	public boolean isFinished() {
+		return model.isFinished();
 	}
 
 	/**
-	* Returns <code>true</code> if this module result is passed.
-	*
-	* @return <code>true</code> if this module result is passed; <code>false</code> otherwise
-	*/
+	 * Returns <code>true</code> if this module result is passed.
+	 *
+	 * @return <code>true</code> if this module result is passed; <code>false</code> otherwise
+	 */
 	@Override
 	public boolean isPassed() {
-		return _moduleResult.isPassed();
+		return model.isPassed();
 	}
 
 	@Override
 	public void persist() {
-		_moduleResult.persist();
-	}
-
-	@Override
-	public void setCachedModel(boolean cachedModel) {
-		_moduleResult.setCachedModel(cachedModel);
+		model.persist();
 	}
 
 	/**
-	* Sets the comments of this module result.
-	*
-	* @param comments the comments of this module result
-	*/
+	 * Sets the comments of this module result.
+	 *
+	 * @param comments the comments of this module result
+	 */
 	@Override
 	public void setComments(String comments) {
-		_moduleResult.setComments(comments);
+		model.setComments(comments);
 	}
 
 	/**
-	* Sets the company ID of this module result.
-	*
-	* @param companyId the company ID of this module result
-	*/
+	 * Sets the company ID of this module result.
+	 *
+	 * @param companyId the company ID of this module result
+	 */
 	@Override
 	public void setCompanyId(long companyId) {
-		_moduleResult.setCompanyId(companyId);
+		model.setCompanyId(companyId);
 	}
 
 	/**
-	* Sets the create date of this module result.
-	*
-	* @param createDate the create date of this module result
-	*/
+	 * Sets the create date of this module result.
+	 *
+	 * @param createDate the create date of this module result
+	 */
 	@Override
 	public void setCreateDate(Date createDate) {
-		_moduleResult.setCreateDate(createDate);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(
-		com.liferay.portal.kernel.model.BaseModel<?> baseModel) {
-		_moduleResult.setExpandoBridgeAttributes(baseModel);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ExpandoBridge expandoBridge) {
-		_moduleResult.setExpandoBridgeAttributes(expandoBridge);
-	}
-
-	@Override
-	public void setExpandoBridgeAttributes(ServiceContext serviceContext) {
-		_moduleResult.setExpandoBridgeAttributes(serviceContext);
+		model.setCreateDate(createDate);
 	}
 
 	/**
-	* Sets the extra data of this module result.
-	*
-	* @param extraData the extra data of this module result
-	*/
+	 * Sets the extra data of this module result.
+	 *
+	 * @param extraData the extra data of this module result
+	 */
 	@Override
 	public void setExtraData(String extraData) {
-		_moduleResult.setExtraData(extraData);
+		model.setExtraData(extraData);
 	}
 
 	/**
-	* Sets the group ID of this module result.
-	*
-	* @param groupId the group ID of this module result
-	*/
+	 * Sets the group ID of this module result.
+	 *
+	 * @param groupId the group ID of this module result
+	 */
 	@Override
 	public void setGroupId(long groupId) {
-		_moduleResult.setGroupId(groupId);
+		model.setGroupId(groupId);
 	}
 
 	/**
-	* Sets the modified date of this module result.
-	*
-	* @param modifiedDate the modified date of this module result
-	*/
+	 * Sets the modified date of this module result.
+	 *
+	 * @param modifiedDate the modified date of this module result
+	 */
 	@Override
 	public void setModifiedDate(Date modifiedDate) {
-		_moduleResult.setModifiedDate(modifiedDate);
+		model.setModifiedDate(modifiedDate);
 	}
 
 	/**
-	* Sets the module ID of this module result.
-	*
-	* @param moduleId the module ID of this module result
-	*/
+	 * Sets the module ID of this module result.
+	 *
+	 * @param moduleId the module ID of this module result
+	 */
 	@Override
 	public void setModuleId(long moduleId) {
-		_moduleResult.setModuleId(moduleId);
+		model.setModuleId(moduleId);
 	}
 
 	/**
-	* Sets the mr ID of this module result.
-	*
-	* @param mrId the mr ID of this module result
-	*/
+	 * Sets the mr ID of this module result.
+	 *
+	 * @param mrId the mr ID of this module result
+	 */
 	@Override
 	public void setMrId(long mrId) {
-		_moduleResult.setMrId(mrId);
-	}
-
-	@Override
-	public void setNew(boolean n) {
-		_moduleResult.setNew(n);
+		model.setMrId(mrId);
 	}
 
 	/**
-	* Sets whether this module result is passed.
-	*
-	* @param passed the passed of this module result
-	*/
+	 * Sets whether this module result is passed.
+	 *
+	 * @param passed the passed of this module result
+	 */
 	@Override
 	public void setPassed(boolean passed) {
-		_moduleResult.setPassed(passed);
+		model.setPassed(passed);
 	}
 
 	/**
-	* Sets the passed date of this module result.
-	*
-	* @param passedDate the passed date of this module result
-	*/
+	 * Sets the passed date of this module result.
+	 *
+	 * @param passedDate the passed date of this module result
+	 */
 	@Override
 	public void setPassedDate(Date passedDate) {
-		_moduleResult.setPassedDate(passedDate);
+		model.setPassedDate(passedDate);
 	}
 
 	/**
-	* Sets the primary key of this module result.
-	*
-	* @param primaryKey the primary key of this module result
-	*/
+	 * Sets the primary key of this module result.
+	 *
+	 * @param primaryKey the primary key of this module result
+	 */
 	@Override
 	public void setPrimaryKey(long primaryKey) {
-		_moduleResult.setPrimaryKey(primaryKey);
-	}
-
-	@Override
-	public void setPrimaryKeyObj(Serializable primaryKeyObj) {
-		_moduleResult.setPrimaryKeyObj(primaryKeyObj);
+		model.setPrimaryKey(primaryKey);
 	}
 
 	/**
-	* Sets the result of this module result.
-	*
-	* @param result the result of this module result
-	*/
+	 * Sets the result of this module result.
+	 *
+	 * @param result the result of this module result
+	 */
 	@Override
 	public void setResult(double result) {
-		_moduleResult.setResult(result);
+		model.setResult(result);
 	}
 
 	/**
-	* Sets the start date of this module result.
-	*
-	* @param startDate the start date of this module result
-	*/
+	 * Sets the start date of this module result.
+	 *
+	 * @param startDate the start date of this module result
+	 */
 	@Override
 	public void setStartDate(Date startDate) {
-		_moduleResult.setStartDate(startDate);
+		model.setStartDate(startDate);
 	}
 
 	/**
-	* Sets the user ID of this module result.
-	*
-	* @param userId the user ID of this module result
-	*/
+	 * Sets the user ID of this module result.
+	 *
+	 * @param userId the user ID of this module result
+	 */
 	@Override
 	public void setUserId(long userId) {
-		_moduleResult.setUserId(userId);
+		model.setUserId(userId);
 	}
 
 	/**
-	* Sets the user modified ID of this module result.
-	*
-	* @param userModifiedId the user modified ID of this module result
-	*/
+	 * Sets the user modified ID of this module result.
+	 *
+	 * @param userModifiedId the user modified ID of this module result
+	 */
 	@Override
 	public void setUserModifiedId(long userModifiedId) {
-		_moduleResult.setUserModifiedId(userModifiedId);
+		model.setUserModifiedId(userModifiedId);
 	}
 
 	/**
-	* Sets the user modified name of this module result.
-	*
-	* @param userModifiedName the user modified name of this module result
-	*/
+	 * Sets the user modified name of this module result.
+	 *
+	 * @param userModifiedName the user modified name of this module result
+	 */
 	@Override
 	public void setUserModifiedName(String userModifiedName) {
-		_moduleResult.setUserModifiedName(userModifiedName);
+		model.setUserModifiedName(userModifiedName);
 	}
 
 	/**
-	* Sets the user uuid of this module result.
-	*
-	* @param userUuid the user uuid of this module result
-	*/
+	 * Sets the user uuid of this module result.
+	 *
+	 * @param userUuid the user uuid of this module result
+	 */
 	@Override
 	public void setUserUuid(String userUuid) {
-		_moduleResult.setUserUuid(userUuid);
+		model.setUserUuid(userUuid);
 	}
 
 	@Override
-	public com.liferay.portal.kernel.model.CacheModel<ModuleResult> toCacheModel() {
-		return _moduleResult.toCacheModel();
+	protected ModuleResultWrapper wrap(ModuleResult moduleResult) {
+		return new ModuleResultWrapper(moduleResult);
 	}
 
-	@Override
-	public ModuleResult toEscapedModel() {
-		return new ModuleResultWrapper(_moduleResult.toEscapedModel());
-	}
-
-	@Override
-	public String toString() {
-		return _moduleResult.toString();
-	}
-
-	@Override
-	public ModuleResult toUnescapedModel() {
-		return new ModuleResultWrapper(_moduleResult.toUnescapedModel());
-	}
-
-	@Override
-	public String toXmlString() {
-		return _moduleResult.toXmlString();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (!(obj instanceof ModuleResultWrapper)) {
-			return false;
-		}
-
-		ModuleResultWrapper moduleResultWrapper = (ModuleResultWrapper)obj;
-
-		if (Objects.equals(_moduleResult, moduleResultWrapper._moduleResult)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	public ModuleResult getWrappedModel() {
-		return _moduleResult;
-	}
-
-	@Override
-	public boolean isEntityCacheEnabled() {
-		return _moduleResult.isEntityCacheEnabled();
-	}
-
-	@Override
-	public boolean isFinderCacheEnabled() {
-		return _moduleResult.isFinderCacheEnabled();
-	}
-
-	@Override
-	public void resetOriginalValues() {
-		_moduleResult.resetOriginalValues();
-	}
-
-	private final ModuleResult _moduleResult;
 }

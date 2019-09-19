@@ -14,19 +14,20 @@
 
 package com.ted.lms.inscription.teams.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * The extended model implementation for the Schedule service. Represents a row in the &quot;Lms_Schedule&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the Schedule service. Represents a row in the &quot;iteam_Schedule&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.lms.inscription.teams.model.Schedule} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.lms.inscription.teams.model.Schedule<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class ScheduleImpl extends ScheduleBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -34,4 +35,5 @@ public class ScheduleImpl extends ScheduleBaseImpl {
 	 */
 	public ScheduleImpl() {
 	}
+
 }

@@ -11,7 +11,7 @@ create table PTP_P2PActivity (
 	userId LONG,
 	fileEntryId LONG,
 	countCorrections LONG,
-	description TEXT null,
+	description VARCHAR(75) null,
 	date_ DATE null,
 	asignationsCompleted BOOLEAN
 );
@@ -28,7 +28,7 @@ create table PTP_P2PActivityCorrections (
 	p2pActivityId LONG,
 	userId LONG,
 	actId LONG,
-	description TEXT null,
+	description VARCHAR(75) null,
 	date_ DATE null,
 	fileEntryId LONG,
 	result LONG

@@ -14,72 +14,87 @@
 
 package com.ted.lms.service.persistence.impl;
 
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.kernel.configuration.Configuration;
+import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.service.persistence.LearningActivityResultPersistence;
-
-import java.lang.reflect.Field;
+import com.ted.lms.service.persistence.impl.constants.LMSPersistenceConstants;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Brian Wing Shun Chan
  * @generated
  */
-public class LearningActivityResultFinderBaseImpl extends BasePersistenceImpl<LearningActivityResult> {
+public abstract class LearningActivityResultFinderBaseImpl
+	extends BasePersistenceImpl<LearningActivityResult> {
+
 	public LearningActivityResultFinderBaseImpl() {
 		setModelClass(LearningActivityResult.class);
 
-		try {
-			Field field = BasePersistenceImpl.class.getDeclaredField(
-					"_dbColumnNames");
+		Map<String, String> dbColumnNames = new HashMap<String, String>();
 
-			field.setAccessible(true);
+		dbColumnNames.put("uuid", "uuid_");
 
-			Map<String, String> dbColumnNames = new HashMap<String, String>();
-
-			dbColumnNames.put("uuid", "uuid_");
-
-			field.set(this, dbColumnNames);
-		}
-		catch (Exception e) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(e, e);
-			}
-		}
+		setDBColumnNames(dbColumnNames);
 	}
 
 	@Override
 	public Set<String> getBadColumnNames() {
-		return getLearningActivityResultPersistence().getBadColumnNames();
+		return learningActivityResultPersistence.getBadColumnNames();
 	}
 
-	/**
-	 * Returns the learning activity result persistence.
-	 *
-	 * @return the learning activity result persistence
-	 */
-	public LearningActivityResultPersistence getLearningActivityResultPersistence() {
-		return learningActivityResultPersistence;
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
+		unbind = "-"
+	)
+	public void setConfiguration(Configuration configuration) {
+		super.setConfiguration(configuration);
 	}
 
-	/**
-	 * Sets the learning activity result persistence.
-	 *
-	 * @param learningActivityResultPersistence the learning activity result persistence
-	 */
-	public void setLearningActivityResultPersistence(
-		LearningActivityResultPersistence learningActivityResultPersistence) {
-		this.learningActivityResultPersistence = learningActivityResultPersistence;
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setDataSource(DataSource dataSource) {
+		super.setDataSource(dataSource);
 	}
 
-	@BeanReference(type = LearningActivityResultPersistence.class)
-	protected LearningActivityResultPersistence learningActivityResultPersistence;
-	private static final Log _log = LogFactoryUtil.getLog(LearningActivityResultFinderBaseImpl.class);
+	@Override
+	@Reference(
+		target = LMSPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		unbind = "-"
+	)
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		super.setSessionFactory(sessionFactory);
+	}
+
+	@Reference
+	protected LearningActivityResultPersistence
+		learningActivityResultPersistence;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LearningActivityResultFinderBaseImpl.class);
+
+	static {
+		try {
+			Class.forName(LMSPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
+
 }

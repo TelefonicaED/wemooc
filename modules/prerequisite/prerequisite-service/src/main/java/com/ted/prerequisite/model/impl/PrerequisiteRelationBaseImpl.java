@@ -14,10 +14,10 @@
 
 package com.ted.prerequisite.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.prerequisite.model.PrerequisiteRelation;
 import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the PrerequisiteRelation service. Represents a row in the &quot;pre_PrerequisiteRelation&quot; database table, with each column mapped to a property of this class.
@@ -34,10 +34,11 @@ import com.ted.prerequisite.service.PrerequisiteRelationLocalServiceUtil;
 @ProviderType
 public abstract class PrerequisiteRelationBaseImpl
 	extends PrerequisiteRelationModelImpl implements PrerequisiteRelation {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a prerequisite relation model instance should use the {@link PrerequisiteRelation} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a prerequisite relation model instance should use the <code>PrerequisiteRelation</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -45,7 +46,9 @@ public abstract class PrerequisiteRelationBaseImpl
 			PrerequisiteRelationLocalServiceUtil.addPrerequisiteRelation(this);
 		}
 		else {
-			PrerequisiteRelationLocalServiceUtil.updatePrerequisiteRelation(this);
+			PrerequisiteRelationLocalServiceUtil.updatePrerequisiteRelation(
+				this);
 		}
 	}
+
 }

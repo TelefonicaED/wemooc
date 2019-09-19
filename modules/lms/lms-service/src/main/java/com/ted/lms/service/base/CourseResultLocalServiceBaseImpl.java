@@ -14,9 +14,7 @@
 
 package com.ted.lms.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
@@ -34,15 +32,10 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
-import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
-import com.liferay.portal.kernel.service.persistence.CompanyPersistence;
-import com.liferay.portal.kernel.service.persistence.GroupPersistence;
-import com.liferay.portal.kernel.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.service.CourseResultLocalService;
@@ -66,6 +59,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * Provides the base implementation for the course result local service.
  *
@@ -75,17 +71,17 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.ted.lms.service.impl.CourseResultLocalServiceImpl
- * @see com.ted.lms.service.CourseResultLocalServiceUtil
  * @generated
  */
 @ProviderType
 public abstract class CourseResultLocalServiceBaseImpl
-	extends BaseLocalServiceImpl implements CourseResultLocalService,
-		IdentifiableOSGiService {
+	extends BaseLocalServiceImpl
+	implements CourseResultLocalService, AopService, IdentifiableOSGiService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link com.ted.lms.service.CourseResultLocalServiceUtil} to access the course result local service.
+	 * Never modify or reference this class directly. Use <code>CourseResultLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.CourseResultLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -143,8 +139,8 @@ public abstract class CourseResultLocalServiceBaseImpl
 	public DynamicQuery dynamicQuery() {
 		Class<?> clazz = getClass();
 
-		return DynamicQueryFactoryUtil.forClass(CourseResult.class,
-			clazz.getClassLoader());
+		return DynamicQueryFactoryUtil.forClass(
+			CourseResult.class, clazz.getClassLoader());
 	}
 
 	/**
@@ -162,7 +158,7 @@ public abstract class CourseResultLocalServiceBaseImpl
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.model.impl.CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.model.impl.CourseResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -171,17 +167,18 @@ public abstract class CourseResultLocalServiceBaseImpl
 	 * @return the range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
-		return courseResultPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
+
+		return courseResultPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.model.impl.CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.model.impl.CourseResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -191,10 +188,12 @@ public abstract class CourseResultLocalServiceBaseImpl
 	 * @return the ordered range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
-		return courseResultPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end, orderByComparator);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
+
+		return courseResultPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
@@ -216,10 +215,11 @@ public abstract class CourseResultLocalServiceBaseImpl
 	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
-		return courseResultPersistence.countWithDynamicQuery(dynamicQuery,
-			projection);
+	public long dynamicQueryCount(
+		DynamicQuery dynamicQuery, Projection projection) {
+
+		return courseResultPersistence.countWithDynamicQuery(
+			dynamicQuery, projection);
 	}
 
 	@Override
@@ -241,7 +241,8 @@ public abstract class CourseResultLocalServiceBaseImpl
 
 	@Override
 	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+		ActionableDynamicQuery actionableDynamicQuery =
+			new DefaultActionableDynamicQuery();
 
 		actionableDynamicQuery.setBaseLocalService(courseResultLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
@@ -253,10 +254,14 @@ public abstract class CourseResultLocalServiceBaseImpl
 	}
 
 	@Override
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+	public IndexableActionableDynamicQuery
+		getIndexableActionableDynamicQuery() {
 
-		indexableActionableDynamicQuery.setBaseLocalService(courseResultLocalService);
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery =
+			new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(
+			courseResultLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
 		indexableActionableDynamicQuery.setModelClass(CourseResult.class);
 
@@ -267,6 +272,7 @@ public abstract class CourseResultLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
+
 		actionableDynamicQuery.setBaseLocalService(courseResultLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(CourseResult.class);
@@ -280,12 +286,15 @@ public abstract class CourseResultLocalServiceBaseImpl
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException {
-		return courseResultLocalService.deleteCourseResult((CourseResult)persistedModel);
+
+		return courseResultLocalService.deleteCourseResult(
+			(CourseResult)persistedModel);
 	}
 
 	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException {
+
 		return courseResultPersistence.findByPrimaryKey(primaryKeyObj);
 	}
 
@@ -293,7 +302,7 @@ public abstract class CourseResultLocalServiceBaseImpl
 	 * Returns a range of all the course results.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.model.impl.CourseResultModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.model.impl.CourseResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of course results
@@ -327,633 +336,17 @@ public abstract class CourseResultLocalServiceBaseImpl
 		return courseResultPersistence.update(courseResult);
 	}
 
-	/**
-	 * Returns the course local service.
-	 *
-	 * @return the course local service
-	 */
-	public com.ted.lms.service.CourseLocalService getCourseLocalService() {
-		return courseLocalService;
-	}
-
-	/**
-	 * Sets the course local service.
-	 *
-	 * @param courseLocalService the course local service
-	 */
-	public void setCourseLocalService(
-		com.ted.lms.service.CourseLocalService courseLocalService) {
-		this.courseLocalService = courseLocalService;
-	}
-
-	/**
-	 * Returns the course persistence.
-	 *
-	 * @return the course persistence
-	 */
-	public CoursePersistence getCoursePersistence() {
-		return coursePersistence;
-	}
-
-	/**
-	 * Sets the course persistence.
-	 *
-	 * @param coursePersistence the course persistence
-	 */
-	public void setCoursePersistence(CoursePersistence coursePersistence) {
-		this.coursePersistence = coursePersistence;
-	}
-
-	/**
-	 * Returns the course finder.
-	 *
-	 * @return the course finder
-	 */
-	public CourseFinder getCourseFinder() {
-		return courseFinder;
-	}
-
-	/**
-	 * Sets the course finder.
-	 *
-	 * @param courseFinder the course finder
-	 */
-	public void setCourseFinder(CourseFinder courseFinder) {
-		this.courseFinder = courseFinder;
-	}
-
-	/**
-	 * Returns the course result local service.
-	 *
-	 * @return the course result local service
-	 */
-	public CourseResultLocalService getCourseResultLocalService() {
-		return courseResultLocalService;
-	}
-
-	/**
-	 * Sets the course result local service.
-	 *
-	 * @param courseResultLocalService the course result local service
-	 */
-	public void setCourseResultLocalService(
-		CourseResultLocalService courseResultLocalService) {
-		this.courseResultLocalService = courseResultLocalService;
-	}
-
-	/**
-	 * Returns the course result persistence.
-	 *
-	 * @return the course result persistence
-	 */
-	public CourseResultPersistence getCourseResultPersistence() {
-		return courseResultPersistence;
-	}
-
-	/**
-	 * Sets the course result persistence.
-	 *
-	 * @param courseResultPersistence the course result persistence
-	 */
-	public void setCourseResultPersistence(
-		CourseResultPersistence courseResultPersistence) {
-		this.courseResultPersistence = courseResultPersistence;
-	}
-
-	/**
-	 * Returns the course result finder.
-	 *
-	 * @return the course result finder
-	 */
-	public CourseResultFinder getCourseResultFinder() {
-		return courseResultFinder;
-	}
-
-	/**
-	 * Sets the course result finder.
-	 *
-	 * @param courseResultFinder the course result finder
-	 */
-	public void setCourseResultFinder(CourseResultFinder courseResultFinder) {
-		this.courseResultFinder = courseResultFinder;
-	}
-
-	/**
-	 * Returns the course type local service.
-	 *
-	 * @return the course type local service
-	 */
-	public com.ted.lms.service.CourseTypeLocalService getCourseTypeLocalService() {
-		return courseTypeLocalService;
-	}
-
-	/**
-	 * Sets the course type local service.
-	 *
-	 * @param courseTypeLocalService the course type local service
-	 */
-	public void setCourseTypeLocalService(
-		com.ted.lms.service.CourseTypeLocalService courseTypeLocalService) {
-		this.courseTypeLocalService = courseTypeLocalService;
-	}
-
-	/**
-	 * Returns the course type persistence.
-	 *
-	 * @return the course type persistence
-	 */
-	public CourseTypePersistence getCourseTypePersistence() {
-		return courseTypePersistence;
-	}
-
-	/**
-	 * Sets the course type persistence.
-	 *
-	 * @param courseTypePersistence the course type persistence
-	 */
-	public void setCourseTypePersistence(
-		CourseTypePersistence courseTypePersistence) {
-		this.courseTypePersistence = courseTypePersistence;
-	}
-
-	/**
-	 * Returns the course type relation local service.
-	 *
-	 * @return the course type relation local service
-	 */
-	public com.ted.lms.service.CourseTypeRelationLocalService getCourseTypeRelationLocalService() {
-		return courseTypeRelationLocalService;
-	}
-
-	/**
-	 * Sets the course type relation local service.
-	 *
-	 * @param courseTypeRelationLocalService the course type relation local service
-	 */
-	public void setCourseTypeRelationLocalService(
-		com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService) {
-		this.courseTypeRelationLocalService = courseTypeRelationLocalService;
-	}
-
-	/**
-	 * Returns the course type relation persistence.
-	 *
-	 * @return the course type relation persistence
-	 */
-	public CourseTypeRelationPersistence getCourseTypeRelationPersistence() {
-		return courseTypeRelationPersistence;
-	}
-
-	/**
-	 * Sets the course type relation persistence.
-	 *
-	 * @param courseTypeRelationPersistence the course type relation persistence
-	 */
-	public void setCourseTypeRelationPersistence(
-		CourseTypeRelationPersistence courseTypeRelationPersistence) {
-		this.courseTypeRelationPersistence = courseTypeRelationPersistence;
-	}
-
-	/**
-	 * Returns the learning activity local service.
-	 *
-	 * @return the learning activity local service
-	 */
-	public com.ted.lms.service.LearningActivityLocalService getLearningActivityLocalService() {
-		return learningActivityLocalService;
-	}
-
-	/**
-	 * Sets the learning activity local service.
-	 *
-	 * @param learningActivityLocalService the learning activity local service
-	 */
-	public void setLearningActivityLocalService(
-		com.ted.lms.service.LearningActivityLocalService learningActivityLocalService) {
-		this.learningActivityLocalService = learningActivityLocalService;
-	}
-
-	/**
-	 * Returns the learning activity persistence.
-	 *
-	 * @return the learning activity persistence
-	 */
-	public LearningActivityPersistence getLearningActivityPersistence() {
-		return learningActivityPersistence;
-	}
-
-	/**
-	 * Sets the learning activity persistence.
-	 *
-	 * @param learningActivityPersistence the learning activity persistence
-	 */
-	public void setLearningActivityPersistence(
-		LearningActivityPersistence learningActivityPersistence) {
-		this.learningActivityPersistence = learningActivityPersistence;
-	}
-
-	/**
-	 * Returns the learning activity result local service.
-	 *
-	 * @return the learning activity result local service
-	 */
-	public com.ted.lms.service.LearningActivityResultLocalService getLearningActivityResultLocalService() {
-		return learningActivityResultLocalService;
-	}
-
-	/**
-	 * Sets the learning activity result local service.
-	 *
-	 * @param learningActivityResultLocalService the learning activity result local service
-	 */
-	public void setLearningActivityResultLocalService(
-		com.ted.lms.service.LearningActivityResultLocalService learningActivityResultLocalService) {
-		this.learningActivityResultLocalService = learningActivityResultLocalService;
-	}
-
-	/**
-	 * Returns the learning activity result persistence.
-	 *
-	 * @return the learning activity result persistence
-	 */
-	public LearningActivityResultPersistence getLearningActivityResultPersistence() {
-		return learningActivityResultPersistence;
-	}
-
-	/**
-	 * Sets the learning activity result persistence.
-	 *
-	 * @param learningActivityResultPersistence the learning activity result persistence
-	 */
-	public void setLearningActivityResultPersistence(
-		LearningActivityResultPersistence learningActivityResultPersistence) {
-		this.learningActivityResultPersistence = learningActivityResultPersistence;
-	}
-
-	/**
-	 * Returns the learning activity result finder.
-	 *
-	 * @return the learning activity result finder
-	 */
-	public LearningActivityResultFinder getLearningActivityResultFinder() {
-		return learningActivityResultFinder;
-	}
-
-	/**
-	 * Sets the learning activity result finder.
-	 *
-	 * @param learningActivityResultFinder the learning activity result finder
-	 */
-	public void setLearningActivityResultFinder(
-		LearningActivityResultFinder learningActivityResultFinder) {
-		this.learningActivityResultFinder = learningActivityResultFinder;
-	}
-
-	/**
-	 * Returns the learning activity try local service.
-	 *
-	 * @return the learning activity try local service
-	 */
-	public com.ted.lms.service.LearningActivityTryLocalService getLearningActivityTryLocalService() {
-		return learningActivityTryLocalService;
-	}
-
-	/**
-	 * Sets the learning activity try local service.
-	 *
-	 * @param learningActivityTryLocalService the learning activity try local service
-	 */
-	public void setLearningActivityTryLocalService(
-		com.ted.lms.service.LearningActivityTryLocalService learningActivityTryLocalService) {
-		this.learningActivityTryLocalService = learningActivityTryLocalService;
-	}
-
-	/**
-	 * Returns the learning activity try persistence.
-	 *
-	 * @return the learning activity try persistence
-	 */
-	public LearningActivityTryPersistence getLearningActivityTryPersistence() {
-		return learningActivityTryPersistence;
-	}
-
-	/**
-	 * Sets the learning activity try persistence.
-	 *
-	 * @param learningActivityTryPersistence the learning activity try persistence
-	 */
-	public void setLearningActivityTryPersistence(
-		LearningActivityTryPersistence learningActivityTryPersistence) {
-		this.learningActivityTryPersistence = learningActivityTryPersistence;
-	}
-
-	/**
-	 * Returns the module local service.
-	 *
-	 * @return the module local service
-	 */
-	public com.ted.lms.service.ModuleLocalService getModuleLocalService() {
-		return moduleLocalService;
-	}
-
-	/**
-	 * Sets the module local service.
-	 *
-	 * @param moduleLocalService the module local service
-	 */
-	public void setModuleLocalService(
-		com.ted.lms.service.ModuleLocalService moduleLocalService) {
-		this.moduleLocalService = moduleLocalService;
-	}
-
-	/**
-	 * Returns the module persistence.
-	 *
-	 * @return the module persistence
-	 */
-	public ModulePersistence getModulePersistence() {
-		return modulePersistence;
-	}
-
-	/**
-	 * Sets the module persistence.
-	 *
-	 * @param modulePersistence the module persistence
-	 */
-	public void setModulePersistence(ModulePersistence modulePersistence) {
-		this.modulePersistence = modulePersistence;
-	}
-
-	/**
-	 * Returns the module result local service.
-	 *
-	 * @return the module result local service
-	 */
-	public com.ted.lms.service.ModuleResultLocalService getModuleResultLocalService() {
-		return moduleResultLocalService;
-	}
-
-	/**
-	 * Sets the module result local service.
-	 *
-	 * @param moduleResultLocalService the module result local service
-	 */
-	public void setModuleResultLocalService(
-		com.ted.lms.service.ModuleResultLocalService moduleResultLocalService) {
-		this.moduleResultLocalService = moduleResultLocalService;
-	}
-
-	/**
-	 * Returns the module result persistence.
-	 *
-	 * @return the module result persistence
-	 */
-	public ModuleResultPersistence getModuleResultPersistence() {
-		return moduleResultPersistence;
-	}
-
-	/**
-	 * Sets the module result persistence.
-	 *
-	 * @param moduleResultPersistence the module result persistence
-	 */
-	public void setModuleResultPersistence(
-		ModuleResultPersistence moduleResultPersistence) {
-		this.moduleResultPersistence = moduleResultPersistence;
-	}
-
-	/**
-	 * Returns the module result finder.
-	 *
-	 * @return the module result finder
-	 */
-	public ModuleResultFinder getModuleResultFinder() {
-		return moduleResultFinder;
-	}
-
-	/**
-	 * Sets the module result finder.
-	 *
-	 * @param moduleResultFinder the module result finder
-	 */
-	public void setModuleResultFinder(ModuleResultFinder moduleResultFinder) {
-		this.moduleResultFinder = moduleResultFinder;
-	}
-
-	/**
-	 * Returns the student local service.
-	 *
-	 * @return the student local service
-	 */
-	public com.ted.lms.service.StudentLocalService getStudentLocalService() {
-		return studentLocalService;
-	}
-
-	/**
-	 * Sets the student local service.
-	 *
-	 * @param studentLocalService the student local service
-	 */
-	public void setStudentLocalService(
-		com.ted.lms.service.StudentLocalService studentLocalService) {
-		this.studentLocalService = studentLocalService;
-	}
-
-	/**
-	 * Returns the counter local service.
-	 *
-	 * @return the counter local service
-	 */
-	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
-		return counterLocalService;
-	}
-
-	/**
-	 * Sets the counter local service.
-	 *
-	 * @param counterLocalService the counter local service
-	 */
-	public void setCounterLocalService(
-		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
-		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
-	}
-
-	/**
-	 * Returns the company local service.
-	 *
-	 * @return the company local service
-	 */
-	public com.liferay.portal.kernel.service.CompanyLocalService getCompanyLocalService() {
-		return companyLocalService;
-	}
-
-	/**
-	 * Sets the company local service.
-	 *
-	 * @param companyLocalService the company local service
-	 */
-	public void setCompanyLocalService(
-		com.liferay.portal.kernel.service.CompanyLocalService companyLocalService) {
-		this.companyLocalService = companyLocalService;
-	}
-
-	/**
-	 * Returns the company persistence.
-	 *
-	 * @return the company persistence
-	 */
-	public CompanyPersistence getCompanyPersistence() {
-		return companyPersistence;
-	}
-
-	/**
-	 * Sets the company persistence.
-	 *
-	 * @param companyPersistence the company persistence
-	 */
-	public void setCompanyPersistence(CompanyPersistence companyPersistence) {
-		this.companyPersistence = companyPersistence;
-	}
-
-	/**
-	 * Returns the group local service.
-	 *
-	 * @return the group local service
-	 */
-	public com.liferay.portal.kernel.service.GroupLocalService getGroupLocalService() {
-		return groupLocalService;
-	}
-
-	/**
-	 * Sets the group local service.
-	 *
-	 * @param groupLocalService the group local service
-	 */
-	public void setGroupLocalService(
-		com.liferay.portal.kernel.service.GroupLocalService groupLocalService) {
-		this.groupLocalService = groupLocalService;
-	}
-
-	/**
-	 * Returns the group persistence.
-	 *
-	 * @return the group persistence
-	 */
-	public GroupPersistence getGroupPersistence() {
-		return groupPersistence;
-	}
-
-	/**
-	 * Sets the group persistence.
-	 *
-	 * @param groupPersistence the group persistence
-	 */
-	public void setGroupPersistence(GroupPersistence groupPersistence) {
-		this.groupPersistence = groupPersistence;
-	}
-
-	/**
-	 * Returns the resource local service.
-	 *
-	 * @return the resource local service
-	 */
-	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
-		return resourceLocalService;
-	}
-
-	/**
-	 * Sets the resource local service.
-	 *
-	 * @param resourceLocalService the resource local service
-	 */
-	public void setResourceLocalService(
-		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
-		this.resourceLocalService = resourceLocalService;
-	}
-
-	/**
-	 * Returns the user local service.
-	 *
-	 * @return the user local service
-	 */
-	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
-		return userLocalService;
-	}
-
-	/**
-	 * Sets the user local service.
-	 *
-	 * @param userLocalService the user local service
-	 */
-	public void setUserLocalService(
-		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
-
-	/**
-	 * Returns the user persistence.
-	 *
-	 * @return the user persistence
-	 */
-	public UserPersistence getUserPersistence() {
-		return userPersistence;
-	}
-
-	/**
-	 * Sets the user persistence.
-	 *
-	 * @param userPersistence the user persistence
-	 */
-	public void setUserPersistence(UserPersistence userPersistence) {
-		this.userPersistence = userPersistence;
-	}
-
-	public void afterPropertiesSet() {
-		persistedModelLocalServiceRegistry.register("com.ted.lms.model.CourseResult",
-			courseResultLocalService);
-	}
-
-	public void destroy() {
-		persistedModelLocalServiceRegistry.unregister(
-			"com.ted.lms.model.CourseResult");
+	@Override
+	public Class<?>[] getAopInterfaces() {
+		return new Class<?>[] {
+			CourseResultLocalService.class, IdentifiableOSGiService.class,
+			PersistedModelLocalService.class
+		};
+	}
+
+	@Override
+	public void setAopProxy(Object aopProxy) {
+		courseResultLocalService = (CourseResultLocalService)aopProxy;
 	}
 
 	/**
@@ -988,8 +381,8 @@ public abstract class CourseResultLocalServiceBaseImpl
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
 
-			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
-					sql);
+			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(
+				dataSource, sql);
 
 			sqlUpdate.update();
 		}
@@ -998,72 +391,70 @@ public abstract class CourseResultLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.ted.lms.service.CourseLocalService.class)
-	protected com.ted.lms.service.CourseLocalService courseLocalService;
-	@BeanReference(type = CoursePersistence.class)
+	@Reference
 	protected CoursePersistence coursePersistence;
-	@BeanReference(type = CourseFinder.class)
+
+	@Reference
 	protected CourseFinder courseFinder;
-	@BeanReference(type = CourseResultLocalService.class)
+
 	protected CourseResultLocalService courseResultLocalService;
-	@BeanReference(type = CourseResultPersistence.class)
+
+	@Reference
 	protected CourseResultPersistence courseResultPersistence;
-	@BeanReference(type = CourseResultFinder.class)
+
+	@Reference
 	protected CourseResultFinder courseResultFinder;
-	@BeanReference(type = com.ted.lms.service.CourseTypeLocalService.class)
-	protected com.ted.lms.service.CourseTypeLocalService courseTypeLocalService;
-	@BeanReference(type = CourseTypePersistence.class)
+
+	@Reference
 	protected CourseTypePersistence courseTypePersistence;
-	@BeanReference(type = com.ted.lms.service.CourseTypeRelationLocalService.class)
-	protected com.ted.lms.service.CourseTypeRelationLocalService courseTypeRelationLocalService;
-	@BeanReference(type = CourseTypeRelationPersistence.class)
+
+	@Reference
 	protected CourseTypeRelationPersistence courseTypeRelationPersistence;
-	@BeanReference(type = com.ted.lms.service.LearningActivityLocalService.class)
-	protected com.ted.lms.service.LearningActivityLocalService learningActivityLocalService;
-	@BeanReference(type = LearningActivityPersistence.class)
+
+	@Reference
 	protected LearningActivityPersistence learningActivityPersistence;
-	@BeanReference(type = com.ted.lms.service.LearningActivityResultLocalService.class)
-	protected com.ted.lms.service.LearningActivityResultLocalService learningActivityResultLocalService;
-	@BeanReference(type = LearningActivityResultPersistence.class)
-	protected LearningActivityResultPersistence learningActivityResultPersistence;
-	@BeanReference(type = LearningActivityResultFinder.class)
+
+	@Reference
+	protected LearningActivityResultPersistence
+		learningActivityResultPersistence;
+
+	@Reference
 	protected LearningActivityResultFinder learningActivityResultFinder;
-	@BeanReference(type = com.ted.lms.service.LearningActivityTryLocalService.class)
-	protected com.ted.lms.service.LearningActivityTryLocalService learningActivityTryLocalService;
-	@BeanReference(type = LearningActivityTryPersistence.class)
+
+	@Reference
 	protected LearningActivityTryPersistence learningActivityTryPersistence;
-	@BeanReference(type = com.ted.lms.service.ModuleLocalService.class)
-	protected com.ted.lms.service.ModuleLocalService moduleLocalService;
-	@BeanReference(type = ModulePersistence.class)
+
+	@Reference
 	protected ModulePersistence modulePersistence;
-	@BeanReference(type = com.ted.lms.service.ModuleResultLocalService.class)
-	protected com.ted.lms.service.ModuleResultLocalService moduleResultLocalService;
-	@BeanReference(type = ModuleResultPersistence.class)
+
+	@Reference
 	protected ModuleResultPersistence moduleResultPersistence;
-	@BeanReference(type = ModuleResultFinder.class)
+
+	@Reference
 	protected ModuleResultFinder moduleResultFinder;
-	@BeanReference(type = com.ted.lms.service.StudentLocalService.class)
-	protected com.ted.lms.service.StudentLocalService studentLocalService;
-	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
-	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
-	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
-	@ServiceReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.CompanyLocalService.class)
-	protected com.liferay.portal.kernel.service.CompanyLocalService companyLocalService;
-	@ServiceReference(type = CompanyPersistence.class)
-	protected CompanyPersistence companyPersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.GroupLocalService.class)
-	protected com.liferay.portal.kernel.service.GroupLocalService groupLocalService;
-	@ServiceReference(type = GroupPersistence.class)
-	protected GroupPersistence groupPersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
-	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
-	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
-	@ServiceReference(type = UserPersistence.class)
-	protected UserPersistence userPersistence;
-	@ServiceReference(type = PersistedModelLocalServiceRegistry.class)
-	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
+
+	@Reference
+	protected com.liferay.counter.kernel.service.CounterLocalService
+		counterLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ClassNameLocalService
+		classNameLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.CompanyLocalService
+		companyLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.GroupLocalService
+		groupLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourceLocalService
+		resourceLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.UserLocalService
+		userLocalService;
+
 }

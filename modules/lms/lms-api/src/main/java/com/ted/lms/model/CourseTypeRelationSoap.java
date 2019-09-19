@@ -14,14 +14,14 @@
 
 package com.ted.lms.model;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.service.persistence.CourseTypeRelationPK;
 
 import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * This class is used by SOAP remote services.
@@ -31,6 +31,7 @@ import java.util.List;
  */
 @ProviderType
 public class CourseTypeRelationSoap implements Serializable {
+
 	public static CourseTypeRelationSoap toSoapModel(CourseTypeRelation model) {
 		CourseTypeRelationSoap soapModel = new CourseTypeRelationSoap();
 
@@ -43,7 +44,9 @@ public class CourseTypeRelationSoap implements Serializable {
 
 	public static CourseTypeRelationSoap[] toSoapModels(
 		CourseTypeRelation[] models) {
-		CourseTypeRelationSoap[] soapModels = new CourseTypeRelationSoap[models.length];
+
+		CourseTypeRelationSoap[] soapModels =
+			new CourseTypeRelationSoap[models.length];
 
 		for (int i = 0; i < models.length; i++) {
 			soapModels[i] = toSoapModel(models[i]);
@@ -54,10 +57,12 @@ public class CourseTypeRelationSoap implements Serializable {
 
 	public static CourseTypeRelationSoap[][] toSoapModels(
 		CourseTypeRelation[][] models) {
+
 		CourseTypeRelationSoap[][] soapModels = null;
 
 		if (models.length > 0) {
-			soapModels = new CourseTypeRelationSoap[models.length][models[0].length];
+			soapModels =
+				new CourseTypeRelationSoap[models.length][models[0].length];
 		}
 		else {
 			soapModels = new CourseTypeRelationSoap[0][0];
@@ -72,13 +77,16 @@ public class CourseTypeRelationSoap implements Serializable {
 
 	public static CourseTypeRelationSoap[] toSoapModels(
 		List<CourseTypeRelation> models) {
-		List<CourseTypeRelationSoap> soapModels = new ArrayList<CourseTypeRelationSoap>(models.size());
+
+		List<CourseTypeRelationSoap> soapModels =
+			new ArrayList<CourseTypeRelationSoap>(models.size());
 
 		for (CourseTypeRelation model : models) {
 			soapModels.add(toSoapModel(model));
 		}
 
-		return soapModels.toArray(new CourseTypeRelationSoap[soapModels.size()]);
+		return soapModels.toArray(
+			new CourseTypeRelationSoap[soapModels.size()]);
 	}
 
 	public CourseTypeRelationSoap() {
@@ -121,4 +129,5 @@ public class CourseTypeRelationSoap implements Serializable {
 	private long _courseTypeId;
 	private long _classNameId;
 	private long _classPK;
+
 }

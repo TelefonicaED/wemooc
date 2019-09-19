@@ -14,19 +14,20 @@
 
 package com.ted.audit.db.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
- * The extended model implementation for the AuditEntry service. Represents a row in the &quot;audit_AuditEntry&quot; database table, with each column mapped to a property of this class.
+ * The extended model implementation for the AuditEntry service. Represents a row in the &quot;Aud_AuditEntry&quot; database table, with each column mapped to a property of this class.
  *
  * <p>
- * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the {@link com.ted.audit.db.model.AuditEntry} interface.
+ * Helper methods and all application logic should be put in this class. Whenever methods are added, rerun ServiceBuilder to copy their definitions into the <code>com.ted.audit.db.model.AuditEntry<code> interface.
  * </p>
  *
  * @author Brian Wing Shun Chan
  */
 @ProviderType
 public class AuditEntryImpl extends AuditEntryBaseImpl {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
@@ -34,4 +35,5 @@ public class AuditEntryImpl extends AuditEntryBaseImpl {
 	 */
 	public AuditEntryImpl() {
 	}
+
 }

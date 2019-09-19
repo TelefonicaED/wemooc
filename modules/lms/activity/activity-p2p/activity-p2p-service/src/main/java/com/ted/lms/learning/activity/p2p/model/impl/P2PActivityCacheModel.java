@@ -14,11 +14,9 @@
 
 package com.ted.lms.learning.activity.p2p.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
+import com.liferay.petra.lang.HashUtil;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.model.CacheModel;
-import com.liferay.portal.kernel.util.HashUtil;
-import com.liferay.portal.kernel.util.StringBundler;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivity;
 
@@ -29,16 +27,18 @@ import java.io.ObjectOutput;
 
 import java.util.Date;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * The cache model class for representing P2PActivity in entity cache.
  *
  * @author Brian Wing Shun Chan
- * @see P2PActivity
  * @generated
  */
 @ProviderType
-public class P2PActivityCacheModel implements CacheModel<P2PActivity>,
-	Externalizable {
+public class P2PActivityCacheModel
+	implements CacheModel<P2PActivity>, Externalizable {
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -49,7 +49,8 @@ public class P2PActivityCacheModel implements CacheModel<P2PActivity>,
 			return false;
 		}
 
-		P2PActivityCacheModel p2pActivityCacheModel = (P2PActivityCacheModel)obj;
+		P2PActivityCacheModel p2pActivityCacheModel =
+			(P2PActivityCacheModel)obj;
 
 		if (p2pActivityId == p2pActivityCacheModel.p2pActivityId) {
 			return true;
@@ -194,8 +195,7 @@ public class P2PActivityCacheModel implements CacheModel<P2PActivity>,
 	}
 
 	@Override
-	public void writeExternal(ObjectOutput objectOutput)
-		throws IOException {
+	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		if (uuid == null) {
 			objectOutput.writeUTF("");
 		}
@@ -256,4 +256,5 @@ public class P2PActivityCacheModel implements CacheModel<P2PActivity>,
 	public String description;
 	public long date;
 	public boolean asignationsCompleted;
+
 }

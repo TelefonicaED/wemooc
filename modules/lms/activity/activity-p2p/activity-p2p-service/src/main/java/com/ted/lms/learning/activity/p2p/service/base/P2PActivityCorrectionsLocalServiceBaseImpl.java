@@ -14,15 +14,12 @@
 
 package com.ted.lms.learning.activity.p2p.service.base;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.exportimport.kernel.lar.StagedModelType;
-
-import com.liferay.portal.kernel.bean.BeanReference;
+import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.SqlUpdate;
@@ -41,13 +38,10 @@ import com.liferay.portal.kernel.module.framework.service.IdentifiableOSGiServic
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalServiceImpl;
-import com.liferay.portal.kernel.service.PersistedModelLocalServiceRegistry;
-import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
-import com.liferay.portal.kernel.service.persistence.UserPersistence;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.spring.extender.service.ServiceReference;
 
 import com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections;
 import com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalService;
@@ -62,6 +56,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * Provides the base implementation for the p2p activity corrections local service.
  *
@@ -71,17 +68,18 @@ import javax.sql.DataSource;
  *
  * @author Brian Wing Shun Chan
  * @see com.ted.lms.learning.activity.p2p.service.impl.P2PActivityCorrectionsLocalServiceImpl
- * @see com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil
  * @generated
  */
 @ProviderType
 public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
-	extends BaseLocalServiceImpl implements P2PActivityCorrectionsLocalService,
-		IdentifiableOSGiService {
+	extends BaseLocalServiceImpl
+	implements P2PActivityCorrectionsLocalService, AopService,
+			   IdentifiableOSGiService {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. Always use {@link com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil} to access the p2p activity corrections local service.
+	 * Never modify or reference this class directly. Use <code>P2PActivityCorrectionsLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.learning.activity.p2p.service.P2PActivityCorrectionsLocalServiceUtil</code>.
 	 */
 
 	/**
@@ -94,6 +92,7 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Override
 	public P2PActivityCorrections addP2PActivityCorrections(
 		P2PActivityCorrections p2pActivityCorrections) {
+
 		p2pActivityCorrections.setNew(true);
 
 		return p2pActivityCorrectionsPersistence.update(p2pActivityCorrections);
@@ -109,7 +108,9 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Transactional(enabled = false)
 	public P2PActivityCorrections createP2PActivityCorrections(
 		long p2pActivityCorrectionsId) {
-		return p2pActivityCorrectionsPersistence.create(p2pActivityCorrectionsId);
+
+		return p2pActivityCorrectionsPersistence.create(
+			p2pActivityCorrectionsId);
 	}
 
 	/**
@@ -122,8 +123,11 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Indexable(type = IndexableType.DELETE)
 	@Override
 	public P2PActivityCorrections deleteP2PActivityCorrections(
-		long p2pActivityCorrectionsId) throws PortalException {
-		return p2pActivityCorrectionsPersistence.remove(p2pActivityCorrectionsId);
+			long p2pActivityCorrectionsId)
+		throws PortalException {
+
+		return p2pActivityCorrectionsPersistence.remove(
+			p2pActivityCorrectionsId);
 	}
 
 	/**
@@ -136,6 +140,7 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Override
 	public P2PActivityCorrections deleteP2PActivityCorrections(
 		P2PActivityCorrections p2pActivityCorrections) {
+
 		return p2pActivityCorrectionsPersistence.remove(p2pActivityCorrections);
 	}
 
@@ -143,8 +148,8 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	public DynamicQuery dynamicQuery() {
 		Class<?> clazz = getClass();
 
-		return DynamicQueryFactoryUtil.forClass(P2PActivityCorrections.class,
-			clazz.getClassLoader());
+		return DynamicQueryFactoryUtil.forClass(
+			P2PActivityCorrections.class, clazz.getClassLoader());
 	}
 
 	/**
@@ -155,14 +160,15 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 */
 	@Override
 	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery) {
-		return p2pActivityCorrectionsPersistence.findWithDynamicQuery(dynamicQuery);
+		return p2pActivityCorrectionsPersistence.findWithDynamicQuery(
+			dynamicQuery);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns a range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -171,17 +177,18 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * @return the range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end) {
-		return p2pActivityCorrectionsPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end) {
+
+		return p2pActivityCorrectionsPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end);
 	}
 
 	/**
 	 * Performs a dynamic query on the database and returns an ordered range of the matching rows.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param dynamicQuery the dynamic query
@@ -191,10 +198,12 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * @return the ordered range of matching rows
 	 */
 	@Override
-	public <T> List<T> dynamicQuery(DynamicQuery dynamicQuery, int start,
-		int end, OrderByComparator<T> orderByComparator) {
-		return p2pActivityCorrectionsPersistence.findWithDynamicQuery(dynamicQuery,
-			start, end, orderByComparator);
+	public <T> List<T> dynamicQuery(
+		DynamicQuery dynamicQuery, int start, int end,
+		OrderByComparator<T> orderByComparator) {
+
+		return p2pActivityCorrectionsPersistence.findWithDynamicQuery(
+			dynamicQuery, start, end, orderByComparator);
 	}
 
 	/**
@@ -205,7 +214,8 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 */
 	@Override
 	public long dynamicQueryCount(DynamicQuery dynamicQuery) {
-		return p2pActivityCorrectionsPersistence.countWithDynamicQuery(dynamicQuery);
+		return p2pActivityCorrectionsPersistence.countWithDynamicQuery(
+			dynamicQuery);
 	}
 
 	/**
@@ -216,16 +226,19 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * @return the number of rows matching the dynamic query
 	 */
 	@Override
-	public long dynamicQueryCount(DynamicQuery dynamicQuery,
-		Projection projection) {
-		return p2pActivityCorrectionsPersistence.countWithDynamicQuery(dynamicQuery,
-			projection);
+	public long dynamicQueryCount(
+		DynamicQuery dynamicQuery, Projection projection) {
+
+		return p2pActivityCorrectionsPersistence.countWithDynamicQuery(
+			dynamicQuery, projection);
 	}
 
 	@Override
 	public P2PActivityCorrections fetchP2PActivityCorrections(
 		long p2pActivityCorrectionsId) {
-		return p2pActivityCorrectionsPersistence.fetchByPrimaryKey(p2pActivityCorrectionsId);
+
+		return p2pActivityCorrectionsPersistence.fetchByPrimaryKey(
+			p2pActivityCorrectionsId);
 	}
 
 	/**
@@ -238,6 +251,7 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Override
 	public P2PActivityCorrections fetchP2PActivityCorrectionsByUuidAndGroupId(
 		String uuid, long groupId) {
+
 		return p2pActivityCorrectionsPersistence.fetchByUUID_G(uuid, groupId);
 	}
 
@@ -250,15 +264,20 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 */
 	@Override
 	public P2PActivityCorrections getP2PActivityCorrections(
-		long p2pActivityCorrectionsId) throws PortalException {
-		return p2pActivityCorrectionsPersistence.findByPrimaryKey(p2pActivityCorrectionsId);
+			long p2pActivityCorrectionsId)
+		throws PortalException {
+
+		return p2pActivityCorrectionsPersistence.findByPrimaryKey(
+			p2pActivityCorrectionsId);
 	}
 
 	@Override
 	public ActionableDynamicQuery getActionableDynamicQuery() {
-		ActionableDynamicQuery actionableDynamicQuery = new DefaultActionableDynamicQuery();
+		ActionableDynamicQuery actionableDynamicQuery =
+			new DefaultActionableDynamicQuery();
 
-		actionableDynamicQuery.setBaseLocalService(p2pActivityCorrectionsLocalService);
+		actionableDynamicQuery.setBaseLocalService(
+			p2pActivityCorrectionsLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(P2PActivityCorrections.class);
 
@@ -269,12 +288,17 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	}
 
 	@Override
-	public IndexableActionableDynamicQuery getIndexableActionableDynamicQuery() {
-		IndexableActionableDynamicQuery indexableActionableDynamicQuery = new IndexableActionableDynamicQuery();
+	public IndexableActionableDynamicQuery
+		getIndexableActionableDynamicQuery() {
 
-		indexableActionableDynamicQuery.setBaseLocalService(p2pActivityCorrectionsLocalService);
+		IndexableActionableDynamicQuery indexableActionableDynamicQuery =
+			new IndexableActionableDynamicQuery();
+
+		indexableActionableDynamicQuery.setBaseLocalService(
+			p2pActivityCorrectionsLocalService);
 		indexableActionableDynamicQuery.setClassLoader(getClassLoader());
-		indexableActionableDynamicQuery.setModelClass(P2PActivityCorrections.class);
+		indexableActionableDynamicQuery.setModelClass(
+			P2PActivityCorrections.class);
 
 		indexableActionableDynamicQuery.setPrimaryKeyPropertyName(
 			"p2pActivityCorrectionsId");
@@ -284,7 +308,9 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 
 	protected void initActionableDynamicQuery(
 		ActionableDynamicQuery actionableDynamicQuery) {
-		actionableDynamicQuery.setBaseLocalService(p2pActivityCorrectionsLocalService);
+
+		actionableDynamicQuery.setBaseLocalService(
+			p2pActivityCorrectionsLocalService);
 		actionableDynamicQuery.setClassLoader(getClassLoader());
 		actionableDynamicQuery.setModelClass(P2PActivityCorrections.class);
 
@@ -295,50 +321,66 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Override
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
 		final PortletDataContext portletDataContext) {
-		final ExportActionableDynamicQuery exportActionableDynamicQuery = new ExportActionableDynamicQuery() {
+
+		final ExportActionableDynamicQuery exportActionableDynamicQuery =
+			new ExportActionableDynamicQuery() {
+
 				@Override
 				public long performCount() throws PortalException {
-					ManifestSummary manifestSummary = portletDataContext.getManifestSummary();
+					ManifestSummary manifestSummary =
+						portletDataContext.getManifestSummary();
 
 					StagedModelType stagedModelType = getStagedModelType();
 
 					long modelAdditionCount = super.performCount();
 
-					manifestSummary.addModelAdditionCount(stagedModelType,
-						modelAdditionCount);
+					manifestSummary.addModelAdditionCount(
+						stagedModelType, modelAdditionCount);
 
-					long modelDeletionCount = ExportImportHelperUtil.getModelDeletionCount(portletDataContext,
-							stagedModelType);
+					long modelDeletionCount =
+						ExportImportHelperUtil.getModelDeletionCount(
+							portletDataContext, stagedModelType);
 
-					manifestSummary.addModelDeletionCount(stagedModelType,
-						modelDeletionCount);
+					manifestSummary.addModelDeletionCount(
+						stagedModelType, modelDeletionCount);
 
 					return modelAdditionCount;
 				}
+
 			};
 
 		initActionableDynamicQuery(exportActionableDynamicQuery);
 
-		exportActionableDynamicQuery.setAddCriteriaMethod(new ActionableDynamicQuery.AddCriteriaMethod() {
+		exportActionableDynamicQuery.setAddCriteriaMethod(
+			new ActionableDynamicQuery.AddCriteriaMethod() {
+
 				@Override
 				public void addCriteria(DynamicQuery dynamicQuery) {
-					portletDataContext.addDateRangeCriteria(dynamicQuery,
-						"modifiedDate");
+					portletDataContext.addDateRangeCriteria(
+						dynamicQuery, "modifiedDate");
 				}
+
 			});
 
-		exportActionableDynamicQuery.setCompanyId(portletDataContext.getCompanyId());
+		exportActionableDynamicQuery.setCompanyId(
+			portletDataContext.getCompanyId());
 
-		exportActionableDynamicQuery.setPerformActionMethod(new ActionableDynamicQuery.PerformActionMethod<P2PActivityCorrections>() {
+		exportActionableDynamicQuery.setPerformActionMethod(
+			new ActionableDynamicQuery.PerformActionMethod
+				<P2PActivityCorrections>() {
+
 				@Override
 				public void performAction(
-					P2PActivityCorrections p2pActivityCorrections)
+						P2PActivityCorrections p2pActivityCorrections)
 					throws PortalException {
-					StagedModelDataHandlerUtil.exportStagedModel(portletDataContext,
-						p2pActivityCorrections);
+
+					StagedModelDataHandlerUtil.exportStagedModel(
+						portletDataContext, p2pActivityCorrections);
 				}
+
 			});
-		exportActionableDynamicQuery.setStagedModelType(new StagedModelType(
+		exportActionableDynamicQuery.setStagedModelType(
+			new StagedModelType(
 				PortalUtil.getClassNameId(
 					P2PActivityCorrections.class.getName())));
 
@@ -351,13 +393,17 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException {
-		return p2pActivityCorrectionsLocalService.deleteP2PActivityCorrections((P2PActivityCorrections)persistedModel);
+
+		return p2pActivityCorrectionsLocalService.deleteP2PActivityCorrections(
+			(P2PActivityCorrections)persistedModel);
 	}
 
 	@Override
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException {
-		return p2pActivityCorrectionsPersistence.findByPrimaryKey(primaryKeyObj);
+
+		return p2pActivityCorrectionsPersistence.findByPrimaryKey(
+			primaryKeyObj);
 	}
 
 	/**
@@ -368,8 +414,10 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * @return the matching p2p activity correctionses, or an empty list if no matches were found
 	 */
 	@Override
-	public List<P2PActivityCorrections> getP2PActivityCorrectionsesByUuidAndCompanyId(
-		String uuid, long companyId) {
+	public List<P2PActivityCorrections>
+		getP2PActivityCorrectionsesByUuidAndCompanyId(
+			String uuid, long companyId) {
+
 		return p2pActivityCorrectionsPersistence.findByUuid_C(uuid, companyId);
 	}
 
@@ -384,11 +432,13 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * @return the range of matching p2p activity correctionses, or an empty list if no matches were found
 	 */
 	@Override
-	public List<P2PActivityCorrections> getP2PActivityCorrectionsesByUuidAndCompanyId(
-		String uuid, long companyId, int start, int end,
-		OrderByComparator<P2PActivityCorrections> orderByComparator) {
-		return p2pActivityCorrectionsPersistence.findByUuid_C(uuid, companyId,
-			start, end, orderByComparator);
+	public List<P2PActivityCorrections>
+		getP2PActivityCorrectionsesByUuidAndCompanyId(
+			String uuid, long companyId, int start, int end,
+			OrderByComparator<P2PActivityCorrections> orderByComparator) {
+
+		return p2pActivityCorrectionsPersistence.findByUuid_C(
+			uuid, companyId, start, end, orderByComparator);
 	}
 
 	/**
@@ -401,7 +451,9 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 */
 	@Override
 	public P2PActivityCorrections getP2PActivityCorrectionsByUuidAndGroupId(
-		String uuid, long groupId) throws PortalException {
+			String uuid, long groupId)
+		throws PortalException {
+
 		return p2pActivityCorrectionsPersistence.findByUUID_G(uuid, groupId);
 	}
 
@@ -409,7 +461,7 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * Returns a range of all the p2p activity correctionses.
 	 *
 	 * <p>
-	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS} will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not {@link com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS}), then the query will include the default ORDER BY logic from {@link com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsModelImpl}. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>com.liferay.portal.kernel.dao.orm.QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>com.ted.lms.learning.activity.p2p.model.impl.P2PActivityCorrectionsModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
 	 * </p>
 	 *
 	 * @param start the lower bound of the range of p2p activity correctionses
@@ -417,8 +469,9 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 * @return the range of p2p activity correctionses
 	 */
 	@Override
-	public List<P2PActivityCorrections> getP2PActivityCorrectionses(int start,
-		int end) {
+	public List<P2PActivityCorrections> getP2PActivityCorrectionses(
+		int start, int end) {
+
 		return p2pActivityCorrectionsPersistence.findAll(start, end);
 	}
 
@@ -442,243 +495,22 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	@Override
 	public P2PActivityCorrections updateP2PActivityCorrections(
 		P2PActivityCorrections p2pActivityCorrections) {
+
 		return p2pActivityCorrectionsPersistence.update(p2pActivityCorrections);
 	}
 
-	/**
-	 * Returns the p2p activity local service.
-	 *
-	 * @return the p2p activity local service
-	 */
-	public com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService getP2PActivityLocalService() {
-		return p2pActivityLocalService;
+	@Override
+	public Class<?>[] getAopInterfaces() {
+		return new Class<?>[] {
+			P2PActivityCorrectionsLocalService.class,
+			IdentifiableOSGiService.class, PersistedModelLocalService.class
+		};
 	}
 
-	/**
-	 * Sets the p2p activity local service.
-	 *
-	 * @param p2pActivityLocalService the p2p activity local service
-	 */
-	public void setP2PActivityLocalService(
-		com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService p2pActivityLocalService) {
-		this.p2pActivityLocalService = p2pActivityLocalService;
-	}
-
-	/**
-	 * Returns the p2p activity persistence.
-	 *
-	 * @return the p2p activity persistence
-	 */
-	public P2PActivityPersistence getP2PActivityPersistence() {
-		return p2pActivityPersistence;
-	}
-
-	/**
-	 * Sets the p2p activity persistence.
-	 *
-	 * @param p2pActivityPersistence the p2p activity persistence
-	 */
-	public void setP2PActivityPersistence(
-		P2PActivityPersistence p2pActivityPersistence) {
-		this.p2pActivityPersistence = p2pActivityPersistence;
-	}
-
-	/**
-	 * Returns the p2p activity finder.
-	 *
-	 * @return the p2p activity finder
-	 */
-	public P2PActivityFinder getP2PActivityFinder() {
-		return p2pActivityFinder;
-	}
-
-	/**
-	 * Sets the p2p activity finder.
-	 *
-	 * @param p2pActivityFinder the p2p activity finder
-	 */
-	public void setP2PActivityFinder(P2PActivityFinder p2pActivityFinder) {
-		this.p2pActivityFinder = p2pActivityFinder;
-	}
-
-	/**
-	 * Returns the p2p activity corrections local service.
-	 *
-	 * @return the p2p activity corrections local service
-	 */
-	public P2PActivityCorrectionsLocalService getP2PActivityCorrectionsLocalService() {
-		return p2pActivityCorrectionsLocalService;
-	}
-
-	/**
-	 * Sets the p2p activity corrections local service.
-	 *
-	 * @param p2pActivityCorrectionsLocalService the p2p activity corrections local service
-	 */
-	public void setP2PActivityCorrectionsLocalService(
-		P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService) {
-		this.p2pActivityCorrectionsLocalService = p2pActivityCorrectionsLocalService;
-	}
-
-	/**
-	 * Returns the p2p activity corrections persistence.
-	 *
-	 * @return the p2p activity corrections persistence
-	 */
-	public P2PActivityCorrectionsPersistence getP2PActivityCorrectionsPersistence() {
-		return p2pActivityCorrectionsPersistence;
-	}
-
-	/**
-	 * Sets the p2p activity corrections persistence.
-	 *
-	 * @param p2pActivityCorrectionsPersistence the p2p activity corrections persistence
-	 */
-	public void setP2PActivityCorrectionsPersistence(
-		P2PActivityCorrectionsPersistence p2pActivityCorrectionsPersistence) {
-		this.p2pActivityCorrectionsPersistence = p2pActivityCorrectionsPersistence;
-	}
-
-	/**
-	 * Returns the p2p activity corrections finder.
-	 *
-	 * @return the p2p activity corrections finder
-	 */
-	public P2PActivityCorrectionsFinder getP2PActivityCorrectionsFinder() {
-		return p2pActivityCorrectionsFinder;
-	}
-
-	/**
-	 * Sets the p2p activity corrections finder.
-	 *
-	 * @param p2pActivityCorrectionsFinder the p2p activity corrections finder
-	 */
-	public void setP2PActivityCorrectionsFinder(
-		P2PActivityCorrectionsFinder p2pActivityCorrectionsFinder) {
-		this.p2pActivityCorrectionsFinder = p2pActivityCorrectionsFinder;
-	}
-
-	/**
-	 * Returns the counter local service.
-	 *
-	 * @return the counter local service
-	 */
-	public com.liferay.counter.kernel.service.CounterLocalService getCounterLocalService() {
-		return counterLocalService;
-	}
-
-	/**
-	 * Sets the counter local service.
-	 *
-	 * @param counterLocalService the counter local service
-	 */
-	public void setCounterLocalService(
-		com.liferay.counter.kernel.service.CounterLocalService counterLocalService) {
-		this.counterLocalService = counterLocalService;
-	}
-
-	/**
-	 * Returns the class name local service.
-	 *
-	 * @return the class name local service
-	 */
-	public com.liferay.portal.kernel.service.ClassNameLocalService getClassNameLocalService() {
-		return classNameLocalService;
-	}
-
-	/**
-	 * Sets the class name local service.
-	 *
-	 * @param classNameLocalService the class name local service
-	 */
-	public void setClassNameLocalService(
-		com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService) {
-		this.classNameLocalService = classNameLocalService;
-	}
-
-	/**
-	 * Returns the class name persistence.
-	 *
-	 * @return the class name persistence
-	 */
-	public ClassNamePersistence getClassNamePersistence() {
-		return classNamePersistence;
-	}
-
-	/**
-	 * Sets the class name persistence.
-	 *
-	 * @param classNamePersistence the class name persistence
-	 */
-	public void setClassNamePersistence(
-		ClassNamePersistence classNamePersistence) {
-		this.classNamePersistence = classNamePersistence;
-	}
-
-	/**
-	 * Returns the resource local service.
-	 *
-	 * @return the resource local service
-	 */
-	public com.liferay.portal.kernel.service.ResourceLocalService getResourceLocalService() {
-		return resourceLocalService;
-	}
-
-	/**
-	 * Sets the resource local service.
-	 *
-	 * @param resourceLocalService the resource local service
-	 */
-	public void setResourceLocalService(
-		com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService) {
-		this.resourceLocalService = resourceLocalService;
-	}
-
-	/**
-	 * Returns the user local service.
-	 *
-	 * @return the user local service
-	 */
-	public com.liferay.portal.kernel.service.UserLocalService getUserLocalService() {
-		return userLocalService;
-	}
-
-	/**
-	 * Sets the user local service.
-	 *
-	 * @param userLocalService the user local service
-	 */
-	public void setUserLocalService(
-		com.liferay.portal.kernel.service.UserLocalService userLocalService) {
-		this.userLocalService = userLocalService;
-	}
-
-	/**
-	 * Returns the user persistence.
-	 *
-	 * @return the user persistence
-	 */
-	public UserPersistence getUserPersistence() {
-		return userPersistence;
-	}
-
-	/**
-	 * Sets the user persistence.
-	 *
-	 * @param userPersistence the user persistence
-	 */
-	public void setUserPersistence(UserPersistence userPersistence) {
-		this.userPersistence = userPersistence;
-	}
-
-	public void afterPropertiesSet() {
-		persistedModelLocalServiceRegistry.register("com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections",
-			p2pActivityCorrectionsLocalService);
-	}
-
-	public void destroy() {
-		persistedModelLocalServiceRegistry.unregister(
-			"com.ted.lms.learning.activity.p2p.model.P2PActivityCorrections");
+	@Override
+	public void setAopProxy(Object aopProxy) {
+		p2pActivityCorrectionsLocalService =
+			(P2PActivityCorrectionsLocalService)aopProxy;
 	}
 
 	/**
@@ -706,15 +538,16 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 	 */
 	protected void runSQL(String sql) {
 		try {
-			DataSource dataSource = p2pActivityCorrectionsPersistence.getDataSource();
+			DataSource dataSource =
+				p2pActivityCorrectionsPersistence.getDataSource();
 
 			DB db = DBManagerUtil.getDB();
 
 			sql = db.buildSQL(sql);
 			sql = PortalUtil.transformSQL(sql);
 
-			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(dataSource,
-					sql);
+			SqlUpdate sqlUpdate = SqlUpdateFactoryUtil.getSqlUpdate(
+				dataSource, sql);
 
 			sqlUpdate.update();
 		}
@@ -723,30 +556,36 @@ public abstract class P2PActivityCorrectionsLocalServiceBaseImpl
 		}
 	}
 
-	@BeanReference(type = com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService.class)
-	protected com.ted.lms.learning.activity.p2p.service.P2PActivityLocalService p2pActivityLocalService;
-	@BeanReference(type = P2PActivityPersistence.class)
+	@Reference
 	protected P2PActivityPersistence p2pActivityPersistence;
-	@BeanReference(type = P2PActivityFinder.class)
+
+	@Reference
 	protected P2PActivityFinder p2pActivityFinder;
-	@BeanReference(type = P2PActivityCorrectionsLocalService.class)
-	protected P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
-	@BeanReference(type = P2PActivityCorrectionsPersistence.class)
-	protected P2PActivityCorrectionsPersistence p2pActivityCorrectionsPersistence;
-	@BeanReference(type = P2PActivityCorrectionsFinder.class)
+
+	protected P2PActivityCorrectionsLocalService
+		p2pActivityCorrectionsLocalService;
+
+	@Reference
+	protected P2PActivityCorrectionsPersistence
+		p2pActivityCorrectionsPersistence;
+
+	@Reference
 	protected P2PActivityCorrectionsFinder p2pActivityCorrectionsFinder;
-	@ServiceReference(type = com.liferay.counter.kernel.service.CounterLocalService.class)
-	protected com.liferay.counter.kernel.service.CounterLocalService counterLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ClassNameLocalService.class)
-	protected com.liferay.portal.kernel.service.ClassNameLocalService classNameLocalService;
-	@ServiceReference(type = ClassNamePersistence.class)
-	protected ClassNamePersistence classNamePersistence;
-	@ServiceReference(type = com.liferay.portal.kernel.service.ResourceLocalService.class)
-	protected com.liferay.portal.kernel.service.ResourceLocalService resourceLocalService;
-	@ServiceReference(type = com.liferay.portal.kernel.service.UserLocalService.class)
-	protected com.liferay.portal.kernel.service.UserLocalService userLocalService;
-	@ServiceReference(type = UserPersistence.class)
-	protected UserPersistence userPersistence;
-	@ServiceReference(type = PersistedModelLocalServiceRegistry.class)
-	protected PersistedModelLocalServiceRegistry persistedModelLocalServiceRegistry;
+
+	@Reference
+	protected com.liferay.counter.kernel.service.CounterLocalService
+		counterLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ClassNameLocalService
+		classNameLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.ResourceLocalService
+		resourceLocalService;
+
+	@Reference
+	protected com.liferay.portal.kernel.service.UserLocalService
+		userLocalService;
+
 }

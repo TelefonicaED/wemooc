@@ -14,10 +14,10 @@
 
 package com.ted.lms.model.impl;
 
-import aQute.bnd.annotation.ProviderType;
-
 import com.ted.lms.model.Module;
 import com.ted.lms.service.ModuleLocalServiceUtil;
+
+import org.osgi.annotation.versioning.ProviderType;
 
 /**
  * The extended model base implementation for the Module service. Represents a row in the &quot;LMS_Module&quot; database table, with each column mapped to a property of this class.
@@ -33,10 +33,11 @@ import com.ted.lms.service.ModuleLocalServiceUtil;
  */
 @ProviderType
 public abstract class ModuleBaseImpl extends ModuleModelImpl implements Module {
+
 	/*
 	 * NOTE FOR DEVELOPERS:
 	 *
-	 * Never modify or reference this class directly. All methods that expect a module model instance should use the {@link Module} interface instead.
+	 * Never modify or reference this class directly. All methods that expect a module model instance should use the <code>Module</code> interface instead.
 	 */
 	@Override
 	public void persist() {
@@ -47,4 +48,5 @@ public abstract class ModuleBaseImpl extends ModuleModelImpl implements Module {
 			ModuleLocalServiceUtil.updateModule(this);
 		}
 	}
+
 }

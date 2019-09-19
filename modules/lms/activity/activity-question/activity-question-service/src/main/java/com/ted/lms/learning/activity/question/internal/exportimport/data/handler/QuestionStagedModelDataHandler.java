@@ -13,6 +13,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.trash.TrashHandler;
+import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.model.Answer;
@@ -20,6 +22,7 @@ import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.impl.QuestionImpl;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.Module;
 import com.ted.lms.service.LearningActivityLocalService;
 
 import java.util.List;
