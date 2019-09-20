@@ -43,7 +43,7 @@ public class CoursesManagementToolbarDisplayContext {
 				liferayPortletRequest);
 			
 			this.parentCourseId = ParamUtil.getLong(request, "parentCourseId", CourseConstants.DEFAULT_PARENT_COURSE_ID);
-			System.out.println("parentCourseId: " + parentCourseId);
+			log.debug("parentCourseId: " + parentCourseId);
 		}
 
 		public List<DropdownItem> getActionDropdownItems() {

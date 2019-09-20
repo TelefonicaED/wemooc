@@ -118,24 +118,24 @@ public class ResourceInternalActivityType extends BaseLearningActivityType{
 		long oldAssetEntryId = resourceInternal.getLong(ResourceInternalConstants.JSON_RESOURCE_INTERNAL_ASSET_ENTRY);
 		assetEntryId = oldAssetEntryId;
 		
-		System.out.println("oldAssetEntryId: " + assetEntryId);
+		log.debug("oldAssetEntryId: " + assetEntryId);
 		
 		AssetEntry oldAssetEntry = assetEntryLocalService.getAssetEntry(oldAssetEntryId);
 		
-		System.out.println("groupId de recurso: " + oldAssetEntry.getGroupId());
-		System.out.println("groupId de la actividad: " + oldActivity.getGroupId());
+		log.debug("groupId de recurso: " + oldAssetEntry.getGroupId());
+		log.debug("groupId de la actividad: " + oldActivity.getGroupId());
 		
 		if(oldAssetEntry.getGroupId() == oldActivity.getGroupId()) {
 			if(oldAssetEntry.getClassNameId() == PortalUtil.getClassNameId(DLFileEntry.class)) {
 				//Copiamos el dlfileentry
 				DLFileEntry newFileEntry = dlFileEntryLocalService.copyFileEntry(activity.getUserId(), activity.getGroupId(), activity.getGroupId(), 
 						oldAssetEntry.getClassPK(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, serviceContext);
-				System.out.println("newFileEntry: " + newFileEntry.getFileEntryId());
+				log.debug("newFileEntry: " + newFileEntry.getFileEntryId());
 				FileEntry fileEntry = DLAppLocalServiceUtil.getFileEntry(newFileEntry.getFileEntryId());
-				System.out.println("fileEntry: " + fileEntry.getFileEntryId());
+				log.debug("fileEntry: " + fileEntry.getFileEntryId());
 				DLAppHelperLocalServiceUtil.checkAssetEntry(serviceContext.getUserId(), fileEntry, fileEntry.getFileVersion());
 				assetEntryId = assetEntryLocalService.getEntry(DLFileEntry.class.getName(), newFileEntry.getFileEntryId()).getEntryId();
-				System.out.println("assetEntryId: " + assetEntryId);
+				log.debug("assetEntryId: " + assetEntryId);
 			}else if(oldAssetEntry.getClassNameId() == PortalUtil.getClassNameId(BookmarksEntry.class)) {
 				//Copiamos el enlace
 				BookmarksEntry oldBookmarks = bookmarksEntryLocalService.getBookmarksEntry(oldAssetEntry.getClassPK());
@@ -184,20 +184,20 @@ public class ResourceInternalActivityType extends BaseLearningActivityType{
 		List<Element> elements = portletDataContext.getReferenceDataElements(activityElement, DLFileEntry.class, PortletDataContext.REFERENCE_TYPE_EMBEDDED);
 		if(elements != null && elements.size() > 0) {
 			Element element = elements.get(0);
-			element.nodeIterator().forEachRemaining(action -> System.out.println("action: " + action));
-			System.out.println("element: " + elements.get(0));
+			element.nodeIterator().forEachRemaining(action -> log.debug("action: " + action));
+			log.debug("element: " + elements.get(0));
 		}else {
 			elements = portletDataContext.getReferenceDataElements(activityElement, BookmarksEntry.class, PortletDataContext.REFERENCE_TYPE_EMBEDDED);
 			if(elements != null && elements.size() > 0) {
 				Element element = elements.get(0);
-				element.nodeIterator().forEachRemaining(action -> System.out.println("action: " + action));
-				System.out.println("element: " + elements.get(0));
+				element.nodeIterator().forEachRemaining(action -> log.debug("action: " + action));
+				log.debug("element: " + elements.get(0));
 			}else {
 				elements = portletDataContext.getReferenceDataElements(activityElement, BlogsEntry.class, PortletDataContext.REFERENCE_TYPE_EMBEDDED);
 				if(elements != null && elements.size() > 0) {
 					Element element = elements.get(0);
-					element.nodeIterator().forEachRemaining(action -> System.out.println("action: " + action));
-					System.out.println("element: " + elements.get(0));
+					element.nodeIterator().forEachRemaining(action -> log.debug("action: " + action));
+					log.debug("element: " + elements.get(0));
 				}
 			}
 		}

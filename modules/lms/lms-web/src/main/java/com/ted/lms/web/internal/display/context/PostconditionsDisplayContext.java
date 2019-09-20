@@ -121,8 +121,8 @@ public class PostconditionsDisplayContext {
 				searchContainer.getStart(), searchContainer.getEnd());
 		int total = PostconditionRelationLocalServiceUtil.getPostconditionRelationsCount(classNameId, courseId);
 		
-		System.out.println("prerequisites: " + postconditions.size());
-		System.out.println("total: " + total);
+		log.debug("prerequisites: " + postconditions.size());
+		log.debug("total: " + total);
 		
 		searchContainer.setResults(postconditions);
 		searchContainer.setTotal(total);

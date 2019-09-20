@@ -25,8 +25,7 @@ public abstract class QuestionsLearningActivityTypeFactory extends BaseLearningA
 	@Override
 	public void doExportStagedModel(PortletDataContext portletDataContext) throws PortalException{
 		super.doExportStagedModel(portletDataContext);
-		//TODO arreglar esto
-	/*	ExportActionableDynamicQuery questionActionableDynamicQuery =
+		ExportActionableDynamicQuery questionActionableDynamicQuery =
     	        questionLocalService.
     	            getExportActionableDynamicQuery(portletDataContext);
 
@@ -36,7 +35,7 @@ public abstract class QuestionsLearningActivityTypeFactory extends BaseLearningA
     	        answerLocalService.
     	            getExportActionableDynamicQuery(portletDataContext);
 
-		answerActionableDynamicQuery.performActions();*/
+		answerActionableDynamicQuery.performActions();
 	}
 	
 	@Override

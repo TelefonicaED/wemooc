@@ -64,11 +64,11 @@ public class ImportCourseMVCActionCommand extends BaseMVCActionCommand {
 	protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
-		System.out.println("entramos en la acción");
+		log.debug("entramos en la acción");
 		
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 		
-		System.out.println("cmd: " + cmd);
+		log.debug("cmd: " + cmd);
 
 		if (Validator.isNull(cmd)) {
 			SessionMessages.add(
@@ -119,7 +119,7 @@ public class ImportCourseMVCActionCommand extends BaseMVCActionCommand {
 				String redirect = ParamUtil.getString(actionRequest, "redirect");
 				redirect+= "&_" + portal.getPortletId(actionRequest) + "_backgroundTaskId=" + backgroundTaskId;
 				
-				System.out.println("redirect: " + redirect);
+				log.debug("redirect: " + redirect);
 				
 				sendRedirect(actionRequest, actionResponse, redirect);
 				
@@ -209,12 +209,12 @@ public class ImportCourseMVCActionCommand extends BaseMVCActionCommand {
 		try (InputStream inputStream = dlFileEntryLocalService.getFileAsStream(
 				fileEntry.getFileEntryId(), fileEntry.getVersion(), false)) {
 
-			System.out.println("validamos el archivo");
+			log.debug("validamos el archivo");
 			
 			MissingReferences missingReferences = validateFile(
 				actionRequest, inputStream);
 			
-			System.out.println("archivo validado");
+			log.debug("archivo validado");
 
 			Map<String, MissingReference> weakMissingReferences =
 				missingReferences.getWeakMissingReferences();
@@ -223,7 +223,8 @@ public class ImportCourseMVCActionCommand extends BaseMVCActionCommand {
 				return;
 			}
 			
-			weakMissingReferences.forEach((key, reference)-> System.out.println("key: " + key + " reference: " + reference));
+			if(log.isDebugEnabled())
+				weakMissingReferences.forEach((key, reference)-> log.debug("key: " + key + " reference: " + reference));
 
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject();
 

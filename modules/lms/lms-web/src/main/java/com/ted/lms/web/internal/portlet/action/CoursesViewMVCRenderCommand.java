@@ -61,7 +61,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		System.out.println("CoursesViewMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("CoursesViewMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		//Si recibo un courseId es porque estoy en ediciones
 		long parentCourseId = ParamUtil.getLong(renderRequest, "parentCourseId", CourseConstants.DEFAULT_PARENT_COURSE_ID);

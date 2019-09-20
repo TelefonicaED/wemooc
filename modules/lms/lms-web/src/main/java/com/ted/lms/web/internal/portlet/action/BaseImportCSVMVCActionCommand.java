@@ -15,7 +15,7 @@ public abstract class BaseImportCSVMVCActionCommand extends BaseMVCActionCommand
 	@Override
 	protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {
 		
-		System.out.println("action import csv");
+		log.debug("action import csv");
 		
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
 		String portletId = getPortletId(actionRequest);
@@ -24,7 +24,7 @@ public abstract class BaseImportCSVMVCActionCommand extends BaseMVCActionCommand
 			
 			if (cmd.equals(Constants.ADD_TEMP)) {
 				
-				System.out.println("cmd add temp");
+				log.debug("cmd add temp");
 				
 				FileEntry fileEntry = importCSVMVCActionCommand.addTempFileEntry(
 						actionRequest,
@@ -53,7 +53,7 @@ public abstract class BaseImportCSVMVCActionCommand extends BaseMVCActionCommand
 				String redirect = ParamUtil.getString(actionRequest, "redirect");
 				redirect+= "&_" + portletId + "_backgroundTaskId=" + backgroundTaskId;
 				
-				System.out.println("redirect: " + redirect);
+				log.debug("redirect: " + redirect);
 				
 				sendRedirect(actionRequest, actionResponse, redirect);
 				

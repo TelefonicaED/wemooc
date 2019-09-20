@@ -14,6 +14,7 @@
  */
 --%>
 
+<%@page import="com.ted.lms.exception.NoSuchModuleException"%>
 <%@ include file="/init.jsp" %>
 
 <liferay-ui:error-header />

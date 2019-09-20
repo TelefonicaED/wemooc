@@ -52,7 +52,10 @@ import com.liferay.sites.kernel.util.SitesUtil;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.Module;
+import com.ted.lms.model.ModuleResult;
 import com.ted.lms.service.LearningActivityLocalServiceUtil;
+import com.ted.lms.service.ModuleResultLocalService;
+import com.ted.lms.service.ModuleResultLocalServiceUtil;
 import com.ted.lms.service.util.DateUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteRelation;
@@ -72,6 +75,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.WindowState;
 
 import org.osgi.annotation.versioning.ProviderType;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The extended model implementation for the Module service. Represents a row in the &quot;LMS_Module&quot; database table, with each column mapped to a property of this class.
@@ -90,7 +94,8 @@ public class ModuleImpl extends ModuleBaseImpl {
 	 *
 	 * Never reference this class directly. All methods that expect a module model instance should use the {@link com.ted.lms.model.Module} interface instead.
 	 */
-private AssetEntry assetEntry;
+	
+	private AssetEntry assetEntry;
 	
 	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
 	/*
@@ -220,6 +225,20 @@ private AssetEntry assetEntry;
 		
 		if((getEndDate()!=null && getEndDate().before(now)) || (getStartDate()!=null && getStartDate().after(now))){
 			return true;
+		}
+		
+		//Comprobamos que no haya finalizado el tiempo de módulo
+		if(getAllowedTime() > 0) {
+			ModuleResult moduleResult = ModuleResultLocalServiceUtil.getModuleResult(getModuleId(), userId);
+			
+			if(moduleResult != null && !moduleResult.isPassed()) {
+				long usedTime = System.currentTimeMillis() - moduleResult.getStartDate().getTime();
+				long leftTime = getAllowedTime() - usedTime;
+				
+				if(leftTime <= 0) {
+					return true;
+				}
+			}
 		}
 		
 		List<Prerequisite> listPrerequiste = PrerequisiteRelationLocalServiceUtil.getPrerequisites(PortalUtil.getClassNameId(Module.class.getName()), getModuleId());

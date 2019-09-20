@@ -34,7 +34,7 @@ public class AddCourseMVCRenderCommand implements MVCRenderCommand {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-		System.out.println("AddCourseMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("AddCourseMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		List<CourseType> courseTypes = courseTypeLocalService.getCourseTypes(themeDisplay.getCompanyId());
 		renderRequest.setAttribute("courseTypes", courseTypes);

@@ -47,7 +47,6 @@ public class ModuleExportImportContentProcessor implements ExportImportContentPr
 					exportReferencedContent, escapeContent);
 		
 		MissingReferencesExportImportContentProcessor.setOtherGroupIdsMissingReferences(portletDataContext, stagedModel);
-		System.out.println("eeee");
 
 		return content;
 	}

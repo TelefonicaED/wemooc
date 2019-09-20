@@ -210,7 +210,6 @@ Liferay.provide(
 		<%
 		LearningActivityResult laResult =  LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, student.getUserId());
 		
-		System.out.println("actId: " + actId + " - userId: " + student.getUserId());
 		String result= "";
 		String status="status.not-calification";
 		if(laResult != null){

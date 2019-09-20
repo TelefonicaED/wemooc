@@ -3,6 +3,8 @@ package com.ted.prerequisite.module;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.xml.Element;
@@ -23,6 +25,8 @@ import java.util.Map;
 import javax.portlet.PortletRequest;
 
 public class ModulePrerequisite extends BasePrerequisite{
+	
+	private static final Log log = LogFactoryUtil.getLog(ModulePrerequisite.class);
 
 	public ModulePrerequisite(PrerequisiteRelation prerequisiteRelation, ModuleResultLocalService moduleResultLocalService, 
 								PrerequisiteRelationLocalService prerequisiteRelationLocalService, ModuleLocalService moduleLocalService) {
@@ -30,13 +34,6 @@ public class ModulePrerequisite extends BasePrerequisite{
 		this.moduleResultLocalService = moduleResultLocalService;
 		this.moduleLocalService = moduleLocalService;
 	}
-	
-/*	public ModulePrerequisite(long classNameId, long classPK, ModuleResultLocalService moduleResultLocalService, 
-				PrerequisiteRelationLocalService prerequisiteRelationLocalService, ModuleLocalService moduleLocalService) {
-		super(classNameId, classPK, prerequisiteRelationLocalService);
-		this.moduleResultLocalService = moduleResultLocalService;
-		this.moduleLocalService = moduleLocalService;
-	}*/
 	
 	@Override
 	public String getTitle(Locale locale) {
@@ -86,7 +83,7 @@ public class ModulePrerequisite extends BasePrerequisite{
 		long moduleId = ParamUtil.getLong(request, "prerequisiteModuleId", 0);
 		
 		if(moduleId > 0 && prerequisiteRelation == null) {
-			System.out.println("prerequisiteRelationLocalService: " + prerequisiteRelationLocalService);
+			log.debug("prerequisiteRelationLocalService: " + prerequisiteRelationLocalService);
 			prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), classNameId, classPK, "");
 		}
 		

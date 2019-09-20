@@ -94,14 +94,14 @@ public interface PrerequisiteRelationPersistence
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	public java.util.List<PrerequisiteRelation> findByUuid(
 		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<PrerequisiteRelation>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first prerequisite relation in the ordered set where uuid = &#63;.
@@ -242,14 +242,14 @@ public interface PrerequisiteRelationPersistence
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	public java.util.List<PrerequisiteRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<PrerequisiteRelation>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first prerequisite relation in the ordered set where classNameId = &#63; and classPK = &#63;.
@@ -406,7 +406,7 @@ public interface PrerequisiteRelationPersistence
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	public java.util.List<PrerequisiteRelation>
@@ -415,7 +415,7 @@ public interface PrerequisiteRelationPersistence
 			int start, int end,
 			com.liferay.portal.kernel.util.OrderByComparator
 				<PrerequisiteRelation> orderByComparator,
-			boolean retrieveFromCache);
+			boolean useFinderCache);
 
 	/**
 	 * Returns the first prerequisite relation in the ordered set where classNamePrerequisiteId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -622,14 +622,14 @@ public interface PrerequisiteRelationPersistence
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of prerequisite relations
 	 */
 	public java.util.List<PrerequisiteRelation> findAll(
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<PrerequisiteRelation>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Removes all the prerequisite relations from the database.

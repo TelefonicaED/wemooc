@@ -188,16 +188,16 @@ public class PrerequisiteRelationUtil {
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	public static List<PrerequisiteRelation> findByUuid(
 		String uuid, int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByUuid(
-			uuid, start, end, orderByComparator, retrieveFromCache);
+			uuid, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -367,17 +367,17 @@ public class PrerequisiteRelationUtil {
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	public static List<PrerequisiteRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByClassNameIdClassPK(
 			classNameId, classPK, start, end, orderByComparator,
-			retrieveFromCache);
+			useFinderCache);
 	}
 
 	/**
@@ -573,7 +573,7 @@ public class PrerequisiteRelationUtil {
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	public static List<PrerequisiteRelation>
@@ -581,11 +581,11 @@ public class PrerequisiteRelationUtil {
 			long classNamePrerequisiteId, long classNameId, long classPK,
 			int start, int end,
 			OrderByComparator<PrerequisiteRelation> orderByComparator,
-			boolean retrieveFromCache) {
+			boolean useFinderCache) {
 
 		return getPersistence().findByClassNamePrerequisiteIdClassNameIdClassPK(
 			classNamePrerequisiteId, classNameId, classPK, start, end,
-			orderByComparator, retrieveFromCache);
+			orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -859,16 +859,16 @@ public class PrerequisiteRelationUtil {
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of prerequisite relations
 	 */
 	public static List<PrerequisiteRelation> findAll(
 		int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findAll(
-			start, end, orderByComparator, retrieveFromCache);
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**

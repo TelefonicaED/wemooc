@@ -16,6 +16,8 @@ package com.ted.prerequisite.service.impl;
 
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.model.PrerequisiteRelation;
@@ -46,6 +48,8 @@ import org.osgi.service.component.annotations.Component;
 )
 public class PrerequisiteRelationLocalServiceImpl
 	extends PrerequisiteRelationLocalServiceBaseImpl {
+	
+	private static final Log log = LogFactoryUtil.getLog(PrerequisiteRelationLocalServiceImpl.class);
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -66,7 +70,7 @@ public class PrerequisiteRelationLocalServiceImpl
 	public List<Prerequisite> getPrerequisites(long classNameId, long classPK){
 		List<Prerequisite> listPrerequisites = new ArrayList<Prerequisite>();
 			
-		System.out.println("prerequisiteRelationPersistence: " + prerequisiteRelationPersistence);
+		log.debug("prerequisiteRelationPersistence: " + prerequisiteRelationPersistence);
 		
 		List<PrerequisiteRelation> listPrerequisiteRelation = prerequisiteRelationPersistence.findByClassNameIdClassPK(classNameId, classPK);
 		
@@ -119,5 +123,9 @@ public class PrerequisiteRelationLocalServiceImpl
 	
 	public List<PrerequisiteRelation> getPrerequisiteRelation(long classNamePrerequisiteId, long classNameId, long classPK) {
 		return prerequisiteRelationPersistence.findByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId, classNameId, classPK);
+	}
+	
+	public void deletePrerequisiteRelations(long classNamePrerequisiteId, long classNameId, long classPK) {
+		prerequisiteRelationPersistence.removeByClassNamePrerequisiteIdClassNameIdClassPK(classNamePrerequisiteId, classNameId, classPK);
 	}
 }

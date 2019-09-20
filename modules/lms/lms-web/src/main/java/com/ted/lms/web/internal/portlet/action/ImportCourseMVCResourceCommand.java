@@ -38,7 +38,7 @@ public class ImportCourseMVCResourceCommand extends BaseMVCResourceCommand {
 		
 		long backgroundTaskId = ParamUtil.getLong(resourceRequest, "backgroundTaskId");
 		
-		System.out.println("backgroundTaskId: " + backgroundTaskId);
+		log.debug("backgroundTaskId: " + backgroundTaskId);
 		
 		JSONObject oreturned = JSONFactoryUtil.createJSONObject();
 		resourceResponse.setContentType("application/json");

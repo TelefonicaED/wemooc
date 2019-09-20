@@ -44,17 +44,19 @@ public class ModulePrerequisiteFactory extends BasePrerequisiteFactory {
 		
 		long moduleId = ParamUtil.getLong(request, "prerequisiteModuleId", 0);
 		
-		List<PrerequisiteRelation> prerequisiteRelations = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelation(getClassNameId(), classNameId, classPK);
+		List<PrerequisiteRelation> prerequisiteRelations = prerequisiteRelationLocalService.getPrerequisiteRelation(getClassNameId(), classNameId, classPK);
 		
 		Prerequisite prerequisite = null;
 		if(moduleId > 0 && (prerequisiteRelations == null || prerequisiteRelations.size() == 0)) {
 			PrerequisiteRelation prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), classNameId, classPK, "");
 			prerequisite = getPrerequisite(prerequisiteRelation);
-		}else {
+			prerequisite.setExtraContent(request);
+		}else if(moduleId > 0){
 			prerequisite = getPrerequisite(prerequisiteRelations.get(0));
+			prerequisite.setExtraContent(request);
+		}else if(prerequisiteRelations != null && prerequisiteRelations.size() > 0){
+			prerequisiteRelationLocalService.deletePrerequisiteRelations(PortalUtil.getClassNameId(ModulePrerequisiteFactory.class), classNameId, classPK);
 		}
-
-		prerequisite.setExtraContent(request);
 	}
 	
 	@Override

@@ -157,7 +157,7 @@ public class ImportMVCActionCommand extends BaseMVCActionCommand {
 				themeDisplay.getLocale(), e, (ExportImportConfiguration)null);
 		}
 			
-		System.out.println("jsonObject: " + jsonObject);
+		log.debug("jsonObject: " + jsonObject);
 
 		JSONPortletResponseUtil.writeJSON(
 			actionRequest, actionResponse, jsonObject);

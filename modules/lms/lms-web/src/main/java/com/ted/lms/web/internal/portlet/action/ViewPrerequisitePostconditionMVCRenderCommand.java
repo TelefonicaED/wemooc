@@ -54,7 +54,7 @@ public class ViewPrerequisitePostconditionMVCRenderCommand implements MVCRenderC
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
 		log.debug("courseId: " + courseId);
-		System.out.println("AssignMembersMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("AssignMembersMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		try {
 			Course course = courseLocalService.getCourse(courseId);

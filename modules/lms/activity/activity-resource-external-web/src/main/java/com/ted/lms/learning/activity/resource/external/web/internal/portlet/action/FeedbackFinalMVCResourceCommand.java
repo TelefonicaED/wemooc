@@ -35,7 +35,7 @@ public class FeedbackFinalMVCResourceCommand extends BaseMVCResourceCommand {
 
 		long actId = ParamUtil.getLong(resourceRequest, "actId");
 		
-		System.out.println("actId: " + actId);
+		log.debug("actId: " + actId);
 		
 		List<Question> questions = questionLocalService.getQuestions(actId);
 		LearningActivityTry activityTry = learningActivityTryLocalService.getLastLearningActivityTry(actId, themeDisplay.getUserId());

@@ -75,7 +75,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		
 		String navigation = ParamUtil.getString(renderRequest, "navigation", LMSPortletConstants.EDIT_COURSE_DEFAULT_NAVIGATION);
 		log.debug("navigation: " + navigation);
-		System.out.println("EditCourseMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("EditCourseMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		Course course = null;
 		

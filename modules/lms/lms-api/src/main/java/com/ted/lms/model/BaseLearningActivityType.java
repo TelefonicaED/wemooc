@@ -131,11 +131,11 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 	@Override
 	public void updateActivityCopied(Map<Long, Long> activitiesRelation) {
 		JSONObject extraContent = activity.getExtraContentJSON();
-		System.out.println("BaseLearning: " + extraContent);
+		log.debug("BaseLearning: " + extraContent);
 		updateActivityIds(extraContent, activitiesRelation);
 		
 		activity.setExtraContent(extraContent.toJSONString());
-		System.out.println("extraContent final: " + extraContent.toJSONString());
+		log.debug("extraContent final: " + extraContent.toJSONString());
 	}
 	
 	@Override
@@ -146,7 +146,7 @@ public abstract class BaseLearningActivityType implements LearningActivityType {
 		if(extraContent != null) {
 			updateActivityIds(extraContent, activityIds);
 			activity.setExtraContent(extraContent.toJSONString());
-			System.out.println("extraContent final: " + extraContent.toJSONString());
+			log.debug("extraContent final: " + extraContent.toJSONString());
 		}
 		
 	}

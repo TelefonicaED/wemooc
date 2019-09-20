@@ -122,8 +122,8 @@ public class PrerequisitesDisplayContext {
 				searchContainer.getStart(), searchContainer.getEnd());
 		int total = PrerequisiteRelationLocalServiceUtil.getPrerequisiteRelationsCount(classNameId, courseId);
 		
-		System.out.println("prerequisites: " + prerequisites.size());
-		System.out.println("total: " + total);
+		log.debug("prerequisites: " + prerequisites.size());
+		log.debug("total: " + total);
 		
 		searchContainer.setResults(prerequisites);
 		searchContainer.setTotal(total);

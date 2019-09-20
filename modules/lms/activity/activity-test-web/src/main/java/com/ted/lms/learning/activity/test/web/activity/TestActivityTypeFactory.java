@@ -42,7 +42,7 @@ public class TestActivityTypeFactory extends QuestionsLearningActivityTypeFactor
 	}
 	
 	public TestActivityType getTestActivityType(LearningActivity activity) {
-		System.out.println("testfactory questionLocalService: " + questionLocalService);
+		log.debug("testfactory questionLocalService: " + questionLocalService);
 		return new TestActivityType(activity, learningActivityResultLocalService, questionLocalService, answerLocalService, learningActivityTryLocalService);
 	}
 	

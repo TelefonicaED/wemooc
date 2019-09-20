@@ -115,6 +115,9 @@ public interface PrerequisiteRelationLocalService
 	public PrerequisiteRelation deletePrerequisiteRelation(
 		PrerequisiteRelation prerequisiteRelation);
 
+	public void deletePrerequisiteRelations(
+		long classNamePrerequisiteId, long classNameId, long classPK);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
 

@@ -45,7 +45,7 @@ public class DLReferencesCopyContentProcessorImpl implements DLReferencesCopyCon
 	public String replaceExportDLReferences(String content, long oldGroupId, long newGroupId, long userId)
 		throws Exception {
 		
-		System.out.println("vamos a reemplazar el contenido");
+		log.debug("vamos a reemplazar el contenido");
 
 		Group oldGroup = _groupLocalService.getGroup(oldGroupId);
 
@@ -69,7 +69,7 @@ public class DLReferencesCopyContentProcessorImpl implements DLReferencesCopyCon
 		while (true) {
 			beginPos = StringUtil.lastIndexOfAny(content, patterns, endPos);
 			
-			System.out.println("beginPos: " + beginPos);
+			log.debug("beginPos: " + beginPos);
 
 			if (beginPos == -1) {
 				break;
@@ -92,19 +92,19 @@ public class DLReferencesCopyContentProcessorImpl implements DLReferencesCopyCon
 				endPos = MapUtil.getInteger(dlReferenceParameters, "endPos");
 				
 				try {
-					System.out.println("*****Creamos archivo con: " + newGroupId + " - " + oldFileEntry.getFileName());
+					log.debug("*****Creamos archivo con: " + newGroupId + " - " + oldFileEntry.getFileName());
 					newFileEntry = PortletFileRepositoryUtil.addPortletFileEntry(
 							newGroupId, userId, null, 0, LMSConstants.SERVICE_NAME, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, oldFileEntry.getContentStream(),
 							oldFileEntry.getFileName(), oldFileEntry.getMimeType(), true);
-					System.out.println("creamos el recurso" + oldFileEntry.getFileName() + " - " + newFileEntry.getFolderId() + " - " + newFileEntry.getGroupId());
+					log.debug("creamos el recurso" + oldFileEntry.getFileName() + " - " + newFileEntry.getFolderId() + " - " + newFileEntry.getGroupId());
 				} catch (DuplicateFileEntryException e) {
 					String fileName = Time.getShortTimestamp() + oldFileEntry.getFileName();
 					try {
-						System.out.println("*****Creamos archivo con: " + newGroupId + " - " + Time.getShortTimestamp() + oldFileEntry.getFileName());
+						log.debug("*****Creamos archivo con: " + newGroupId + " - " + Time.getShortTimestamp() + oldFileEntry.getFileName());
 						newFileEntry = PortletFileRepositoryUtil.addPortletFileEntry(
 								newGroupId, userId, null, 0, LMSConstants.SERVICE_NAME, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID, oldFileEntry.getContentStream(),
 								fileName, oldFileEntry.getMimeType(), true);
-						System.out.println("creamos el recurso duplicado" + oldFileEntry.getFileName() + " - " + newFileEntry.getFolderId() + " - " + newFileEntry.getGroupId());
+						log.debug("creamos el recurso duplicado" + oldFileEntry.getFileName() + " - " + newFileEntry.getFolderId() + " - " + newFileEntry.getGroupId());
 						folderId = newFileEntry.getFolderId();
 					}catch(DuplicateFileEntryException d) {
 						newFileEntry = PortletFileRepositoryUtil.getPortletFileEntry(newGroupId, folderId, fileName);
@@ -115,7 +115,7 @@ public class DLReferencesCopyContentProcessorImpl implements DLReferencesCopyCon
 	
 				sb.replace(beginPos, endPos, url);
 				
-				System.out.println("endPos: " + endPos);
+				log.debug("endPos: " + endPos);
 			}
 			
 			endPos = beginPos - 1;

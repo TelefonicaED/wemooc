@@ -104,7 +104,6 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	}
 	
 	public JSONObject getExtraContentJSON() {
-		System.out.println("estamos llamando al función ");
 		if(extraContentJSON == NULL_JSON_OBJECT) {
 			try {
 				extraContentJSON = JSONFactoryUtil.createJSONObject(getExtraContent());
@@ -246,7 +245,7 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 	}
 	
 	/**
-	 * Comprueba si se puede accceder a una actividad
+	 * Comprueba si se puede accceder a una actividad aunque esté bloqueada
 	 * @param viewActivityFinish Si la actividad deja acceder coon el modo observador
 	 * @param user Usuario que accede a la actividad
 	 * @param permissionChecker permisos del usuario
@@ -289,7 +288,10 @@ public class LearningActivityImpl extends LearningActivityBaseImpl {
 		return false;
 		
 	}
-	
+
+	/**
+	 * Comprueba que la actividad esté bloqueda para el usuario para realizarla
+	 */
 	public boolean isLocked(User user, PermissionChecker permissionChecker) throws PortalException{
 		if(!LearningActivityPermission.contains(permissionChecker, this, ActionKeys.VIEW)){
 			return true;

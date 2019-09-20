@@ -159,14 +159,14 @@ public class PrerequisiteRelationPersistenceImpl
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
 	public List<PrerequisiteRelation> findByUuid(
 		String uuid, int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -178,17 +178,20 @@ public class PrerequisiteRelationPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUuid;
-			finderArgs = new Object[] {uuid};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid;
+				finderArgs = new Object[] {uuid};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid;
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<PrerequisiteRelation> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<PrerequisiteRelation>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -265,10 +268,14 @@ public class PrerequisiteRelationPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -720,14 +727,14 @@ public class PrerequisiteRelationPersistenceImpl
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
 	public List<PrerequisiteRelation> findByClassNameIdClassPK(
 		long classNameId, long classPK, int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -737,10 +744,14 @@ public class PrerequisiteRelationPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByClassNameIdClassPK;
-			finderArgs = new Object[] {classNameId, classPK};
+
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByClassNameIdClassPK;
+				finderArgs = new Object[] {classNameId, classPK};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByClassNameIdClassPK;
 			finderArgs = new Object[] {
 				classNameId, classPK, start, end, orderByComparator
@@ -749,7 +760,7 @@ public class PrerequisiteRelationPersistenceImpl
 
 		List<PrerequisiteRelation> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<PrerequisiteRelation>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -822,10 +833,14 @@ public class PrerequisiteRelationPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1295,7 +1310,7 @@ public class PrerequisiteRelationPersistenceImpl
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching prerequisite relations
 	 */
 	@Override
@@ -1304,7 +1319,7 @@ public class PrerequisiteRelationPersistenceImpl
 			long classNamePrerequisiteId, long classNameId, long classPK,
 			int start, int end,
 			OrderByComparator<PrerequisiteRelation> orderByComparator,
-			boolean retrieveFromCache) {
+			boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1314,13 +1329,16 @@ public class PrerequisiteRelationPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath =
-				_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
-			finderArgs = new Object[] {
-				classNamePrerequisiteId, classNameId, classPK
-			};
+
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
+				finderArgs = new Object[] {
+					classNamePrerequisiteId, classNameId, classPK
+				};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath =
 				_finderPathWithPaginationFindByClassNamePrerequisiteIdClassNameIdClassPK;
 			finderArgs = new Object[] {
@@ -1331,7 +1349,7 @@ public class PrerequisiteRelationPersistenceImpl
 
 		List<PrerequisiteRelation> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<PrerequisiteRelation>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1414,10 +1432,14 @@ public class PrerequisiteRelationPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2348,14 +2370,14 @@ public class PrerequisiteRelationPersistenceImpl
 	 * @param start the lower bound of the range of prerequisite relations
 	 * @param end the upper bound of the range of prerequisite relations (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of prerequisite relations
 	 */
 	@Override
 	public List<PrerequisiteRelation> findAll(
 		int start, int end,
 		OrderByComparator<PrerequisiteRelation> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2365,17 +2387,20 @@ public class PrerequisiteRelationPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<PrerequisiteRelation> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<PrerequisiteRelation>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
@@ -2426,10 +2451,14 @@ public class PrerequisiteRelationPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2632,7 +2661,7 @@ public class PrerequisiteRelationPersistenceImpl
 
 	@Override
 	@Reference(
-		target = prePersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = prePersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -2696,5 +2725,14 @@ public class PrerequisiteRelationPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(prePersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

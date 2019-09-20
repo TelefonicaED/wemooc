@@ -49,18 +49,16 @@ public class ActivityPrerequisiteFactory extends BasePrerequisiteFactory {
 		if(actId > 0 && (prerequisiteRelations == null || prerequisiteRelations.size() == 0)) {
 			PrerequisiteRelation prerequisiteRelation = prerequisiteRelationLocalService.addPrerequisiteRelation(PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), classNameId, classPK, "");
 			prerequisite = getPrerequisite(prerequisiteRelation);
-		}else {
+			prerequisite.setExtraContent(request);
+		}else if(actId > 0){
 			prerequisite = getPrerequisite(prerequisiteRelations.get(0));
+			prerequisite.setExtraContent(request);
+		}else if(prerequisiteRelations != null && prerequisiteRelations.size() > 0){
+			prerequisiteRelationLocalService.deletePrerequisiteRelations(PortalUtil.getClassNameId(ActivityPrerequisiteFactory.class), classNameId, classPK);
 		}
 
-		prerequisite.setExtraContent(request);
+		
 	}
-
-/*	@Override
-	public Prerequisite getPrerequisite(long classNameId, long classPK) throws PortalException {
-		System.out.println("prerequisiteRelationLocalService: " + prerequisiteRelationLocalService);
-		return new ActivityPrerequisite(classNameId, classPK, learningActivityResultLocalService, prerequisiteRelationLocalService, learningActivityLocalService);
-	}*/
 	
 	@Override
 	public String getIconCssClass() {

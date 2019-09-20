@@ -136,7 +136,7 @@ public class CourseUtil {
 			listLayoutSetPrototype = new ArrayList<LayoutSetPrototype>();
 			
 			for(long courseTemplate: courseTemplates) {
-				System.out.println("courseTemplate: " + courseTemplate);
+				log.debug("courseTemplate: " + courseTemplate);
 				try {
 					listLayoutSetPrototype.add(LayoutSetPrototypeLocalServiceUtil.getLayoutSetPrototype(courseTemplate));
 				} catch (PortalException e) {
@@ -159,7 +159,7 @@ public class CourseUtil {
 			String[] courseTemplates = portletInstanceConfiguration.courseTemplates();
 			
 			for(String courseTemplate: courseTemplates) {
-				System.out.println("courseTemplate: " + courseTemplate);
+				log.debug("courseTemplate: " + courseTemplate);
 				try {
 					layoutSetPrototypes.add(LayoutSetPrototypeLocalServiceUtil.getLayoutSetPrototype(Long.parseLong(courseTemplate)));
 				} catch (NumberFormatException | PortalException e) {

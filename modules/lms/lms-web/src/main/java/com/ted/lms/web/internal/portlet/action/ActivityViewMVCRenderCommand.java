@@ -16,9 +16,13 @@ import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityTypeFactory;
+import com.ted.lms.model.Module;
+import com.ted.lms.model.ModuleResult;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
+import com.ted.lms.service.ModuleLocalService;
+import com.ted.lms.service.ModuleResultLocalService;
 
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
@@ -45,20 +49,21 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 		LearningActivity activity = null;
 		
 		if(actId > 0) {
+			ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 			activity = learningActivityLocalService.fetchLearningActivity(actId);
 			
-			ThemeDisplay themeDisplay = (ThemeDisplay) renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-			
-			AuditFactory.audit(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_VIEW, 
-					LearningActivity.class.getName(), actId, themeDisplay.getUserId(), themeDisplay.getUser().getFullName(), null);
+			Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
 			
 			LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
-			Course course = courseLocalService.getCourseByGroupCreatedId(activity.getGroupId());
 			
 			PortalUtil.clearRequestParameters(renderRequest);
 			
 			try {
 				if(activity.canAccess(learningActivityTypeFactory.canAccessFinished(), themeDisplay.getUser(), themeDisplay.getPermissionChecker(), course)){
+					
+					AuditFactory.audit(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_VIEW, 
+							LearningActivity.class.getName(), actId, themeDisplay.getUserId(), themeDisplay.getUser().getFullName(), null);
+					
 					//Embebemos el portlet sin bordes
 					StringBundler sb = new StringBundler();
 					sb.append("<portlet-preferences >");
@@ -84,6 +89,28 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 					renderRequest.setAttribute("defaultPreferences", sb);
 					renderRequest.setAttribute("queryString", queryStringStringBundler.toString());
 					
+					Module module = moduleLocalService.getModule(activity.getModuleId());
+					
+					if(module != null && module.getAllowedTime() > 0) {
+						
+						ModuleResult moduleResult = moduleResultLocalService.getModuleResult(module.getModuleId(), themeDisplay.getUserId());
+						
+						if(moduleResult != null && !moduleResult.isFinished()) {
+							long usedTime = System.currentTimeMillis() - moduleResult.getStartDate().getTime();
+							long leftTime = module.getAllowedTime() - usedTime;
+							
+							renderRequest.setAttribute("leftTime", leftTime);
+							renderRequest.setAttribute("actId", actId);
+							
+						} else if (moduleResult == null && actId > 0) {
+							long leftTime = module.getAllowedTime();
+							
+							renderRequest.setAttribute("leftTime", leftTime);
+							renderRequest.setAttribute("actId", actId);
+							
+						}
+					}
+					
 					return "/activities/view_activity.jsp";
 				}else {
 					log.debug("no puedes acceder al curso");
@@ -107,5 +134,9 @@ public class ActivityViewMVCRenderCommand implements MVCRenderCommand {
 	private LearningActivityLocalService learningActivityLocalService;
 	@Reference
 	private CourseLocalService courseLocalService;
+	@Reference
+	private ModuleLocalService moduleLocalService;
+	@Reference
+	private ModuleResultLocalService moduleResultLocalService;
 
 }

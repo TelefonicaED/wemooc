@@ -35,7 +35,7 @@ public class CourseTypeViewMVCRenderCommand implements MVCRenderCommand {
 		
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		String redirect = ParamUtil.getString(renderRequest, "redirect");
-		System.out.println("CourseTypeViewMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("CourseTypeViewMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		PortletURL iteratorURL = renderResponse.createRenderURL();
 		iteratorURL.setParameter("mvcRenderCommandName", "/course_type/view");

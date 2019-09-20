@@ -1,18 +1,14 @@
 package com.ted.lms.learning.activity;
 
-import com.liferay.exportimport.kernel.lar.PortletDataContext;
-import com.liferay.exportimport.kernel.lar.PortletDataException;
-import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
-import com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.constants.QuestionConstants;
-import com.ted.lms.learning.activity.question.model.Answer;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
@@ -20,7 +16,6 @@ import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.model.BaseLearningActivityType;
 import com.ted.lms.model.LearningActivity;
-import com.ted.lms.model.Module;
 import com.ted.lms.service.LearningActivityResultLocalService;
 
 import java.util.HashMap;
@@ -39,10 +34,12 @@ public abstract class QuestionsLearningActivityType extends BaseLearningActivity
 	protected final AnswerLocalService answerLocalService;
 	protected Map<Long, Long> questionsRelation;
 	
+	private static final Log log = LogFactoryUtil.getLog(QuestionsLearningActivityType.class);
+	
 	public QuestionsLearningActivityType(LearningActivity activity, LearningActivityResultLocalService learningActivityResultLocalService, 
 			QuestionLocalService questionLocalService, AnswerLocalService answerLocalService) {
 		super(activity, learningActivityResultLocalService);
-		System.out.println("questionstype questionLocalService: " + questionLocalService);
+		log.debug("questionstype questionLocalService: " + questionLocalService);
 		this.questionLocalService = questionLocalService;
 		this.answerLocalService = answerLocalService;
 		

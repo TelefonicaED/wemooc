@@ -369,7 +369,7 @@ public class LearningActivityStagedModelDataHandler extends BaseStagedModelDataH
 				long folderId = LearningActivityAttachmentsUtil.getFolderId(importedLearningActivity.getGroupId(), importedLearningActivity.getUserId(), 
 						importedLearningActivity.getActId());
 				
-				System.out.println("folderId: " + folderId);
+				log.debug("folderId: " + folderId);
 
 				_portletFileRepository.addPortletFileEntry(
 					importedLearningActivity.getGroupId(),

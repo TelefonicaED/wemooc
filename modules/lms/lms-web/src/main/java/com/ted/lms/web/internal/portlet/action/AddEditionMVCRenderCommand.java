@@ -59,7 +59,7 @@ public class AddEditionMVCRenderCommand implements MVCRenderCommand {
 		long parentCourseId = ParamUtil.getLong(renderRequest, "parentCourseId");
 		long courseId = ParamUtil.getLong(renderRequest, "courseId", 0);
 		log.debug("courseId: " + courseId);
-		System.out.println("AddEditionMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("AddEditionMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		try {
 		

@@ -37,10 +37,10 @@ public class EvaluationUsersUtil {
 		Course course = null;
 		if(activitiesEvaluation != null) log.debug("activitiesEvaluation: " + activitiesEvaluation.size());
 		EvaluationActivityTypeFactory evaluationActivityTypeFactory = (EvaluationActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(EvaluationConstants.TYPE);
-		System.out.println("evaluationActivityTypeFactory: " + evaluationActivityTypeFactory);
+		log.debug("evaluationActivityTypeFactory: " + evaluationActivityTypeFactory);
 		for(LearningActivity activity: activitiesEvaluation) {
 			try {
-				System.out.println("activityId: " + activity.getActId() + " - groupId: " + activity.getGroupId());
+				log.debug("activityId: " + activity.getActId() + " - groupId: " + activity.getGroupId());
 				evaluationActivityType = evaluationActivityTypeFactory.getEvaluationActivityType(activity);
 				course = courseLocalService.getCourseByGroupCreatedId(activity.getGroupId());
 				users = studentLocalService.getStudentsFromCourse(course.getCourseId(), activity.getCompanyId(), null, WorkflowConstants.STATUS_APPROVED, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);

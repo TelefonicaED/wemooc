@@ -89,7 +89,7 @@ public class ImportMembersMVCActionCommand extends BaseImportCSVMVCActionCommand
 		Role roleStudent = roleLocalService.getRole(themeDisplay.getCompanyId(), LMSRoleConstants.STUDENT);
 		boolean isStudent = roleStudent.getRoleId() == roleId;
 		
-		System.out.println("validamos el fichero");
+		log.debug("validamos el fichero");
 		
 		try (InputStream inputStream = dlFileEntryLocalService.getFileAsStream(
 				fileEntry.getFileEntryId(), fileEntry.getVersion(), false);
@@ -100,7 +100,7 @@ public class ImportMembersMVCActionCommand extends BaseImportCSVMVCActionCommand
 			//Comprobamos las cabeceras
 			String[] headers = reader.readNext();
 			
-			System.out.println("headers: " + headers.length);
+			log.debug("headers: " + headers.length);
 			
 			if((isStudent && headers.length != (LMSConstants.COLUMNS_IMPORT_EXPORT_ASSIGN_MEMBERS.length + 
 					LMSConstants.COLUMNS_IMPORT_EXPORT_ASSIGN_MEMBERS_STUDENTS.length + 1)) 

@@ -30,8 +30,6 @@ if(prerequisiteRelationId > 0){
 
 <%
 
-System.out.println("prerequisiteRelation: " + (prerequisiteRelation != null ? prerequisiteRelation.getPrerequisiteRelationId() : ""));
-
 long activityPrerequisiteId = prerequisiteRelation != null ? prerequisiteRelation.getExtraDataJSON().getLong(ActivityPrerequisiteConstants.JSON_ACT_ID) : 0;
 
 long moduleId = 0;

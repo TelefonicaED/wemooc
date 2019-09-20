@@ -113,6 +113,13 @@ public class PrerequisiteRelationLocalServiceUtil {
 		return getService().deletePrerequisiteRelation(prerequisiteRelation);
 	}
 
+	public static void deletePrerequisiteRelations(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+
+		getService().deletePrerequisiteRelations(
+			classNamePrerequisiteId, classNameId, classPK);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
 		dynamicQuery() {
 

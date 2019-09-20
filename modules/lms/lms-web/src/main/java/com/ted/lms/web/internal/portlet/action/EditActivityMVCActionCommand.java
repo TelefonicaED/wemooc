@@ -113,7 +113,7 @@ public class EditActivityMVCActionCommand extends BaseMVCActionCommand {
 
 			String redirect = ParamUtil.getString(actionRequest, "redirect", null);
 			
-			System.out.println("redirect: " + redirect);
+			log.debug("redirect: " + redirect);
 			
 			String portletId = _http.getParameter(redirect, "p_p_id", false);
 

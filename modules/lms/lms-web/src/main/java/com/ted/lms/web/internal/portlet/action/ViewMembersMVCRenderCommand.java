@@ -55,7 +55,7 @@ public class ViewMembersMVCRenderCommand implements MVCRenderCommand {
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		long courseId = ParamUtil.getLong(renderRequest, "courseId", 0);
 		log.debug("courseId: " + courseId);
-		System.out.println("ViewMembersMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
+		log.debug("ViewMembersMVCRenderCommand redirect: " + ParamUtil.getString(renderRequest, "redirect"));
 		
 		try {
 			Course course = courseLocalService.getCourse(courseId);

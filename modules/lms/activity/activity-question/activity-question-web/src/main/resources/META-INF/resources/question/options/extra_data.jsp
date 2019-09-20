@@ -23,16 +23,11 @@ if(enableOrder){
 
 	int formatType = OptionConstants.DEFAULT_FORMAT_TYPE;
 	
-	System.out.println("questionId: " + questionId);
-	
 	if(questionId > 0){
 		Question question = QuestionLocalServiceUtil.getQuestion(questionId);
-		System.out.println("questionId: " + question.getQuestionTypeId());
 		OptionsQuestionTypeFactory optionsQuestionTypeFactory = new OptionsQuestionTypeFactory();
 		OptionsQuestionType optionsQuestionType = optionsQuestionTypeFactory.getOptionsQuestionType(question);
-		System.out.println("question: " + question.getExtraContent());
 		formatType = optionsQuestionType.getFormatType();
-		System.out.println("optionsQuestionType: " + optionsQuestionType.getFormatType());
 	}
 	
 	String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());%>

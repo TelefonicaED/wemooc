@@ -82,7 +82,7 @@ public class ImportEditionsMVCActionCommand extends BaseImportCSVMVCActionComman
 	@Override
 	protected void validateFile(ActionRequest actionRequest, ActionResponse actionResponse, FileEntry fileEntry) throws Exception {
 		
-		System.out.println("validamos el fichero");
+		log.debug("validamos el fichero");
 		
 		try (InputStream inputStream = dlFileEntryLocalService.getFileAsStream(
 				fileEntry.getFileEntryId(), fileEntry.getVersion(), false);
@@ -93,7 +93,7 @@ public class ImportEditionsMVCActionCommand extends BaseImportCSVMVCActionComman
 			//Comprobamos las cabeceras
 			String[] headers = reader.readNext();
 			
-			System.out.println("headers: " + headers.length);
+			log.debug("headers: " + headers.length);
 			
 			if((headers.length != LMSConstants.COLUMNS_IMPORT_EDITIONS.length) ) {
 				throw new CSVFileException(

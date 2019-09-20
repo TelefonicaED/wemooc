@@ -38,7 +38,7 @@ public class ImportCourseUsersBackgroundTaskExecutor extends BaseBackgroundTaskE
 	@Override
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask) throws Exception {
 		
-		System.out.println("entramos");
+		log.debug("entramos");
 		
 		Map<String, Serializable> taskContextMap = backgroundTask.getTaskContextMap();
 

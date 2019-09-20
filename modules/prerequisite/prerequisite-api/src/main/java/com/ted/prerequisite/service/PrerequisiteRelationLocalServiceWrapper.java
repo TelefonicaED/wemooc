@@ -121,6 +121,14 @@ public class PrerequisiteRelationLocalServiceWrapper
 	}
 
 	@Override
+	public void deletePrerequisiteRelations(
+		long classNamePrerequisiteId, long classNameId, long classPK) {
+
+		_prerequisiteRelationLocalService.deletePrerequisiteRelations(
+			classNamePrerequisiteId, classNameId, classPK);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
 		return _prerequisiteRelationLocalService.dynamicQuery();
 	}
