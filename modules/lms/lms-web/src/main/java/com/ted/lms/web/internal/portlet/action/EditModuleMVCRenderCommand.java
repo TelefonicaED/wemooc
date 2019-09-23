@@ -2,6 +2,8 @@ package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
@@ -20,6 +22,7 @@ import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.ModuleLocalService;
 import com.ted.lms.web.internal.ModulesItemSelectorHelper;
+import com.ted.lms.web.internal.configuration.LMSWebConfiguration;
 import com.ted.lms.web.internal.servlet.taglib.ui.FormNavigatorConstants;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
@@ -101,6 +104,13 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 			}
 		}
 		
+		LMSWebConfiguration lmsWebConfiguration = null;
+		try {
+			lmsWebConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(LMSWebConfiguration.class, themeDisplay.getCompanyId());
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		
 		renderRequest.setAttribute("module", module);
 		renderRequest.setAttribute("cmd", cmd);
 		renderRequest.setAttribute("moduleId", moduleId);
@@ -111,6 +121,7 @@ public class EditModuleMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("smallImageSelectedItemEventName", smallImageSelectedItemEventName);
 		renderRequest.setAttribute("itemSelectorURL", itemSelectorURL);
 		renderRequest.setAttribute("listPrerequisiteFactory", listPrerequisiteFactory);
+		renderRequest.setAttribute("lmsWebConfiguration", lmsWebConfiguration);
 		
 		return "/modules/edit_module.jsp";
 	}

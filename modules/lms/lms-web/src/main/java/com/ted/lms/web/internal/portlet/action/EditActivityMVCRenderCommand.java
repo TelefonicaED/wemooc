@@ -5,6 +5,8 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -24,10 +26,8 @@ import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
 import com.ted.lms.service.ModuleLocalService;
-import com.ted.lms.util.LMSPrefsPropsValues;
-import com.ted.lms.web.internal.ModulesItemSelectorHelper;
+import com.ted.lms.web.internal.configuration.LMSWebConfiguration;
 import com.ted.lms.web.internal.servlet.taglib.ui.FormNavigatorConstants;
-import com.ted.prerequisite.model.Prerequisite;
 import com.ted.prerequisite.model.PrerequisiteFactory;
 import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
@@ -114,6 +114,13 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 			}
 		}
 		
+		LMSWebConfiguration lmsWebConfiguration = null;
+		try {
+			lmsWebConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(LMSWebConfiguration.class, themeDisplay.getCompanyId());
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		
 		renderRequest.setAttribute("module", module);
 		renderRequest.setAttribute("cmd", cmd);
 		renderRequest.setAttribute("moduleId", moduleId);
@@ -125,6 +132,7 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("type", type);
 		renderRequest.setAttribute("attachmentsFileEntries", attachmentsFileEntries);
 		renderRequest.setAttribute("listPrerequisiteFactory", listPrerequisiteFactory);
+		renderRequest.setAttribute("lmsWebConfiguration", lmsWebConfiguration);
 		
 		return "/activities/edit_activity.jsp";
 	}
@@ -159,12 +167,5 @@ public class EditActivityMVCRenderCommand implements MVCRenderCommand {
 	}
 
 	private ResourceBundleLoader resourceBundleLoader;
-	
-	@Reference(unbind = "-")
-	public void setItemSelectorHelper(ModulesItemSelectorHelper modulesItemSelectorHelper) {
-		this.modulesItemSelectorHelper = modulesItemSelectorHelper;
-	}
-
-	private ModulesItemSelectorHelper modulesItemSelectorHelper;
 
 }

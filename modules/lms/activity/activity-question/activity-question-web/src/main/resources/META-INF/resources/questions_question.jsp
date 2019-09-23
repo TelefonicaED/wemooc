@@ -1,3 +1,6 @@
+<%@page import="com.liferay.portal.kernel.module.configuration.ConfigurationException"%>
+<%@page import="com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil"%>
+<%@page import="com.ted.lms.learning.activity.question.web.internal.configuration.QuestionWebConfiguration"%>
 <%@page import="com.liferay.portal.kernel.util.StringUtil"%>
 <%@page import="com.liferay.portal.kernel.util.ArrayUtil"%>
 <%@page import="com.liferay.portal.kernel.util.Validator"%>
@@ -26,6 +29,13 @@ long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? Stri
 List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId(), questionIdsAllowed);
 String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
 
+QuestionWebConfiguration questionWebConfiguration = null;
+try {
+	questionWebConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(QuestionWebConfiguration.class, themeDisplay.getCompanyId());
+} catch (ConfigurationException e) {
+	e.printStackTrace();
+}
+
 Question question = null;
 if(questionId > 0){
 	question = QuestionLocalServiceUtil.getQuestion(questionId);
@@ -33,6 +43,7 @@ if(questionId > 0){
 }
 QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionType);
 
+String editorName = questionWebConfiguration != null ? questionWebConfiguration.getHTMLQuestionEditor() : "alloyeditor";
 %>
 
 <aui:input  type="hidden" name='<%=namespace + "questionId_" + iteratorQuestion %>' id='<%=namespace + "questionId_" + iteratorQuestion%>' value="<%=questionId%>" useNamespace="false" />
@@ -120,7 +131,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 					name='<%="questionTitle" + iteratorQuestion%>'
 					placeholder="description"
 					required="<%= true %>"
-					editorName="alloyeditor"
+					editorName='<%=editorName %>'
 					onChangeMethod='<%="changeQuestion" + iteratorQuestion%>'
 				/>
 				<aui:input type="hidden" name='<%=namespace + "question_title_" + iteratorQuestion %>' useNamespace="false" value="<%=(question != null) ? question.getText() : StringPool.BLANK %>"/>
@@ -148,6 +159,7 @@ QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQue
 		<liferay-util:include page="<%=questionTypeFactory.getURLEditAnswers()%>" portletId="<%=questionTypeFactory.getPortletId()%>" servletContext="<%=this.getServletContext() %>">
 			<liferay-util:param name="questionId" value="<%=String.valueOf(questionId) %>" />
 			<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
+			<liferay-util:param name="editorName" value="<%=editorName %>"/>
 		</liferay-util:include>
 	</div>
 </div>

@@ -54,7 +54,7 @@
 					<label for="<portlet:namespace />descriptionMapAsXML"><liferay-ui:message key="description" /></label>
 					<liferay-ui:input-localized
 						cssClass="form-control"
-						editorName="alloyeditor"
+						editorName="${lmsWebConfiguration.getHTMLActivityEditor() }"
 						formName="fm"
 						name="descriptionMapAsXML"
 						placeholder="description"

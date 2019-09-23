@@ -209,6 +209,7 @@ public class LearningActivityLocalServiceImpl
 		activity.setStatusByUserName(user.getFullName());
 		
 		activity.setModuleId(moduleId);
+		//TODO Mirar si sanitizamos
 		activity.setTitleMap(titleMap);
 		activity.setDescriptionMap(descriptionMap);
 		

@@ -20,7 +20,7 @@
 				<label for="<portlet:namespace />descriptionMapAsXML"><liferay-ui:message key="free-text" /></label>
 				<liferay-ui:input-localized
 					cssClass="form-control"
-					editorName="alloyeditor"
+					editorName="${lmsWebConfiguration.getHTMLCourseEditor() }"
 					formName="fm"
 					name="descriptionMapAsXML"
 					placeholder="write-content-here"

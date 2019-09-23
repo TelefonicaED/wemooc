@@ -8,6 +8,7 @@
 long iteratorQuestion = ParamUtil.getLong(request, "iteratorQuestion");
 long iterator = ParamUtil.getLong(request, "iterator");
 long answerId = ParamUtil.getLong(request, "answerId", 0);
+String editorName = ParamUtil.getString(request, "editorName");
 Answer answer = null;
 if(answerId > 0){
 	answer = AnswerLocalServiceUtil.getAnswer(answerId);
@@ -24,7 +25,7 @@ String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPor
 		name='<%=iteratorQuestion + "_answer_" + iterator %>'
 		placeholder="write-here-answer"
 		required="<%= true %>"
-		editorName="alloyeditor"
+		editorName="<%=editorName %>"
 		showSource="true" 
 		onChangeMethod='<%=iteratorQuestion + "changeAnswer" + iterator %>'
 	>	

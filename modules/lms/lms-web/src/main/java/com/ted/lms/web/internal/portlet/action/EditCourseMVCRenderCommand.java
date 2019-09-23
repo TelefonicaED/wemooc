@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.module.configuration.ConfigurationProviderUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
@@ -36,6 +37,7 @@ import com.ted.lms.service.CourseTypeRelationLocalService;
 import com.ted.lms.web.constants.LMSPortletConstants;
 import com.ted.lms.web.internal.CoursesItemSelectorHelper;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
+import com.ted.lms.web.internal.configuration.LMSWebConfiguration;
 import com.ted.lms.web.internal.util.CourseUtil;
 
 import java.util.ArrayList;
@@ -167,11 +169,19 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 			listLayoutSetPrototype = CourseUtil.getTemplates(portletInstanceConfiguration, configuration, themeDisplay.getCompanyId());
 		}
 		
+		LMSWebConfiguration lmsWebConfiguration = null;
+		try {
+			lmsWebConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(LMSWebConfiguration.class, themeDisplay.getCompanyId());
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+		
 		renderRequest.setAttribute("listLayoutSetPrototype", listLayoutSetPrototype);
 		renderRequest.setAttribute("smallImageSelectedItemEventName", smallImageSelectedItemEventName);
 		renderRequest.setAttribute("itemSelectorURL", itemSelectorURL);
 		renderRequest.setAttribute("friendlyURLMaxLength", String.valueOf(ModelHintsUtil.getMaxLength(Group.class.getName(), "friendlyURL")));
 		renderRequest.setAttribute("courseTypeId", courseTypeId);
+		renderRequest.setAttribute("lmsWebConfiguration", lmsWebConfiguration);
 	
 	}
 	

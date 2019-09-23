@@ -203,6 +203,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		course.setUserName(user.getFullName());
 		
 		course.setParentCourseId(parentCourseId);
+		//TODO Mirar si sanitizamos
 		course.setTitleMap(titleMap);
 		course.setDescriptionMap(descriptionMap);
 		course.setCourseEvalId(-1);

@@ -43,7 +43,7 @@
 				
 					<liferay-ui:input-localized
 						cssClass="form-control"
-						editorName="alloyeditor"
+						editorName="${lmsWebConfiguration.getHTMLModuleEditor() }"
 						formName="fm"
 						name="descriptionMapAsXML"
 						placeholder="description"

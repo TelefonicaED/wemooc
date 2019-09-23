@@ -160,6 +160,7 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		module.setCompanyId(user.getCompanyId());
 		module.setUserId(user.getUserId());
 		module.setUserName(user.getFullName());
+		//TODO Mirar si sanitizamos
 		module.setTitleMap(titleMap);
 		module.setDescriptionMap(descriptionMap);
 		
