@@ -8,6 +8,8 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.backgroundtask.BaseBackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.display.BackgroundTaskDisplay;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -29,6 +31,8 @@ import org.osgi.service.component.annotations.Reference;
 	service = BackgroundTaskExecutor.class
 )
 public class ImportCourseUsersBackgroundTaskExecutor extends BaseBackgroundTaskExecutor {
+	
+	private static final Log log = LogFactoryUtil.getLog(ImportCourseUsersBackgroundTaskExecutor.class);
 
 	public ImportCourseUsersBackgroundTaskExecutor() {
 		/*setBackgroundTaskStatusMessageTranslator(

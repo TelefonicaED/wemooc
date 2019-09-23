@@ -2,6 +2,8 @@ package com.ted.lms.web.internal.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalServiceUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -16,6 +18,7 @@ import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
+import com.ted.lms.web.internal.portlet.action.ImportMembersMVCActionCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +31,9 @@ import java.util.ResourceBundle;
  *
  */
 public class CourseUtil {
+	
+	private static final Log log = LogFactoryUtil.getLog(CourseUtil.class);
+	
 	public static String getDisplayTitle(ResourceBundle resourceBundle, Course course) {
 
 		if (Validator.isNull(course.getTitle())) {

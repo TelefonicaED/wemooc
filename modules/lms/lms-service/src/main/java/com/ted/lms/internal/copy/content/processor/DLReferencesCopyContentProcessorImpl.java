@@ -40,6 +40,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class DLReferencesCopyContentProcessorImpl implements DLReferencesCopyContentProcessor{
 	
+	private static final Log log = LogFactoryUtil.getLog(DLReferencesCopyContentProcessorImpl.class);
+	
 	private long folderId;
 	
 	public String replaceExportDLReferences(String content, long oldGroupId, long newGroupId, long userId)

@@ -2,6 +2,8 @@ package com.ted.lms.learning.activity.test.web.activity;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.ted.lms.learning.activity.QuestionsLearningActivityTypeFactory;
 import com.ted.lms.learning.activity.question.service.AnswerLocalService;
@@ -26,6 +28,8 @@ import org.osgi.service.component.annotations.Reference;
     service = LearningActivityTypeFactory.class
 )
 public class TestActivityTypeFactory extends QuestionsLearningActivityTypeFactory {
+	private static final Log log = LogFactoryUtil.getLog(TestActivityTypeFactory.class);
+	
 	@Override
 	public String getClassName() {
 		return TestActivityTypeFactory.class.getName();

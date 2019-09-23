@@ -1,3 +1,5 @@
+<%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
+<%@page import="javax.portlet.WindowState"%>
 <%@page import="com.ted.lms.constants.LMSRoleConstants"%>
 <%@page import="com.liferay.portal.kernel.model.ResourceConstants"%>
 <%@page import="com.liferay.portal.kernel.service.ResourcePermissionLocalServiceUtil"%>
@@ -35,23 +37,43 @@
 	
 	<a href="${moveDownLearningActivityURL }"><span class="glyphicon glyphicon-arrow-down" title="<liferay-ui:message key='move-down' />"></span></a>
 </c:if>
-<c:if test="<%=LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.PERMISSIONS) %>">
-	<liferay-security:permissionsURL
-		modelResource="<%= LearningActivity.class.getName() %>"
-		modelResourceDescription="<%= HtmlUtil.escape(activity.getTitle(themeDisplay.getLocale())) %>"
-		resourcePrimKey="<%= String.valueOf(activity.getActId()) %>"
-		var="permissionsURL"
-		windowState="<%= LiferayWindowState.POP_UP.toString() %>"
-	/>
-
-	<liferay-ui:icon
-		image="permissions"
-		message="set-permissions"
-		method="get"
-		url="<%=permissionsURL %>"
-		useDialog="<%= true %>"
-	/>
-</c:if>
+<%boolean permissions = LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.PERMISSIONS);
+boolean softPermissions = LearningActivityPermission.contains(permissionChecker, activity, LMSActionKeys.SOFT_PERMISSIONS);%>
+<c:choose>
+	<c:when test="<%=false && permissions && !softPermissions %>">
+		<liferay-security:permissionsURL
+			modelResource="<%= LearningActivity.class.getName() %>"
+			modelResourceDescription="<%= HtmlUtil.escape(activity.getTitle(themeDisplay.getLocale())) %>"
+			resourcePrimKey="<%= String.valueOf(activity.getActId()) %>"
+			var="permissionsURL"
+			windowState="<%= LiferayWindowState.POP_UP.toString() %>"
+		/>
+	
+		<liferay-ui:icon
+			image="permissions"
+			message="set-permissions"
+			method="get"
+			url="<%=permissionsURL %>"
+			useDialog="<%= true %>"
+		/>
+	</c:when>
+	<c:when test="<%=true || softPermissions %>">
+		<%PortletURL softPermissionURL = renderResponse.createRenderURL();
+		softPermissionURL.setWindowState(LiferayWindowState.POP_UP);
+		softPermissionURL.setParameter("modelResource", LearningActivity.class.getName());
+		softPermissionURL.setParameter("resourcePrimKey", String.valueOf(activity.getActId()));
+		softPermissionURL.setParameter("modelResourceDescription", HtmlUtil.escape(activity.getTitle(themeDisplay.getLocale())));
+		softPermissionURL.setParameter("mvcPath", "/activities/soft_permissions.jsp");%>
+	
+		<liferay-ui:icon
+			image="permissions"
+			message="set-permissions"
+			method="get"
+			url="<%=softPermissionURL.toString() %>"
+			useDialog="<%= true %>" 
+		/>
+	</c:when>
+</c:choose>
 
 <c:if test="<%=LMSPrefsPropsValues.getLearningActivityChangeVisibility(themeDisplay.getCompanyId()) && LearningActivityPermission.contains(permissionChecker, activity, LMSActionKeys.CHANGE_VISIBILITY)%>">
 

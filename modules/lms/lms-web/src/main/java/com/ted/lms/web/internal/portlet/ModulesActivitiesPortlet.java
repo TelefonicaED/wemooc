@@ -13,8 +13,10 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.impl.VirtualLayout;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder;
 import com.liferay.portal.kernel.portlet.PortletLayoutFinder.Result;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
@@ -22,19 +24,29 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionService;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portlet.portletconfiguration.action.ActionUtil;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.trash.TrashHelper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.portlet.Portlet;
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
 import javax.portlet.PortletException;
 import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
@@ -61,7 +73,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.supported-public-render-parameter=actId",
 		"javax.portlet.supported-public-render-parameter=moduleId"
 	},
-	service = Portlet.class
+	service = javax.portlet.Portlet.class
 )
 public class ModulesActivitiesPortlet extends MVCPortlet {
 	
@@ -130,6 +142,79 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 		}
 		
 		return urlNewModule;
+	}
+	
+	public void updateRolePermissions(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception{
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
+
+		String portletResource = ParamUtil.getString(actionRequest, "portletResource");
+		String modelResource = ParamUtil.getString(actionRequest, "modelResource");
+		long[] roleIds = StringUtil.split(ParamUtil.getString(actionRequest, "rolesSearchContainerPrimaryKeys"),0L);
+
+		String selResource = PortletIdCodec.decodePortletName(portletResource);
+
+		if (Validator.isNotNull(modelResource)) {
+			selResource = modelResource;
+		}
+
+		long resourceGroupId = ParamUtil.getLong(actionRequest, "resourceGroupId", themeDisplay.getScopeGroupId());
+		String resourcePrimKey = ParamUtil.getString(actionRequest, "resourcePrimKey");
+
+		Map<Long, String[]> roleIdsToActionIds = new HashMap<>();
+
+		for (long roleId : roleIds) {
+			String[] actionIds = getActionIds(actionRequest, roleId, false);
+
+			roleIdsToActionIds.put(roleId, actionIds);
+		}
+
+		resourcePermissionService.setIndividualResourcePermissions(resourceGroupId, themeDisplay.getCompanyId(), selResource,
+			resourcePrimKey, roleIdsToActionIds);
+
+		if (Validator.isNull(modelResource)) {
+
+			Portlet portlet = ActionUtil.getPortlet(actionRequest);
+
+			PortletPreferences portletPreferences = ActionUtil.getLayoutPortletSetup(actionRequest, portlet);
+
+			portletPreferences.store();
+		}
+	}
+	
+	protected String[] getActionIds(ActionRequest actionRequest, long roleId, boolean includePreselected) {
+
+		List<String> actionIds = getActionIdsList(actionRequest, roleId, includePreselected);
+
+		return actionIds.toArray(new String[0]);
+	}
+	
+	protected List<String> getActionIdsList(ActionRequest actionRequest, long roleId, boolean includePreselected) {
+
+		List<String> actionIds = new ArrayList<>();
+
+		Enumeration<String> enu = actionRequest.getParameterNames();
+
+		while (enu.hasMoreElements()) {
+			String name = enu.nextElement();
+
+			if (name.startsWith(roleId + ActionUtil.ACTION)) {
+				int pos = name.indexOf(ActionUtil.ACTION);
+
+				String actionId = name.substring(pos + ActionUtil.ACTION.length());
+
+				actionIds.add(actionId);
+			} else if (includePreselected &&name.startsWith(roleId + ActionUtil.PRESELECTED)) {
+
+				int pos = name.indexOf(ActionUtil.PRESELECTED);
+
+				String actionId = name.substring(pos + ActionUtil.PRESELECTED.length());
+
+				actionIds.add(actionId);
+			}
+		}
+
+		return actionIds;
 	}
 	
 	protected Layout setTargetLayout(RenderRequest request, long groupId, long plid)throws Exception {
@@ -206,6 +291,15 @@ public class ModulesActivitiesPortlet extends MVCPortlet {
 	}
 	
 	private LayoutLocalService layoutLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setResourcePermissionService(
+		ResourcePermissionService resourcePermissionService) {
+
+		this.resourcePermissionService = resourcePermissionService;
+	}
+	
+	private ResourcePermissionService resourcePermissionService;
 	
 	@Reference
 	private TrashHelper trashHelper;

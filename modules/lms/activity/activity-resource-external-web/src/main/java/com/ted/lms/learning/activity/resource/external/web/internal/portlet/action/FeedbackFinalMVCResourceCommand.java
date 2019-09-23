@@ -1,5 +1,7 @@
 package com.ted.lms.learning.activity.resource.external.web.internal.portlet.action;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -28,6 +30,8 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class FeedbackFinalMVCResourceCommand extends BaseMVCResourceCommand {
 
+	private static final Log log = LogFactoryUtil.getLog(FeedbackFinalMVCResourceCommand.class);
+	
 	@Override
 	protected void doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse) throws Exception {
 		

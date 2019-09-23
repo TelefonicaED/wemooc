@@ -7,6 +7,8 @@ import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -24,6 +26,9 @@ import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
 public class PrerequisitesDisplayContext {
+	
+	private static final Log log = LogFactoryUtil.getLog(PrerequisitesDisplayContext.class);
+	
 	public PrerequisitesDisplayContext(HttpServletRequest request, RenderRequest renderRequest,
 			RenderResponse renderResponse, List<PrerequisiteFactory> prerequisiteFactories) {
 

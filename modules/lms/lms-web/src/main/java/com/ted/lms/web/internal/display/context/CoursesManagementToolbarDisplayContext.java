@@ -6,6 +6,8 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.ViewTypeItemList;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -30,6 +32,9 @@ import javax.portlet.PortletURL;
 import javax.servlet.http.HttpServletRequest;
 
 public class CoursesManagementToolbarDisplayContext {
+	
+	private static final Log log = LogFactoryUtil.getLog(CoursesManagementToolbarDisplayContext.class);
+	
 	public CoursesManagementToolbarDisplayContext(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse,
 			HttpServletRequest request, PortletURL currentURLObj, TrashHelper trashHelper) {
 

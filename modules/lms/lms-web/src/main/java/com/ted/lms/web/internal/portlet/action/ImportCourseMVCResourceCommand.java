@@ -6,6 +6,8 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -30,6 +32,9 @@ import org.osgi.service.component.annotations.Component;
 	service = MVCResourceCommand.class
 )
 public class ImportCourseMVCResourceCommand extends BaseMVCResourceCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(ImportCourseMVCResourceCommand.class);
+	
 	@Override
 	protected void doServeResource(ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {

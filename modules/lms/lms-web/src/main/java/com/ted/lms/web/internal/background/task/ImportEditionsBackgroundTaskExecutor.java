@@ -7,6 +7,8 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
 import com.liferay.portal.kernel.backgroundtask.BaseBackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.display.BackgroundTaskDisplay;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
@@ -23,6 +25,8 @@ import org.osgi.service.component.annotations.Component;
 	service = BackgroundTaskExecutor.class
 )
 public class ImportEditionsBackgroundTaskExecutor extends BaseBackgroundTaskExecutor {
+	
+	private static final Log log = LogFactoryUtil.getLog(ImportEditionsBackgroundTaskExecutor.class);
 
 	public ImportEditionsBackgroundTaskExecutor() {
 		/*setBackgroundTaskStatusMessageTranslator(

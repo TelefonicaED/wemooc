@@ -8,6 +8,8 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
@@ -47,6 +49,8 @@ import org.osgi.service.component.annotations.Reference;
 	service = MVCActionCommand.class
 )
 public class ImportEditionsMVCActionCommand extends BaseImportCSVMVCActionCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(ImportEditionsMVCActionCommand.class);
 	
 	@Override
 	protected long importData(ActionRequest actionRequest, ActionResponse actionResponse) throws PortalException {

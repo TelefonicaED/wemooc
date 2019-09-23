@@ -2,15 +2,20 @@ package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.exportimport.kernel.lar.ExportImportHelper;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
+
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 
 
 public abstract class BaseImportCSVMVCActionCommand extends BaseMVCActionCommand {
+	
+	private static final Log log = LogFactoryUtil.getLog(BaseImportCSVMVCActionCommand.class);
 
 	@Override
 	protected void doProcessAction(ActionRequest actionRequest, ActionResponse actionResponse) throws Exception {

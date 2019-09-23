@@ -5,6 +5,8 @@ import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.xml.Element;
@@ -22,6 +24,8 @@ import javax.portlet.ActionRequest;
  *
  */
 public abstract class BaseLearningActivityType implements LearningActivityType {
+	
+	private static final Log log = LogFactoryUtil.getLog(BaseLearningActivityType.class);
 	
 	protected LearningActivity activity;
 	protected final LearningActivityResultLocalService learningActivityResultLocalService;

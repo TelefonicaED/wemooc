@@ -17,6 +17,8 @@ import com.liferay.exportimport.kernel.lar.StagedModelDataHandlerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -34,6 +36,8 @@ import java.util.List;
 import javax.portlet.ActionRequest;
 
 public class ResourceInternalActivityType extends BaseLearningActivityType{
+	
+	private static final Log log = LogFactoryUtil.getLog(ResourceInternalActivityType.class);
 	
 	private long assetEntryId;
 	protected final AssetEntryLocalService assetEntryLocalService;
