@@ -1,0 +1,6 @@
+Bundle-Name: options-question-web
+Bundle-SymbolicName: options.question.web
+Bundle-Version: 1.0.0
+Export-Package: \
+	com.ted.lms.question.options,\
+	com.ted.lms.question.options.constants

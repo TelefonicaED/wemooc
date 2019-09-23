@@ -78,7 +78,7 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	public String getURLAddAnswer(LiferayPortletResponse liferayPortletResponse) {
 		String urlAddAnswer = null;
 		if(Validator.isNotNull(getURLEditAnswer())) {
-			LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(QuestionsWebPortletKeys.EDIT_QUESTIONS, 
+			LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(getPortletId(), 
 					PortletRequest.RENDER_PHASE);
 			try {
 		        liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);

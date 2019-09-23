@@ -5,7 +5,6 @@ dependencies {
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.taglib"
 	compileOnly group: "com.liferay", name: "com.liferay.petra.string"
 	compileOnly group: "com.liferay", name: "com.liferay.portal.configuration.metatype.api"
-	compileOnly group: "com.liferay", name: "com.liferay.portal.upgrade.api"
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.editor.taglib"
 	compileOnly group: "com.liferay", name: "com.liferay.frontend.editor.alloyeditor.web"
 	compileOnly group: "javax.portlet", name: "portlet-api"
@@ -16,5 +15,4 @@ dependencies {
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-service")
 	compileOnly project(":modules:lms:lms-api")
-	compile group: 'org.jsoup', name: 'jsoup', version: '1.11.3'
 }

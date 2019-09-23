@@ -1,0 +1,5 @@
+Bundle-Name: drag-and-drop-question-web
+Bundle-SymbolicName: drag.and.drop.question.web
+Bundle-Version: 1.0.0
+Export-Package: drag.and.drop.question.web.constants
+Web-ContextPath: /drag-and-drop-question-web
