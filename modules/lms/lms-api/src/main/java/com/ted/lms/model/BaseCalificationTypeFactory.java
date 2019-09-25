@@ -1,6 +1,5 @@
 package com.ted.lms.model;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.upload.UploadRequest;
@@ -62,6 +61,11 @@ public abstract class BaseCalificationTypeFactory implements CalificationTypeFac
 	@Override
 	public String getURLEditResult() {
 		return "/calification/base_edit_result.jsp";
+	}
+	
+	@Override
+	public String getPortletIdEditResult() {
+		return LMSPortletKeys.CALIFICATION;
 	}
 	
 	@Override

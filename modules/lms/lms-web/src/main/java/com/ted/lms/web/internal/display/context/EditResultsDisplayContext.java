@@ -15,9 +15,12 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portlet.usersadmin.search.UserSearch;
 import com.liferay.portlet.usersadmin.search.UserSearchTerms;
 import com.ted.lms.model.Course;
+import com.ted.lms.model.Module;
 import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.ModuleService;
 import com.ted.lms.service.StudentLocalService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,7 +29,7 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
-public class StudentResultsDisplayContext {
+public class EditResultsDisplayContext {
 	
 	private Course course;
 	private long courseId;
@@ -37,15 +40,18 @@ public class StudentResultsDisplayContext {
 	private final RenderRequest renderRequest;
 	private final RenderResponse renderResponse;
 	private final HttpServletRequest request;
-	private UserSearch userSearch;
+	private List<UserSearch> userSearch;
+	private ModuleService moduleService;
 	
-	public StudentResultsDisplayContext(HttpServletRequest request, RenderRequest renderRequest,
-			RenderResponse renderResponse, CourseLocalService courseLocalService, StudentLocalService studentLocalService) throws PortalException {
+	public EditResultsDisplayContext(HttpServletRequest request, RenderRequest renderRequest,
+			RenderResponse renderResponse, CourseLocalService courseLocalService, StudentLocalService studentLocalService,
+			ModuleService moduleService) throws PortalException {
 
 		this.request = request;
 		this.renderRequest = renderRequest;
 		this.renderResponse = renderResponse;
 		this.studentLocalService = studentLocalService;
+		this.moduleService = moduleService;
 		
 		courseId = ParamUtil.getLong(renderRequest, "courseId", 0);
 		
@@ -63,7 +69,7 @@ public class StudentResultsDisplayContext {
 		PortletURL clearResultsURL = getPortletURL();
 
 		clearResultsURL.setParameter("keywords", StringPool.BLANK);
-		clearResultsURL.setParameter("mvcRenderCommandName", "/results/students");
+		clearResultsURL.setParameter("mvcRenderCommandName", "/results/edit_resutls");
 		clearResultsURL.setParameter("courseId", String.valueOf(getCourseId()));
 
 		return clearResultsURL.toString();
@@ -120,7 +126,7 @@ public class StudentResultsDisplayContext {
 
 		PortletURL portletURL = renderResponse.createRenderURL();
 
-		portletURL.setParameter("mvcRenderCommandName", "/results/students");
+		portletURL.setParameter("mvcRenderCommandName", "/results/edit_results");
 		portletURL.setParameter("courseId", String.valueOf(getCourseId()));
 		portletURL.setParameter("redirect", ParamUtil.getString(renderRequest, "redirect"));
 
@@ -164,7 +170,7 @@ public class StudentResultsDisplayContext {
 	public int getTotalItems() {
 		int total = 0;
 		try {
-			SearchContainer userSearchContainer = getUserSearchContainer();
+			SearchContainer userSearchContainer = getUserSearchContainer(0);
 			total = userSearchContainer.getTotal();
 		} catch (PortalException e) {
 			// TODO Auto-generated catch block
@@ -174,30 +180,40 @@ public class StudentResultsDisplayContext {
 		return total;
 	}
 
-	public SearchContainer getUserSearchContainer() throws PortalException {
+	public SearchContainer getUserSearchContainer(int count) throws PortalException {
 		if (userSearch != null) {
-			return userSearch;
+			return userSearch.get(count);
 		}
 		
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-
-		UserSearch userSearch = new UserSearch(renderRequest, getPortletURL());
-
-		userSearch.setEmptyResultsMessage("no-students");
-
-		UserSearchTerms searchTerms = (UserSearchTerms)userSearch.getSearchTerms();
-
-		int usersCount = studentLocalService.countStudentsFromCourse(getCourseId(), themeDisplay.getCompanyId(), searchTerms.getKeywords(), WorkflowConstants.STATUS_APPROVED, null);
-
-		userSearch.setTotal(usersCount);
-
-		List<User> users = studentLocalService.getStudentsFromCourse(getCourseId(), themeDisplay.getCompanyId(), searchTerms.getKeywords(), WorkflowConstants.STATUS_APPROVED, null, 
-				userSearch.getStart(),
-				userSearch.getEnd(), userSearch.getOrderByComparator()); 
-
-		userSearch.setResults(users);
+		this.userSearch = new ArrayList<UserSearch>();
 		
-		return userSearch;
+		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		
+		List<Module> modules = moduleService.getGroupModules(getCourse().getGroupCreatedId());
+		
+		for(Module module: modules) {
+	
+			UserSearch userSearch = new UserSearch(renderRequest, getPortletURL());
+	
+			userSearch.setEmptyResultsMessage("no-students");
+			userSearch.setId("editResults_" + module.getModuleId());
+	
+			UserSearchTerms searchTerms = (UserSearchTerms)userSearch.getSearchTerms();
+	
+			int usersCount = studentLocalService.countStudentsFromCourse(getCourseId(), themeDisplay.getCompanyId(), searchTerms.getKeywords(), WorkflowConstants.STATUS_APPROVED, null);
+	
+			userSearch.setTotal(usersCount);
+	
+			List<User> users = studentLocalService.getStudentsFromCourse(getCourseId(), themeDisplay.getCompanyId(), searchTerms.getKeywords(), WorkflowConstants.STATUS_APPROVED, null, 
+					userSearch.getStart(),
+					userSearch.getEnd(), userSearch.getOrderByComparator()); 
+	
+			userSearch.setResults(users);
+			
+			this.userSearch.add(userSearch);
+		}
+		
+		return userSearch.get(count);
 	}
 
 	public boolean isDisabledManagementBar() {

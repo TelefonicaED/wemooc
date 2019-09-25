@@ -42,7 +42,6 @@ import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellType;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -215,7 +214,7 @@ public SurveyResult addSurveyResult(long actId, long latId, long userId, long qu
 	
 	private void addLabel(HSSFSheet sheet, HSSFCellStyle style,
 			 int column, HSSFRow row, String value) {
-		HSSFCell cell = row.createCell(column, CellType.STRING);
+		HSSFCell cell = row.createCell(column, HSSFCell.CELL_TYPE_STRING);
 		cell.setCellStyle(style);
 		cell.setCellValue(value);
 	}

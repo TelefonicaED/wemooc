@@ -20,7 +20,8 @@ import org.osgi.service.component.annotations.Component;
 		"javax.portlet.name=" + SortableWebPortletKeys.SORTABLE,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=user",
-		"com.liferay.portlet.add-default-resource=true"
+		"com.liferay.portlet.add-default-resource=true",
+		"com.liferay.portlet.use-default-template=true"
 	},
 	service = Portlet.class
 )

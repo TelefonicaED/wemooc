@@ -3,7 +3,6 @@ package com.ted.lms.calification.zero.to.n;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.upload.UploadRequest;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.ted.lms.calification.zero.to.n.constants.ZeroToNConstants;
 import com.ted.lms.constants.CourseConstants;
@@ -15,7 +14,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 import javax.portlet.ActionRequest;
-import javax.portlet.PortletResponse;
 
 /**
  * Implementa un producto del tipo de calificación de 0 a n
@@ -33,7 +31,7 @@ public class ZeroToNCalificationType extends BaseCalificationType{
 		JSONObject calification = extraData.getJSONObject(CourseConstants.JSON_CALIFICATION);
 		
 		if(calification != null) {
-			this.maxValue = extraData.getDouble(ZeroToNConstants.JSON_ZERO_TO_N, 0);
+			this.maxValue = calification.getDouble(ZeroToNConstants.JSON_ZERO_TO_N, 0);
 		}else {
 			this.maxValue = 0;
 		}

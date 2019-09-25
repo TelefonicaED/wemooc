@@ -160,7 +160,7 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 			    	wse.printStackTrace();
 			    }
 				showPopupGradesURL.setParameter(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, StringPool.TRUE);
-				showPopupGradesURL.setParameter("mvcRenderCommandName", "/activity/online/view_result");
+				showPopupGradesURL.setParameter("mvcRenderCommandName", "/activity/online/edit_result");
 				showPopupGradesURL.setParameter("actId", String.valueOf(actId));
 				
 				renderRequest.setAttribute("showPopupGradesURL", showPopupGradesURL);
@@ -262,7 +262,7 @@ public class OnlineActivityViewMVCRenderCommand implements MVCRenderCommand {
 			
 			PortletURL showPopupActivityURL = renderResponse.createRenderURL();
 			showPopupActivityURL.setWindowState(LiferayWindowState.POP_UP);
-			showPopupActivityURL.setParameter("mvcRenderCommandName", "/activity/online/view_result");
+			showPopupActivityURL.setParameter("mvcRenderCommandName", "/activity/online/edit_result");
 			showPopupActivityURL.setParameter("actId", String.valueOf(actId));
 			showPopupActivityURL.setParameter("courseId", String.valueOf(course.getCourseId()));
 			renderRequest.setAttribute("showPopupActivityURL", showPopupActivityURL);

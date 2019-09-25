@@ -9,6 +9,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.exception.NoSuchCourseResultException;
 import com.ted.lms.model.CalificationType;
@@ -17,6 +18,7 @@ import com.ted.lms.model.Course;
 import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.Module;
 import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseLocalService;
 import com.ted.lms.service.CourseResultLocalService;
 import com.ted.lms.service.LearningActivityLocalService;
@@ -88,6 +90,7 @@ public class ResultsViewMVCRenderCommand implements MVCRenderCommand {
 			renderRequest.setAttribute("moduleResultLocalService", moduleResultLocalService);
 			renderRequest.setAttribute("learningActivityService", learningActivityService);
 			renderRequest.setAttribute("learningActivityResultLocalService", learningActivityResultLocalService);
+			renderRequest.setAttribute("accessLock", LMSPermission.contains(themeDisplay.getPermissionChecker(), course.getGroupCreatedId(), LMSActionKeys.ACCESSLOCK));
 			
 			
 			return "/results/view.jsp";

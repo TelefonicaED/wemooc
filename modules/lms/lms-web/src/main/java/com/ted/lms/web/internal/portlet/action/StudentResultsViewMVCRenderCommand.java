@@ -5,10 +5,8 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.model.CalificationType;
 import com.ted.lms.model.CalificationTypeFactory;
@@ -47,12 +45,11 @@ public class StudentResultsViewMVCRenderCommand implements MVCRenderCommand {
 	@Override
 	public String render(RenderRequest renderRequest, RenderResponse renderResponse) throws PortletException {
 		
-		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
-		
 		HttpServletRequest request = portal.getHttpServletRequest(renderRequest);
 		
 		try {
-			StudentResultsDisplayContext studentResultsDisplayContext = new StudentResultsDisplayContext(request, renderRequest, renderResponse, courseLocalService, studentLocalService);
+			StudentResultsDisplayContext studentResultsDisplayContext = new StudentResultsDisplayContext(request, renderRequest, renderResponse, 
+					courseLocalService, studentLocalService);
 			
 			Course course = studentResultsDisplayContext.getCourse();
 			CalificationTypeFactory calificationTypeFactory = CalificationTypeFactoryRegistryUtil.getCalificationTypeFactoryByType(course.getCalificationType());

@@ -31,8 +31,6 @@ public class StatisticsBackgroundTaskExecutor extends BaseBackgroundTaskExecutor
 	@Override
 	public BackgroundTaskResult execute(BackgroundTask backgroundTask) throws Exception {
 		
-		log.debug("entramos");
-		
 		Map<String, Serializable> taskContextMap = backgroundTask.getTaskContextMap();
 
 		long actId = (long)taskContextMap.get("actId");

@@ -19,9 +19,11 @@ CalificationTypeFactory calificationTypeFactory = CalificationTypeFactoryRegistr
 LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 LearningActivityResult result = LearningActivityResultLocalServiceUtil.getLearningActivityResult(actId, studentId);
 %>
+<aui:input name="actId" value="<%=actId %>" type="hidden"/>
+<aui:input name="studentId" value="<%=studentId %>" type="hidden"/>
+<aui:input name="courseId" value="<%=courseId %>" type="hidden"/>
 
-
-<liferay-util:include page="<%=calificationTypeFactory.getURLEditResult() %>" portletId="<%=calificationTypeFactory.getPortletId() %>" >
+<liferay-util:include page="<%=calificationTypeFactory.getURLEditResult() %>" portletId="<%=calificationTypeFactory.getPortletIdEditResult() %>" >
 	<liferay-util:param name="actId" value="<%=String.valueOf(actId) %>" />
 	<liferay-util:param name="studentId" value="<%=String.valueOf(studentId) %>" />
 	<liferay-util:param name="courseId" value="<%=String.valueOf(courseId) %>" />

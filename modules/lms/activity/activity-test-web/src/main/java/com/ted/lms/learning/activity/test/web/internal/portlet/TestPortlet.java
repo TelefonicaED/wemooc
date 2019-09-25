@@ -50,7 +50,8 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=user",
 		"javax.portlet.supported-public-render-parameter=actId",
-		"com.liferay.portlet.use-default-template=true"
+		"com.liferay.portlet.use-default-template=true",
+		"com.liferay.portlet.add-default-resource=true"
 	},
 	service = Portlet.class
 )

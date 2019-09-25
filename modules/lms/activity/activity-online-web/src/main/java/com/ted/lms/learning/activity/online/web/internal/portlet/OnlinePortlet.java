@@ -77,13 +77,15 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=category.hidden",
-		"com.liferay.portlet.instanceable=false",
+		"com.liferay.portlet.instanceable=true",
 		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.mvc-command-names-default-views=/activities/online/view_activity",
 		"javax.portlet.name=" + OnlinePortletKeys.ONLINE,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=user",
-		"javax.portlet.supported-public-render-parameter=actId"
+		"javax.portlet.supported-public-render-parameter=actId",
+		"com.liferay.portlet.add-default-resource=true"
+		
 	},
 	service = Portlet.class
 )
@@ -268,7 +270,7 @@ public class OnlinePortlet extends MVCPortlet {
 		
 		actionResponse.setRenderParameter("studentId", String.valueOf(studentId));
 		actionResponse.setRenderParameter("actId", String.valueOf(actId));
-		actionResponse.setRenderParameter("mvcRenderCommandName", "/activity/online/view_result");
+		actionResponse.setRenderParameter("mvcRenderCommandName", "/activity/online/edit_result");
 		
 	}
 	

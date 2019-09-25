@@ -29,7 +29,7 @@ if(Validator.isNotNull(tryResultData)){
 	documentTryResultData= SAXReaderUtil.read(tryResultData);
 }
 
-SurveyQuestionTypeFactory surveyQuestionTypeFactory = (SurveyQuestionTypeFactory)QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(SurveyQuestionTypeFactory.TYPE);
+SurveyQuestionTypeFactory surveyQuestionTypeFactory = new SurveyQuestionTypeFactory();
 SurveyQuestionType surveyQuestionType = surveyQuestionTypeFactory.getSurveyQuestionType(question);
 
 String html = "", answersFeedBack="", feedMessage = "", cssclass="", selected="";

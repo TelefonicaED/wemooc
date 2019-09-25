@@ -1,4 +1,3 @@
 Bundle-Name: multioptions-question-web
-Bundle-SymbolicName: multioptions.question.web
+Bundle-SymbolicName: com.ted.lms.question.multioptions.web
 Bundle-Version: 1.0.0
-Export-Package: multioptions.question.web.constants

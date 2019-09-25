@@ -1,0 +1,34 @@
+<custom-sql>
+	<sql id="com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder.findByTeam">
+		<![CDATA[   			
+			SELECT pa.*
+			FROM 
+				ptp_p2pactivity pa
+			INNER JOIN users_teams ut ON ut.userId = pa.userId AND ut.teamId IN [$TEAMS$]
+			WHERE pa.actId = ? AND
+			pa.p2pActivityId <> ? 
+			ORDER BY pa.countCorrections ASC
+		]]>
+	</sql>
+	<sql id="com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder.findByGroup">
+		<![CDATA[   			
+			SELECT pa.*
+			FROM ptp_p2pactivity pa
+			WHERE pa.actId = ? AND
+			pa.p2pActivityId <> ? 
+			ORDER BY pa.countCorrections ASC
+		]]>
+	</sql>
+	<sql id="com.ted.lms.learning.activity.p2p.service.persistence.P2PActivityFinder.findByUserWithoutTeamActivities">
+		<![CDATA[   			
+			SELECT pa.*
+			FROM ptp_p2pactivity pa
+			INNER JOIN users_groups ug ON ug.userId = pa.userId AND  ug.groupId = ? 
+		    AND ug.userId NOT IN (SELECT ut.userId FROM users_teams ut 
+			INNER JOIN team t ON t.teamId = ut.teamId AND t.groupId = ?)
+			WHERE pa.actId = ? AND
+			pa.p2pActivityId <> ? 
+			ORDER BY pa.countCorrections ASC
+		]]>
+	</sql>
+</custom-sql>

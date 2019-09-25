@@ -71,5 +71,9 @@ public class LearningActivityResultImpl extends LearningActivityResultBaseImpl {
 		
 		return status;
 	}
+	
+	public boolean isFailed() {
+		return getStartDate() != null && isFinished() && !getPassed();
+	}
 
 }

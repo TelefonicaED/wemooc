@@ -51,7 +51,7 @@ if(isLinkTabletP2PAct){
 Format dateFormatDate = FastDateFormatFactoryUtil.getDateTime(DateFormat.SHORT, DateFormat.SHORT, locale, timeZone);
 
 long actId=ParamUtil.getLong(request,"actId",0);
-long userId=ParamUtil.getLong(request,"userId",0);
+long userId=ParamUtil.getLong(request,"studentId",0);
 
 LearningActivity activity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 

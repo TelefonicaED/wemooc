@@ -56,7 +56,8 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.name=" + P2PWebPortletKeys.P2P,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=user",
-		"javax.portlet.supported-public-render-parameter=actId"
+		"javax.portlet.supported-public-render-parameter=actId",
+		"com.liferay.portlet.add-default-resource=true"
 	},
 	service = Portlet.class
 )
@@ -287,22 +288,10 @@ public class P2PWebPortlet extends MVCPortlet {
 	
 	private static Log log = LogFactoryUtil.getLog(P2PWebPortlet.class);
 	
-	@Reference(unbind = "-")
-	protected void setP2PActivityCorrectionsLocalService(P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService) {
-		this.p2pActivityCorrectionsLocalService = p2pActivityCorrectionsLocalService;
-	}
-	
-	@Reference(unbind = "-")
-	protected void setP2PActivityLocalService(P2PActivityLocalService p2pActivityLocalService) {
-		this.p2pActivityLocalService = p2pActivityLocalService;
-	}
-	
-	@Reference(unbind = "-")
-	protected void setLearningActivityLocalService(LearningActivityLocalService learningActivityLocalService) {
-		this.p2pActivityLocalService = p2pActivityLocalService;
-	}
-	
+	@Reference
 	private LearningActivityLocalService learningActivityLocalService;
+	@Reference
 	private P2PActivityLocalService p2pActivityLocalService;
+	@Reference
 	private P2PActivityCorrectionsLocalService p2pActivityCorrectionsLocalService;
 }

@@ -63,4 +63,6 @@ public interface LearningActivityResult
 
 	public String getActivityStatus(java.util.Locale locale);
 
+	public boolean isFailed();
+
 }

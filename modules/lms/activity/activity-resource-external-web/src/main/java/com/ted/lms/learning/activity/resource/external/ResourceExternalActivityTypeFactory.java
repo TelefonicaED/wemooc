@@ -84,7 +84,7 @@ public class ResourceExternalActivityTypeFactory extends QuestionsLearningActivi
 	
 	@Override
 	public String getSpecificResultsPage() {
-		return "/view_results.jsp";
+		return "/activity/resource_external/view_result";
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 Bundle-Name: options-question-web
-Bundle-SymbolicName: options.question.web
+Bundle-SymbolicName: com.ted.lms.question.options.web
 Bundle-Version: 1.0.0
 Export-Package: \
 	com.ted.lms.question.options,\

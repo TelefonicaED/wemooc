@@ -74,14 +74,15 @@ import org.osgi.service.component.annotations.Reference;
 	immediate = true,
 	property = {
 		"com.liferay.portlet.display-category=category.hidden",
-		"com.liferay.portlet.instanceable=false",
-		"javax.portlet.init-param.template-path=/",
+		"com.liferay.portlet.instanceable=true",
+		"javax.portlet.init-param.template-path=/META-INF/resources/",
 		"javax.portlet.init-param.view-template=/view.jsp",
 		"javax.portlet.name=" + ResourceExternalPortletKeys.RESOURCE_EXTERNAL,
 		"javax.portlet.resource-bundle=content.Language",
-		"javax.portlet.security-role-ref=power-user,user",
+		"javax.portlet.security-role-ref=user",
 		"javax.portlet.supported-public-render-parameter=actId",
-		"com.liferay.portlet.use-default-template=true"
+		"com.liferay.portlet.use-default-template=true",
+		"com.liferay.portlet.add-default-resource=true"
 	},
 	service = Portlet.class
 )

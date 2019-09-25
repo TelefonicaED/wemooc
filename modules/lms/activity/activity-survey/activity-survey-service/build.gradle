@@ -12,8 +12,11 @@ dependencies {
 	compileOnly project(":modules:lms:lms-api")
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
 	compileOnly group: "javax.servlet", name: "javax.servlet-api"
-	compileInclude group: 'org.apache.poi', name: 'poi', version: '4.1.0'
 	compileOnly group: "com.liferay", name: "com.liferay.portal.aop.api"
+	compile (group: "org.apache.poi", name: "poi", version: "3.13"){ transitive = false}
+	compile (group: "org.apache.poi", name: "poi-ooxml", version: "3.13"){ transitive = false}
+	compile (group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '3.13'){ transitive = false}
+	compile (group: 'org.apache.xmlbeans', name: 'xmlbeans', version: '2.6.0'){ transitive = false}
 }
 
 buildService {

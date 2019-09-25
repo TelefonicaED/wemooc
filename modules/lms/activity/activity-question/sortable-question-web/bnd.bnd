@@ -1,5 +1,5 @@
 Bundle-Name: sortable-question-web
-Bundle-SymbolicName: com.ted.lms.question.sortable
+Bundle-SymbolicName: com.ted.lms.question.sortable.web
 Bundle-Version: 1.0.0
 Export-Package: com.ted.lms.question.sortable.constants
 Web-ContextPath: /sortable-question-web

@@ -1,4 +1,4 @@
-<%@page import="com.ted.lms.question.survey.constants.MultioptionsWebPortletKeys"%>
+<%@page import="com.ted.lms.question.multioptions.constants.MultioptionsWebPortletKeys"%>
 <%@page import="com.ted.lms.question.multioptions.MultioptionsQuestionTypeFactory"%>
 <%@page import="com.ted.lms.question.options.OptionsQuestionTypeFactory"%>
 <%@page import="javax.portlet.RenderResponse"%>

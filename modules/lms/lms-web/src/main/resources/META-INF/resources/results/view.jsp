@@ -29,7 +29,7 @@
 
 		<div class="panel panel-default  lfr-panel lfr-panel-extended" >
 			<c:choose>
-				<c:when test="${!module.isLocked(themeDisplay.userId, themeDisplay.permissionChecker) }">
+				<c:when test="${accessLock || !module.isLocked(themeDisplay.userId, themeDisplay.permissionChecker) }">
 					<div class="panel-heading toggler-header toggler-header-expanded" data-toggle="collapse" data-target="#${renderResponse.namespace }module_${module.moduleId}Content"
 						id="${renderResponse.namespace }module_${module.moduleId}">
 						<div class="panel-toggle" >

@@ -100,7 +100,7 @@ public class OnlineActivityTypeFactory extends BaseLearningActivityTypeFactory {
 	
 	@Override
 	public String getSpecificResultsPage() {
-		return "/result.jsp";
+		return "/activity/online/view_result";
 	}
 	
 	@Override

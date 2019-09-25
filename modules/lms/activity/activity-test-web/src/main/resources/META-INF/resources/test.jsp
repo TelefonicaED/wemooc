@@ -316,6 +316,7 @@
 							questionTypeFactories.put(questionTypeFactory.getType(), questionTypeFactory);
 						}
 						%>
+						
 						<liferay-util:include page="<%=questionType.getURLQuestion() %>" portletId="<%=questionTypeFactory.getPortletId() %>" >
 							<liferay-util:param name="questionId" value="<%=String.valueOf(question.getQuestionId()) %>"/>
 							<liferay-util:param name="tryResultData" value="${tryResultData }" />

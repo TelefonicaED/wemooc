@@ -1,3 +1,7 @@
+<%@page import="com.ted.lms.service.CourseLocalServiceUtil"%>
+<%@page import="com.ted.lms.service.CourseLocalService"%>
+<%@page import="com.ted.lms.model.Course"%>
+<%@page import="com.ted.lms.service.StudentLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.p2p.constants.P2PConstants"%>
 <%@page import="com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil"%>
 <%@page import="com.liferay.portal.kernel.search.Sort"%>
@@ -60,7 +64,7 @@ P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(acti
 
 	</aui:form>
 
-	<liferay-ui:search-container iteratorURL="<%=portletURL%>" emptyResultsMessage="there-are-no-results" delta="5">
+	<liferay-ui:search-container iteratorURL="<%=portletURL%>" emptyResultsMessage="there-are-no-results" delta="75">
 
 	   	<liferay-ui:search-container-results>
 			<%
@@ -92,10 +96,15 @@ P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(acti
 							+ "WHERE users_teams.teamId IN (" + teamIds + ")", null));
 				}
 				
+				Course course = CourseLocalServiceUtil.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+				
 				OrderByComparator obc = null;
-				List<User> userListPage = UserLocalServiceUtil.search(themeDisplay.getCompanyId(), criteria, WorkflowConstants.STATUS_APPROVED, userParams, searchContainer.getStart(), searchContainer.getEnd(), obc);
-				int userCount = UserLocalServiceUtil.searchCount(themeDisplay.getCompanyId(), criteria, WorkflowConstants.STATUS_APPROVED, userParams);
-						
+				List<User> userListPage = StudentLocalServiceUtil.getStudentsFromCourse(course.getCourseId(), 
+						themeDisplay.getCompanyId(), criteria, WorkflowConstants.STATUS_APPROVED, userParams, 
+						searchContainer.getStart(), searchContainer.getEnd(), obc);
+				int userCount = StudentLocalServiceUtil.countStudentsFromCourse(course.getCourseId(), 
+						themeDisplay.getCompanyId(), criteria, WorkflowConstants.STATUS_APPROVED, userParams);
+					
 				pageContext.setAttribute("results", userListPage);
 			    pageContext.setAttribute("total", userCount);
 			    pageContext.setAttribute("delta", 10);
@@ -107,7 +116,7 @@ P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(acti
 		<portlet:renderURL var="verDetalle">
 			<portlet:param name="mvcPath" value="/p2p/activity/detalleAct.jsp" />
 			<portlet:param name="actId" value="<%=String.valueOf(actId) %>" />
-			<portlet:param name="userId" value="<%=String.valueOf(user.getUserId()) %>" />
+			<portlet:param name="studentId" value="<%=String.valueOf(user.getUserId()) %>" />
 		</portlet:renderURL>
 		
 		<%
@@ -152,7 +161,9 @@ P2PActivityType p2pActivityType = p2pActivityTypeFactory.getP2PActivityType(acti
 			String urlResume = "self.location = '"+verDetalle+"';";
 			String nameButton =LanguageUtil.get(themeDisplay.getLocale(), "learning-activity.p2p.see-task"); 
 		%>
-			<liferay-ui:search-container-column-button href="<%=urlResume %>"  name="<%=nameButton %>" />
+			<liferay-ui:search-container-column-text >
+				<aui:button value="<%=nameButton %>" onClick="<%=urlResume %>"/>
+			</liferay-ui:search-container-column-text>
 		<%} else{%>
 			<liferay-ui:search-container-column-text value="" />
 		<%} %>

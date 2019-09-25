@@ -1,6 +1,5 @@
 package com.ted.lms.model;
 
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.upload.UploadRequest;
 import java.util.Locale;
 
@@ -34,6 +33,8 @@ public interface CalificationTypeFactory {
 	public String getURLSpecificContent();
 	
 	public String getURLEditResult();
+	
+	public String getPortletIdEditResult();
 	
 	public boolean specificValidations(UploadRequest uploadRequest,PortletResponse portletResponse);
 	

@@ -358,6 +358,11 @@ public class LearningActivityResultWrapper
 	}
 
 	@Override
+	public boolean isFailed() {
+		return model.isFailed();
+	}
+
+	@Override
 	public boolean isFinished() {
 		return model.isFinished();
 	}

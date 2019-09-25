@@ -114,7 +114,7 @@ public class TestActivityTypeFactory extends QuestionsLearningActivityTypeFactor
 	
 	@Override
 	public String getSpecificResultsPage() {
-		return "/view_results.jsp";
+		return "/activities/test/view_result";
 	}
 	
 	@Reference(

@@ -249,7 +249,7 @@ public class LearningActivityWrapper
 	}
 
 	/**
-	 * Comprueba si se puede accceder a una actividad
+	 * Comprueba si se puede accceder a una actividad aunque esté bloqueada
 	 *
 	 * @param viewActivityFinish Si la actividad deja acceder coon el modo observador
 	 * @param user Usuario que accede a la actividad
@@ -1053,6 +1053,9 @@ public class LearningActivityWrapper
 		return model.isInTrashImplicitly();
 	}
 
+	/**
+	 * Comprueba que la actividad esté bloqueda para el usuario para realizarla
+	 */
 	@Override
 	public boolean isLocked(
 			com.liferay.portal.kernel.model.User user,

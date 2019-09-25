@@ -4,7 +4,7 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Question"%>
-<%@ include file="/init.jsp" %>
+<%@ include file="init.jsp" %>
 
 <c:if test="${isTeacher }">
 	<liferay-ui:icon image="view" message="learning-activity.survey.stadistics" label="true" url="${statisticsURL }" />
