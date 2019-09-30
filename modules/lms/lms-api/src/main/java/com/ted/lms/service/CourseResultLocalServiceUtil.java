@@ -322,6 +322,13 @@ public class CourseResultLocalServiceUtil {
 		return getService().hasUserTries(courseId, userId);
 	}
 
+	public static com.ted.lms.model.CourseResult recalculate(
+			long userId, com.ted.lms.model.CourseResult courseResult)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().recalculate(userId, courseResult);
+	}
+
 	/**
 	 * Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

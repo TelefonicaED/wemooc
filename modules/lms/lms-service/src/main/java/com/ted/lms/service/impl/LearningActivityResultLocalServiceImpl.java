@@ -15,8 +15,6 @@
 package com.ted.lms.service.impl;
 
 import com.liferay.portal.aop.AopService;
-import com.ted.lms.service.LearningActivityLocalService;
-import com.ted.lms.service.LearningActivityTryLocalService;
 import com.ted.lms.service.ModuleResultLocalService;
 import com.ted.lms.service.base.LearningActivityResultLocalServiceBaseImpl;
 
@@ -32,8 +30,7 @@ import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityTry;
-import com.ted.lms.service.base.LearningActivityResultLocalServiceBaseImpl;
-
+import com.ted.lms.model.ModuleResult;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +66,11 @@ public class LearningActivityResultLocalServiceImpl
 	@Override
 	public List<LearningActivityResult> getRequiredLearningActivityResults(long groupId, long userId){
 		return learningActivityResultFinder.findRequiredLearningActivityResults(groupId, userId);
+	}
+	
+	@Override
+	public int countRequiredLearningActivityResults(long groupId, long userId){
+		return learningActivityResultFinder.countRequiredLearningActivityResults(groupId, userId);
 	}
 	
 	@Override
@@ -125,7 +127,7 @@ public class LearningActivityResultLocalServiceImpl
 		
 		log.debug("****END DATE "+learningActivityTry.getEndDate());
 		
-		LearningActivity learningActivity = learningActivityLocalService.getLearningActivity(learningActivityTry.getActId());
+		LearningActivity learningActivity = learningActivityPersistence.fetchByPrimaryKey(learningActivityTry.getActId());
 		
 		if(learningActivityTry.getEndDate()!=null){
 			
@@ -179,6 +181,26 @@ public class LearningActivityResultLocalServiceImpl
 
 	}
 	
+	public LearningActivityResult deleteLearningActivityResult(long userId, LearningActivityResult learningActivityResult, boolean recalculate) throws PortalException {
+		
+		User user = userLocalService.getUser(userId);
+		
+		AuditFactory.audit(learningActivityResult.getCompanyId(), learningActivityResult.getGroupId(), LMSAuditConstants.LEARNING_ACTIVITY_RESULT_REMOVE, 
+				LearningActivityResult.class.getName(), learningActivityResult.getActId(), userId, user.getFullName(), null);
+		
+		learningActivityResult = super.deleteLearningActivityResult(learningActivityResult);
+		
+		if(recalculate) {
+			LearningActivity activity = learningActivityPersistence.fetchByPrimaryKey(learningActivityResult.getActId());
+			if(activity.isRequired()) {
+				ModuleResult moduleResult = moduleResultLocalService.getModuleResult(activity.getModuleId(), learningActivityResult.getUserId());
+				moduleResultLocalService.recalculate(userId, moduleResult);
+			}
+		}
+		
+		return learningActivityResult;
+	}
+	
 	public long countStudentFinished(long actId, long companyId, long courseGroupId) {
 		return learningActivityResultFinder.countStudentsFinished(actId, courseGroupId, companyId);
 	}
@@ -187,7 +209,4 @@ public class LearningActivityResultLocalServiceImpl
 	
 	@Reference
 	protected ModuleResultLocalService moduleResultLocalService;
-	
-	@Reference
-	protected LearningActivityLocalService learningActivityLocalService;
 }

@@ -74,6 +74,11 @@ public interface LearningActivityService extends BaseService {
 	public LearningActivity deleteLearningActivity(long actId)
 		throws PortalException;
 
+	public void executeDeleteTries(
+			long groupId, long actId, long studentId, boolean onlyTriesFailed,
+			ServiceContext serviceContext)
+		throws PortalException, PrincipalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LearningActivity> getActivities(long moduleId);
 

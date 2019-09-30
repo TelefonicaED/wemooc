@@ -10,10 +10,10 @@ create table QU_Answer (
 	lastPublishDate DATE null,
 	questionId LONG,
 	actId LONG,
-	answer VARCHAR(75) null,
+	answer TEXT null,
 	correct BOOLEAN,
-	feedbackCorrect VARCHAR(75) null,
-	feedbackIncorrect VARCHAR(75) null
+	feedbackCorrect TEXT null,
+	feedbackIncorrect TEXT null
 );
 
 create table QU_Question (
@@ -27,10 +27,10 @@ create table QU_Question (
 	modifiedDate DATE null,
 	lastPublishDate DATE null,
 	actId LONG,
-	text_ VARCHAR(75) null,
+	text_ TEXT null,
 	questionTypeId LONG,
 	active_ BOOLEAN,
 	weight LONG,
 	penalize BOOLEAN,
-	extraContent VARCHAR(75) null
+	extraContent TEXT null
 );

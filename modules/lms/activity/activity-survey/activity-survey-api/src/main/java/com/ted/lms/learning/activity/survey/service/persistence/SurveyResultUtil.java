@@ -185,16 +185,16 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	public static List<SurveyResult> findByUuid(
 		String uuid, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByUuid(
-			uuid, start, end, orderByComparator, retrieveFromCache);
+			uuid, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -353,16 +353,16 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	public static List<SurveyResult> findByUserId(
 		long userId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator, retrieveFromCache);
+			userId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -521,16 +521,16 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	public static List<SurveyResult> findByActId(
 		long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByActId(
-			actId, start, end, orderByComparator, retrieveFromCache);
+			actId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -696,17 +696,16 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	public static List<SurveyResult> findByQuestionIdActId(
 		long questionId, long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByQuestionIdActId(
-			questionId, actId, start, end, orderByComparator,
-			retrieveFromCache);
+			questionId, actId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -880,16 +879,16 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	public static List<SurveyResult> findByQuestionId(
 		long questionId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByQuestionId(
-			questionId, start, end, orderByComparator, retrieveFromCache);
+			questionId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1059,17 +1058,17 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	public static List<SurveyResult> findByAnswerIdQuestionId(
 		long answerId, long questionId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByAnswerIdQuestionId(
 			answerId, questionId, start, end, orderByComparator,
-			retrieveFromCache);
+			useFinderCache);
 	}
 
 	/**
@@ -1309,15 +1308,15 @@ public class SurveyResultUtil {
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of survey results
 	 */
 	public static List<SurveyResult> findAll(
 		int start, int end, OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findAll(
-			start, end, orderByComparator, retrieveFromCache);
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**

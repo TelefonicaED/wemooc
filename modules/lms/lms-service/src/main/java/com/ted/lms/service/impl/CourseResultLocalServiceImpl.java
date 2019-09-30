@@ -15,7 +15,6 @@
 package com.ted.lms.service.impl;
 
 import com.liferay.portal.aop.AopService;
-
 import com.ted.lms.service.base.CourseResultLocalServiceBaseImpl;
 import com.ted.postcondition.model.Postcondition;
 import com.ted.postcondition.service.PostconditionRelationLocalService;
@@ -66,7 +65,7 @@ public class CourseResultLocalServiceImpl
 	 * Never reference this class directly. Use <code>com.ted.lms.service.CourseResultLocalService</code> via injection or a <code>org.osgi.util.tracker.ServiceTracker</code> or use <code>com.ted.lms.service.CourseResultLocalServiceUtil</code>.
 	 */
 	
-public List<CourseResult> getCourseResults(long courseId){
+	public List<CourseResult> getCourseResults(long courseId){
 		
 		return courseResultPersistence.findByCourseId(courseId);
 		
@@ -188,6 +187,41 @@ public List<CourseResult> getCourseResults(long courseId){
 	public int getMyCoursesCount(long userId, boolean inProgress, boolean completed, boolean expired, long groupId) {
 		return courseResultFinder.doCountByU_G(userId, inProgress, completed, expired, groupId, true);
 		
+	}
+	
+	public CourseResult recalculate(long userId, CourseResult courseResult) throws PortalException {
+		
+		Course course = coursePersistence.findByPrimaryKey(courseResult.getCourseId());
+		int requiredActivityResults = learningActivityResultFinder.countRequiredLearningActivityResults(course.getGroupCreatedId(), courseResult.getUserId());
+		
+		Date now = new Date();
+		User user = userLocalService.getUser(userId);
+		CourseResult courseResultUpdated = null;
+		
+		if(requiredActivityResults == 0) {
+			courseResultUpdated = courseResult;
+			courseResultUpdated.setStartDate(null);
+			courseResultUpdated.setPassed(false);
+			courseResultUpdated.setPassedDate(null);
+			courseResultUpdated.setResult(0);
+		} else {
+			
+			CourseEvalFactory courseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactoryByType(course.getCourseEvalId());
+			CourseEval courseEval = courseEvalFactory.getCourseEval(course);
+			courseResultUpdated = courseEval.updateCourseResult(courseResult);
+		}
+		
+		if(courseResultUpdated.getStartDate() == null || courseResult.getResult() != courseResultUpdated.getResult() || courseResult.getPassed() != courseResultUpdated.getPassed()) {
+			//Update en la bd
+
+			courseResult.setUserModifiedId(user.getUserId());
+			courseResult.setUserModifiedName(user.getFullName());
+			courseResult.setModifiedDate(now);
+			
+			courseResult = courseResultPersistence.update(courseResultUpdated);
+		}
+			
+		return courseResult;
 	}
 	
 	@Reference

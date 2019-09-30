@@ -130,11 +130,13 @@ public class LearningActivityResultModelImpl
 
 	public static final long GROUPID_COLUMN_BITMASK = 4L;
 
-	public static final long USERID_COLUMN_BITMASK = 8L;
+	public static final long PASSED_COLUMN_BITMASK = 8L;
 
-	public static final long UUID_COLUMN_BITMASK = 16L;
+	public static final long USERID_COLUMN_BITMASK = 16L;
 
-	public static final long LARID_COLUMN_BITMASK = 32L;
+	public static final long UUID_COLUMN_BITMASK = 32L;
+
+	public static final long LARID_COLUMN_BITMASK = 64L;
 
 	public static void setEntityCacheEnabled(boolean entityCacheEnabled) {
 		_entityCacheEnabled = entityCacheEnabled;
@@ -601,7 +603,19 @@ public class LearningActivityResultModelImpl
 
 	@Override
 	public void setPassed(boolean passed) {
+		_columnBitmask |= PASSED_COLUMN_BITMASK;
+
+		if (!_setOriginalPassed) {
+			_setOriginalPassed = true;
+
+			_originalPassed = _passed;
+		}
+
 		_passed = passed;
+	}
+
+	public boolean getOriginalPassed() {
+		return _originalPassed;
 	}
 
 	@Override
@@ -786,6 +800,11 @@ public class LearningActivityResultModelImpl
 			learningActivityResultModelImpl._userId;
 
 		learningActivityResultModelImpl._setOriginalUserId = false;
+
+		learningActivityResultModelImpl._originalPassed =
+			learningActivityResultModelImpl._passed;
+
+		learningActivityResultModelImpl._setOriginalPassed = false;
 
 		learningActivityResultModelImpl._columnBitmask = 0;
 	}
@@ -983,6 +1002,8 @@ public class LearningActivityResultModelImpl
 	private double _result;
 	private String _comments;
 	private boolean _passed;
+	private boolean _originalPassed;
+	private boolean _setOriginalPassed;
 	private Date _startDate;
 	private Date _endDate;
 	private String _extraData;

@@ -694,6 +694,52 @@ public class LearningActivityServiceHttp {
 		}
 	}
 
+	public static void executeDeleteTries(
+			HttpPrincipal httpPrincipal, long groupId, long actId,
+			long studentId, boolean onlyTriesFailed,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				LearningActivityServiceUtil.class, "executeDeleteTries",
+				_executeDeleteTriesParameterTypes16);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, groupId, actId, studentId, onlyTriesFailed,
+				serviceContext);
+
+			try {
+				TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception e) {
+				if (e instanceof
+						com.liferay.portal.kernel.security.auth.
+							PrincipalException) {
+
+					throw (com.liferay.portal.kernel.security.auth.
+						PrincipalException)e;
+				}
+
+				if (e instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						e;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					e);
+			}
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException se) {
+			_log.error(se, se);
+
+			throw se;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		LearningActivityServiceHttp.class);
 
@@ -747,5 +793,10 @@ public class LearningActivityServiceHttp {
 		};
 	private static final Class<?>[] _getTempFileNamesParameterTypes15 =
 		new Class[] {long.class};
+	private static final Class<?>[] _executeDeleteTriesParameterTypes16 =
+		new Class[] {
+			long.class, long.class, long.class, boolean.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
 
 }

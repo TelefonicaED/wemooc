@@ -584,6 +584,164 @@ public interface LearningActivityResultPersistence
 	public int countByActIdUserId(long actId, long userId);
 
 	/**
+	 * Returns all the learning activity results where actId = &#63; and passed = &#63;.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @return the matching learning activity results
+	 */
+	public java.util.List<LearningActivityResult>
+		findByActIdPassedEndDateNotNull(long actId, boolean passed);
+
+	/**
+	 * Returns a range of all the learning activity results where actId = &#63; and passed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param start the lower bound of the range of learning activity results
+	 * @param end the upper bound of the range of learning activity results (not inclusive)
+	 * @return the range of matching learning activity results
+	 */
+	public java.util.List<LearningActivityResult>
+		findByActIdPassedEndDateNotNull(
+			long actId, boolean passed, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the learning activity results where actId = &#63; and passed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param start the lower bound of the range of learning activity results
+	 * @param end the upper bound of the range of learning activity results (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching learning activity results
+	 */
+	public java.util.List<LearningActivityResult>
+		findByActIdPassedEndDateNotNull(
+			long actId, boolean passed, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<LearningActivityResult> orderByComparator);
+
+	/**
+	 * Returns an ordered range of all the learning activity results where actId = &#63; and passed = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent and pagination is required (<code>start</code> and <code>end</code> are not <code>QueryUtil#ALL_POS</code>), then the query will include the default ORDER BY logic from <code>LearningActivityResultModelImpl</code>. If both <code>orderByComparator</code> and pagination are absent, for performance reasons, the query will not have an ORDER BY clause and the returned result set will be sorted on by the primary key in an ascending order.
+	 * </p>
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param start the lower bound of the range of learning activity results
+	 * @param end the upper bound of the range of learning activity results (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching learning activity results
+	 */
+	public java.util.List<LearningActivityResult>
+		findByActIdPassedEndDateNotNull(
+			long actId, boolean passed, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<LearningActivityResult> orderByComparator,
+			boolean useFinderCache);
+
+	/**
+	 * Returns the first learning activity result in the ordered set where actId = &#63; and passed = &#63;.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching learning activity result
+	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
+	 */
+	public LearningActivityResult findByActIdPassedEndDateNotNull_First(
+			long actId, boolean passed,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<LearningActivityResult> orderByComparator)
+		throws NoSuchLearningActivityResultException;
+
+	/**
+	 * Returns the first learning activity result in the ordered set where actId = &#63; and passed = &#63;.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
+	 */
+	public LearningActivityResult fetchByActIdPassedEndDateNotNull_First(
+		long actId, boolean passed,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityResult>
+			orderByComparator);
+
+	/**
+	 * Returns the last learning activity result in the ordered set where actId = &#63; and passed = &#63;.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching learning activity result
+	 * @throws NoSuchLearningActivityResultException if a matching learning activity result could not be found
+	 */
+	public LearningActivityResult findByActIdPassedEndDateNotNull_Last(
+			long actId, boolean passed,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<LearningActivityResult> orderByComparator)
+		throws NoSuchLearningActivityResultException;
+
+	/**
+	 * Returns the last learning activity result in the ordered set where actId = &#63; and passed = &#63;.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching learning activity result, or <code>null</code> if a matching learning activity result could not be found
+	 */
+	public LearningActivityResult fetchByActIdPassedEndDateNotNull_Last(
+		long actId, boolean passed,
+		com.liferay.portal.kernel.util.OrderByComparator<LearningActivityResult>
+			orderByComparator);
+
+	/**
+	 * Returns the learning activity results before and after the current learning activity result in the ordered set where actId = &#63; and passed = &#63;.
+	 *
+	 * @param larId the primary key of the current learning activity result
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next learning activity result
+	 * @throws NoSuchLearningActivityResultException if a learning activity result with the primary key could not be found
+	 */
+	public LearningActivityResult[] findByActIdPassedEndDateNotNull_PrevAndNext(
+			long larId, long actId, boolean passed,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<LearningActivityResult> orderByComparator)
+		throws NoSuchLearningActivityResultException;
+
+	/**
+	 * Removes all the learning activity results where actId = &#63; and passed = &#63; from the database.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 */
+	public void removeByActIdPassedEndDateNotNull(long actId, boolean passed);
+
+	/**
+	 * Returns the number of learning activity results where actId = &#63; and passed = &#63;.
+	 *
+	 * @param actId the act ID
+	 * @param passed the passed
+	 * @return the number of matching learning activity results
+	 */
+	public int countByActIdPassedEndDateNotNull(long actId, boolean passed);
+
+	/**
 	 * Caches the learning activity result in the entity cache if it is enabled.
 	 *
 	 * @param learningActivityResult the learning activity result

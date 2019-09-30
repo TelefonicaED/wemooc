@@ -17,4 +17,5 @@ public class LMSActionKeys extends ActionKeys{
 	public static final String CHANGE_VISIBILITY = "CHANGE_VISIBILITY";
 	public static final String CORRECT = "CORRECT";
 	public static final String VIEW_RESULTS = "VIEW_RESULTS";
+	public static final String DELETE_TRIES = "DELETE_TRIES";
 }

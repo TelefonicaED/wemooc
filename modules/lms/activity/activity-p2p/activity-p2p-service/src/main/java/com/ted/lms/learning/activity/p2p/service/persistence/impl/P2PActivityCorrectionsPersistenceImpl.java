@@ -26,10 +26,9 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -164,14 +163,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	@Override
 	public List<P2PActivityCorrections> findByUuid(
 		String uuid, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -183,17 +182,20 @@ public class P2PActivityCorrectionsPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUuid;
-			finderArgs = new Object[] {uuid};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid;
+				finderArgs = new Object[] {uuid};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid;
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<P2PActivityCorrections> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<P2PActivityCorrections>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -270,10 +272,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -711,20 +717,24 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	@Override
 	public P2PActivityCorrections fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
+		String uuid, long groupId, boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
-		Object[] finderArgs = new Object[] {uuid, groupId};
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {uuid, groupId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByUUID_G, finderArgs, this);
 		}
@@ -778,8 +788,10 @@ public class P2PActivityCorrectionsPersistenceImpl
 				List<P2PActivityCorrections> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByUUID_G, finderArgs, list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByUUID_G, finderArgs, list);
+					}
 				}
 				else {
 					P2PActivityCorrections p2pActivityCorrections = list.get(0);
@@ -790,7 +802,10 @@ public class P2PActivityCorrectionsPersistenceImpl
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(_finderPathFetchByUUID_G, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByUUID_G, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -976,14 +991,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	@Override
 	public List<P2PActivityCorrections> findByUuid_C(
 		String uuid, long companyId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -995,10 +1010,13 @@ public class P2PActivityCorrectionsPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUuid_C;
-			finderArgs = new Object[] {uuid, companyId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid_C;
+				finderArgs = new Object[] {uuid, companyId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid_C;
 			finderArgs = new Object[] {
 				uuid, companyId, start, end, orderByComparator
@@ -1007,7 +1025,7 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 		List<P2PActivityCorrections> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<P2PActivityCorrections>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1090,10 +1108,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1570,14 +1592,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	@Override
 	public List<P2PActivityCorrections> findByP2PActivityId(
 		long p2pActivityId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1587,10 +1609,13 @@ public class P2PActivityCorrectionsPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByP2PActivityId;
-			finderArgs = new Object[] {p2pActivityId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByP2PActivityId;
+				finderArgs = new Object[] {p2pActivityId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByP2PActivityId;
 			finderArgs = new Object[] {
 				p2pActivityId, start, end, orderByComparator
@@ -1599,7 +1624,7 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 		List<P2PActivityCorrections> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<P2PActivityCorrections>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1667,10 +1692,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2098,14 +2127,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	@Override
 	public List<P2PActivityCorrections> findByActIdAndUserId(
 		long actId, long userId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2115,10 +2144,13 @@ public class P2PActivityCorrectionsPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByActIdAndUserId;
-			finderArgs = new Object[] {actId, userId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByActIdAndUserId;
+				finderArgs = new Object[] {actId, userId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByActIdAndUserId;
 			finderArgs = new Object[] {
 				actId, userId, start, end, orderByComparator
@@ -2127,7 +2159,7 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 		List<P2PActivityCorrections> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<P2PActivityCorrections>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2199,10 +2231,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2641,18 +2677,22 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 *
 	 * @param p2pActivityId the p2p activity ID
 	 * @param userId the user ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	@Override
 	public P2PActivityCorrections fetchByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, boolean retrieveFromCache) {
+		long p2pActivityId, long userId, boolean useFinderCache) {
 
-		Object[] finderArgs = new Object[] {p2pActivityId, userId};
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {p2pActivityId, userId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByP2PActivityIdAndUserId, finderArgs, this);
 		}
@@ -2695,9 +2735,11 @@ public class P2PActivityCorrectionsPersistenceImpl
 				List<P2PActivityCorrections> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByP2PActivityIdAndUserId, finderArgs,
-						list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByP2PActivityIdAndUserId,
+							finderArgs, list);
+					}
 				}
 				else {
 					P2PActivityCorrections p2pActivityCorrections = list.get(0);
@@ -2708,8 +2750,10 @@ public class P2PActivityCorrectionsPersistenceImpl
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(
-					_finderPathFetchByP2PActivityIdAndUserId, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByP2PActivityIdAndUserId, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2873,14 +2917,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	@Override
 	public List<P2PActivityCorrections> findByUserId(
 		long userId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2890,17 +2934,20 @@ public class P2PActivityCorrectionsPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUserId;
-			finderArgs = new Object[] {userId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUserId;
+				finderArgs = new Object[] {userId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUserId;
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
 		List<P2PActivityCorrections> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<P2PActivityCorrections>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2966,10 +3013,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -3544,7 +3595,7 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 		p2pActivityCorrections.setUuid(uuid);
 
-		p2pActivityCorrections.setCompanyId(companyProvider.getCompanyId());
+		p2pActivityCorrections.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return p2pActivityCorrections;
 	}
@@ -4003,14 +4054,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of p2p activity correctionses
 	 */
 	@Override
 	public List<P2PActivityCorrections> findAll(
 		int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -4020,17 +4071,20 @@ public class P2PActivityCorrectionsPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<P2PActivityCorrections> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<P2PActivityCorrections>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
@@ -4081,10 +4135,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -4343,7 +4401,7 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 	@Override
 	@Reference(
-		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = PTPPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -4374,9 +4432,6 @@ public class P2PActivityCorrectionsPersistenceImpl
 	}
 
 	private boolean _columnBitmaskEnabled;
-
-	@Reference(service = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
 
 	@Reference
 	protected EntityCache entityCache;
@@ -4410,5 +4465,14 @@ public class P2PActivityCorrectionsPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "date"});
+
+	static {
+		try {
+			Class.forName(PTPPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

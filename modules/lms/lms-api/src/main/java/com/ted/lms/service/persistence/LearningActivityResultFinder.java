@@ -26,6 +26,8 @@ public interface LearningActivityResultFinder {
 	public java.util.List<com.ted.lms.model.LearningActivityResult>
 		findRequiredLearningActivityResults(long groupId, long userId);
 
+	public int countRequiredLearningActivityResults(long groupId, long userId);
+
 	public int countRequiredLearningActivityResultsByModule(
 		long moduleId, long userId);
 

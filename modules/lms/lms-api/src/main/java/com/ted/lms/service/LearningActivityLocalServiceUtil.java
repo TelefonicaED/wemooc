@@ -196,6 +196,13 @@ public class LearningActivityLocalServiceUtil {
 		return getService().deletePersistedModel(persistedModel);
 	}
 
+	public static boolean deleteTries(
+		long userId, long actId, long studentId, boolean deleteOnlyFailed) {
+
+		return getService().deleteTries(
+			userId, actId, studentId, deleteOnlyFailed);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.DynamicQuery
 		dynamicQuery() {
 
@@ -279,6 +286,17 @@ public class LearningActivityLocalServiceUtil {
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 
 		return getService().dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	public static void executeDeleteTries(
+			long userId, long groupId, long actId, long studentId,
+			boolean deleteOnlyFailed,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		getService().executeDeleteTries(
+			userId, groupId, actId, studentId, deleteOnlyFailed,
+			serviceContext);
 	}
 
 	public static com.ted.lms.model.LearningActivity fetchLearningActivity(
@@ -469,6 +487,10 @@ public class LearningActivityLocalServiceUtil {
 		getRequiredLearningActivitiesOfModule(long moduleId) {
 
 		return getService().getRequiredLearningActivitiesOfModule(moduleId);
+	}
+
+	public static boolean hasDeleteTriesInProgress(long actId, long groupId) {
+		return getService().hasDeleteTriesInProgress(actId, groupId);
 	}
 
 	public static com.ted.lms.model.LearningActivity moveDownLearningActivity(

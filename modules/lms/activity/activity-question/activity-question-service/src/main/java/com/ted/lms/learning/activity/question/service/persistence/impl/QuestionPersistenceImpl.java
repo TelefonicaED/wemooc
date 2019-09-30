@@ -26,10 +26,9 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-import com.liferay.portal.kernel.service.persistence.CompanyProvider;
-import com.liferay.portal.kernel.service.persistence.CompanyProviderWrapper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -161,14 +160,13 @@ public class QuestionPersistenceImpl
 	 * @param start the lower bound of the range of questions
 	 * @param end the upper bound of the range of questions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching questions
 	 */
 	@Override
 	public List<Question> findByUuid(
 		String uuid, int start, int end,
-		OrderByComparator<Question> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<Question> orderByComparator, boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -180,17 +178,20 @@ public class QuestionPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUuid;
-			finderArgs = new Object[] {uuid};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid;
+				finderArgs = new Object[] {uuid};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid;
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<Question> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Question>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -267,10 +268,14 @@ public class QuestionPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -695,20 +700,24 @@ public class QuestionPersistenceImpl
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching question, or <code>null</code> if a matching question could not be found
 	 */
 	@Override
 	public Question fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
+		String uuid, long groupId, boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
-		Object[] finderArgs = new Object[] {uuid, groupId};
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {uuid, groupId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByUUID_G, finderArgs, this);
 		}
@@ -761,8 +770,10 @@ public class QuestionPersistenceImpl
 				List<Question> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByUUID_G, finderArgs, list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByUUID_G, finderArgs, list);
+					}
 				}
 				else {
 					Question question = list.get(0);
@@ -773,7 +784,10 @@ public class QuestionPersistenceImpl
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(_finderPathFetchByUUID_G, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByUUID_G, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -956,14 +970,13 @@ public class QuestionPersistenceImpl
 	 * @param start the lower bound of the range of questions
 	 * @param end the upper bound of the range of questions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching questions
 	 */
 	@Override
 	public List<Question> findByUuid_C(
 		String uuid, long companyId, int start, int end,
-		OrderByComparator<Question> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<Question> orderByComparator, boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -975,10 +988,13 @@ public class QuestionPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUuid_C;
-			finderArgs = new Object[] {uuid, companyId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid_C;
+				finderArgs = new Object[] {uuid, companyId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid_C;
 			finderArgs = new Object[] {
 				uuid, companyId, start, end, orderByComparator
@@ -987,7 +1003,7 @@ public class QuestionPersistenceImpl
 
 		List<Question> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Question>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1070,10 +1086,14 @@ public class QuestionPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1539,14 +1559,13 @@ public class QuestionPersistenceImpl
 	 * @param start the lower bound of the range of questions
 	 * @param end the upper bound of the range of questions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching questions
 	 */
 	@Override
 	public List<Question> findByGroupId(
 		long groupId, int start, int end,
-		OrderByComparator<Question> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<Question> orderByComparator, boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1556,17 +1575,20 @@ public class QuestionPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByGroupId;
-			finderArgs = new Object[] {groupId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByGroupId;
+				finderArgs = new Object[] {groupId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByGroupId;
 			finderArgs = new Object[] {groupId, start, end, orderByComparator};
 		}
 
 		List<Question> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Question>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1632,10 +1654,14 @@ public class QuestionPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2039,14 +2065,13 @@ public class QuestionPersistenceImpl
 	 * @param start the lower bound of the range of questions
 	 * @param end the upper bound of the range of questions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching questions
 	 */
 	@Override
 	public List<Question> findByActId(
 		long actId, int start, int end,
-		OrderByComparator<Question> orderByComparator,
-		boolean retrieveFromCache) {
+		OrderByComparator<Question> orderByComparator, boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2056,17 +2081,20 @@ public class QuestionPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByActId;
-			finderArgs = new Object[] {actId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByActId;
+				finderArgs = new Object[] {actId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByActId;
 			finderArgs = new Object[] {actId, start, end, orderByComparator};
 		}
 
 		List<Question> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Question>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2132,10 +2160,14 @@ public class QuestionPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2631,7 +2663,7 @@ public class QuestionPersistenceImpl
 
 		question.setUuid(uuid);
 
-		question.setCompanyId(companyProvider.getCompanyId());
+		question.setCompanyId(CompanyThreadLocal.getCompanyId());
 
 		return question;
 	}
@@ -3026,13 +3058,13 @@ public class QuestionPersistenceImpl
 	 * @param start the lower bound of the range of questions
 	 * @param end the upper bound of the range of questions (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of questions
 	 */
 	@Override
 	public List<Question> findAll(
 		int start, int end, OrderByComparator<Question> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3042,17 +3074,20 @@ public class QuestionPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<Question> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Question>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
@@ -3102,10 +3137,14 @@ public class QuestionPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -3313,7 +3352,7 @@ public class QuestionPersistenceImpl
 
 	@Override
 	@Reference(
-		target = QUPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = QUPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -3344,9 +3383,6 @@ public class QuestionPersistenceImpl
 	}
 
 	private boolean _columnBitmaskEnabled;
-
-	@Reference(service = CompanyProviderWrapper.class)
-	protected CompanyProvider companyProvider;
 
 	@Reference
 	protected EntityCache entityCache;
@@ -3379,5 +3415,14 @@ public class QuestionPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "text", "active"});
+
+	static {
+		try {
+			Class.forName(QUPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

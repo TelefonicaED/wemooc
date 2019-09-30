@@ -78,7 +78,7 @@ public class QuestionModelImpl
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"lastPublishDate", Types.TIMESTAMP}, {"actId", Types.BIGINT},
-		{"text_", Types.VARCHAR}, {"questionTypeId", Types.BIGINT},
+		{"text_", Types.CLOB}, {"questionTypeId", Types.BIGINT},
 		{"active_", Types.BOOLEAN}, {"weight", Types.BIGINT},
 		{"penalize", Types.BOOLEAN}, {"extraContent", Types.VARCHAR}
 	};
@@ -97,7 +97,7 @@ public class QuestionModelImpl
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("text_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("text_", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("questionTypeId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("active_", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("weight", Types.BIGINT);
@@ -106,7 +106,7 @@ public class QuestionModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table QU_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,actId LONG,text_ VARCHAR(75) null,questionTypeId LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent VARCHAR(75) null)";
+		"create table QU_Question (uuid_ VARCHAR(75) null,questionId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,actId LONG,text_ TEXT null,questionTypeId LONG,active_ BOOLEAN,weight LONG,penalize BOOLEAN,extraContent TEXT null)";
 
 	public static final String TABLE_SQL_DROP = "drop table QU_Question";
 
@@ -611,7 +611,12 @@ public class QuestionModelImpl
 	@Override
 	public Question toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, Question>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -872,8 +877,13 @@ public class QuestionModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, Question>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, Question>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 

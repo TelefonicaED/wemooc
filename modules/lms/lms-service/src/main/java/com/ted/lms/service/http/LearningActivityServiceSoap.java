@@ -425,6 +425,22 @@ public class LearningActivityServiceSoap {
 		}
 	}
 
+	public static void executeDeleteTries(
+			long groupId, long actId, long studentId, boolean onlyTriesFailed,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws RemoteException {
+
+		try {
+			LearningActivityServiceUtil.executeDeleteTries(
+				groupId, actId, studentId, onlyTriesFailed, serviceContext);
+		}
+		catch (Exception e) {
+			_log.error(e, e);
+
+			throw new RemoteException(e.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		LearningActivityServiceSoap.class);
 

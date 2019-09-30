@@ -318,4 +318,10 @@ public class LearningActivityServiceImpl
 	
 		return TempFileEntryUtil.getTempFileNames(groupId, getUserId(),LearningActivityConstants.TEMP_FOLDER_NAME);
 	}
+	
+	public void executeDeleteTries(long groupId, long actId, long studentId, boolean onlyTriesFailed, ServiceContext serviceContext) throws PrincipalException, PortalException {
+		learningActivityModelResourcePermission.check(getPermissionChecker(), actId, LMSActionKeys.DELETE_TRIES);
+		
+		learningActivityLocalService.executeDeleteTries(getUserId(), groupId, actId, studentId, onlyTriesFailed, serviceContext);
+	}
 }

@@ -30,6 +30,8 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 			LearningActivityResultFinder.class.getName() + ".findRequiredLearningActivityResults";
 	public static final String COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS_BY_MODULE = 
 			LearningActivityResultFinder.class.getName() + ".countRequiredLearningActivityResultsByModule";
+	public static final String COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS = 
+			LearningActivityResultFinder.class.getName() + ".countRequiredLearningActivityResults";
 	public static final String COUNT_STUDENTS_FINISHED = 
 			LearningActivityResultFinder.class.getName() + ".countStudentsFinished";
 	
@@ -70,6 +72,47 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 	}
 	
 	@Override
+	public int countRequiredLearningActivityResults(long groupId, long userId) {
+
+		Session session = null;
+		
+		int countLearningActivities = 0;
+
+		try {
+			session = openSession();
+
+			String sql = customSQL.get(getClass(), COUNT_REQUIRED_LEARNING_ACTIVITY_RESULTS);
+			log.debug("********sql: " + sql);
+
+			SQLQuery q = session.createSynchronizedSQLQuery(sql);
+			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
+
+			QueryPos qPos = QueryPos.getInstance(q);
+
+			qPos.add(groupId);
+			qPos.add(userId);
+
+			Iterator<Integer> itr = q.iterate();
+
+			if (itr.hasNext()) {
+				Integer count = itr.next();
+
+				if (count != null) {
+					countLearningActivities = count.intValue();
+				}
+			}
+		}
+		catch (Exception e) {
+			throw new SystemException(e);
+		}
+		finally {
+			closeSession(session);
+		}
+		
+		return countLearningActivities;
+	}
+	
+	@Override
 	public int countRequiredLearningActivityResultsByModule(long moduleId, long userId) {
 
 		Session session = null;
@@ -84,7 +127,7 @@ public class LearningActivityResultFinderImpl extends LearningActivityResultFind
 
 			SQLQuery q = session.createSynchronizedSQLQuery(sql);
 
-			q.addEntity("lms_learningactivityresult", LearningActivityResultImpl.class);
+			q.addScalar(COUNT_COLUMN_NAME, Type.LONG);
 
 			QueryPos qPos = QueryPos.getInstance(q);
 

@@ -52,6 +52,12 @@ public class LearningActivityResultLocalServiceWrapper
 	}
 
 	@Override
+	public int countRequiredLearningActivityResults(long groupId, long userId) {
+		return _learningActivityResultLocalService.
+			countRequiredLearningActivityResults(groupId, userId);
+	}
+
+	@Override
 	public long countStudentFinished(
 		long actId, long companyId, long courseGroupId) {
 
@@ -102,6 +108,18 @@ public class LearningActivityResultLocalServiceWrapper
 
 		return _learningActivityResultLocalService.deleteLearningActivityResult(
 			larId);
+	}
+
+	@Override
+	public com.ted.lms.model.LearningActivityResult
+			deleteLearningActivityResult(
+				long userId,
+				com.ted.lms.model.LearningActivityResult learningActivityResult,
+				boolean recalculate)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _learningActivityResultLocalService.deleteLearningActivityResult(
+			userId, learningActivityResult, recalculate);
 	}
 
 	/**

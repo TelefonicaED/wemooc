@@ -277,6 +277,13 @@ public class ModuleResultLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static com.ted.lms.model.ModuleResult recalculate(
+			long userId, com.ted.lms.model.ModuleResult moduleResult)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().recalculate(userId, moduleResult);
+	}
+
 	public static com.ted.lms.model.ModuleResult updateModuleResult(
 			com.ted.lms.model.LearningActivityResult learningActivityResult)
 		throws com.liferay.portal.kernel.exception.PortalException {

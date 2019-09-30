@@ -78,9 +78,9 @@ public class AnswerModelImpl
 		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"lastPublishDate", Types.TIMESTAMP}, {"questionId", Types.BIGINT},
-		{"actId", Types.BIGINT}, {"answer", Types.VARCHAR},
-		{"correct", Types.BOOLEAN}, {"feedbackCorrect", Types.VARCHAR},
-		{"feedbackIncorrect", Types.VARCHAR}
+		{"actId", Types.BIGINT}, {"answer", Types.CLOB},
+		{"correct", Types.BOOLEAN}, {"feedbackCorrect", Types.CLOB},
+		{"feedbackIncorrect", Types.CLOB}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -98,14 +98,14 @@ public class AnswerModelImpl
 		TABLE_COLUMNS_MAP.put("lastPublishDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("questionId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("actId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("answer", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("answer", Types.CLOB);
 		TABLE_COLUMNS_MAP.put("correct", Types.BOOLEAN);
-		TABLE_COLUMNS_MAP.put("feedbackCorrect", Types.VARCHAR);
-		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("feedbackCorrect", Types.CLOB);
+		TABLE_COLUMNS_MAP.put("feedbackIncorrect", Types.CLOB);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table QU_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,questionId LONG,actId LONG,answer VARCHAR(75) null,correct BOOLEAN,feedbackCorrect VARCHAR(75) null,feedbackIncorrect VARCHAR(75) null)";
+		"create table QU_Answer (uuid_ VARCHAR(75) null,answerId LONG not null primary key,groupId LONG,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,lastPublishDate DATE null,questionId LONG,actId LONG,answer TEXT null,correct BOOLEAN,feedbackCorrect TEXT null,feedbackIncorrect TEXT null)";
 
 	public static final String TABLE_SQL_DROP = "drop table QU_Answer";
 
@@ -592,7 +592,12 @@ public class AnswerModelImpl
 	@Override
 	public Answer toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, Answer>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -854,8 +859,13 @@ public class AnswerModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, Answer>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, Answer>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 

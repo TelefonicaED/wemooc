@@ -237,6 +237,9 @@ public interface ModuleResultLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public ModuleResult recalculate(long userId, ModuleResult moduleResult)
+		throws PortalException;
+
 	public ModuleResult updateModuleResult(
 			LearningActivityResult learningActivityResult)
 		throws PortalException;

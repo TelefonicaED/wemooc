@@ -57,7 +57,7 @@ public abstract class P2PActivityFinderBaseImpl
 
 	@Override
 	@Reference(
-		target = PTPPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = PTPPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -87,5 +87,14 @@ public abstract class P2PActivityFinderBaseImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		P2PActivityFinderBaseImpl.class);
+
+	static {
+		try {
+			Class.forName(PTPPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

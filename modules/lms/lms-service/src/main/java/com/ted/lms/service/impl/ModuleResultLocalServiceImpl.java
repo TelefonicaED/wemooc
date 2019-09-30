@@ -16,12 +16,15 @@ package com.ted.lms.service.impl;
 
 import com.liferay.portal.aop.AopService;
 import com.ted.lms.service.CourseResultLocalService;
+import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.ted.audit.api.AuditFactory;
 import com.ted.lms.constants.LMSAuditConstants;
+import com.ted.lms.model.Course;
+import com.ted.lms.model.CourseResult;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.Module;
@@ -29,7 +32,6 @@ import com.ted.lms.model.ModuleEval;
 import com.ted.lms.model.ModuleEvalFactory;
 import com.ted.lms.model.ModuleResult;
 import com.ted.lms.registry.ModuleEvalFactoryRegistryUtil;
-import com.ted.lms.service.base.ModuleResultLocalServiceBaseImpl;
 
 import java.util.Date;
 import java.util.List;
@@ -135,6 +137,43 @@ public class ModuleResultLocalServiceImpl
 			AuditFactory.audit(moduleResult.getCompanyId(), moduleResult.getGroupId(), LMSAuditConstants.MODULE_RESULT_UPDATE, ModuleResult.class.getName(), moduleResult.getMrId(), 
 					learningActivityResult.getUserModifiedId(), learningActivityResult.getUserModifiedName(), null);
 		}
+		
+		return moduleResult;
+	}
+	
+	public ModuleResult recalculate(long userId, ModuleResult moduleResult) throws PortalException {
+		int requiredActivityResults = learningActivityResultFinder.countRequiredLearningActivityResultsByModule(moduleResult.getModuleId(), moduleResult.getUserId());
+		Module module = modulePersistence.findByPrimaryKey(moduleResult.getModuleId());
+		
+		if(requiredActivityResults == 0) {
+			deleteModuleResult(moduleResult);
+			moduleResult = null;
+		} else {
+			
+			ModuleEvalFactory moduleEvalFactory = ModuleEvalFactoryRegistryUtil.getModuleEvalFactoryByType(module.getModuleEvalId());
+			ModuleEval moduleEval = moduleEvalFactory.getModuleEval(module);
+			ModuleResult moduleResultUpdated = moduleEval.updateModuleResult(moduleResult);
+
+			if(moduleResult.getResult() != moduleResultUpdated.getResult() || moduleResult.getPassed() != moduleResultUpdated.getPassed()) {
+				//Update en la bd
+				Date now = new Date();
+				User user = userLocalService.getUser(userId);
+				
+				moduleResult.setUserModifiedId(user.getUserId());
+				moduleResult.setUserModifiedName(user.getFullName());
+				moduleResult.setModifiedDate(now);
+				
+				moduleResult = moduleResultPersistence.update(moduleResultUpdated);
+			}
+		}
+		
+		//Aunque no se haya modificado el moduleresult tenemos que llamar al recalcular porque hay métodos de evaluación que no tienen en cuenta los módulos
+		
+		Course course = coursePersistence.findByGroupCreatedId(module.getGroupId());
+		
+		CourseResult courseResult = courseResultLocalService.getCourseResult(course.getCourseId(), userId);
+		
+		courseResultLocalService.recalculate(userId, courseResult);
 		
 		return moduleResult;
 	}

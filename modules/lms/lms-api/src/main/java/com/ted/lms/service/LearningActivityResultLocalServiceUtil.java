@@ -53,6 +53,13 @@ public class LearningActivityResultLocalServiceUtil {
 		return getService().addLearningActivityResult(learningActivityResult);
 	}
 
+	public static int countRequiredLearningActivityResults(
+		long groupId, long userId) {
+
+		return getService().countRequiredLearningActivityResults(
+			groupId, userId);
+	}
+
 	public static long countStudentFinished(
 		long actId, long companyId, long courseGroupId) {
 
@@ -98,6 +105,17 @@ public class LearningActivityResultLocalServiceUtil {
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return getService().deleteLearningActivityResult(larId);
+	}
+
+	public static com.ted.lms.model.LearningActivityResult
+			deleteLearningActivityResult(
+				long userId,
+				com.ted.lms.model.LearningActivityResult learningActivityResult,
+				boolean recalculate)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().deleteLearningActivityResult(
+			userId, learningActivityResult, recalculate);
 	}
 
 	/**

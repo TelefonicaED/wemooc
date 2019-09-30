@@ -268,6 +268,9 @@ public interface CourseResultLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public boolean hasUserTries(long courseId, long userId);
 
+	public CourseResult recalculate(long userId, CourseResult courseResult)
+		throws PortalException;
+
 	/**
 	 * Updates the course result in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

@@ -495,6 +495,10 @@
 			<finder-column name="actId" />
 			<finder-column name="userId" />
 		</finder>
+		<finder name="ActIdPassedEndDateNotNull" return-type="Collection" where="endDate IS NOT NULL">
+			<finder-column name="actId" />
+			<finder-column name="passed" />
+		</finder>
 
 		<!-- References -->
 

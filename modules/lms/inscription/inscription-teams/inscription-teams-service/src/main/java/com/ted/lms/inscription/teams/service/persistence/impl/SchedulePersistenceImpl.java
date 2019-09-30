@@ -136,16 +136,20 @@ public class SchedulePersistenceImpl
 	 * Returns the schedule where teamId = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
 	 *
 	 * @param teamId the team ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching schedule, or <code>null</code> if a matching schedule could not be found
 	 */
 	@Override
-	public Schedule fetchByTeamId(long teamId, boolean retrieveFromCache) {
-		Object[] finderArgs = new Object[] {teamId};
+	public Schedule fetchByTeamId(long teamId, boolean useFinderCache) {
+		Object[] finderArgs = null;
+
+		if (useFinderCache) {
+			finderArgs = new Object[] {teamId};
+		}
 
 		Object result = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			result = finderCache.getResult(
 				_finderPathFetchByTeamId, finderArgs, this);
 		}
@@ -181,14 +185,20 @@ public class SchedulePersistenceImpl
 				List<Schedule> list = q.list();
 
 				if (list.isEmpty()) {
-					finderCache.putResult(
-						_finderPathFetchByTeamId, finderArgs, list);
+					if (useFinderCache) {
+						finderCache.putResult(
+							_finderPathFetchByTeamId, finderArgs, list);
+					}
 				}
 				else {
 					if (list.size() > 1) {
 						Collections.sort(list, Collections.reverseOrder());
 
 						if (_log.isWarnEnabled()) {
+							if (!useFinderCache) {
+								finderArgs = new Object[] {teamId};
+							}
+
 							_log.warn(
 								"SchedulePersistenceImpl.fetchByTeamId(long, boolean) with parameters (" +
 									StringUtil.merge(finderArgs) +
@@ -204,7 +214,10 @@ public class SchedulePersistenceImpl
 				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(_finderPathFetchByTeamId, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(
+						_finderPathFetchByTeamId, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -684,13 +697,13 @@ public class SchedulePersistenceImpl
 	 * @param start the lower bound of the range of schedules
 	 * @param end the upper bound of the range of schedules (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of schedules
 	 */
 	@Override
 	public List<Schedule> findAll(
 		int start, int end, OrderByComparator<Schedule> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -700,17 +713,20 @@ public class SchedulePersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<Schedule> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<Schedule>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
@@ -760,10 +776,14 @@ public class SchedulePersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -887,7 +907,7 @@ public class SchedulePersistenceImpl
 
 	@Override
 	@Reference(
-		target = iteamPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = iteamPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -947,5 +967,14 @@ public class SchedulePersistenceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SchedulePersistenceImpl.class);
+
+	static {
+		try {
+			Class.forName(iteamPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

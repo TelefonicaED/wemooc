@@ -297,6 +297,14 @@ public class ModuleResultLocalServiceWrapper
 	}
 
 	@Override
+	public com.ted.lms.model.ModuleResult recalculate(
+			long userId, com.ted.lms.model.ModuleResult moduleResult)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _moduleResultLocalService.recalculate(userId, moduleResult);
+	}
+
+	@Override
 	public com.ted.lms.model.ModuleResult updateModuleResult(
 			com.ted.lms.model.LearningActivityResult learningActivityResult)
 		throws com.liferay.portal.kernel.exception.PortalException {

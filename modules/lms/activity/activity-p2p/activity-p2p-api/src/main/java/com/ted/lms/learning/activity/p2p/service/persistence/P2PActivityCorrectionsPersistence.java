@@ -94,14 +94,14 @@ public interface P2PActivityCorrectionsPersistence
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public java.util.List<P2PActivityCorrections> findByUuid(
 		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivityCorrections>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity corrections in the ordered set where uuid = &#63;.
@@ -210,11 +210,11 @@ public interface P2PActivityCorrectionsPersistence
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	public P2PActivityCorrections fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache);
+		String uuid, long groupId, boolean useFinderCache);
 
 	/**
 	 * Removes the p2p activity corrections where uuid = &#63; and groupId = &#63; from the database.
@@ -292,14 +292,14 @@ public interface P2PActivityCorrectionsPersistence
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public java.util.List<P2PActivityCorrections> findByUuid_C(
 		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivityCorrections>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity corrections in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -443,14 +443,14 @@ public interface P2PActivityCorrectionsPersistence
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public java.util.List<P2PActivityCorrections> findByP2PActivityId(
 		long p2pActivityId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivityCorrections>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity corrections in the ordered set where p2pActivityId = &#63;.
@@ -591,14 +591,14 @@ public interface P2PActivityCorrectionsPersistence
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public java.util.List<P2PActivityCorrections> findByActIdAndUserId(
 		long actId, long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivityCorrections>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity corrections in the ordered set where actId = &#63; and userId = &#63;.
@@ -716,11 +716,11 @@ public interface P2PActivityCorrectionsPersistence
 	 *
 	 * @param p2pActivityId the p2p activity ID
 	 * @param userId the user ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	public P2PActivityCorrections fetchByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, boolean retrieveFromCache);
+		long p2pActivityId, long userId, boolean useFinderCache);
 
 	/**
 	 * Removes the p2p activity corrections where p2pActivityId = &#63; and userId = &#63; from the database.
@@ -794,14 +794,14 @@ public interface P2PActivityCorrectionsPersistence
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public java.util.List<P2PActivityCorrections> findByUserId(
 		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivityCorrections>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity corrections in the ordered set where userId = &#63;.
@@ -988,14 +988,14 @@ public interface P2PActivityCorrectionsPersistence
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of p2p activity correctionses
 	 */
 	public java.util.List<P2PActivityCorrections> findAll(
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivityCorrections>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Removes all the p2p activity correctionses from the database.

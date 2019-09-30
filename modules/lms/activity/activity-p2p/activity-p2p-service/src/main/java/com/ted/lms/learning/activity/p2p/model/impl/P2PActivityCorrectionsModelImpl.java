@@ -654,7 +654,12 @@ public class P2PActivityCorrectionsModelImpl
 	@Override
 	public P2PActivityCorrections toEscapedModel() {
 		if (_escapedModel == null) {
-			_escapedModel = _escapedModelProxyProviderFunction.apply(
+			Function<InvocationHandler, P2PActivityCorrections>
+				escapedModelProxyProviderFunction =
+					EscapedModelProxyProviderFunctionHolder.
+						_escapedModelProxyProviderFunction;
+
+			_escapedModel = escapedModelProxyProviderFunction.apply(
 				new AutoEscapeBeanHandler(this));
 		}
 
@@ -922,8 +927,13 @@ public class P2PActivityCorrectionsModelImpl
 		return sb.toString();
 	}
 
-	private static final Function<InvocationHandler, P2PActivityCorrections>
-		_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+	private static class EscapedModelProxyProviderFunctionHolder {
+
+		private static final Function<InvocationHandler, P2PActivityCorrections>
+			_escapedModelProxyProviderFunction = _getProxyProviderFunction();
+
+	}
+
 	private static boolean _entityCacheEnabled;
 	private static boolean _finderCacheEnabled;
 

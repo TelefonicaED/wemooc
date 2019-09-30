@@ -78,6 +78,17 @@ public class LearningActivityServiceWrapper
 	}
 
 	@Override
+	public void executeDeleteTries(
+			long groupId, long actId, long studentId, boolean onlyTriesFailed,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   com.liferay.portal.kernel.security.auth.PrincipalException {
+
+		_learningActivityService.executeDeleteTries(
+			groupId, actId, studentId, onlyTriesFailed, serviceContext);
+	}
+
+	@Override
 	public java.util.List<com.ted.lms.model.LearningActivity> getActivities(
 		long moduleId) {
 

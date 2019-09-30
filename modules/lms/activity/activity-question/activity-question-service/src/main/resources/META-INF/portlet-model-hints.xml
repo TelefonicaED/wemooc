@@ -13,14 +13,14 @@
 		<field name="lastPublishDate" type="Date" />
 		<field name="questionId" type="long" />
 		<field name="actId" type="long" />
-		<field name="answer" type="String" >
+		<field name="answer" type="String">
 			<hint-collection name="EDITOR" />
 		</field>
 		<field name="correct" type="boolean" />
-		<field name="feedbackCorrect" type="String" >
+		<field name="feedbackCorrect" type="String">
 			<hint-collection name="EDITOR" />
 		</field>
-		<field name="feedbackIncorrect" type="String" >
+		<field name="feedbackIncorrect" type="String">
 			<hint-collection name="EDITOR" />
 		</field>
 	</model>
@@ -35,14 +35,14 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="lastPublishDate" type="Date" />
 		<field name="actId" type="long" />
-		<field name="text" type="String" >
+		<field name="text" type="String">
 			<hint-collection name="EDITOR" />
 		</field>
 		<field name="questionTypeId" type="long" />
 		<field name="active" type="boolean" />
 		<field name="weight" type="long" />
 		<field name="penalize" type="boolean" />
-		<field name="extraContent" type="String" >
+		<field name="extraContent" type="String">
 			<hint name="max-length">5000</hint>
 		</field>
 	</model>

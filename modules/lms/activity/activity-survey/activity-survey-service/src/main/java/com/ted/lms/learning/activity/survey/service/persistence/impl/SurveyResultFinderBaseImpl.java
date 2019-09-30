@@ -56,7 +56,7 @@ public abstract class SurveyResultFinderBaseImpl
 
 	@Override
 	@Reference(
-		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = SurveyPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -86,5 +86,14 @@ public abstract class SurveyResultFinderBaseImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		SurveyResultFinderBaseImpl.class);
+
+	static {
+		try {
+			Class.forName(SurveyPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }

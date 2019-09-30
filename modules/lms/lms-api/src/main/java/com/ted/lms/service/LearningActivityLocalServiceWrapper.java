@@ -205,6 +205,14 @@ public class LearningActivityLocalServiceWrapper
 	}
 
 	@Override
+	public boolean deleteTries(
+		long userId, long actId, long studentId, boolean deleteOnlyFailed) {
+
+		return _learningActivityLocalService.deleteTries(
+			userId, actId, studentId, deleteOnlyFailed);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.DynamicQuery dynamicQuery() {
 		return _learningActivityLocalService.dynamicQuery();
 	}
@@ -293,6 +301,18 @@ public class LearningActivityLocalServiceWrapper
 
 		return _learningActivityLocalService.dynamicQueryCount(
 			dynamicQuery, projection);
+	}
+
+	@Override
+	public void executeDeleteTries(
+			long userId, long groupId, long actId, long studentId,
+			boolean deleteOnlyFailed,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_learningActivityLocalService.executeDeleteTries(
+			userId, groupId, actId, studentId, deleteOnlyFailed,
+			serviceContext);
 	}
 
 	@Override
@@ -513,6 +533,12 @@ public class LearningActivityLocalServiceWrapper
 
 		return _learningActivityLocalService.
 			getRequiredLearningActivitiesOfModule(moduleId);
+	}
+
+	@Override
+	public boolean hasDeleteTriesInProgress(long actId, long groupId) {
+		return _learningActivityLocalService.hasDeleteTriesInProgress(
+			actId, groupId);
 	}
 
 	@Override

@@ -15,12 +15,15 @@
 package com.ted.lms.service.impl;
 
 import com.liferay.portal.aop.AopService;
-
+import com.ted.lms.service.LearningActivityResultLocalService;
 import com.ted.lms.service.base.LearningActivityLocalServiceBaseImpl;
 
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetLinkConstants;
 import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskConstants;
+import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -42,6 +45,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.social.SocialActivityManagerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -54,6 +58,7 @@ import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActivityKeys;
 import com.ted.lms.constants.LMSAuditConstants;
 import com.ted.lms.constants.LMSConstants;
+import com.ted.lms.constants.LMSPortletKeys;
 import com.ted.lms.constants.LMSRoleConstants;
 import com.ted.lms.constants.LearningActivityConstants;
 import com.ted.lms.copy.content.processor.DLReferencesCopyContentProcessor;
@@ -62,7 +67,9 @@ import com.ted.lms.exception.LearningActivityEndDateException;
 import com.ted.lms.exception.LearningActivityStartDateException;
 import com.ted.lms.exception.NoSuchNextLearningActivityException;
 import com.ted.lms.exception.NoSuchPreviousLearningActivityException;
+import com.ted.lms.internal.background.task.DeleteTriesBackgroundTaskExecutor;
 import com.ted.lms.model.LearningActivity;
+import com.ted.lms.model.LearningActivityResult;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.model.Module;
@@ -73,11 +80,13 @@ import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -785,6 +794,57 @@ public class LearningActivityLocalServiceImpl
 		return activity;
 	}
 	
+	public boolean deleteTries(long userId, long actId, long studentId, boolean deleteOnlyFailed) {
+		
+		LearningActivity activity = learningActivityPersistence.fetchByPrimaryKey(actId);
+		
+		LearningActivityTypeFactory learningActivityTypeFactory = LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(activity.getTypeId());
+		if(learningActivityTypeFactory.canDeleteTries()) {
+			List<LearningActivityResult> learningActivityResults = null;
+			if(studentId > 0) {
+				learningActivityResults = new ArrayList<LearningActivityResult>();
+				LearningActivityResult learningActivityResult = learningActivityResultPersistence.fetchByActIdUserId(actId, studentId);
+				if(learningActivityResult != null) {
+					learningActivityResults.add(learningActivityResult);
+				}
+			}else if(deleteOnlyFailed) {
+				learningActivityResults = learningActivityResultPersistence.findByActIdPassedEndDateNotNull(actId, false);
+			}else {
+				learningActivityResults = learningActivityResultPersistence.findByActId(actId);
+			}
+			
+			for(LearningActivityResult learningActivityResult: learningActivityResults) {
+				learningActivityResultLocalService.deleteLearningActivityResult(learningActivityResult);
+			}
+			
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	public void executeDeleteTries(long userId, long groupId, long actId, long studentId, boolean deleteOnlyFailed, ServiceContext serviceContext) throws PortalException {
+		Map<String, Serializable> taskContextMap = new HashMap<>();
+		
+		taskContextMap.put("userId", userId);
+		taskContextMap.put("actId", actId);
+		taskContextMap.put("studentId", studentId);
+		taskContextMap.put("deleteOnlyFailed", deleteOnlyFailed);
+		
+		BackgroundTaskManagerUtil.addBackgroundTask(userId, groupId,
+				LMSPortletKeys.MODULES_ACTIVITIES, DeleteTriesBackgroundTaskExecutor.class.getName(),
+				taskContextMap, serviceContext);
+	}
+	
+	public boolean hasDeleteTriesInProgress(long actId, long groupId) {
+		List<BackgroundTask> backgroundTasks = BackgroundTaskManagerUtil.getBackgroundTasks(groupId, DeleteTriesBackgroundTaskExecutor.class.getName(), BackgroundTaskConstants.STATUS_IN_PROGRESS);
+		
+		List<BackgroundTask> filterBackgroundTasks = backgroundTasks.stream().filter(background -> 
+			MapUtil.getLong(background.getTaskContextMap(), "actId", 0) == actId).collect(Collectors.toList()
+		);
+		return filterBackgroundTasks != null && filterBackgroundTasks.size() > 0;
+	}
+	
 	
 	@Reference
 	protected CommentManager commentManager;
@@ -800,4 +860,7 @@ public class LearningActivityLocalServiceImpl
 	
 	@Reference
 	protected ResourceCopy resourceCopy;
+	
+	@Reference
+	protected LearningActivityResultLocalService learningActivityResultLocalService;
 }

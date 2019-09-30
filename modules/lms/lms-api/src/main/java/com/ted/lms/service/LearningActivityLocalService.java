@@ -166,6 +166,9 @@ public interface LearningActivityLocalService
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
 
+	public boolean deleteTries(
+		long userId, long actId, long studentId, boolean deleteOnlyFailed);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public DynamicQuery dynamicQuery();
 
@@ -231,6 +234,11 @@ public interface LearningActivityLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long dynamicQueryCount(
 		DynamicQuery dynamicQuery, Projection projection);
+
+	public void executeDeleteTries(
+			long userId, long groupId, long actId, long studentId,
+			boolean deleteOnlyFailed, ServiceContext serviceContext)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public LearningActivity fetchLearningActivity(long actId);
@@ -367,6 +375,9 @@ public interface LearningActivityLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<LearningActivity> getRequiredLearningActivitiesOfModule(
 		long moduleId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public boolean hasDeleteTriesInProgress(long actId, long groupId);
 
 	public LearningActivity moveDownLearningActivity(long userId, long actId)
 		throws PortalException;

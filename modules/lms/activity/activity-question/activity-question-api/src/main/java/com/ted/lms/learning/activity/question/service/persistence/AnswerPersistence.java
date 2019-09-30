@@ -92,14 +92,14 @@ public interface AnswerPersistence extends BasePersistence<Answer> {
 	 * @param start the lower bound of the range of answers
 	 * @param end the upper bound of the range of answers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching answers
 	 */
 	public java.util.List<Answer> findByUuid(
 		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Answer>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first answer in the ordered set where uuid = &#63;.
@@ -208,11 +208,11 @@ public interface AnswerPersistence extends BasePersistence<Answer> {
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching answer, or <code>null</code> if a matching answer could not be found
 	 */
 	public Answer fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache);
+		String uuid, long groupId, boolean useFinderCache);
 
 	/**
 	 * Removes the answer where uuid = &#63; and groupId = &#63; from the database.
@@ -289,14 +289,14 @@ public interface AnswerPersistence extends BasePersistence<Answer> {
 	 * @param start the lower bound of the range of answers
 	 * @param end the upper bound of the range of answers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching answers
 	 */
 	public java.util.List<Answer> findByUuid_C(
 		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Answer>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first answer in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -439,14 +439,14 @@ public interface AnswerPersistence extends BasePersistence<Answer> {
 	 * @param start the lower bound of the range of answers
 	 * @param end the upper bound of the range of answers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching answers
 	 */
 	public java.util.List<Answer> findByGroupId(
 		long groupId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Answer>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first answer in the ordered set where groupId = &#63;.
@@ -582,14 +582,14 @@ public interface AnswerPersistence extends BasePersistence<Answer> {
 	 * @param start the lower bound of the range of answers
 	 * @param end the upper bound of the range of answers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching answers
 	 */
 	public java.util.List<Answer> findByQuestionId(
 		long questionId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Answer>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first answer in the ordered set where questionId = &#63;.
@@ -770,14 +770,14 @@ public interface AnswerPersistence extends BasePersistence<Answer> {
 	 * @param start the lower bound of the range of answers
 	 * @param end the upper bound of the range of answers (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of answers
 	 */
 	public java.util.List<Answer> findAll(
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<Answer>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Removes all the answers from the database.

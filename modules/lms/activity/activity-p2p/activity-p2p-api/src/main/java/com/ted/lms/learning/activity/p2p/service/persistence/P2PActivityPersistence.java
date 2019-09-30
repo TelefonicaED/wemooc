@@ -93,14 +93,14 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 * @param start the lower bound of the range of p2p activities
 	 * @param end the upper bound of the range of p2p activities (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activities
 	 */
 	public java.util.List<P2PActivity> findByUuid(
 		String uuid, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivity>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity in the ordered set where uuid = &#63;.
@@ -209,11 +209,11 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	public P2PActivity fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache);
+		String uuid, long groupId, boolean useFinderCache);
 
 	/**
 	 * Removes the p2p activity where uuid = &#63; and groupId = &#63; from the database.
@@ -291,14 +291,14 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 * @param start the lower bound of the range of p2p activities
 	 * @param end the upper bound of the range of p2p activities (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activities
 	 */
 	public java.util.List<P2PActivity> findByUuid_C(
 		String uuid, long companyId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivity>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity in the ordered set where uuid = &#63; and companyId = &#63;.
@@ -414,11 +414,11 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 *
 	 * @param actId the act ID
 	 * @param userId the user ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity, or <code>null</code> if a matching p2p activity could not be found
 	 */
 	public P2PActivity fetchByActIdUserId(
-		long actId, long userId, boolean retrieveFromCache);
+		long actId, long userId, boolean useFinderCache);
 
 	/**
 	 * Removes the p2p activity where actId = &#63; and userId = &#63; from the database.
@@ -491,14 +491,14 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 * @param start the lower bound of the range of p2p activities
 	 * @param end the upper bound of the range of p2p activities (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activities
 	 */
 	public java.util.List<P2PActivity> findByActId(
 		long actId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivity>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity in the ordered set where actId = &#63;.
@@ -634,14 +634,14 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 * @param start the lower bound of the range of p2p activities
 	 * @param end the upper bound of the range of p2p activities (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activities
 	 */
 	public java.util.List<P2PActivity> findByUserId(
 		long userId, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivity>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity in the ordered set where userId = &#63;.
@@ -778,14 +778,14 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 * @param start the lower bound of the range of p2p activities
 	 * @param end the upper bound of the range of p2p activities (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activities
 	 */
 	public java.util.List<P2PActivity> findByAsignationsCompleted(
 		boolean asignationsCompleted, int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivity>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Returns the first p2p activity in the ordered set where asignationsCompleted = &#63;.
@@ -968,14 +968,14 @@ public interface P2PActivityPersistence extends BasePersistence<P2PActivity> {
 	 * @param start the lower bound of the range of p2p activities
 	 * @param end the upper bound of the range of p2p activities (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of p2p activities
 	 */
 	public java.util.List<P2PActivity> findAll(
 		int start, int end,
 		com.liferay.portal.kernel.util.OrderByComparator<P2PActivity>
 			orderByComparator,
-		boolean retrieveFromCache);
+		boolean useFinderCache);
 
 	/**
 	 * Removes all the p2p activities from the database.

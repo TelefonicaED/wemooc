@@ -1,3 +1,4 @@
+<%@page import="com.ted.lms.security.permission.resource.LMSPermission"%>
 <%@page import="com.liferay.portal.kernel.portlet.LiferayWindowState"%>
 <%@page import="javax.portlet.WindowState"%>
 <%@page import="com.ted.lms.constants.LMSRoleConstants"%>
@@ -40,7 +41,7 @@
 <%boolean permissions = LearningActivityPermission.contains(permissionChecker, activity, ActionKeys.PERMISSIONS);
 boolean softPermissions = LearningActivityPermission.contains(permissionChecker, activity, LMSActionKeys.SOFT_PERMISSIONS);%>
 <c:choose>
-	<c:when test="<%=false && permissions && !softPermissions %>">
+	<c:when test="<%=permissions && !softPermissions %>">
 		<liferay-security:permissionsURL
 			modelResource="<%= LearningActivity.class.getName() %>"
 			modelResourceDescription="<%= HtmlUtil.escape(activity.getTitle(themeDisplay.getLocale())) %>"
@@ -57,7 +58,7 @@ boolean softPermissions = LearningActivityPermission.contains(permissionChecker,
 			useDialog="<%= true %>"
 		/>
 	</c:when>
-	<c:when test="<%=true || softPermissions %>">
+	<c:when test="<%=softPermissions %>">
 		<%PortletURL softPermissionURL = renderResponse.createRenderURL();
 		softPermissionURL.setWindowState(LiferayWindowState.POP_UP);
 		softPermissionURL.setParameter("modelResource", LearningActivity.class.getName());
@@ -114,4 +115,26 @@ boolean softPermissions = LearningActivityPermission.contains(permissionChecker,
 	<%}else{ %>
 		<a href="javascript:if(confirm('are-you-sure-you-want-to-delete-this')){location.href='${deleteLearningActivityURL}';}"><span class="glyphicon glyphicon-trash" title="<liferay-ui:message key='delete' />"></span></a>
 	<%} %> 					 				
+</c:if>
+<c:if test="<%=LMSPermission.contains(permissionChecker, activity.getGroupId(), LMSActionKeys.VIEW_RESULTS) %>">
+	<liferay-portlet:renderURL var="viewResultsURL" windowState="<%=LiferayWindowState.POP_UP.toString() %>">
+		<portlet:param name="mvcRenderCommandName" value="/activities/view_results" />
+		<portlet:param name="actId" value="<%= String.valueOf(activity.getActId()) %>" />
+	</liferay-portlet:renderURL>
+	<a href='javascript: Liferay.Util.Window.getWindow(
+						{
+							dialog: {
+								modal: true,
+								resizable: false,
+								width: "auto",
+								heigth: "auto",
+								centered: true,
+								destroyOnHide: true
+							},
+							title: Liferay.Language.get("learning-activity.view-results"),		
+							uri: "<%=viewResultsURL %>"
+						}
+						).render();'>
+		<span class="glyphicon glyphicon-file" title="<liferay-ui:message key='learning-activity.view-results' />"></span>
+	</a>
 </c:if>

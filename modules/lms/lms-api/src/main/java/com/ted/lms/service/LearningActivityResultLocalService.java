@@ -76,6 +76,8 @@ public interface LearningActivityResultLocalService
 	public LearningActivityResult addLearningActivityResult(
 		LearningActivityResult learningActivityResult);
 
+	public int countRequiredLearningActivityResults(long groupId, long userId);
+
 	public long countStudentFinished(
 		long actId, long companyId, long courseGroupId);
 
@@ -107,6 +109,11 @@ public interface LearningActivityResultLocalService
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public LearningActivityResult deleteLearningActivityResult(long larId)
+		throws PortalException;
+
+	public LearningActivityResult deleteLearningActivityResult(
+			long userId, LearningActivityResult learningActivityResult,
+			boolean recalculate)
 		throws PortalException;
 
 	/**

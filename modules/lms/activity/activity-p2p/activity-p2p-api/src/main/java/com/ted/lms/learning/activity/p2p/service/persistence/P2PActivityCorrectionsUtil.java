@@ -190,16 +190,16 @@ public class P2PActivityCorrectionsUtil {
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public static List<P2PActivityCorrections> findByUuid(
 		String uuid, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByUuid(
-			uuid, start, end, orderByComparator, retrieveFromCache);
+			uuid, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -335,13 +335,13 @@ public class P2PActivityCorrectionsUtil {
 	 *
 	 * @param uuid the uuid
 	 * @param groupId the group ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	public static P2PActivityCorrections fetchByUUID_G(
-		String uuid, long groupId, boolean retrieveFromCache) {
+		String uuid, long groupId, boolean useFinderCache) {
 
-		return getPersistence().fetchByUUID_G(uuid, groupId, retrieveFromCache);
+		return getPersistence().fetchByUUID_G(uuid, groupId, useFinderCache);
 	}
 
 	/**
@@ -436,16 +436,16 @@ public class P2PActivityCorrectionsUtil {
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public static List<P2PActivityCorrections> findByUuid_C(
 		String uuid, long companyId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByUuid_C(
-			uuid, companyId, start, end, orderByComparator, retrieveFromCache);
+			uuid, companyId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -621,16 +621,16 @@ public class P2PActivityCorrectionsUtil {
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public static List<P2PActivityCorrections> findByP2PActivityId(
 		long p2pActivityId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByP2PActivityId(
-			p2pActivityId, start, end, orderByComparator, retrieveFromCache);
+			p2pActivityId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -803,16 +803,16 @@ public class P2PActivityCorrectionsUtil {
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public static List<P2PActivityCorrections> findByActIdAndUserId(
 		long actId, long userId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByActIdAndUserId(
-			actId, userId, start, end, orderByComparator, retrieveFromCache);
+			actId, userId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -962,14 +962,14 @@ public class P2PActivityCorrectionsUtil {
 	 *
 	 * @param p2pActivityId the p2p activity ID
 	 * @param userId the user ID
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the matching p2p activity corrections, or <code>null</code> if a matching p2p activity corrections could not be found
 	 */
 	public static P2PActivityCorrections fetchByP2PActivityIdAndUserId(
-		long p2pActivityId, long userId, boolean retrieveFromCache) {
+		long p2pActivityId, long userId, boolean useFinderCache) {
 
 		return getPersistence().fetchByP2PActivityIdAndUserId(
-			p2pActivityId, userId, retrieveFromCache);
+			p2pActivityId, userId, useFinderCache);
 	}
 
 	/**
@@ -1062,16 +1062,16 @@ public class P2PActivityCorrectionsUtil {
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching p2p activity correctionses
 	 */
 	public static List<P2PActivityCorrections> findByUserId(
 		long userId, int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findByUserId(
-			userId, start, end, orderByComparator, retrieveFromCache);
+			userId, start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1306,16 +1306,16 @@ public class P2PActivityCorrectionsUtil {
 	 * @param start the lower bound of the range of p2p activity correctionses
 	 * @param end the upper bound of the range of p2p activity correctionses (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of p2p activity correctionses
 	 */
 	public static List<P2PActivityCorrections> findAll(
 		int start, int end,
 		OrderByComparator<P2PActivityCorrections> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		return getPersistence().findAll(
-			start, end, orderByComparator, retrieveFromCache);
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**

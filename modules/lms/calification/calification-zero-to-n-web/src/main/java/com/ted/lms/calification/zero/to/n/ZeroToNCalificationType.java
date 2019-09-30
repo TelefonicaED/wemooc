@@ -80,7 +80,7 @@ public class ZeroToNCalificationType extends BaseCalificationType{
 	public String getSuffix() {
 		String suffix = "";
 		if(this.maxValue > 0) {
-			suffix = "/" + this.maxValue;
+			suffix = "/" + (int)this.maxValue;
 		}
 		return suffix;
 	}

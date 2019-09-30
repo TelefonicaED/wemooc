@@ -101,7 +101,6 @@ import com.liferay.trash.service.TrashEntryLocalService;
 import com.liferay.upload.AttachmentContentUpdater;
 import com.opencsv.CSVReader;
 import com.ted.audit.api.AuditFactory;
-import com.ted.audit.api.registry.AuditRegistryUtil;
 import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActivityKeys;

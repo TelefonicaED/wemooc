@@ -157,14 +157,14 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
 	public List<SurveyResult> findByUuid(
 		String uuid, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		uuid = Objects.toString(uuid, "");
 
@@ -176,17 +176,20 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUuid;
-			finderArgs = new Object[] {uuid};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUuid;
+				finderArgs = new Object[] {uuid};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUuid;
 			finderArgs = new Object[] {uuid, start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -263,10 +266,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -698,14 +705,14 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
 	public List<SurveyResult> findByUserId(
 		long userId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -715,17 +722,20 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByUserId;
-			finderArgs = new Object[] {userId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByUserId;
+				finderArgs = new Object[] {userId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByUserId;
 			finderArgs = new Object[] {userId, start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -791,10 +801,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1200,14 +1214,14 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
 	public List<SurveyResult> findByActId(
 		long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1217,17 +1231,20 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByActId;
-			finderArgs = new Object[] {actId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByActId;
+				finderArgs = new Object[] {actId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByActId;
 			finderArgs = new Object[] {actId, start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1293,10 +1310,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -1711,14 +1732,14 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
 	public List<SurveyResult> findByQuestionIdActId(
 		long questionId, long actId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -1728,10 +1749,13 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByQuestionIdActId;
-			finderArgs = new Object[] {questionId, actId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByQuestionIdActId;
+				finderArgs = new Object[] {questionId, actId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByQuestionIdActId;
 			finderArgs = new Object[] {
 				questionId, actId, start, end, orderByComparator
@@ -1740,7 +1764,7 @@ public class SurveyResultPersistenceImpl
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -1812,10 +1836,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2257,14 +2285,14 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
 	public List<SurveyResult> findByQuestionId(
 		long questionId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2274,10 +2302,13 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByQuestionId;
-			finderArgs = new Object[] {questionId};
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindByQuestionId;
+				finderArgs = new Object[] {questionId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByQuestionId;
 			finderArgs = new Object[] {
 				questionId, start, end, orderByComparator
@@ -2286,7 +2317,7 @@ public class SurveyResultPersistenceImpl
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2352,10 +2383,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -2772,14 +2807,14 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of matching survey results
 	 */
 	@Override
 	public List<SurveyResult> findByAnswerIdQuestionId(
 		long answerId, long questionId, int start, int end,
 		OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -2789,10 +2824,14 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindByAnswerIdQuestionId;
-			finderArgs = new Object[] {answerId, questionId};
+
+			if (useFinderCache) {
+				finderPath =
+					_finderPathWithoutPaginationFindByAnswerIdQuestionId;
+				finderArgs = new Object[] {answerId, questionId};
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindByAnswerIdQuestionId;
 			finderArgs = new Object[] {
 				answerId, questionId, start, end, orderByComparator
@@ -2801,7 +2840,7 @@ public class SurveyResultPersistenceImpl
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 
@@ -2873,10 +2912,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -3794,13 +3837,13 @@ public class SurveyResultPersistenceImpl
 	 * @param start the lower bound of the range of survey results
 	 * @param end the upper bound of the range of survey results (not inclusive)
 	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
-	 * @param retrieveFromCache whether to retrieve from the finder cache
+	 * @param useFinderCache whether to use the finder cache
 	 * @return the ordered range of survey results
 	 */
 	@Override
 	public List<SurveyResult> findAll(
 		int start, int end, OrderByComparator<SurveyResult> orderByComparator,
-		boolean retrieveFromCache) {
+		boolean useFinderCache) {
 
 		boolean pagination = true;
 		FinderPath finderPath = null;
@@ -3810,17 +3853,20 @@ public class SurveyResultPersistenceImpl
 			(orderByComparator == null)) {
 
 			pagination = false;
-			finderPath = _finderPathWithoutPaginationFindAll;
-			finderArgs = FINDER_ARGS_EMPTY;
+
+			if (useFinderCache) {
+				finderPath = _finderPathWithoutPaginationFindAll;
+				finderArgs = FINDER_ARGS_EMPTY;
+			}
 		}
-		else {
+		else if (useFinderCache) {
 			finderPath = _finderPathWithPaginationFindAll;
 			finderArgs = new Object[] {start, end, orderByComparator};
 		}
 
 		List<SurveyResult> list = null;
 
-		if (retrieveFromCache) {
+		if (useFinderCache) {
 			list = (List<SurveyResult>)finderCache.getResult(
 				finderPath, finderArgs, this);
 		}
@@ -3870,10 +3916,14 @@ public class SurveyResultPersistenceImpl
 
 				cacheResult(list);
 
-				finderCache.putResult(finderPath, finderArgs, list);
+				if (useFinderCache) {
+					finderCache.putResult(finderPath, finderArgs, list);
+				}
 			}
 			catch (Exception e) {
-				finderCache.removeResult(finderPath, finderArgs);
+				if (useFinderCache) {
+					finderCache.removeResult(finderPath, finderArgs);
+				}
 
 				throw processException(e);
 			}
@@ -4111,7 +4161,7 @@ public class SurveyResultPersistenceImpl
 
 	@Override
 	@Reference(
-		target = SurveyPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
+		target = SurveyPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
 		unbind = "-"
 	)
 	public void setConfiguration(Configuration configuration) {
@@ -4174,5 +4224,14 @@ public class SurveyResultPersistenceImpl
 
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
+
+	static {
+		try {
+			Class.forName(SurveyPersistenceConstants.class.getName());
+		}
+		catch (ClassNotFoundException cnfe) {
+			throw new ExceptionInInitializerError(cnfe);
+		}
+	}
 
 }
