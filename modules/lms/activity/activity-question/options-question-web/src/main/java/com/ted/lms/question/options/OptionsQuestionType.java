@@ -235,6 +235,40 @@ public class OptionsQuestionType extends BaseQuestionType{
 		return correctAnswered>0 && incorrectAnswered==0;
 	}
 	
+	public boolean getXMLSingle() {
+		return true;
+	}
+	
+	@Override
+	public String getXMLType() {
+		return "multichoice";
+	}
+	
+	@Override
+	public Element exportXML() {
+		Element questionXML = super.exportXML();
+		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		for(Answer answer:answers){
+			Element answerE = SAXReaderUtil.createElement("answer");
+			answerE.addAttribute("fraction", (answer.isCorrect())?"100":"0");
+			
+			Element text = SAXReaderUtil.createElement("text");
+			text.addText(answer.getAnswer());
+			answerE.add(text);
+			
+			Element feedback = SAXReaderUtil.createElement("feedback");
+			Element feedText = SAXReaderUtil.createElement("text");
+			feedText.addText(answer.getFeedbackCorrect());
+			feedback.add(feedText);
+			answerE.add(feedback);
+			questionXML.add(answerE);
+		}
+		Element single = SAXReaderUtil.createElement("single");
+		single.addText(String.valueOf(getXMLSingle()));
+		questionXML.add(single);
+		return questionXML;
+	}
+	
 	private static final Log log = LogFactoryUtil.getLog(OptionsQuestionType.class);
 	
 }

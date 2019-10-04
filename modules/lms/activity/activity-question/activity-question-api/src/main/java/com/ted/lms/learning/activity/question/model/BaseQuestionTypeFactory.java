@@ -1,20 +1,21 @@
 package com.ted.lms.learning.activity.question.model;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.LiferayPortletURL;
-import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.constants.QuestionsWebPortletKeys;
 
 import java.util.Locale;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.WindowStateException;
 
 public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	
@@ -79,13 +80,7 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 		String urlAddAnswer = null;
 		if(Validator.isNotNull(getURLEditAnswer())) {
 			LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(getPortletId(), 
-					PortletRequest.RENDER_PHASE);
-			try {
-		        liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
-		    }
-		    catch (WindowStateException wse) {
-		    	wse.printStackTrace();
-		    }
+					PortletRequest.RESOURCE_PHASE);
 			liferayPortletURL.setParameter(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, StringPool.TRUE);
 			liferayPortletURL.setParameter("mvcPath", getURLEditAnswer());
 			liferayPortletURL.setParameter("namespace", liferayPortletResponse.getNamespace());
@@ -97,17 +92,12 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	@Override
 	public final String getURLAddQuestion(LiferayPortletResponse liferayPortletResponse) {
 		LiferayPortletURL liferayPortletURL = liferayPortletResponse.createLiferayPortletURL(QuestionsWebPortletKeys.EDIT_QUESTIONS, 
-				PortletRequest.RENDER_PHASE);
-		try {
-	        liferayPortletURL.setWindowState(LiferayWindowState.EXCLUSIVE);
-	    }
-	    catch (WindowStateException wse) {
-	    	wse.printStackTrace();
-	    }
+				PortletRequest.RESOURCE_PHASE);
 		liferayPortletURL.setParameter(WebKeys.PORTLET_CONFIGURATOR_VISIBILITY, StringPool.TRUE);
 		liferayPortletURL.setParameter("mvcPath", "/questions_question.jsp");
 		liferayPortletURL.setParameter("questionType", String.valueOf(getType()));
 		liferayPortletURL.setParameter("namespace", liferayPortletResponse.getNamespace());
+		liferayPortletURL.setCopyCurrentRenderParameters(false);
 		
 	    return liferayPortletURL.toString();
 	}
@@ -119,6 +109,21 @@ public abstract class BaseQuestionTypeFactory implements QuestionTypeFactory{
 	
 	@Override
 	public String[] getJavascriptImport(String cdnHost) {
+		return null;
+	}
+	
+	@Override
+	public String getName() {
+		return "";
+	}
+	
+	@Override
+	public String[] getXMLType() {
+		return new String[] {};
+	}
+	
+	@Override
+	public Question importQuestionXML(long userId, long groupId, long actId, Element questionElement, ServiceContext serviceContext) throws PortalException {
 		return null;
 	}
 }

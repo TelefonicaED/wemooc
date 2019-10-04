@@ -174,6 +174,33 @@ public class DragAndDropQuestionType extends BaseQuestionType{
 		}
 		return answerSelected;
 	}
-
 	
+	@Override
+	public String getXMLType() {
+		return "draganddrop";
+	}
+
+	@Override
+	public Element exportXML() {
+		Element questionXML = super.exportXML();
+
+		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		for(Answer answer:answers){
+			Element answerE = SAXReaderUtil.createElement("answer");
+			answerE.addAttribute("fraction", (answer.isCorrect())?"100":"0");
+			
+			Element text = SAXReaderUtil.createElement("text");
+			text.addText(answer.getAnswer());
+			answerE.add(text);
+			
+			Element feedback = SAXReaderUtil.createElement("feedback");
+			Element feedText = SAXReaderUtil.createElement("text");
+			feedText.addText(answer.getFeedbackCorrect());
+			feedback.add(feedText);
+			answerE.add(feedback);
+			questionXML.add(answerE);
+		}
+
+		return questionXML;
+	}
 }

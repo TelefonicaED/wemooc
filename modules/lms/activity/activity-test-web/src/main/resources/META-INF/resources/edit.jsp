@@ -20,8 +20,9 @@ boolean canBeEdited = ParamUtil.getBoolean(request, "canBeEdited", true);
 TestActivityType testActivityType = null;
 LearningActivity learningActivity = null;
 
+TestActivityTypeFactory testActivityTypeFactory = (TestActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(TestConstants.TYPE);
+
 if(actId > 0){
-	TestActivityTypeFactory testActivityTypeFactory = (TestActivityTypeFactory)LearningActivityTypeFactoryRegistryUtil.getLearningActivityTypeFactoryByType(TestConstants.TYPE);
 	learningActivity = LearningActivityLocalServiceUtil.getLearningActivity(actId);
 	testActivityType = testActivityTypeFactory.getTestActivityType(learningActivity);
 }
@@ -259,6 +260,6 @@ timeNumberFormat.setMinimumIntegerDigits(2);
 	<liferay-util:include page="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS_JSP %>" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" >
 		<liferay-util:param name="actId" value="<%=String.valueOf(actId)%>" />
 		<liferay-util:param name="canBeEdited" value="<%=String.valueOf(canBeEdited)%>" />
-		<liferay-util:param name="questionIdsAllowed" value="<%=TestPrefsPropsValues.getQuestionsAllowed(themeDisplay.getCompanyId())%>" />
+		<liferay-util:param name="questionIdsAllowed" value="<%=testActivityTypeFactory.getQuestionsAllowed(themeDisplay.getCompanyId())%>" />
 	</liferay-util:include>
 </div>

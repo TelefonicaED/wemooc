@@ -542,4 +542,9 @@ public abstract class QuestionLocalServiceBaseImpl
 	protected com.liferay.document.library.kernel.service.DLAppLocalService
 		dlAppLocalService;
 
+	@Reference
+	protected
+		com.liferay.document.library.kernel.service.DLFileEntryLocalService
+			dlFileEntryLocalService;
+
 }

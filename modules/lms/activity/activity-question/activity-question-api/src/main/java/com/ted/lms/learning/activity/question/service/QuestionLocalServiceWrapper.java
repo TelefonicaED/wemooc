@@ -223,6 +223,23 @@ public class QuestionLocalServiceWrapper
 	}
 
 	@Override
+	public java.io.File exportExcelQuestions(
+			java.util.Locale locale, long actId)
+		throws java.io.IOException, javax.portlet.PortletException {
+
+		return _questionLocalService.exportExcelQuestions(locale, actId);
+	}
+
+	@Override
+	public java.io.PrintWriter exportXMLQuestions(
+			java.io.OutputStream outputStream, long actId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   java.io.IOException {
+
+		return _questionLocalService.exportXMLQuestions(outputStream, actId);
+	}
+
+	@Override
 	public com.ted.lms.learning.activity.question.model.Question fetchQuestion(
 		long questionId) {
 
@@ -413,6 +430,29 @@ public class QuestionLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.portal.kernel.json.JSONObject importQuestionsExcel(
+			long userId, long actId,
+			com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+			long[] questionIdsAllowed, java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   java.io.IOException {
+
+		return _questionLocalService.importQuestionsExcel(
+			userId, actId, fileEntry, questionIdsAllowed, locale);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject importQuestionsXML(
+			long userId, long actId,
+			com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+			long[] questionIdsAllowed, java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _questionLocalService.importQuestionsXML(
+			userId, actId, fileEntry, questionIdsAllowed, locale);
+	}
+
+	@Override
 	public void saveQuestions(
 			javax.portlet.ActionRequest actionRequest, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -440,6 +480,14 @@ public class QuestionLocalServiceWrapper
 		com.ted.lms.learning.activity.question.model.Question question) {
 
 		return _questionLocalService.updateQuestion(question);
+	}
+
+	@Override
+	public com.liferay.portal.kernel.json.JSONObject validateFileXML(
+			com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws Exception {
+
+		return _questionLocalService.validateFileXML(fileEntry);
 	}
 
 	@Override

@@ -149,5 +149,27 @@ public class SortableQuestionType extends BaseQuestionType{
 		}
 		return answerSelected;
 	}
+	
+	@Override
+	public String getXMLType() {
+		return "sort";
+	}
+	
+	@Override
+	public Element exportXML() {
+		Element questionXML = super.exportXML();
+		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		for(Answer answer:answers){
+			Element answerE = SAXReaderUtil.createElement("answer");
+			answerE.addAttribute("fraction", "100");
+			
+			Element text = SAXReaderUtil.createElement("text");
+			text.addText(answer.getAnswer());
+			answerE.add(text);
+			
+			questionXML.add(answerE);
+		}
+		return questionXML;
+	}
 
 }

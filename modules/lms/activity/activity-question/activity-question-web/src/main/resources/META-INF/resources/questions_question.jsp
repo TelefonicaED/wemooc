@@ -25,16 +25,10 @@ long questionType = ParamUtil.getLong(request, "questionType");
 long questionId = ParamUtil.getLong(request, "questionId");
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion");
 String questionIdsAllowedString = ParamUtil.getString(request, "questionIdsAllowed");
+String editorName = ParamUtil.getString(request, "editorName");
 long[] questionIdsAllowed = Validator.isNotNull(questionIdsAllowedString) ? StringUtil.split(questionIdsAllowedString,",", 0L) : null;
 List<QuestionTypeFactory> questionTypeFactories = QuestionTypeFactoryRegistryUtil.getQuestionFactories(themeDisplay.getCompanyId(), questionIdsAllowed);
-String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
-
-QuestionWebConfiguration questionWebConfiguration = null;
-try {
-	questionWebConfiguration = ConfigurationProviderUtil.getCompanyConfiguration(QuestionWebConfiguration.class, themeDisplay.getCompanyId());
-} catch (ConfigurationException e) {
-	e.printStackTrace();
-}
+String namespace = ParamUtil.getString(request, "namespaceDest", themeDisplay.getPortletDisplay().getNamespace());
 
 Question question = null;
 if(questionId > 0){
@@ -42,8 +36,6 @@ if(questionId > 0){
 	questionType = question.getQuestionTypeId();
 }
 QuestionTypeFactory questionTypeFactory = QuestionTypeFactoryRegistryUtil.getQuestionTypeFactoryByType(questionType);
-
-String editorName = questionWebConfiguration != null ? questionWebConfiguration.getHTMLQuestionEditor() : "alloyeditor";
 %>
 
 <aui:input  type="hidden" name='<%=namespace + "questionId_" + iteratorQuestion %>' id='<%=namespace + "questionId_" + iteratorQuestion%>' value="<%=questionId%>" useNamespace="false" />
@@ -147,7 +139,7 @@ String editorName = questionWebConfiguration != null ? questionWebConfiguration.
 			>
 				<liferay-ui:icon
 					message="add-answer"
-					url='<%="javascript:" + namespace + "addAnswer(" + iteratorQuestion + ",'" + questionTypeFactory.getURLAddAnswer(liferayPortletResponse) + "')" %>'
+					url='<%="javascript:" + namespace + "addAnswer(" + iteratorQuestion + ",'" + questionTypeFactory.getURLAddAnswer(liferayPortletResponse) + "','" + questionTypeFactory.getPortletId() + "')" %>'
 				/>
 			</liferay-ui:icon-menu>
 			</div>
@@ -155,11 +147,13 @@ String editorName = questionWebConfiguration != null ? questionWebConfiguration.
 	</div>
 	
 	<div id='<%=namespace + "div_answers_" + iteratorQuestion%>' >
-		
-		<liferay-util:include page="<%=questionTypeFactory.getURLEditAnswers()%>" portletId="<%=questionTypeFactory.getPortletId()%>" servletContext="<%=this.getServletContext() %>">
+		<%System.out.println("urlEditAnswers: " + questionTypeFactory.getURLEditAnswers()); 
+		System.out.println("portletId: " + questionTypeFactory.getPortletId());%>
+		<liferay-util:include page="<%=questionTypeFactory.getURLEditAnswers()%>" portletId="<%=questionTypeFactory.getPortletId()%>" >
 			<liferay-util:param name="questionId" value="<%=String.valueOf(questionId) %>" />
 			<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
 			<liferay-util:param name="editorName" value="<%=editorName %>"/>
+			<liferay-util:param name="namespace" value="<%=namespace %>"/>
 		</liferay-util:include>
 	</div>
 </div>

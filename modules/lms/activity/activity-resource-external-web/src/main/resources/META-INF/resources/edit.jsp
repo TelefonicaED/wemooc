@@ -78,7 +78,7 @@ if(actId > 0){
 		<liferay-util:include page="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS_JSP %>" portletId="<%=QuestionsWebPortletKeys.EDIT_QUESTIONS%>" >
 			<liferay-util:param name="actId" value="<%=String.valueOf(actId)%>" />
 			<liferay-util:param name="canBeEdited" value="<%=String.valueOf(canBeEdited)%>" />
-			<liferay-util:param name="questionIdsAllowed" value="<%=ResourceExternalPrefsPropsValues.getQuestionsAllowed(themeDisplay.getCompanyId())%>" />
+			<liferay-util:param name="questionIdsAllowed" value="<%=resourceExternalActivityTypeFactory.getQuestionsAllowed(themeDisplay.getCompanyId())%>" />
 		</liferay-util:include>
 	</div>
 	

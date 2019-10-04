@@ -8,6 +8,7 @@ import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyConstants;
 import com.ted.lms.learning.activity.survey.web.constants.SurveyPortletKeys;
+import com.ted.lms.learning.activity.survey.web.util.SurveyPrefsPropsValues;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
@@ -100,5 +101,10 @@ public class SurveyActivityTypeFactory extends QuestionsLearningActivityTypeFact
 	@Reference(unbind = "-")
 	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
 		this.answerLocalService = answerLocalService;
+	}
+
+	@Override
+	public String getQuestionsAllowed(long companyId) {
+		return SurveyPrefsPropsValues.getQuestionsAllowed(companyId);
 	}
 }

@@ -297,6 +297,10 @@ public class AnswerLocalServiceUtil {
 		return getService().getAnswersByQuestionId(questionId);
 	}
 
+	public static int getAnswersByQuestionIdCount(long questionId) {
+		return getService().getAnswersByQuestionIdCount(questionId);
+	}
+
 	/**
 	 * Returns all the answers matching the UUID and company.
 	 *

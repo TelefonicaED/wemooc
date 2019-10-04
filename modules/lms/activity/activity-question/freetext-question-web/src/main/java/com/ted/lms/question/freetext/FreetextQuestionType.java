@@ -123,4 +123,48 @@ public class FreetextQuestionType extends BaseQuestionType{
 		}
 		return answerGiven;
 	}
+	
+	@Override
+	public String getXMLType() {
+		if(answerLocalService.getAnswersByQuestionIdCount(question.getQuestionId()) > 0) {
+			return "numerical";
+		}else {
+			return "essay";
+		}
+	}
+	
+	@Override
+	public Element exportXML() {
+		Element questionXML = super.exportXML();
+		String xmlType = getXMLType();
+		if("numerical".equals(xmlType)){
+			List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+			for(Answer answer:answers){
+				Element answerE = SAXReaderUtil.createElement("answer");
+				answerE.addAttribute("fraction", "100");
+				
+				Element text = SAXReaderUtil.createElement("text");
+				text.addText(answer.getAnswer());
+				answerE.add(text);
+				
+				Element feedback = SAXReaderUtil.createElement("feedback");
+				Element feedText = SAXReaderUtil.createElement("text");
+				feedText.addText(answer.getFeedbackCorrect()+"//"+ answer.getFeedbackIncorrect());
+				feedback.add(feedText);
+				answerE.add(feedback);
+				questionXML.add(answerE);
+				break;
+			}
+		}else{
+			Element answerE = SAXReaderUtil.createElement("answer");
+			answerE.addAttribute("fraction", "0");
+			
+			Element text = SAXReaderUtil.createElement("text");
+			answerE.add(text);
+			
+			questionXML.add(answerE);
+		}
+		return questionXML;
+
+	}
 }

@@ -219,6 +219,21 @@ public class QuestionLocalServiceUtil {
 		return getService().dynamicQueryCount(dynamicQuery, projection);
 	}
 
+	public static java.io.File exportExcelQuestions(
+			java.util.Locale locale, long actId)
+		throws java.io.IOException, javax.portlet.PortletException {
+
+		return getService().exportExcelQuestions(locale, actId);
+	}
+
+	public static java.io.PrintWriter exportXMLQuestions(
+			java.io.OutputStream outputStream, long actId)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   java.io.IOException {
+
+		return getService().exportXMLQuestions(outputStream, actId);
+	}
+
 	public static com.ted.lms.learning.activity.question.model.Question
 		fetchQuestion(long questionId) {
 
@@ -395,6 +410,28 @@ public class QuestionLocalServiceUtil {
 		return getService().getQuestionsOrder(actId);
 	}
 
+	public static com.liferay.portal.kernel.json.JSONObject
+			importQuestionsExcel(
+				long userId, long actId,
+				com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+				long[] questionIdsAllowed, java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException,
+			   java.io.IOException {
+
+		return getService().importQuestionsExcel(
+			userId, actId, fileEntry, questionIdsAllowed, locale);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONObject importQuestionsXML(
+			long userId, long actId,
+			com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+			long[] questionIdsAllowed, java.util.Locale locale)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return getService().importQuestionsXML(
+			userId, actId, fileEntry, questionIdsAllowed, locale);
+	}
+
 	public static void saveQuestions(
 			javax.portlet.ActionRequest actionRequest, long actId)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -423,6 +460,13 @@ public class QuestionLocalServiceUtil {
 			com.ted.lms.learning.activity.question.model.Question question) {
 
 		return getService().updateQuestion(question);
+	}
+
+	public static com.liferay.portal.kernel.json.JSONObject validateFileXML(
+			com.liferay.portal.kernel.repository.model.FileEntry fileEntry)
+		throws Exception {
+
+		return getService().validateFileXML(fileEntry);
 	}
 
 	public static QuestionLocalService getService() {

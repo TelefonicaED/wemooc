@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.Element;
+import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.ted.lms.learning.activity.question.exception.MinNumAnswerException;
 import com.ted.lms.learning.activity.question.exception.MinNumCorrectAnswerException;
 import com.ted.lms.learning.activity.question.registry.QuestionTypeFactoryRegistryUtil;
@@ -30,7 +31,7 @@ public abstract class BaseQuestionType implements QuestionType{
 	protected final AnswerLocalService answerLocalService;
 	
 	protected Question question;
-	private QuestionTypeFactory questionTypeFactory;
+	protected QuestionTypeFactory questionTypeFactory;
 	
 	public BaseQuestionType(Question question, AnswerLocalService answerLocalService) {
 		this.question = question;
@@ -162,5 +163,28 @@ public abstract class BaseQuestionType implements QuestionType{
 	@Override
 	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter) {
 		return true;
+	}
+	
+	public Element exportXML() {
+		questionTypeFactory = getQuestionTypeFactory();
+		
+		Element questionXML=SAXReaderUtil.createElement("question");
+		questionXML.addAttribute("type", getXMLType());
+		
+		Element name = SAXReaderUtil.createElement("name");
+		Element text = SAXReaderUtil.createElement("text");
+		
+		text.addText(questionTypeFactory.getName());
+		name.add(text);
+		questionXML.add(name);
+		
+		Element questionText = SAXReaderUtil.createElement("questiontext");
+		questionText.addAttribute("format", "html");
+		Element textqt = SAXReaderUtil.createElement("text");
+		textqt.addText(question.getText());
+
+		questionText.add(textqt);
+		questionXML.add(questionText);
+		return questionXML;
 	}
 }

@@ -23,4 +23,8 @@ public class MultioptionsQuestionType extends OptionsQuestionType{
 	public boolean isQuestionCorrect(int correctAnswers, int correctAnswered, int incorrectAnswered){
 		return correctAnswers==correctAnswered && incorrectAnswered==0;
 	}
+	
+	public boolean getXMLSingle() {
+		return false;
+	}
 }

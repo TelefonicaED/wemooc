@@ -12,13 +12,15 @@
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion", 0);
 long questionId = ParamUtil.getLong(request, "questionId");
 String editorName = ParamUtil.getString(request, "editorName");
+String namespace = ParamUtil.getString(request, "namespace");
+System.out.println("namespace: " + namespace);
 
 if(questionId > 0){
 	List<Answer> answers =  AnswerLocalServiceUtil.getAnswersByQuestionId(questionId);
 	int i=0;
 	for(Answer answer:answers){
 		i++;%>
-		<div class="row" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_div_answer_" + i%>'>
+		<div class="row" id='<%=namespace + iteratorQuestion + "_div_answer_" + i%>'>
 			<liferay-util:include page="<%=OptionsQuestionTypeFactory.URL_EDIT_ANSWER %>" portletId="<%=OptionsWebPortletKeys.OPTIONS_PORTLET%>" servletContext="<%=this.getServletContext() %>">
 				<liferay-util:param name="iterator" value="<%=String.valueOf(i) %>" />
 				<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
@@ -28,8 +30,8 @@ if(questionId > 0){
 		</div>
 	<%}
 }else{
-	for(int i = 1; i <= 2; i++){%>
-		<div class="row" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_div_answer_" + i%>'>
+	for(int i = 0; i <= 2; i++){%>
+		<div class="row" id='<%=namespace + iteratorQuestion + "_div_answer_" + i%>'>
 			<liferay-util:include page="<%=OptionsQuestionTypeFactory.URL_EDIT_ANSWER %>" portletId="<%=OptionsWebPortletKeys.OPTIONS_PORTLET%>" servletContext="<%=this.getServletContext() %>">
 				<liferay-util:param name="iterator" value="<%=String.valueOf(i) %>" />
 				<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />

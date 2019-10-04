@@ -251,4 +251,45 @@ public class FillblankQuestionType extends BaseQuestionType{
 		return answer.split(",");
 	}
 	
+	@Override
+	public String getXMLType() {
+		return "cloze";
+	}
+	
+	@Override
+	public Element exportXML() {
+		Element questionXML=SAXReaderUtil.createElement("question");
+		questionXML.addAttribute("type", getXMLType());
+		
+		Element name = SAXReaderUtil.createElement("name");
+		Element text = SAXReaderUtil.createElement("text");
+
+		text.addText(question.getText());
+		name.add(text);
+		questionXML.add(name);
+		
+		Element questionText = SAXReaderUtil.createElement("questiontext");
+		questionText.addAttribute("format", "html");
+		Element textqt = SAXReaderUtil.createElement("text");
+		String feedback="";
+
+		List<Answer> answers = answerLocalService.getAnswersByQuestionId(question.getQuestionId());
+		for(Answer answer:answers){
+			textqt.addText(answer.getAnswer());
+			feedback = answer.getFeedbackCorrect()+"//"+ answer.getFeedbackIncorrect();
+			break;//Solo aceptamos una respuesta
+		}
+	
+		questionText.add(textqt);
+		questionXML.add(questionText);
+		
+		Element feedbackE = SAXReaderUtil.createElement("generalfeedback");
+		Element feedText = SAXReaderUtil.createElement("text");
+		feedText.addText(feedback);
+		feedbackE.add(feedText);
+		questionXML.add(feedbackE);
+		
+		return questionXML;
+	}
+	
 }

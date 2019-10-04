@@ -2,12 +2,15 @@ package com.ted.lms.question.options;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
+import com.liferay.portal.kernel.xml.Element;
 import com.ted.lms.learning.activity.question.model.BaseQuestionTypeFactory;
 import com.ted.lms.learning.activity.question.model.Question;
 import com.ted.lms.learning.activity.question.model.QuestionType;
 import com.ted.lms.learning.activity.question.model.QuestionTypeFactory;
 import com.ted.lms.learning.activity.question.service.AnswerLocalService;
+import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.question.options.constants.OptionsWebPortletKeys;
 
 import java.util.Locale;
@@ -91,6 +94,36 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 		return "options";
 	}
 	
+	@Override
+	public String getName() {
+		return "options";
+	}
+	
+	@Override
+	public String[] getXMLType() {
+		return new String[] {"multichoice"};
+	}
+	
+	@Override
+	public Question importQuestionXML(long userId, long groupId, long actId, Element questionElement, ServiceContext serviceContext) throws PortalException {
+		Element questiontext=questionElement.element("questiontext");
+		String description=questiontext.elementText("text");
+		
+		Question question = questionLocalService.addQuestion(userId, groupId, actId, description, getType(), false, serviceContext);
+		
+		for(Element answerElement:questionElement.elements("answer")){
+			boolean correct=(!"0".equals(answerElement.attributeValue("fraction")))? true:false;
+			String answer=answerElement.elementText("text");
+			String feedback="";
+			if(answerElement.element("feedback")!=null && answerElement.element("feedback").element("text")!=null)
+				feedback=answerElement.element("feedback").element("text").getText();
+			
+			answerLocalService.addAnswer(userId, groupId, question.getQuestionId(), actId, answer, feedback, feedback, correct, serviceContext);
+		}
+		
+		return question;
+	}
+	
 	@Reference(
 		unbind = "-"
 	)
@@ -106,4 +139,10 @@ public class OptionsQuestionTypeFactory extends BaseQuestionTypeFactory{
 		this.answerLocalService = answerLocalService;
 	}
 	protected AnswerLocalService answerLocalService;
+	
+	@Reference(unbind = "-")
+	protected void setQuestionLocalService(QuestionLocalService questionLocalService) {
+		this.questionLocalService = questionLocalService;
+	}
+	protected QuestionLocalService questionLocalService;
 }

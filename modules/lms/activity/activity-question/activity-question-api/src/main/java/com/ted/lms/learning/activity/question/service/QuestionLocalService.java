@@ -22,7 +22,9 @@ import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
@@ -35,11 +37,17 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 
 import com.ted.lms.learning.activity.question.model.Question;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.portlet.ActionRequest;
+import javax.portlet.PortletException;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -189,6 +197,12 @@ public interface QuestionLocalService
 	public long dynamicQueryCount(
 		DynamicQuery dynamicQuery, Projection projection);
 
+	public File exportExcelQuestions(Locale locale, long actId)
+		throws IOException, PortletException;
+
+	public PrintWriter exportXMLQuestions(OutputStream outputStream, long actId)
+		throws IOException, PortalException;
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Question fetchQuestion(long questionId);
 
@@ -307,6 +321,16 @@ public interface QuestionLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Question> getQuestionsOrder(long actId);
 
+	public JSONObject importQuestionsExcel(
+			long userId, long actId, FileEntry fileEntry,
+			long[] questionIdsAllowed, Locale locale)
+		throws IOException, PortalException;
+
+	public JSONObject importQuestionsXML(
+			long userId, long actId, FileEntry fileEntry,
+			long[] questionIdsAllowed, Locale locale)
+		throws PortalException;
+
 	public void saveQuestions(ActionRequest actionRequest, long actId)
 		throws PortalException;
 
@@ -322,5 +346,7 @@ public interface QuestionLocalService
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public Question updateQuestion(Question question);
+
+	public JSONObject validateFileXML(FileEntry fileEntry) throws Exception;
 
 }

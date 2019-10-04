@@ -77,6 +77,10 @@ public class MultioptionsQuestionTypeFactory extends OptionsQuestionTypeFactory{
 		return "multioptions";
 	}
 	
+	public String getName() {
+		return "multioptions";
+	}
+	
 	@Reference(
 		unbind = "-"
 	)

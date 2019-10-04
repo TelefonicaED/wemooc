@@ -8,6 +8,7 @@ import com.ted.lms.learning.activity.question.service.AnswerLocalService;
 import com.ted.lms.learning.activity.question.service.QuestionLocalService;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalConstants;
 import com.ted.lms.learning.activity.resource.external.web.constants.ResourceExternalPortletKeys;
+import com.ted.lms.learning.activity.resource.external.web.util.ResourceExternalPrefsPropsValues;
 import com.ted.lms.model.LearningActivity;
 import com.ted.lms.model.LearningActivityType;
 import com.ted.lms.model.LearningActivityTypeFactory;
@@ -114,5 +115,10 @@ public class ResourceExternalActivityTypeFactory extends QuestionsLearningActivi
 	@Reference(unbind = "-")
 	protected void setAnswerLocalService(AnswerLocalService answerLocalService) {
 		this.answerLocalService = answerLocalService;
+	}
+
+	@Override
+	public String getQuestionsAllowed(long companyId) {
+		return ResourceExternalPrefsPropsValues.getQuestionsAllowed(companyId);
 	}
 }

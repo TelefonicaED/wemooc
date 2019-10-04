@@ -244,6 +244,9 @@ public interface AnswerLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Answer> getAnswersByQuestionId(long questionId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getAnswersByQuestionIdCount(long questionId);
+
 	/**
 	 * Returns all the answers matching the UUID and company.
 	 *

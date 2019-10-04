@@ -86,6 +86,10 @@ public class SurveyQuestionTypeFactory extends OptionsQuestionTypeFactory {
 		return "survey";
 	}
 	
+	public String getName() {
+		return "surveyoptions";
+	}
+	
 	@Reference(
 		unbind = "-"
 	)

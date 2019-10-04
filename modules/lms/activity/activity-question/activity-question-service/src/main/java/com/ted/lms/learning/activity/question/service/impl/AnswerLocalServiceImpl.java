@@ -56,6 +56,10 @@ public class AnswerLocalServiceImpl extends AnswerLocalServiceBaseImpl {
 		return answerPersistence.findByQuestionId(questionId);
 	}
 	
+	public int getAnswersByQuestionIdCount(long questionId) {
+		return answerPersistence.countByQuestionId(questionId);
+	}
+	
 	public Answer addAnswer(long userId, long groupId, long questionId, long actId, String answerText, String feedbackCorrect, 
 			String feedbackIncorrect, boolean correct, ServiceContext serviceContext) throws PortalException {
 		User user = userLocalService.getUser(userId);

@@ -11,6 +11,10 @@ dependencies {
 	compileOnly group: "org.osgi", name: "org.osgi.core"
 	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations"
 	compileOnly project(":modules:lms:activity:activity-question:activity-question-api")
+	compile (group: "org.apache.poi", name: "poi", version: "3.13"){ transitive = false}
+	compile (group: "org.apache.poi", name: "poi-ooxml", version: "3.13"){ transitive = false}
+	compile (group: 'org.apache.poi', name: 'poi-ooxml-schemas', version: '3.13'){ transitive = false}
+	compile (group: 'org.apache.xmlbeans', name: 'xmlbeans', version: '2.6.0'){ transitive = false}
 	compileOnly project(":modules:lms:lms-api")
 	compileOnly project(":modules:lms:lms-service")
 }

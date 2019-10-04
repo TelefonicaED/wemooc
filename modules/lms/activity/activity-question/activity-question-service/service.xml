@@ -43,6 +43,7 @@
 			<finder-column name="actId" />
 		</finder>
 		<reference entity="DLApp" package-path="com.liferay.portlet.documentlibrary" />
+		<reference entity="DLFileEntry" package-path="com.liferay.portlet.documentlibrary" />
 	</entity>
 	
 	<entity name="Answer" uuid="true" local-service="true" remote-service="false" json-enabled="false">

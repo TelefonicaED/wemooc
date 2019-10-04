@@ -23,4 +23,7 @@ public interface QuestionType {
 	public boolean isCorrectRequest(ActionRequest actionRequest, String iteratorQuestion, int counter);
 	
 	public String getURLQuestion();
+	
+	public Element exportXML();
+	public String getXMLType();
 }

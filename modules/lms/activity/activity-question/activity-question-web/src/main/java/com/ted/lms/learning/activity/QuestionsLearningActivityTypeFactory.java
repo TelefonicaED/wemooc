@@ -22,6 +22,8 @@ public abstract class QuestionsLearningActivityTypeFactory extends BaseLearningA
 	protected QuestionLocalService questionLocalService;
 	protected AnswerLocalService answerLocalService;
 	
+	public abstract String getQuestionsAllowed(long companyId);
+	
 	@Override
 	public void doExportStagedModel(PortletDataContext portletDataContext) throws PortalException{
 		super.doExportStagedModel(portletDataContext);

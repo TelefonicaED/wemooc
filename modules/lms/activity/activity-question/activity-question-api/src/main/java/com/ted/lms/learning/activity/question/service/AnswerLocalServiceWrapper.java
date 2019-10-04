@@ -304,6 +304,11 @@ public class AnswerLocalServiceWrapper
 		return _answerLocalService.getAnswersByQuestionId(questionId);
 	}
 
+	@Override
+	public int getAnswersByQuestionIdCount(long questionId) {
+		return _answerLocalService.getAnswersByQuestionIdCount(questionId);
+	}
+
 	/**
 	 * Returns all the answers matching the UUID and company.
 	 *
