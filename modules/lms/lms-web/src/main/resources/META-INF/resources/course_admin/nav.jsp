@@ -91,12 +91,19 @@
 				</aui:select>
 			</div>
 			<div class="col-md-3">
-				<liferay-ui:input-date name="executionStartDate" dayParam="executionStartDateDay" monthParam="executionStartDateMonth" yearParam="executionStartDateYear" nullable="true"
-					dayValue="${courseDisplayContext.executionStartDateDay }" monthValue="${courseDisplayContext.executionStartDateMonth }" yearValue="${courseDisplayContext.executionStartDateYear }"/>
+				<div class="calendar-portlet-field-datepicker clearfix">
+					<label><liferay-ui:message key="execution-start-date" /></label>
+					<liferay-ui:input-date name="executionStartDate" dayParam="executionStartDateDay" monthParam="executionStartDateMonth" yearParam="executionStartDateYear" nullable="true"
+						showDisableCheckbox="false"/>
+				</div>
 			</div>
 			<div class="col-md-3">
-				<liferay-ui:input-date name="executionEndDate" dayParam="executionEndDateDay" monthParam="executionEndDateMonth" yearParam="executionEndDateYear" nullable="true"
-					dayValue="${courseDisplayContext.executionEndDateDay }" monthValue="${courseDisplayContext.executionEndDateMonth }" yearValue="${courseDisplayContext.executionEndDateYear }" />
+				<div class="calendar-portlet-field-datepicker clearfix">
+					<label><liferay-ui:message key="execution-end-date" /></label>
+					<liferay-ui:input-date name="executionEndDate" dayParam="executionEndDateDay" monthParam="executionEndDateMonth" yearParam="executionEndDateYear" nullable="true"
+						
+						showDisableCheckbox="false"/>
+				</div>
 			</div>
 		</div>
 		<div class="row">

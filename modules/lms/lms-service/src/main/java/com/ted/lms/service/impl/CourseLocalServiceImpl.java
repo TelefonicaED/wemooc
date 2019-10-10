@@ -523,16 +523,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		assetEntry.setModifiedDate(now);
 		assetEntryLocalService.updateAssetEntry(assetEntry);
 		
-		// Friendly URLs
-
-		List<FriendlyURLEntry> friendlyURLEntries =
-			friendlyURLEntryLocalService.getFriendlyURLEntries(course.getGroupId(),classNameLocalService.getClassNameId(Course.class),
-					course.getCourseId());
-
-		for (FriendlyURLEntry friendlyURLEntry : friendlyURLEntries) {
-			friendlyURLEntryLocalService.deleteFriendlyURLEntry(friendlyURLEntry);
-		}
-		
 		//Para la url miramos si ya tiene group, si no lo tiene actualizo la friendlyurl, si no la del curso
 		if(course.getGroupCreatedId() > 0 ) {
 			Group group = course.getGroup();

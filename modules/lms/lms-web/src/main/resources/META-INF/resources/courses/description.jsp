@@ -28,20 +28,16 @@
 					xml="${not empty course ? course.descriptionMapAsXML : '' }"
 				/>
 			</div>
-			<c:choose>
-				<c:when test="${not empty listLayoutSetPrototype && listLayoutSetPrototype.size() > 0 }">
-					<aui:select name="layoutSetPrototypeId" label="template" helpMessage="template.help-message" required="true" >
-						<c:if test="${empty course || empty course.group }">
-							<aui:option label="select-option" value="" disabled="true" selected="true"/>
-						</c:if>
-						<c:forEach items="${listLayoutSetPrototype }" var="layoutSetPrototype">
-							<aui:option label="${layoutSetPrototype.getName(themeDisplay.locale) }" value="${layoutSetPrototype.layoutSetPrototypeId }" 
-									selected="${layoutSetPrototype.layoutSetPrototypeId == course.layoutSetPrototypeId }"
-									disabled="${not empty course }"/>
-						</c:forEach>
-					</aui:select>
-				</c:when>
-			</c:choose>
+			<aui:select name="layoutSetPrototypeId" label="template" helpMessage="template.help-message" required="true" >
+				<c:if test="${(empty course || empty course.group) &&  listLayoutSetPrototype.size() > 1 }">
+					<aui:option label="select-option" value="" disabled="true" selected="true"/>
+				</c:if>
+				<c:forEach items="${listLayoutSetPrototype }" var="layoutSetPrototype">
+					<aui:option label="${layoutSetPrototype.getName(themeDisplay.locale) }" value="${layoutSetPrototype.layoutSetPrototypeId }" 
+							selected="${layoutSetPrototype.layoutSetPrototypeId == course.layoutSetPrototypeId }"
+							disabled="${not empty course }"/>
+				</c:forEach>
+			</aui:select>
 		</div>
 		<div class="col-md-4">
 			<c:if test="${configuration.courseIndexer() }">
@@ -68,7 +64,7 @@
 				<div class="form-text">
 					${courseDisplayContext.friendlyURLBase }
 				</div>
-				<aui:input name="friendyURL" label="" value="${course.groupFriendlyURL }"/>
+				<aui:input name="friendlyURL" label="" value="${course.groupFriendlyURL }"/>
 			</div>
 		</div>
 	</div>

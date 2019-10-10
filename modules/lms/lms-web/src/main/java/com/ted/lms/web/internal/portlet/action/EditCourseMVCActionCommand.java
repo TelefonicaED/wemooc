@@ -327,11 +327,12 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 
 		if (courseId <= 0) {
 			long courseTypeId = ParamUtil.getLong(actionRequest, "courseTypeId", 0);
-			// Añadir módulo
+			// Añadir curso
 			course = courseService.addCourse(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, summaryMap, indexer, friendlyURL, layoutSetPrototypeId, parentCourseId, 
 					courseTypeId, smallImageImageSelector, serviceContext);
 		} else {
-			// Actualizamos el módulo
+			// Actualizamos el curso
+
 			course = courseService.updateCourse(courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURL, layoutSetPrototypeId, 
 					smallImageImageSelector,  serviceContext);
 		} 
