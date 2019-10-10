@@ -8,14 +8,20 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.ted.lms.constants.LMSPortletKeys;
+import com.ted.lms.model.Course;
 import com.ted.lms.model.LearningActivityTypeFactory;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
+import com.ted.lms.service.CourseLocalService;
+import com.ted.lms.service.CourseTypeLocalService;
+import com.ted.lms.service.CourseTypeRelationLocalService;
+
 import java.util.List;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 @Component(
 	immediate = true,
@@ -35,10 +41,16 @@ public class AddActivityMVCRenderCommand implements MVCRenderCommand {
 		ThemeDisplay themeDisplay = (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
 		long moduleId = ParamUtil.getLong(renderRequest, "moduleId", 0);
-		List<LearningActivityTypeFactory> listLearningActivityTypeFactory = 
-				LearningActivityTypeFactoryRegistryUtil.getLearningActivityFactories(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
-		for(LearningActivityTypeFactory lat: listLearningActivityTypeFactory) {
-			log.debug("lat: " + lat.getName(themeDisplay.getLocale()));
+		
+		Course course = courseLocalService.getCourseByGroupCreatedId(themeDisplay.getScopeGroupId());
+		
+		List<LearningActivityTypeFactory> listLearningActivityTypeFactory = null;
+		
+		if(course.getCourseTypeId() > 0) {
+			listLearningActivityTypeFactory = courseTypeRelationLocalService.getLearningActivityTypes(course.getCourseTypeId());
+		}else {
+			listLearningActivityTypeFactory = 
+					LearningActivityTypeFactoryRegistryUtil.getLearningActivityFactories(themeDisplay.getCompanyId(), themeDisplay.getScopeGroupId());
 		}
 		
 		PortalUtil.clearRequestParameters(renderRequest);
@@ -48,4 +60,9 @@ public class AddActivityMVCRenderCommand implements MVCRenderCommand {
 		
 		return "/activities/add_activity.jsp";
 	}
+	
+	@Reference
+	private CourseLocalService courseLocalService;
+	@Reference
+	private CourseTypeRelationLocalService courseTypeRelationLocalService;
 }
