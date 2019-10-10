@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSConstants;
 import com.ted.lms.model.Course;
-import com.ted.lms.service.base.CourseServiceBaseImpl;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -100,14 +99,14 @@ private static final Log log = LogFactoryUtil.getLog(CourseLocalServiceImpl.clas
 	 */
 	@Override
 	public Course addCourse(long groupId, Map<Locale,String> titleMap, Map<Locale,String> descriptionMap,  Map<Locale,String> summaryMap, boolean indexer, 
-			Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, long parentCourseId, long courseTypeId, ImageSelector smallImageSelector, 
+			String friendlyURL, long layoutSetPrototypeId, long parentCourseId, long courseTypeId, ImageSelector smallImageSelector, 
 			ServiceContext serviceContext) throws Exception {
 		
 		portletResourcePermission.check(
 				getPermissionChecker(), serviceContext.getScopeGroupId(),
 				LMSActionKeys.ADD_COURSE);
 		
-		return courseLocalService.addCourse(getUserId(), groupId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+		return courseLocalService.addCourse(getUserId(), groupId, titleMap, descriptionMap, summaryMap, indexer, friendlyURL, layoutSetPrototypeId,
 				parentCourseId, courseTypeId, smallImageSelector, serviceContext);
 		
 	}
@@ -126,12 +125,12 @@ private static final Log log = LogFactoryUtil.getLog(CourseLocalServiceImpl.clas
 	 * @throws PrincipalException 
 	 */
 	public Course updateCourse(long courseId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			Map<Locale, String> summaryMap, boolean indexer, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
+			Map<Locale, String> summaryMap, boolean indexer, String friendlyURL, long layoutSetPrototypeId, 
 			ImageSelector smallImageImageSelector, ServiceContext serviceContext) throws Exception {
 		
 		courseModelResourcePermission.check(getPermissionChecker(), courseId, ActionKeys.UPDATE);
 		
-		return courseLocalService.updateCourse(getUserId(), courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId,
+		return courseLocalService.updateCourse(getUserId(), courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURL, layoutSetPrototypeId,
 				smallImageImageSelector, serviceContext);
 	}
 	

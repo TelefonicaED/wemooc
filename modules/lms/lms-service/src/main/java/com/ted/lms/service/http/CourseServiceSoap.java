@@ -87,8 +87,7 @@ public class CourseServiceSoap {
 			long groupId, String[] titleMapLanguageIds, String[] titleMapValues,
 			String[] descriptionMapLanguageIds, String[] descriptionMapValues,
 			String[] summaryMapLanguageIds, String[] summaryMapValues,
-			boolean indexer, String[] friendlyURLMapLanguageIds,
-			String[] friendlyURLMapValues, long layoutSetPrototypeId,
+			boolean indexer, String friendlyURL, long layoutSetPrototypeId,
 			long parentCourseId, long courseTypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageSelector,
@@ -104,14 +103,11 @@ public class CourseServiceSoap {
 			Map<Locale, String> summaryMap =
 				LocalizationUtil.getLocalizationMap(
 					summaryMapLanguageIds, summaryMapValues);
-			Map<Locale, String> friendlyURLMap =
-				LocalizationUtil.getLocalizationMap(
-					friendlyURLMapLanguageIds, friendlyURLMapValues);
 
 			com.ted.lms.model.Course returnValue = CourseServiceUtil.addCourse(
 				groupId, titleMap, descriptionMap, summaryMap, indexer,
-				friendlyURLMap, layoutSetPrototypeId, parentCourseId,
-				courseTypeId, smallImageSelector, serviceContext);
+				friendlyURL, layoutSetPrototypeId, parentCourseId, courseTypeId,
+				smallImageSelector, serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
 		}
@@ -140,8 +136,7 @@ public class CourseServiceSoap {
 			long courseId, String[] titleMapLanguageIds,
 			String[] titleMapValues, String[] descriptionMapLanguageIds,
 			String[] descriptionMapValues, String[] summaryMapLanguageIds,
-			String[] summaryMapValues, boolean indexer,
-			String[] friendlyURLMapLanguageIds, String[] friendlyURLMapValues,
+			String[] summaryMapValues, boolean indexer, String friendlyURL,
 			long layoutSetPrototypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageImageSelector,
@@ -157,15 +152,12 @@ public class CourseServiceSoap {
 			Map<Locale, String> summaryMap =
 				LocalizationUtil.getLocalizationMap(
 					summaryMapLanguageIds, summaryMapValues);
-			Map<Locale, String> friendlyURLMap =
-				LocalizationUtil.getLocalizationMap(
-					friendlyURLMapLanguageIds, friendlyURLMapValues);
 
 			com.ted.lms.model.Course returnValue =
 				CourseServiceUtil.updateCourse(
 					courseId, titleMap, descriptionMap, summaryMap, indexer,
-					friendlyURLMap, layoutSetPrototypeId,
-					smallImageImageSelector, serviceContext);
+					friendlyURL, layoutSetPrototypeId, smallImageImageSelector,
+					serviceContext);
 
 			return com.ted.lms.model.CourseSoap.toSoapModel(returnValue);
 		}

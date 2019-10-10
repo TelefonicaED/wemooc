@@ -78,8 +78,8 @@ public interface CourseService extends BaseService {
 	public Course addCourse(
 			long groupId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
-			boolean indexer, Map<Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
+			boolean indexer, String friendlyURL, long layoutSetPrototypeId,
+			long parentCourseId, long courseTypeId,
 			ImageSelector smallImageSelector, ServiceContext serviceContext)
 		throws Exception;
 
@@ -231,8 +231,8 @@ public interface CourseService extends BaseService {
 	public Course updateCourse(
 			long courseId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
-			boolean indexer, Map<Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, ImageSelector smallImageImageSelector,
+			boolean indexer, String friendlyURL, long layoutSetPrototypeId,
+			ImageSelector smallImageImageSelector,
 			ServiceContext serviceContext)
 		throws Exception;
 

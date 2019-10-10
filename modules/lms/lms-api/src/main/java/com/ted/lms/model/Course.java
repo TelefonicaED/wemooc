@@ -58,6 +58,8 @@ public interface Course extends CourseModel, PersistedModel {
 
 	public String getFriendlyURL();
 
+	public String getGroupFriendlyURL();
+
 	public int getTypeSite();
 
 	public com.liferay.portal.kernel.json.JSONObject getCourseExtraDataJSON();
@@ -107,12 +109,6 @@ public interface Course extends CourseModel, PersistedModel {
 	public String getGoodbyeMsgMapAsXML();
 
 	public String getDeniedInscriptionMsgMapAsXML();
-
-	public String getFriendlyURLsXML()
-		throws com.liferay.portal.kernel.exception.PortalException;
-
-	public java.util.Map<java.util.Locale, String> getFriendlyURLMap()
-		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public boolean isRegistrationOnDate();
 

@@ -188,7 +188,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	@Override
 	@Indexable(type = IndexableType.REINDEX)
 	public Course addCourse(long userId, long groupId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap, boolean indexer, 
-			Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, long parentCourseId, long courseTypeId, ImageSelector smallImageSelector, 
+			String friendlyURL, long layoutSetPrototypeId, long parentCourseId, long courseTypeId, ImageSelector smallImageSelector, 
 			ServiceContext serviceContext) throws Exception {
 
 		User user = userLocalService.getUser(userId);
@@ -219,21 +219,13 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		course.setUuid(serviceContext.getUuid());
 		
-		//Guardamos la url si no es vacía para cuando creemos el sitio web
-		// Friendly URLs
-
-		Map<String, String> urlGroupMap = getURLGroupMap(groupId, course.getCourseId(), friendlyURLMap);
-		
 		//Creamos el group asociado, le cambiamos al nombre al grupo porque no deja crear dos con el mismo nombre por el groupKey
 		
-		String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(LocaleUtil.getDefault()));
-		if(Validator.isNull(urlGroup)) {
-			urlGroup = getFriendlyURL(user.getCompanyId(), urlGroup, course.getTitleMap());
-			urlGroupMap.put(LocaleUtil.toLanguageId(LocaleUtil.getDefault()), urlGroup.substring(1));
+		if(Validator.isNull(friendlyURL)) {
+			friendlyURL = getFriendlyURL(user.getCompanyId(), course.getTitleMap());
 		}
 		
-		friendlyURLEntryLocalService.addFriendlyURLEntry(groupId, classNameLocalService.getClassNameId(Course.class),
-				course.getCourseId(), urlGroupMap, serviceContext);
+		friendlyURL = StringPool.FORWARD_SLASH + friendlyURL;
 	
 		int membershipRestriction = GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION;
 
@@ -251,7 +243,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		}
 		
 		Group group = GroupLocalServiceUtil.addGroup(userId, parentGroupId, Course.class.getName(), courseId, 0, titleMap, course.getDescriptionMap(), 
-				GroupConstants.TYPE_SITE_OPEN, true, membershipRestriction, urlGroup, 
+				GroupConstants.TYPE_SITE_OPEN, true, membershipRestriction, friendlyURL, 
 				true, false, true, serviceContext);
 		
 		course.setGroupCreatedId(group.getGroupId());
@@ -504,7 +496,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public Course updateCourse(long userId, long courseId, Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			Map<Locale, String> summaryMap, boolean indexer, Map<Locale, String> friendlyURLMap, long layoutSetPrototypeId, 
+			Map<Locale, String> summaryMap, boolean indexer, String friendlyURL, long layoutSetPrototypeId, 
 			ImageSelector smallImageSelector, ServiceContext serviceContext) throws Exception {
 		
 		User user = userLocalService.getUser(userId);
@@ -541,19 +533,12 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			friendlyURLEntryLocalService.deleteFriendlyURLEntry(friendlyURLEntry);
 		}
 		
-		Map<String, String> urlGroupMap = getURLGroupMap(course.getGroupId(), course.getCourseId(), friendlyURLMap);
-
-		String urlGroup = urlGroupMap.get(LocaleUtil.toLanguageId(serviceContext.getLocale()));
-
-		friendlyURLEntryLocalService.addFriendlyURLEntry(course.getGroupId(), classNameLocalService.getClassNameId(Course.class),
-			course.getCourseId(), urlGroupMap, serviceContext);
-		
 		//Para la url miramos si ya tiene group, si no lo tiene actualizo la friendlyurl, si no la del curso
 		if(course.getGroupCreatedId() > 0 ) {
 			Group group = course.getGroup();
-			urlGroup = StringPool.FORWARD_SLASH + urlGroup;
-			if(!group.getFriendlyURL().equals(urlGroup)) {
-				groupLocalService.updateFriendlyURL(course.getGroupCreatedId(), urlGroup);
+			friendlyURL = StringPool.FORWARD_SLASH + friendlyURL;
+			if(!group.getFriendlyURL().equals(friendlyURL)) {
+				groupLocalService.updateFriendlyURL(course.getGroupCreatedId(), friendlyURL);
 			}	
 		}
 		
@@ -827,7 +812,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return course;
 	}
 	
-	private String getFriendlyURL(long companyId, String friendlyURL, Map<Locale, String> titleMap) {
+	private String getFriendlyURL(long companyId, Map<Locale, String> titleMap) {
 		//Se asegura que la longitud de friendlyURL no supere el maximo
 		int maxLength  = GetterUtil.getInteger(
 							ModelHintsUtil.getHints(Group.class.getName(), "friendlyURL").get("max-length"),
@@ -842,32 +827,30 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			title = entry.getValue();
 		}
 		
-		if(Validator.isNull(friendlyURL)) {
-			friendlyURL = StringPool.SLASH + FriendlyURLNormalizerUtil.normalize(title);
-			if(friendlyURL.length()>maxLength) {
-				friendlyURL = friendlyURL.substring(0, maxLength);
-			}
-			int  i = 0;
-			boolean friendlyNotExit = false;
-			while(!friendlyNotExit) {
-				Group exist = groupLocalService.fetchFriendlyURLGroup(companyId, friendlyURL);
-				if (Validator.isNotNull(exist)){
-					String iString = String.valueOf(i);
-					if(friendlyURL.length()+iString.length()>maxLength) {
-						if(iString.length()>maxLength) {
-							throw new SystemException();
-						}
-						friendlyURL =friendlyURL.substring(0, maxLength-iString.length())+iString;
-					}
-					else {
-						friendlyURL =friendlyURL+iString;
-					}
-				}else{
-					friendlyNotExit = true;
-				}
-				i++;
-			}				
+		String friendlyURL = StringPool.SLASH + FriendlyURLNormalizerUtil.normalize(title);
+		if(friendlyURL.length()>maxLength) {
+			friendlyURL = friendlyURL.substring(0, maxLength);
 		}
+		int  i = 0;
+		boolean friendlyNotExit = false;
+		while(!friendlyNotExit) {
+			Group exist = groupLocalService.fetchFriendlyURLGroup(companyId, friendlyURL);
+			if (Validator.isNotNull(exist)){
+				String iString = String.valueOf(i);
+				if(friendlyURL.length()+iString.length()>maxLength) {
+					if(iString.length()>maxLength) {
+						throw new SystemException();
+					}
+					friendlyURL =friendlyURL.substring(0, maxLength-iString.length())+iString;
+				}
+				else {
+					friendlyURL =friendlyURL+iString;
+				}
+			}else{
+				friendlyNotExit = true;
+			}
+			i++;
+		}				
 		
 		friendlyURL = StringPool.SLASH+friendlyURL.replaceAll("[^a-zA-Z0-9_-]+", "");
 		return friendlyURL;
@@ -972,24 +955,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 	 */
 	public void updateFriendlyURL(long groupCreatedId, String friendlyURL) throws PortalException {
 		groupLocalService.updateFriendlyURL(groupCreatedId, friendlyURL);
-	}
-	
-	private Map<String, String> getURLGroupMap(long groupId, long resourcePrimKey, Map<Locale, String> friendlyURLMap) {
-
-		Map<String, String> urlTitleMap = new HashMap<>();
-
-		for (Map.Entry<Locale, String> entry : friendlyURLMap.entrySet()) {
-			String title = entry.getValue();
-
-			if (Validator.isNull(title)) {
-				continue;
-			}
-
-			String urlTitle = friendlyURLEntryLocalService.getUniqueUrlTitle(groupId,classNameLocalService.getClassNameId(Course.class),resourcePrimKey, title);
-			urlTitleMap.put(LocaleUtil.toLanguageId(entry.getKey()), urlTitle);
-		}
-
-		return urlTitleMap;
 	}
 	
 	@Override
@@ -1417,10 +1382,6 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			smallImageSelector = new ImageSelector(imageBytes, fileEntry.getFileName(), fileEntry.getMimeType(), StringPool.BLANK);
 		}
 		
-		if(friendlyURLMap == null) {
-			friendlyURLMap = new HashMap<>();
-		}
-		
 		serviceContext.setUserId(userId);
 		serviceContext.setAssetCategoryIds(oldAssetEntry.getCategoryIds());
 		serviceContext.setAssetEntryVisible(oldAssetEntry.isVisible());
@@ -1431,7 +1392,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		//Primer paso, creamos el curso
 		Course newCourse = addCourse(userId, serviceContext.getScopeGroupId(), titleMap, oldCourse.getDescriptionMap(), oldAssetEntry.getSummaryMap(), oldAssetEntry.isVisible(), 
-				friendlyURLMap, layoutSetPrototypeId, parentCourseId, oldCourse.getCourseTypeId(), smallImageSelector, serviceContext);
+				null, layoutSetPrototypeId, parentCourseId, oldCourse.getCourseTypeId(), smallImageSelector, serviceContext);
 		
 		log.debug("primer paso fin: " + newCourse.getCourseId());
 		

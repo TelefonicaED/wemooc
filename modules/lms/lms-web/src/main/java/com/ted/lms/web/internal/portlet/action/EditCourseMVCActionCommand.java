@@ -2,6 +2,7 @@ package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.asset.kernel.exception.AssetCategoryException;
 import com.liferay.asset.kernel.exception.AssetTagException;
+import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -150,6 +151,13 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 					}
 				}
 			}
+		} catch(GroupFriendlyURLException e) {
+			e.printStackTrace();
+			SessionErrors.add(actionRequest, e.getClass(), e);
+			
+			actionResponse.setRenderParameter("mvcRenderCommandName", "/courses/edit_course");
+
+			hideDefaultSuccessMessage(actionRequest);
 		} catch (AssetCategoryException | AssetTagException e) {
 			e.printStackTrace();
 			SessionErrors.add(actionRequest, e.getClass(), e);
@@ -295,7 +303,7 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		Map<Locale, String> titleMap = LocalizationUtil.getLocalizationMap(actionRequest, "titleMapAsXML");
 		Map<Locale, String> summaryMap = LocalizationUtil.getLocalizationMap(actionRequest, "summaryMapAsXML");
 		Map<Locale, String> descriptionMap = LocalizationUtil.getLocalizationMap(actionRequest, "descriptionMapAsXML");
-		Map<Locale, String> friendlyURLMap = LocalizationUtil.getLocalizationMap(actionRequest, "friendlyURLMapAsXML");
+		String friendlyURL = ParamUtil.getString(actionRequest, "friendlyURL");
 		long layoutSetPrototypeId = ParamUtil.getLong(actionRequest, "layoutSetPrototypeId", 0);
 		boolean indexer = ParamUtil.getBoolean(actionRequest, "visible", false);	
 		long courseImageFileEntryId = ParamUtil.getLong(actionRequest, "courseImageFileEntryId", 0);
@@ -320,11 +328,11 @@ public class EditCourseMVCActionCommand extends BaseMVCActionCommand {
 		if (courseId <= 0) {
 			long courseTypeId = ParamUtil.getLong(actionRequest, "courseTypeId", 0);
 			// Añadir módulo
-			course = courseService.addCourse(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, parentCourseId, 
+			course = courseService.addCourse(themeDisplay.getScopeGroupId(), titleMap, descriptionMap, summaryMap, indexer, friendlyURL, layoutSetPrototypeId, parentCourseId, 
 					courseTypeId, smallImageImageSelector, serviceContext);
 		} else {
 			// Actualizamos el módulo
-			course = courseService.updateCourse(courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURLMap, layoutSetPrototypeId, 
+			course = courseService.updateCourse(courseId, titleMap, descriptionMap, summaryMap, indexer, friendlyURL, layoutSetPrototypeId, 
 					smallImageImageSelector,  serviceContext);
 		} 
 		

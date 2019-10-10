@@ -159,7 +159,8 @@ public class CourseUtil {
 	public static List<LayoutSetPrototype> getTemplates(CourseAdminPortletInstanceConfiguration portletInstanceConfiguration, 
 			CourseServiceConfiguration configuration, long companyId){
 		List<LayoutSetPrototype> layoutSetPrototypes = null;
-		if(portletInstanceConfiguration != null && portletInstanceConfiguration.courseTemplates() != null && portletInstanceConfiguration.courseTemplates().length > 0) {
+		if(portletInstanceConfiguration != null && portletInstanceConfiguration.courseTemplates() != null && portletInstanceConfiguration.courseTemplates().length > 0
+				&& Validator.isNotNull(portletInstanceConfiguration.courseTemplates()[0])) {
 			layoutSetPrototypes = new ArrayList<LayoutSetPrototype>();
 			
 			String[] courseTemplates = portletInstanceConfiguration.courseTemplates();

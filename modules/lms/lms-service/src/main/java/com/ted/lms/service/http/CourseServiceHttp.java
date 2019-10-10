@@ -60,8 +60,8 @@ public class CourseServiceHttp {
 			java.util.Map<java.util.Locale, String> titleMap,
 			java.util.Map<java.util.Locale, String> descriptionMap,
 			java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
-			java.util.Map<java.util.Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
+			String friendlyURL, long layoutSetPrototypeId, long parentCourseId,
+			long courseTypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageSelector,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -74,7 +74,7 @@ public class CourseServiceHttp {
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, groupId, titleMap, descriptionMap, summaryMap,
-				indexer, friendlyURLMap, layoutSetPrototypeId, parentCourseId,
+				indexer, friendlyURL, layoutSetPrototypeId, parentCourseId,
 				courseTypeId, smallImageSelector, serviceContext);
 
 			Object returnObj = null;
@@ -105,8 +105,7 @@ public class CourseServiceHttp {
 			java.util.Map<java.util.Locale, String> titleMap,
 			java.util.Map<java.util.Locale, String> descriptionMap,
 			java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
-			java.util.Map<java.util.Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId,
+			String friendlyURL, long layoutSetPrototypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageImageSelector,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -119,7 +118,7 @@ public class CourseServiceHttp {
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, courseId, titleMap, descriptionMap, summaryMap,
-				indexer, friendlyURLMap, layoutSetPrototypeId,
+				indexer, friendlyURL, layoutSetPrototypeId,
 				smallImageImageSelector, serviceContext);
 
 			Object returnObj = null;
@@ -656,14 +655,14 @@ public class CourseServiceHttp {
 
 	private static final Class<?>[] _addCourseParameterTypes0 = new Class[] {
 		long.class, java.util.Map.class, java.util.Map.class,
-		java.util.Map.class, boolean.class, java.util.Map.class, long.class,
+		java.util.Map.class, boolean.class, String.class, long.class,
 		long.class, long.class,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector.class,
 		com.liferay.portal.kernel.service.ServiceContext.class
 	};
 	private static final Class<?>[] _updateCourseParameterTypes1 = new Class[] {
 		long.class, java.util.Map.class, java.util.Map.class,
-		java.util.Map.class, boolean.class, java.util.Map.class, long.class,
+		java.util.Map.class, boolean.class, String.class, long.class,
 		com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector.class,
 		com.liferay.portal.kernel.service.ServiceContext.class
 	};

@@ -105,8 +105,8 @@ public interface CourseLocalService
 	public Course addCourse(
 			long userId, long groupId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
-			boolean indexer, Map<Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
+			boolean indexer, String friendlyURL, long layoutSetPrototypeId,
+			long parentCourseId, long courseTypeId,
 			ImageSelector smallImageSelector, ServiceContext serviceContext)
 		throws Exception;
 
@@ -616,9 +616,8 @@ public interface CourseLocalService
 	public Course updateCourse(
 			long userId, long courseId, Map<Locale, String> titleMap,
 			Map<Locale, String> descriptionMap, Map<Locale, String> summaryMap,
-			boolean indexer, Map<Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, ImageSelector smallImageSelector,
-			ServiceContext serviceContext)
+			boolean indexer, String friendlyURL, long layoutSetPrototypeId,
+			ImageSelector smallImageSelector, ServiceContext serviceContext)
 		throws Exception;
 
 	/**

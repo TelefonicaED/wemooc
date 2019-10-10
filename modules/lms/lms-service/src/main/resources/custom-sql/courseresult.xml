@@ -77,12 +77,12 @@
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseResultFinder.whereMyCoursesEndDateAfter">
 		<![CDATA[
-			Lms_course.executionEndDate >= NOW()
+			(Lms_course.executionEndDate >= NOW() AND (Lms_courseresult.allowEndDate IS NULL OR Lms_courseresult.allowEndDate >= NOW()))
 		]]>
 	</sql>
 	<sql id="com.ted.lms.service.persistence.CourseResultFinder.whereMyCoursesEndDateBefore">
 		<![CDATA[
-			Lms_course.executionEndDate < NOW()
+			Lms_course.executionEndDate < NOW() AND (Lms_courseresult.allowEndDate IS NULL OR Lms_courseresult.allowEndDate < NOW()))
 		]]>
 	</sql>
 </custom-sql>

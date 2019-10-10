@@ -95,6 +95,10 @@ private static Log log = LogFactoryUtil.getLog(CourseImpl.class);
 		return "/web" + getGroup().getFriendlyURL();
 	}
 	
+	public String getGroupFriendlyURL() {
+		return getGroup().getFriendlyURL().substring(1);
+	}
+	
 	private static final Group NULL_GROUP = new GroupImpl();
 	private static final LayoutSet NULL_LAYOUT_SET = new LayoutSetImpl();
 	private static final AssetEntry NULL_ASSET_ENTRY = new AssetEntryImpl();
@@ -255,51 +259,6 @@ private static Log log = LogFactoryUtil.getLog(CourseImpl.class);
 	@Override 
 	public String getDeniedInscriptionMsgMapAsXML() {
 		return LocalizationUtil.updateLocalization(getDeniedInscriptionMsgMap(), StringPool.BLANK, "DeniedInscriptionMsg", getDefaultLanguageId());
-	}
-	
-	@Override
-	public String getFriendlyURLsXML() throws PortalException {
-		Map<Locale, String> friendlyURLMap = getFriendlyURLMap();
-
-		return LocalizationUtil.updateLocalization(
-			friendlyURLMap, StringPool.BLANK, "FriendlyURL",
-			LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault()));
-	}
-	
-	@Override
-	public Map<Locale, String> getFriendlyURLMap() throws PortalException {
-		Map<Locale, String> friendlyURLMap = new HashMap<>();
-
-		long classNameId = PortalUtil.getClassNameId(Course.class);
-
-		List<FriendlyURLEntry> friendlyURLEntries = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntries(getGroupId(), classNameId, getCourseId());
-
-		if (friendlyURLEntries.isEmpty()) {
-			
-			friendlyURLMap.put(LocaleUtil.fromLanguageId(getDefaultLanguageId()),getFriendlyURL().substring(getFriendlyURL().lastIndexOf("/")));
-
-			return friendlyURLMap;
-		}
-
-		FriendlyURLEntry friendlyURLEntry = FriendlyURLEntryLocalServiceUtil.getMainFriendlyURLEntry(classNameId, getCourseId());
-
-		List<FriendlyURLEntryLocalization> friendlyURLEntryLocalizations = FriendlyURLEntryLocalServiceUtil.getFriendlyURLEntryLocalizations(friendlyURLEntry.getFriendlyURLEntryId());
-
-		for (FriendlyURLEntryLocalization friendlyURLEntryLocalization : friendlyURLEntryLocalizations) {
-
-			Locale locale = LocaleUtil.fromLanguageId(friendlyURLEntryLocalization.getLanguageId());
-			friendlyURLMap.put(locale, friendlyURLEntryLocalization.getUrlTitle());
-		}
-
-		Locale defaultSiteLocale = LocaleUtil.getSiteDefault();
-
-		if (Validator.isNull(friendlyURLMap.get(defaultSiteLocale))) {
-			Locale defaultLocale = LocaleUtil.fromLanguageId(getDefaultLanguageId());
-
-			friendlyURLMap.put(defaultSiteLocale, friendlyURLMap.get(defaultLocale));
-		}
-
-		return friendlyURLMap;
 	}
 	
 	@Override

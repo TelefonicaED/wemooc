@@ -194,7 +194,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		if(course.getCourseTypeId() > 0) {
 			listCourseEvalFactory = courseTypeRelationLocalService.getCourseEvals(course.getCourseTypeId());
 		}else {
-			listCourseEvalFactory = CourseEvalFactoryRegistryUtil.getCourseEvalFactories(themeDisplay.getCompanyId());
+			listCourseEvalFactory = CourseUtil.getCourseEvalFactories(configuration, themeDisplay.getCompanyId());
 		}
 		renderRequest.setAttribute("listCourseEvalFactory", listCourseEvalFactory);
 		
@@ -202,7 +202,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		if(course.getCourseTypeId() > 0) {
 			listCalificationTypeFactory = courseTypeRelationLocalService.getCalificationTypes(course.getCourseTypeId());
 		}else {
-			listCalificationTypeFactory = CalificationTypeFactoryRegistryUtil.getCalificationFactories(themeDisplay.getCompanyId());
+			listCalificationTypeFactory = CourseUtil.getCalificationTypeFactories(configuration, themeDisplay.getCompanyId());
 		}
 		renderRequest.setAttribute("listCalificationTypeFactory", listCalificationTypeFactory);
 		
@@ -210,7 +210,7 @@ public class EditCourseMVCRenderCommand implements MVCRenderCommand {
 		if(course.getCourseTypeId() > 0) {
 			listInscriptionTypeFactory = courseTypeRelationLocalService.getInscriptionTypes(course.getCourseTypeId()); 
 		}else {
-			listInscriptionTypeFactory = InscriptionTypeFactoryRegistryUtil.getInscriptionFactories(themeDisplay.getCompanyId());
+			listInscriptionTypeFactory = CourseUtil.getInscriptionTypeFactories(configuration, themeDisplay.getCompanyId());
 		}
 		renderRequest.setAttribute("listInscriptionTypeFactory", listInscriptionTypeFactory);
 		

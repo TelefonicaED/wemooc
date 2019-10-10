@@ -65,14 +65,10 @@
 			
 			<div class="form-group">
 				<label for="<portlet:namespace />friendlyURL"><liferay-ui:message key="url" /></label>
-			
-				<liferay-ui:input-localized
-					defaultLanguageId="<%= LocaleUtil.toLanguageId(themeDisplay.getSiteDefaultLocale()) %>"
-					inputAddon="${courseDisplayContext.friendlyURLBase }"
-					maxLength='${friendlyURLMaxLength }'
-					name="friendlyURLMapAsXML"
-					xml="${course.friendlyURLsXML }"
-				/>
+				<div class="form-text">
+					${courseDisplayContext.friendlyURLBase }
+				</div>
+				<aui:input name="friendyURL" label="" value="${course.groupFriendlyURL }"/>
 			</div>
 		</div>
 	</div>

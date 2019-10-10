@@ -735,20 +735,6 @@ public class CourseWrapper
 		return model.getFriendlyURL();
 	}
 
-	@Override
-	public Map<java.util.Locale, String> getFriendlyURLMap()
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return model.getFriendlyURLMap();
-	}
-
-	@Override
-	public String getFriendlyURLsXML()
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return model.getFriendlyURLsXML();
-	}
-
 	/**
 	 * Returns the goodbye of this course.
 	 *
@@ -931,6 +917,11 @@ public class CourseWrapper
 	@Override
 	public long getGroupCreatedId() {
 		return model.getGroupCreatedId();
+	}
+
+	@Override
+	public String getGroupFriendlyURL() {
+		return model.getGroupFriendlyURL();
 	}
 
 	/**

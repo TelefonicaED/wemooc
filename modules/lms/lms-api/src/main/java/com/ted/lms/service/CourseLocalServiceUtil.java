@@ -77,8 +77,8 @@ public class CourseLocalServiceUtil {
 			java.util.Map<java.util.Locale, String> titleMap,
 			java.util.Map<java.util.Locale, String> descriptionMap,
 			java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
-			java.util.Map<java.util.Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
+			String friendlyURL, long layoutSetPrototypeId, long parentCourseId,
+			long courseTypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageSelector,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -86,7 +86,7 @@ public class CourseLocalServiceUtil {
 
 		return getService().addCourse(
 			userId, groupId, titleMap, descriptionMap, summaryMap, indexer,
-			friendlyURLMap, layoutSetPrototypeId, parentCourseId, courseTypeId,
+			friendlyURL, layoutSetPrototypeId, parentCourseId, courseTypeId,
 			smallImageSelector, serviceContext);
 	}
 
@@ -799,8 +799,7 @@ public class CourseLocalServiceUtil {
 			java.util.Map<java.util.Locale, String> titleMap,
 			java.util.Map<java.util.Locale, String> descriptionMap,
 			java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
-			java.util.Map<java.util.Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId,
+			String friendlyURL, long layoutSetPrototypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageSelector,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -808,7 +807,7 @@ public class CourseLocalServiceUtil {
 
 		return getService().updateCourse(
 			userId, courseId, titleMap, descriptionMap, summaryMap, indexer,
-			friendlyURLMap, layoutSetPrototypeId, smallImageSelector,
+			friendlyURL, layoutSetPrototypeId, smallImageSelector,
 			serviceContext);
 	}
 

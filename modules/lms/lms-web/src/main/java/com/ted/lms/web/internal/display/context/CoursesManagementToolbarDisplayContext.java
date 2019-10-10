@@ -8,23 +8,38 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.trash.TrashHelper;
+import com.ted.lms.configuration.CourseServiceConfiguration;
 import com.ted.lms.constants.CourseConstants;
 import com.ted.lms.constants.LMSActionKeys;
 import com.ted.lms.constants.LMSPortletKeys;
+import com.ted.lms.model.CalificationTypeFactory;
+import com.ted.lms.model.CourseEvalFactory;
+import com.ted.lms.model.InscriptionTypeFactory;
+import com.ted.lms.registry.CalificationTypeFactoryRegistryUtil;
+import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
+import com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil;
 import com.ted.lms.security.permission.resource.LMSPermission;
 import com.ted.lms.service.CourseTypeLocalServiceUtil;
+import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
+import com.ted.lms.web.internal.util.CourseUtil;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.PortletException;
@@ -35,8 +50,20 @@ public class CoursesManagementToolbarDisplayContext {
 	
 	private static final Log log = LogFactoryUtil.getLog(CoursesManagementToolbarDisplayContext.class);
 	
+	private final PortletURL currentURLObj;
+	private final LiferayPortletRequest liferayPortletRequest;
+	private final LiferayPortletResponse liferayPortletResponse;
+	private final PortalPreferences portalPreferences;
+	private final HttpServletRequest request;
+	private final TrashHelper trashHelper;
+	private long parentCourseId;
+	private String keywords;
+	private CourseAdminPortletInstanceConfiguration portletConfiguration;
+	private CourseServiceConfiguration serviceConfiguration;
+	private ThemeDisplay themeDisplay;
+	
 	public CoursesManagementToolbarDisplayContext(LiferayPortletRequest liferayPortletRequest, LiferayPortletResponse liferayPortletResponse,
-			HttpServletRequest request, PortletURL currentURLObj, TrashHelper trashHelper) {
+			HttpServletRequest request, PortletURL currentURLObj, TrashHelper trashHelper, CourseServiceConfiguration serviceConfiguration) {
 
 			this.liferayPortletRequest = liferayPortletRequest;
 			this.liferayPortletResponse = liferayPortletResponse;
@@ -46,6 +73,17 @@ public class CoursesManagementToolbarDisplayContext {
 
 			this.portalPreferences = PortletPreferencesFactoryUtil.getPortalPreferences(
 				liferayPortletRequest);
+			
+			themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(WebKeys.THEME_DISPLAY);
+			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+			
+			try {
+				portletConfiguration = portletDisplay.getPortletInstanceConfiguration(CourseAdminPortletInstanceConfiguration.class);
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
+			
+			this.serviceConfiguration = serviceConfiguration;
 			
 			this.parentCourseId = ParamUtil.getLong(request, "parentCourseId", CourseConstants.DEFAULT_PARENT_COURSE_ID);
 			log.debug("parentCourseId: " + parentCourseId);
@@ -75,36 +113,60 @@ public class CoursesManagementToolbarDisplayContext {
 				}
 			};
 		}
-
-		public CreationMenu getCreationMenu() {
+		
+		public long getParentCourseId() {
+			return parentCourseId;
+		}
+		
+		public long getDefaultParentCourseId() {
+			return CourseConstants.DEFAULT_PARENT_COURSE_ID;
+		}
+		
+		/**
+		 * Sólo se muestra el botón de creación de curso si tienes dado de alta al menos:
+		 * - Plantilla de sitio web
+		 * @return
+		 */
+		public boolean showCreationButton() {
+			List<LayoutSetPrototype> listLayoutSetPrototype = CourseUtil.getTemplates(portletConfiguration, serviceConfiguration, themeDisplay.getCompanyId());
+			if(listLayoutSetPrototype == null || listLayoutSetPrototype.size() == 0) {
+				return false;
+			}
+			List<CourseEvalFactory> listCourseEvalFactory = CourseUtil.getCourseEvalFactories(serviceConfiguration,themeDisplay.getCompanyId());
+			if(listCourseEvalFactory == null || listCourseEvalFactory.size() == 0) {
+				return false;
+			}
+			List<CalificationTypeFactory> listCalificationTypeFactory = CourseUtil.getCalificationTypeFactories(serviceConfiguration,themeDisplay.getCompanyId());
+			if(listCalificationTypeFactory == null || listCalificationTypeFactory.size() == 0) {
+				return false;
+			}
+			List<InscriptionTypeFactory> listInscriptionTypeFactory = CourseUtil.getInscriptionTypeFactories(serviceConfiguration,themeDisplay.getCompanyId());
+			if(listInscriptionTypeFactory == null || listInscriptionTypeFactory.size() == 0) {
+				return false;
+			}
+			return true;
+		}
+		
+		public String getCreationURL() {
 			ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(WebKeys.THEME_DISPLAY);
-
+			
 			//Comprobamos que el usuario tiene permisos para crear cursos
 			if (!LMSPermission.contains(themeDisplay.getPermissionChecker(), themeDisplay.getScopeGroupId(), LMSActionKeys.ADD_COURSE)) {
 				return null;
 			}
-			
-			//Comprobamos que tenemos alguna plantilla de sitio web
-			
-
-			CreationMenu creationMenu = new CreationMenu();
 			
 			//Dependiendo si hay tipos de curso o no, mandamos a una ventana u otra
 			int countCourseTypes = CourseTypeLocalServiceUtil.countCourseTypes(themeDisplay.getCompanyId());
 			
 			String mvcRenderCommand = parentCourseId == CourseConstants.DEFAULT_PARENT_COURSE_ID ? (countCourseTypes > 0 ? "/courses/add_course" : "/courses/edit_course") : "/courses/edit_edition";
 
-			creationMenu.addDropdownItem(
-				dropdownItem -> {
-					dropdownItem.setHref(
-						liferayPortletResponse.createRenderURL(),
-						"mvcRenderCommandName", mvcRenderCommand, "redirect",
-						currentURLObj.toString(), "parentCourseId", parentCourseId);
-					dropdownItem.setLabel(
-						LanguageUtil.get(request, parentCourseId == CourseConstants.DEFAULT_PARENT_COURSE_ID ? "add-course" : "course-admin.new-edition"));
-				});
-
-			return creationMenu;
+			
+			PortletURL creationCourseURL = liferayPortletResponse.createRenderURL();
+			creationCourseURL.setParameter("mvcRenderCommandName", mvcRenderCommand);
+			creationCourseURL.setParameter("redirect", currentURLObj.toString());
+			creationCourseURL.setParameter("parentCourseId", String.valueOf(parentCourseId));
+			
+			return creationCourseURL.toString();
 		}
 
 		public String getDisplayStyle() {
@@ -220,11 +282,5 @@ public class CoursesManagementToolbarDisplayContext {
 			return true;
 		}
 
-		private final PortletURL currentURLObj;
-		private final LiferayPortletRequest liferayPortletRequest;
-		private final LiferayPortletResponse liferayPortletResponse;
-		private final PortalPreferences portalPreferences;
-		private final HttpServletRequest request;
-		private final TrashHelper trashHelper;
-		private long parentCourseId;
+		
 }

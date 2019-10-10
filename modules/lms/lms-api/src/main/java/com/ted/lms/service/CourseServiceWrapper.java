@@ -52,16 +52,16 @@ public class CourseServiceWrapper
 			long groupId, java.util.Map<java.util.Locale, String> titleMap,
 			java.util.Map<java.util.Locale, String> descriptionMap,
 			java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
-			java.util.Map<java.util.Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId, long parentCourseId, long courseTypeId,
+			String friendlyURL, long layoutSetPrototypeId, long parentCourseId,
+			long courseTypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageSelector,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws Exception {
 
 		return _courseService.addCourse(
-			groupId, titleMap, descriptionMap, summaryMap, indexer,
-			friendlyURLMap, layoutSetPrototypeId, parentCourseId, courseTypeId,
+			groupId, titleMap, descriptionMap, summaryMap, indexer, friendlyURL,
+			layoutSetPrototypeId, parentCourseId, courseTypeId,
 			smallImageSelector, serviceContext);
 	}
 
@@ -297,8 +297,7 @@ public class CourseServiceWrapper
 			long courseId, java.util.Map<java.util.Locale, String> titleMap,
 			java.util.Map<java.util.Locale, String> descriptionMap,
 			java.util.Map<java.util.Locale, String> summaryMap, boolean indexer,
-			java.util.Map<java.util.Locale, String> friendlyURLMap,
-			long layoutSetPrototypeId,
+			String friendlyURL, long layoutSetPrototypeId,
 			com.liferay.portal.kernel.servlet.taglib.ui.ImageSelector
 				smallImageImageSelector,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -306,7 +305,7 @@ public class CourseServiceWrapper
 
 		return _courseService.updateCourse(
 			courseId, titleMap, descriptionMap, summaryMap, indexer,
-			friendlyURLMap, layoutSetPrototypeId, smallImageImageSelector,
+			friendlyURL, layoutSetPrototypeId, smallImageImageSelector,
 			serviceContext);
 	}
 

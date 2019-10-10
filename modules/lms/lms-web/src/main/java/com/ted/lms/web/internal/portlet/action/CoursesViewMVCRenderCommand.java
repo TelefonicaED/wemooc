@@ -2,6 +2,7 @@ package com.ted.lms.web.internal.portlet.action;
 
 import com.liferay.asset.kernel.service.AssetTagService;
 import com.liferay.asset.kernel.service.AssetVocabularyService;
+import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -34,6 +35,7 @@ import com.ted.prerequisite.registry.PrerequisiteFactoryRegistryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.portlet.PortletException;
 import javax.portlet.PortletURL;
@@ -41,11 +43,13 @@ import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 
 @Component(
-	configurationPid = "com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration",
+	configurationPid = "com.ted.lms.configuration.CourseServiceConfiguration",
 	immediate = true,
 	property = {
 		"javax.portlet.name=" + LMSPortletKeys.COURSE,
@@ -99,7 +103,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		
 		CoursesManagementToolbarDisplayContext coursesManagementToolbarDisplayContext = new CoursesManagementToolbarDisplayContext(
 				PortalUtil.getLiferayPortletRequest(renderRequest), liferayPortletResponse, PortalUtil.getHttpServletRequest(renderRequest), 
-				portletURL, trashHelper);
+				portletURL, trashHelper, configuration);
 		
 		PortletURL iteratorURL = renderResponse.createRenderURL();
 		
@@ -131,6 +135,7 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 		renderRequest.setAttribute("inputFiltersShowOptions", inputFiltersShowOptions);
 		renderRequest.setAttribute("portletURL", portletURL);
 		renderRequest.setAttribute("redirect", redirect);
+		renderRequest.setAttribute("keywords", keywords);
 		
 		renderRequest.setAttribute("coursesManagementToolbarDisplayContext", coursesManagementToolbarDisplayContext);
 		
@@ -207,5 +212,13 @@ public class CoursesViewMVCRenderCommand implements MVCRenderCommand {
 	
 	@Reference
 	private Portal portal;
+	
+	@Activate
+	@Modified
+	protected void activate(Map<String, Object> properties) {
+	    configuration = ConfigurableUtil.createConfigurable(CourseServiceConfiguration.class, properties);
+	}
+
+	private volatile CourseServiceConfiguration configuration;
 
 }
