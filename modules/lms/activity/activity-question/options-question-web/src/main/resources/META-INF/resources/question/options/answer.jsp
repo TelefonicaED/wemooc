@@ -1,3 +1,8 @@
+<%@page import="com.liferay.portal.kernel.util.Validator"%>
+<%@page import="com.liferay.taglib.aui.AUIUtil"%>
+<%@page import="com.liferay.portal.kernel.util.JavaConstants"%>
+<%@page import="javax.portlet.PortletResponse"%>
+<%@page import="javax.portlet.PortletRequest"%>
 <%@page import="com.liferay.petra.string.StringPool"%> 
 <%@page import="com.ted.lms.learning.activity.question.service.AnswerLocalServiceUtil"%>
 <%@page import="com.ted.lms.learning.activity.question.model.Answer"%>
@@ -12,10 +17,21 @@ Answer answer = null;
 if(answerId > 0){
 	answer = AnswerLocalServiceUtil.getAnswer(answerId);
 } 
-String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
+String namespace = ParamUtil.getString(request, "namespaceAnswer", themeDisplay.getPortletDisplay().getNamespace());
+PortletRequest portletRequest = (PortletRequest)request.getAttribute(JavaConstants.JAVAX_PORTLET_REQUEST);
+
+PortletResponse portletResponse = (PortletResponse)request.getAttribute(JavaConstants.JAVAX_PORTLET_RESPONSE);
+
+String namespaceEditor = AUIUtil.getNamespace(portletRequest, portletResponse);
+
+if (Validator.isNull(namespaceEditor)) {
+	namespaceEditor = AUIUtil.getNamespace(request);
+}
+System.out.println("namespace options q: " + namespace);
 %>
 <aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_answerId_" + iterator%>' value="<%=answerId %>" useNamespace="false" />
 <aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_iteratorAnswer" %>' id='<%=namespace + iteratorQuestion + "_iteratorAnswer" %>' value="<%=iterator%>" useNamespace="false"  />
+
 <div class="col-md-10">
 
 	<aui:input type="radio" name='<%=namespace + iteratorQuestion + "_correct"%>' label="correct" value="<%=iterator%>" checked="<%=answer != null ? answer.isCorrect() : false %>" 
@@ -29,6 +45,7 @@ String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPor
 		editorName="<%=editorName %>"
 		showSource="true" 
 		onChangeMethod='<%=iteratorQuestion + "changeAnswer" + iterator %>'
+		autoCreate="true" 
 	>
 		<aui:validator name="required" />
 	</liferay-editor:editor>
@@ -55,8 +72,20 @@ String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPor
 	</liferay-ui:icon-menu>
 </div>
 
-<script>
-	function <portlet:namespace /><%=iteratorQuestion%>changeAnswer<%=iterator%>(val){
-		$('#<%=namespace + iteratorQuestion%>_answer_title_<%=iterator%>').val(window.<portlet:namespace /><%=iteratorQuestion%>_answer_<%=iterator%>.getHTML());
-	}
-</script>
+<c:choose>
+	<c:when test="<%=!namespaceEditor.equals(namespace) %>">
+		<aui:script>
+			document.getElementById("<%=namespaceEditor + iteratorQuestion + "_answer_" + iterator%>").addEventListener("mouseout",
+				function(){
+					$('#<%=namespace + iteratorQuestion%>_answer_title_<%=iterator%>').val(window.<%=namespaceEditor %><%=iteratorQuestion%>_answer_<%=iterator%>.getHTML());
+				});
+		</aui:script>
+	</c:when>
+	<c:otherwise>
+		<script>
+			function <portlet:namespace /><%=iteratorQuestion%>changeAnswer<%=iterator%>(val){
+				$('#<%=namespace + iteratorQuestion%>_answer_title_<%=iterator%>').val(window.<portlet:namespace /><%=iteratorQuestion%>_answer_<%=iterator%>.getHTML());
+			}
+		</script>
+	</c:otherwise>
+</c:choose>

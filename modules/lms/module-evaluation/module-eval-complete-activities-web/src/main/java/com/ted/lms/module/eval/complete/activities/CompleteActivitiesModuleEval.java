@@ -40,34 +40,35 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 		// Se obtiene el courseresult del usuario en dicho course.
 		
 		List<LearningActivity> learningActivities = learningActivityLocalService.getRequiredLearningActivitiesOfModule(moduleResult.getModuleId());
+		int numActivities = learningActivityLocalService.getLearningActivitiesOfModuleCount(module.getModuleId());
 		
-		return updateModuleResult(moduleResult, learningActivities);
+		return updateModuleResult(moduleResult, learningActivities, numActivities);
 	}
 	
 	@Override
 	public ModuleResult recalculateModule(ModuleResult moduleResult) throws SystemException {
 		
-		List<LearningActivity> learningActivities = learningActivityLocalService.getRequiredLearningActivitiesOfModule(module.getModuleId());
-		
 		if(moduleResult != null && moduleResult.getStartDate() != null){
-			moduleResult = updateModuleResult(moduleResult, learningActivities);
+			List<LearningActivity> learningActivities = learningActivityLocalService.getRequiredLearningActivitiesOfModule(module.getModuleId());
+			int numActivities = learningActivityLocalService.getLearningActivitiesOfModuleCount(module.getModuleId());
+			moduleResult = updateModuleResult(moduleResult, learningActivities, numActivities);
 		}
 		return moduleResult;	
 	}
 	
-	private ModuleResult updateModuleResult(ModuleResult moduleResult, List<LearningActivity> learningActivities) {
+	private ModuleResult updateModuleResult(ModuleResult moduleResult, List<LearningActivity> learningActivitiesRequired, int countNumActivites) {
 		
 		//Si el módulo no tiene actividades no lo podemos aprobar, da igual que sean obligatorias o no
-		boolean passedModule = learningActivities.size() > 0;
+		boolean passedModule = countNumActivites > 0;
 		long activitiesPassed = 0;
         Date passedDate = new Date(0);
         LearningActivityResult learningActivityResult = null;
         int i = 0;
         log.debug("passedModule: " + passedModule);
-        log.debug("learningActivities size: " + learningActivities.size());
+        log.debug("learningActivitiesRequired size: " + learningActivitiesRequired.size());
         
-        while(i < learningActivities.size()) {	
-        	learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(learningActivities.get(i).getActId(), moduleResult.getUserId());
+        while(i < learningActivitiesRequired.size()) {	
+        	learningActivityResult = learningActivityResultLocalService.getLearningActivityResult(learningActivitiesRequired.get(i).getActId(), moduleResult.getUserId());
         	log.debug("learningActivityResult: " + (learningActivityResult != null ? learningActivityResult.isPassed(): "null"));
 
 			if(learningActivityResult != null && learningActivityResult.isPassed()) {
@@ -83,7 +84,7 @@ public class CompleteActivitiesModuleEval extends BaseModuleEval{
 		}
 
 		//Indicamos la media y el resultado del m�dulo.
-		long result = learningActivities.size() > 0 ? activitiesPassed * 100 / learningActivities.size() : 0;
+		long result = learningActivitiesRequired.size() > 0 ? activitiesPassed * 100 / learningActivitiesRequired.size() : 0;
 		
 		log.debug("Vamos a ver si actualizamos...");
 		log.debug("Module result "+moduleResult.getResult());

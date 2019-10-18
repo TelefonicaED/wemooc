@@ -46,6 +46,7 @@ import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManager;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskManagerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.GroupFriendlyURLException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -92,6 +93,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.liveusers.LiveUsers;
+import com.liferay.portal.model.impl.LayoutImpl;
+import com.liferay.portal.util.PropsValues;
 import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.social.kernel.model.SocialActivityConstants;
 import com.liferay.trash.exception.RestoreEntryException;
@@ -221,11 +224,22 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		//Creamos el group asociado, le cambiamos al nombre al grupo porque no deja crear dos con el mismo nombre por el groupKey
 		
-		if(Validator.isNull(friendlyURL)) {
-			friendlyURL = getFriendlyURL(user.getCompanyId(), course.getTitleMap());
+		log.debug("friendlyURL: " + friendlyURL);
+		
+		String friendlyName = null;
+		if(titleMap.containsKey(Locale.getDefault())){
+			friendlyName = titleMap.get(Locale.getDefault());
+		}else{
+			//Cogemos el primero
+			Entry<Locale, String> entry = titleMap.entrySet().iterator().next();
+			friendlyName = entry.getValue();
 		}
 		
-		friendlyURL = StringPool.FORWARD_SLASH + friendlyURL;
+		friendlyURL = getFriendlyURL(
+				user.getCompanyId(), groupId, PortalUtil.getClassNameId(Course.class.getName()), courseId, friendlyName,
+				friendlyURL);
+		
+		log.debug("friendlyURL: " + friendlyURL);
 	
 		int membershipRestriction = GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION;
 
@@ -802,7 +816,166 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		return course;
 	}
 	
-	private String getFriendlyURL(long companyId, Map<Locale, String> titleMap) {
+	protected String getFriendlyURL(
+			long companyId, long groupId, long classNameId, long classPK,
+			String friendlyName, String friendlyURL)
+		throws PortalException {
+
+		friendlyURL = getFriendlyURL(friendlyURL);
+
+		if (Validator.isNotNull(friendlyURL)) {
+			return friendlyURL;
+		}
+
+		friendlyURL = StringPool.SLASH + getFriendlyURL(friendlyName);
+
+		return getValidatedFriendlyURL(
+			companyId, groupId, classNameId, classPK, friendlyURL);
+	}
+
+	protected String getFriendlyURL(String friendlyURL) {
+		return FriendlyURLNormalizerUtil.normalize(friendlyURL);
+	}
+	
+	protected String getValidatedFriendlyURL(
+			long companyId, long groupId, long classNameId, long classPK,
+			String friendlyURL)
+		throws PortalException {
+
+		int i = 0;
+
+		while (true) {
+			try {
+				validateFriendlyURL(
+					companyId, groupId, classNameId, classPK, friendlyURL);
+
+				break;
+			}
+			catch (GroupFriendlyURLException gfurle) {
+				int type = gfurle.getType();
+
+				if (type == GroupFriendlyURLException.DUPLICATE) {
+					if (friendlyURL.matches(".+-[0-9]+$")) {
+						int end = friendlyURL.lastIndexOf(CharPool.DASH);
+
+						long suffix = GetterUtil.getLong(
+							friendlyURL.substring(end + 1));
+
+						if (!(friendlyURL.contains("group") &&
+							  (groupId == suffix))) {
+
+							friendlyURL = friendlyURL.substring(0, end);
+						}
+					}
+
+					if (StringUtil.endsWith(friendlyURL, CharPool.DASH)) {
+						friendlyURL = friendlyURL + ++i;
+					}
+					else {
+						friendlyURL = friendlyURL + CharPool.DASH + ++i;
+					}
+				}
+				else if (type == GroupFriendlyURLException.ENDS_WITH_DASH) {
+					friendlyURL = StringUtil.replaceLast(
+						friendlyURL, CharPool.DASH, StringPool.BLANK);
+				}
+				else {
+					friendlyURL = StringPool.SLASH + "group-" + classPK;
+				}
+			}
+		}
+
+		return friendlyURL;
+	}
+	
+	protected void validateFriendlyURL(
+			long companyId, long groupId, long classNameId, long classPK,
+			String friendlyURL)
+		throws PortalException {
+
+		Company company = companyLocalService.getCompany(companyId);
+
+		if (company.isSystem()) {
+			return;
+		}
+
+		if (Validator.isNull(friendlyURL)) {
+			return;
+		}
+
+		int exceptionType = LayoutImpl.validateFriendlyURL(friendlyURL);
+
+		if (exceptionType != -1) {
+			throw new GroupFriendlyURLException(exceptionType);
+		}
+		
+		int maxLength  = GetterUtil.getInteger(
+				ModelHintsUtil.getHints(Group.class.getName(), "friendlyURL").get("max-length"),
+				GetterUtil.getInteger(ModelHintsConstants.TEXT_MAX_LENGTH));
+		
+		int i = 0;
+		boolean friendlyNotExit = false;
+		while(!friendlyNotExit) {
+	
+			Group group = groupLocalService.fetchFriendlyURLGroup(companyId, friendlyURL);
+			
+			if ((group != null) && (group.getGroupId() != groupId)){
+				String iString = String.valueOf(i);
+				if(friendlyURL.length()+iString.length()>maxLength) {
+					if(iString.length()>maxLength) {
+						throw new SystemException();
+					}
+					friendlyURL =friendlyURL.substring(0, maxLength-iString.length())+iString;
+				}
+				else {
+					friendlyURL =friendlyURL+iString;
+				}
+			}else{
+				friendlyNotExit = true;
+			}
+			i++;
+		}
+
+		String groupIdFriendlyURL = friendlyURL.substring(1);
+
+		if (Validator.isNumber(groupIdFriendlyURL)) {
+			long groupClassNameId = classNameLocalService.getClassNameId(
+				Group.class);
+
+			if (((classNameId != groupClassNameId) &&
+				 !groupIdFriendlyURL.equals(String.valueOf(classPK)) &&
+				 !PropsValues.USERS_SCREEN_NAME_ALLOW_NUMERIC) ||
+				(classNameId == groupClassNameId)) {
+
+				GroupFriendlyURLException gfurle =
+					new GroupFriendlyURLException(
+						GroupFriendlyURLException.POSSIBLE_DUPLICATE);
+
+				gfurle.setKeywordConflict(groupIdFriendlyURL);
+
+				throw gfurle;
+			}
+		}
+
+		if (StringUtil.count(friendlyURL, CharPool.SLASH) > 1) {
+			throw new GroupFriendlyURLException(
+				GroupFriendlyURLException.TOO_DEEP);
+		}
+
+		if (StringUtil.endsWith(friendlyURL, CharPool.DASH)) {
+			throw new GroupFriendlyURLException(
+				GroupFriendlyURLException.ENDS_WITH_DASH);
+		}
+
+		if (StringUtil.equals(friendlyURL, "/.") ||
+			StringUtil.equals(friendlyURL, "/..")) {
+
+			throw new GroupFriendlyURLException(
+				GroupFriendlyURLException.INVALID_CHARACTERS);
+		}
+	}
+	
+/*	private String getFriendlyURL(long companyId, Map<Locale, String> titleMap) {
 		//Se asegura que la longitud de friendlyURL no supere el maximo
 		int maxLength  = GetterUtil.getInteger(
 							ModelHintsUtil.getHints(Group.class.getName(), "friendlyURL").get("max-length"),
@@ -817,10 +990,16 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 			title = entry.getValue();
 		}
 		
+		log.debug("title: " + title);
+		
 		String friendlyURL = StringPool.SLASH + FriendlyURLNormalizerUtil.normalize(title);
+		log.debug("friendlyURL: " + friendlyURL);
 		if(friendlyURL.length()>maxLength) {
 			friendlyURL = friendlyURL.substring(0, maxLength);
 		}
+		
+		log.debug("friendlyURL: " + friendlyURL);
+		
 		int  i = 0;
 		boolean friendlyNotExit = false;
 		while(!friendlyNotExit) {
@@ -844,7 +1023,7 @@ public class CourseLocalServiceImpl extends CourseLocalServiceBaseImpl {
 		
 		friendlyURL = StringPool.SLASH+friendlyURL.replaceAll("[^a-zA-Z0-9_-]+", "");
 		return friendlyURL;
-	}
+	}*/
 	
 	/**
 	 * Actualiza el estado del asset correspondiente al curso

@@ -202,6 +202,8 @@ public class QuestionLocalServiceImpl extends QuestionLocalServiceBaseImpl {
 	
 	public void saveQuestions(ActionRequest actionRequest, long actId) throws PortalException {
 		
+		ParamUtil.print(actionRequest);
+		
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 		
 		//Pedimos las preguntas que ya existían por si alguna ha sido borrada eliminarla

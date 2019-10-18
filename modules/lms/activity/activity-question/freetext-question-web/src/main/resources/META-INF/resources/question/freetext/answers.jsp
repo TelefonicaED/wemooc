@@ -8,6 +8,8 @@
 <% 
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion", 0);
 long questionId = ParamUtil.getLong(request, "questionId");
+String namespace = ParamUtil.getString(request, "namespaceAnswers");
+System.out.println("namespace freetext: " + namespace);
 
 List<Answer> answers = null;
 if(questionId > 0){
@@ -15,43 +17,47 @@ if(questionId > 0){
 }%>
 
 <span class="question">
-	<aui:input type="radio" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_include_solution"%>' 
-			name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "includeSolution"%>' label="questions.free-text.include-solution.yes"  
-			onClick='<%= themeDisplay.getPortletDisplay().getNamespace() + "showHideSolution" + iteratorQuestion + "();" %>' checked='<%=Validator.isNotNull(answers) && answers.size() > 0 %>'
+	<aui:input type="radio" id='<%=namespace + iteratorQuestion + "_include_solution"%>' 
+			name='<%=namespace + iteratorQuestion + "includeSolution"%>' label="questions.free-text.include-solution.yes"  
+			checked='<%=Validator.isNotNull(answers) && answers.size() > 0 %>'
 			useNamespace="false"/>
 			
-	<aui:input type="radio" id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_not_include_solution" %>' 
-			name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "includeSolution"%>' label="questions.free-text.include-solution.no"
-			onClick='<%= themeDisplay.getPortletDisplay().getNamespace() + "showHideSolution" + iteratorQuestion + "();" %>' checked='<%=Validator.isNull(answers) || answers.size() == 0  %>'
+	<aui:input type="radio" id='<%=namespace + iteratorQuestion + "_not_include_solution" %>' 
+			name='<%=namespace + iteratorQuestion + "includeSolution"%>' label="questions.free-text.include-solution.no"
+			checked='<%=Validator.isNull(answers) || answers.size() == 0  %>'
 			useNamespace="false"/>
 </span> 
 
-<div id='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_solution"%>' class='<%=Validator.isNull(answers) ||  answers.size() == 0 ? "hide" : ""%>'>
+<div id='<%=namespace + iteratorQuestion + "_solution"%>' class='<%=Validator.isNull(answers) ||  answers.size() == 0 ? "hide" : ""%>'>
 	<%Answer answer = Validator.isNotNull(answers) && answers.size() > 0 ? answers.get(0) : null; %>
+	<aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_answerId_0"%>' value="<%=answer != null ? answer.getAnswerId() : 0 %>" useNamespace="false" />
+	<aui:input  type="hidden" name='<%=namespace + iteratorQuestion + "_iteratorAnswer" %>' id='<%=namespace + iteratorQuestion + "_iteratorAnswer" %>' value="0" useNamespace="false"  />
+	
 	<liferay-ui:panel title="answer" collapsible="true" extended="true" defaultState="open" persistState="false">
-		<aui:input type="hidden" name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_correct"%>' value="<%=answer != null %>"/>
+		<aui:input type="hidden" name='<%=namespace + iteratorQuestion + "_correct"%>' value="<%=answer != null %>"/>
 		<aui:field-wrapper label="">
 			<div class="container-textarea">
-				<textarea name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_answer"%>'>
+				<textarea name='<%=namespace + iteratorQuestion + "_answer_title_0"%>'>
 					<%=answer != null ? answer.getAnswer() : "" %>
 				</textarea>
 			</div>
 		</aui:field-wrapper>
-		<aui:input name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_feedbackCorrect" %>' label="question.feedback-correct" 
+		<aui:input name='<%=namespace + iteratorQuestion + "_feedbackCorrect" %>' label="question.feedback-correct" 
 			value="" size="60" useNamespace="false" localized="true"/>
-		<aui:input name='<%=themeDisplay.getPortletDisplay().getNamespace() + iteratorQuestion + "_feedbackIncorrect" %>' label="question.feedback-incorrect" 
+		<aui:input name='<%=namespace + iteratorQuestion + "_feedbackIncorrect" %>' label="question.feedback-incorrect" 
 			value="" size="60" useNamespace="false" localized="true"/>
 		
 	</liferay-ui:panel>
 </div>
 
-<script type="text/javascript">
-function <portlet:namespace />showHideSolution<%=iteratorQuestion%>(){
-	if($('#<portlet:namespace /><%=iteratorQuestion%>_solution').hasClass('hide')){
-		$('#<portlet:namespace /><%=iteratorQuestion%>_solution').removeClass("hide");
-	}else{
-		$('#<portlet:namespace /><%=iteratorQuestion%>_solution').addClass("hide");
-	}
-}
+<script >
+	document.getElementById("<%=namespace + iteratorQuestion%>_include_solution").addEventListener("click",
+			function(){
+				if($('#<%=namespace + iteratorQuestion%>_solution').hasClass('hide')){
+					$('#<%=namespace + iteratorQuestion%>_solution').removeClass("hide");
+				}else{
+					$('#<%=namespace + iteratorQuestion%>_solution').addClass("hide");
+				}
+	});
 
 </script>

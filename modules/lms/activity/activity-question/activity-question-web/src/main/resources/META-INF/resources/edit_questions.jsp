@@ -42,6 +42,7 @@ try {
 
 String editorName = questionWebConfiguration != null ? questionWebConfiguration.getHTMLQuestionEditor() : "alloyeditor";
 String namespace = ParamUtil.getString(request, "namespace", themeDisplay.getPortletDisplay().getNamespace());
+System.out.println("namespace edit_questions: " + namespace);
 %>
 
 <liferay-ui:error exception="<%= MinNumAnswerException.class %>" message="questions.error.min-num-answers" />
@@ -280,7 +281,7 @@ function <portlet:namespace />addAnswer(iteratorQuestion, urlAnswer, portletId){
 			urlAnswer += '&_' + portletId + '_editorName=<%=editorName%>';
 			urlAnswer += '&_' + portletId + '_iterator=' + iter;
 			urlAnswer += '&_' + portletId + '_iteratorQuestion=' + iteratorQuestion;
-			urlAnswer += '&_' + portletId + '_namespaceDest=<portlet:namespace />';
+			urlAnswer += '&_' + portletId + '_namespaceAnswer=<portlet:namespace />';
 			
 			var id = '<%=themeDisplay.getPortletDisplay().getNamespace()%>' + iteratorQuestion + '_div_answer_'+iter;
 			

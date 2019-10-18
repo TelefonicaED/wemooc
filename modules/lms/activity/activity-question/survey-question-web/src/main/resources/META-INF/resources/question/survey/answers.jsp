@@ -10,6 +10,8 @@
 int iteratorQuestion = ParamUtil.getInteger(request, "iteratorQuestion", 0);
 long questionId = ParamUtil.getLong(request, "questionId");
 String editorName = ParamUtil.getString(request, "editorName");
+String namespace = ParamUtil.getString(request, "namespaceAnswers");
+System.out.println("namespace survey: " + namespace);
 
 if(questionId > 0){
 	List<Answer> answers =  AnswerLocalServiceUtil.getAnswersByQuestionId(questionId);
@@ -22,6 +24,7 @@ if(questionId > 0){
 				<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
 				<liferay-util:param name="answerId" value="<%=String.valueOf(answer.getAnswerId())%>" />
 				<liferay-util:param name="editorName" value="<%=editorName%>" />
+				<liferay-util:param name="namespaceAnswer" value="<%=namespace%>" />
 			</liferay-util:include>
 		</div>
 	<%}
@@ -32,6 +35,7 @@ if(questionId > 0){
 				<liferay-util:param name="iterator" value="<%=String.valueOf(i) %>" />
 				<liferay-util:param name="iteratorQuestion" value="<%=String.valueOf(iteratorQuestion) %>" />
 				<liferay-util:param name="editorName" value="<%=editorName%>" />
+				<liferay-util:param name="namespaceAnswer" value="<%=namespace%>" />
 			</liferay-util:include>
 		</div>
 <%	}

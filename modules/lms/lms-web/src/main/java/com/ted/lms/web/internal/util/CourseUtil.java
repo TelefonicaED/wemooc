@@ -18,7 +18,6 @@ import com.ted.lms.registry.CourseEvalFactoryRegistryUtil;
 import com.ted.lms.registry.InscriptionTypeFactoryRegistryUtil;
 import com.ted.lms.registry.LearningActivityTypeFactoryRegistryUtil;
 import com.ted.lms.web.internal.configuration.CourseAdminPortletInstanceConfiguration;
-import com.ted.lms.web.internal.portlet.action.ImportMembersMVCActionCommand;
 
 import java.util.ArrayList;
 import java.util.Arrays;
